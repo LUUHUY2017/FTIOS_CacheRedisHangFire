@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Identity\Repositories\**" />
+    <Compile Remove="MasterDatas\**" />
+    <Compile Remove="Sites\**" />
+    <Compile Remove="Terminals\**" />
+    <EmbeddedResource Remove="Identity\Repositories\**" />
+    <EmbeddedResource Remove="MasterDatas\**" />
+    <EmbeddedResource Remove="Sites\**" />
+    <EmbeddedResource Remove="Terminals\**" />
+    <None Remove="Identity\Repositories\**" />
+    <None Remove="MasterDatas\**" />
+    <None Remove="Sites\**" />
+    <None Remove="Terminals\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.33" />
+    <PackageReference Include="MongoDB.Driver" Version="2.28.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Share\IdentityServer4\IdentityServer4.EntityFramework.Storage\IdentityServer4.EntityFramework.Storage.csproj" />
+    <ProjectReference Include="..\..\Share\IdentityServer4\IdentityServer4.EntityFramework\IdentityServer4.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\Share\Shared.Core\Shared.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\A1\" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,318 @@
+﻿@{
+    ViewData["Title"] = "Báo cáo tổng hợp xe";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+
+<!-- Main content -->
+<div class="content-wrapper" id="webui">
+
+    <!-- Inner content -->
+    <div class="content-inner">
+
+        <!-- Page header -->
+        <div class="page-header page-header-light shadow">
+            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+                <div class="d-flex">
+                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
+                        <span class="fw-normal">@ViewData["Title"]</span>
+                    </h4>
+                    <a href="#page_header" class="btn btn-light align-self-center collapsed d-lg-none border-transparent rounded-pill p-0 ms-auto" data-bs-toggle="collapse">
+                        <i class="ph-caret-down collapsible-indicator ph-sm m-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- /page header -->
+        <!-- Content area -->
+        <div class="content">
+            <div class="card">
+                <div class="card-body">
+                    <form v-on:submit.prevent="loadData">
+                        <div class="row mb-3  ">
+                            <div class="col-md-3">
+                                <label class="form-label">Từ ngày</label>
+                                <datetime type="date"
+                                          v-model="filter.startDate"
+                                          class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                          placeholder="Vui lòng chọn thời gian...">
+                                </datetime>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Đến ngày</label>
+                                <datetime type="date"
+                                          v-model="filter.endDate"
+                                          class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                          placeholder="Vui lòng chọn thời gian...">
+                                </datetime>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Biển số</label>
+                                <input type="text" class="form-control" v-model="filter.plateNumber" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Lượt xe</label>
+                                <select id="laneId" class="form-control select">
+                                    <option selected value="">Tất cả </option>
+                                    <option v-for="option in combobox.lanes" v-bind:value="option.id">
+                                        {{ option.laneName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="text-start">
+                                <button type="button" v-on:click=loadData() class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                                <button type="button" v-on:click=onExport() class="btn btn-primary" style="margin-right: 5px;">Xuất báo cáo</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <bootstrap-table :columns="columns" :data="data" :options="optionTable.options"></bootstrap-table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="XemChiTiet">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Hình ảnh </h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row img-platenumber">
+                        <div class="col-sm-12">
+                            <div style=" padding: 5px;  box-shadow:unset !important ;border:  unset !important" class="panel">
+                                <label style="padding:5px 0 0 5px;color:forestgreen" class="control-label recent-history ">Hình ảnh</label>
+                                <table style=" border: 1px solid #ddd !important;min-height: 250px; " class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Lượt xe </th>
+                                            <th>Hình trước </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style=" vertical-align: inherit !important;">  </td>
+                                            <td><a class="anh_report" id="anh_chup_truoc_lan1" data-fancybox="gallery" href="" target="_blank"> <img style="width:150px; height: 130px !important  " src=" " alt=" " /> </a></td>
+                                        </tr>
+                                        <tr>
+                                            <td style=" vertical-align: middle;" colspan="1">Biển số  </td>
+                                            <td style="height:60px !important"><a class="anh_report" id="bien_so_xe_sau_lan1" target="_blank" data-fancybox="gallery" href=""> <img style="height: 35px;  object-fit: contain;" src=" " alt=" " /> </a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style=" padding: 5px 15px;" class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#vehicleInOutStatus').on("change", function () {
+            _bcX.filter.vehicleInOutStatus = $(this).val();
+        });   
+        $('#laneId').on("change", function () {
+            _bcX.filter.laneId = $(this).val() ?? null;
+        });
+    });
+
+    var _bcX = new Vue({
+        el: '#webui',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            filter: {
+                export: 0,
+                laneId: null,
+                vehicleInOutStatus: 0,
+                plateNumber: null,
+                startDate: formatDateTime(new Date()),
+                endDate: formatDateTime(new Date()),
+            },
+            data: [],
+            name_file: "BAOCAOTONGHOPXE_" + new Date().getDate() + "_" + new Date().getTime(),
+            columns: [
+                {
+                    title: 'Stt',
+                    field: 'stt',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        return index + 1;
+                    },
+                },
+
+                {
+                    title: 'Ngày vào',
+                    field: 'dateTimeIn',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.dateTimeIn) {
+                            var dateTimeIn = moment(row.dateTimeIn).format('DD/MM/YYYY');
+                            return "<span class =black'> " + dateTimeIn + "  </span>";
+                        }
+                    },
+                },
+                {
+                    title: 'Hướng di chuyển',
+                    field: 'laneInName',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.vehicleInOutStatus == 1) {
+                            return "<span class='badge bg-primary bg-opacity-10 text-primary'>" + row.laneInName + "</span>";
+                        } else {
+                            return "<span class='badge bg-secondary  bg-opacity-10 text-secondary '>" + row.laneInName + "</span>";
+                        }
+                    },
+                },
+                {
+                    title: 'Tổng số xe',
+                    field: 'number',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.number)
+                            return row.number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                    },
+                },
+            ],
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                config: {
+                    headers: {
+                        headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                    }
+                }
+            },
+            optionTable: {
+                options: {
+                    search: true,
+                    pagination: true,
+                    showExtendedPagination: true,
+                    sortable: true,
+                    searchAlign: 'right',
+                    paginationHAlign: 'right',
+                    paginationDetailHAlign: 'left',
+                    pageSize: 25,
+                    pageList: [10, 25, 50, 100, 200],
+                },
+            },
+            combobox: {
+                lanes: [],
+            },
+            detail: {
+                xe_anh_sau: { imageFolder: " ", imageIndex: 1, imageName: "" },
+                xe_anh_truoc: { imageFolder: " ", imageIndex: 1, imageName: "" },
+                xe_anh_toan_canh: { imageFolder: " ", imageIndex: 1, imageName: "" },
+                xe_bien_so: { imageFolder: " ", imageIndex: 1, imageName: "" }
+            },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                this.filter.export = "0";
+                axios.post('/api/v1/BaoCaoTongHopXe/Post', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    this.data = response.data.data;
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+
+            onExport() {
+                $('.loader').show();
+                axios.post('/api/v1/BaoCaoTongHopXe/export', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login'))
+                        window.location = window.location.href;
+
+                    $('.loader').delay(100).hide(0);
+                    window.location.href = '/' + response.data;
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+
+            popupViewDetail(row) {
+                this.value = row;
+                axios.get('/api/v1/BaoCaoTongHopXe/GetImage?id=' + row.id).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login'))
+                        window.location = window.location.href;
+
+                    if (response.data.succeeded) {
+                        this.detail = response.data.data;
+                        var hostname = window.location.origin + "/";
+                        $(".anh_report").attr("href", ""); $(".anh_report img").attr("src", "");
+
+                        if (this.detail?.anh_chup_truoc_lan1?.imageName) {
+                            console.warn("asl11", this.detail?.anh_chup_truoc_lan1?.imageName);
+
+                            $("#anh_chup_truoc_lan1").attr("href", hostname + this.detail?.anh_chup_truoc_lan1.imageFolder + this.detail?.anh_chup_truoc_lan1?.imageName);
+                            $("#anh_chup_truoc_lan1 img").attr("src", hostname + this.detail?.anh_chup_truoc_lan1.imageFolder + this.detail?.anh_chup_truoc_lan1?.imageName);
+                        }
+
+
+                        if (this.detail?.anh_chup_sau_lan1?.imageName) {
+                            $("#anh_chup_sau_lan1").attr("href", hostname + this.detail?.anh_chup_sau_lan1.imageFolder + this.detail?.anh_chup_sau_lan1?.imageName);
+                            $("#anh_chup_sau_lan1 img").attr("src", hostname + this.detail?.anh_chup_sau_lan1.imageFolder + this.detail?.anh_chup_sau_lan1?.imageName);
+                        }
+
+                        if (this.detail?.anh_toancanh_lan1?.imageName) {
+                            $("#anh_toancanh_lan1").attr("href", hostname + this.detail?.anh_toancanh_lan1.imageFolder + this.detail?.anh_toancanh_lan1?.imageName);
+                            $("#anh_toancanh_lan1 img").attr("src", hostname + this.detail?.anh_toancanh_lan1.imageFolder + this.detail?.anh_toancanh_lan1?.imageName);
+                        }
+
+                        if (this.detail?.bien_so_xe_truoc_lan1?.imageName) {
+                            $("#bien_so_xe_truoc_lan1").attr("href", hostname + this.detail?.bien_so_xe_truoc_lan1.imageFolder + this.detail?.bien_so_xe_truoc_lan1?.imageName);
+                            $("#bien_so_xe_truoc_lan1 img").attr("src", hostname + this.detail?.bien_so_xe_truoc_lan1.imageFolder + this.detail?.bien_so_xe_truoc_lan1?.imageName);
+                        }
+
+                        if (this.detail?.bien_so_xe_sau_lan1?.imageName) {
+                            $("#bien_so_xe_sau_lan1").attr("href", hostname + this.detail?.bien_so_xe_sau_lan1.imageFolder + this.detail?.bien_so_xe_sau_lan1?.imageName);
+                            $("#bien_so_xe_sau_lan1 img").attr("src", hostname + this.detail?.bien_so_xe_sau_lan1.imageFolder + this.detail?.bien_so_xe_sau_lan1?.imageName);
+                        }
+                    }
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('XemChiTiet')).show();
+
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+            loadCombox() {
+                axios.get('/api/v1/lane/gets', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.lanes = response.data.data;
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+
+        },
+        mounted() {
+            this.loadData();
+            this.loadCombox();
+        },
+    })
+</script>

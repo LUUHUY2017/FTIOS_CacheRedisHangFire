@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Name": "Services\\Brickstream\\Brickstream.API\\Brickstream.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Name": "Services\\Server\\Server.API\\Server.API.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

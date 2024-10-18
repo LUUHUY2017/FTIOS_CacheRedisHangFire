@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "Quản lý người dùng";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+
+    string tab_system_user = "";
+
+    if (ViewBag.Tab == "system")
+        tab_system_user = "active";
+
+    // string tab_employee_user = "";
+    // if (ViewBag.Tab == "employee")
+    //     tab_employee_user = "active";
+
+    // string tab_truckdriver_user = "";
+    // if (ViewBag.Tab == "truckdriver")
+    //     tab_truckdriver_user = "active";
+
+    // string tab_visitor_user = "";
+    // if (ViewBag.Tab == "visitor")
+    //     tab_visitor_user = "active";
+
+    // string tab_vendor_user = "";
+    // if (ViewBag.Tab == "vendor")
+    //     tab_vendor_user = "active";
+
+    // string tab_customer_user = "";
+    // if (ViewBag.Tab == "customer")
+    //     tab_customer_user = "active";
+
+}
+
+
+<!-- Main content -->
+<div class="content-wrapper" id="webui">
+
+    <!-- Inner content -->
+    <div class="content-inner">
+        <!-- Page header -->
+        <div class="page-header page-header-light shadow mb-3">
+            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+                <div class="d-flex">
+                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
+                        <span class="fw-normal">@ViewData["Title"]</span>
+                    </h4>
+
+                    <a href="#page_header" class="btn btn-light align-self-center collapsed d-lg-none border-transparent rounded-pill p-0 ms-auto" data-bs-toggle="collapse">
+                        <i class="ph-caret-down collapsible-indicator ph-sm m-1"></i>
+                    </a>
+                </div>
+
+                <div class="collapse d-lg-block my-lg-auto ms-lg-auto" id="page_header">
+                    <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
+                        <div class="d-inline-flex mt-3 mt-sm-0">
+                            <div class="pull-right">
+
+                                <!--   <a onclick="openFormAdd()" class="btn btn-primary pull-right" style="margin-right: 5px;"> Thêm mới </a -->
+
+                                <!--  <a class="btn btn-primary pull-right hidden-xs" style="margin-right: 5px;"> Import  </a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /page header -->
+        <div class="w-100 ">
+            <ul class="nav nav-tabs nav-tabs-highlight">
+                <li class="nav-item">
+                    <a href="@Url.Action("index", new { tab =  "system"})" class="nav-link @tab_system_user">
+                        <i class="ph-user-circle-gear m-2"></i>
+                        Hệ thống
+                    </a>
+                </li>
+            </ul>
+            @await Html.PartialAsync("/Areas/Managers/Users/V1/Views/_tabSystemAccount.cshtml")
+
+        </div>
+        <!-- Content area -->
+    </div>
+</div>
+
+
+
+
+

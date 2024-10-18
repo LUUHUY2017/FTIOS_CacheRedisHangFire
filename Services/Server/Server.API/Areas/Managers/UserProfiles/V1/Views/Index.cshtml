@@ -1,0 +1,760 @@
+﻿@using System.Security.Claims;
+@{
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+    ViewBag.Title = "Thông tin cá nhân";
+    ViewBag.Page = "Hồ sơ";
+}
+
+<div class="content-wrapper" id="content-wrapper001">
+    <div class="content-inner" id="profileInfo">
+        <div class="page-header page-header-light shadow">
+
+            <div class="navbar navbar-expand-lg border-top py-2">
+                <div class="container-fluid">
+                    <ul class="nav navbar-nav flex-row flex-fill">
+                        <li class="nav-item me-1">
+                            <a href="#settings" class="navbar-nav-link navbar-nav-link-icon active rounded" data-bs-toggle="tab">
+                                <div class="d-flex align-items-center mx-lg-1">
+                                    <i class="ph-gear"></i>
+                                    <span class="d-none d-lg-inline-block ms-2">Thông tin cá nhân</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item d-lg-none ms-auto">
+                            <a href="#profile_nav" class="navbar-nav-link navbar-nav-link-icon collapsed rounded" data-bs-toggle="collapse">
+                                <i class="ph-caret-down collapsible-indicator"></i>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="navbar-collapse collapse" id="profile_nav">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="content" id="content001">
+            <div class="tab-content flex-1 order-2 order-lg-1">
+                <div class="tab-pane fade active show " id="settings">
+                    <!-- Profile info -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Thông tin cá nhân</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="sidebar-section">
+                                <div class="sidebar-section-body text-center pt-0">
+                                    <div class="card-img-actions d-inline-block mb-3">
+                                        <img class="rounded-circle" :src="avata" width="150" height="150" alt="">
+
+                                        <div class="card-img-actions-overlay card-img rounded-circle">
+                                            <a href="#" v-on:click="onPopupModelChangeAvata()" class="btn btn-outline-white btn-icon rounded-pill">
+                                                <i class="ph-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body text-center pt-0">
+                            <button type="button" v-on:click="onPopupModelChangePassword()" class="btn btn-primary">Đổi mật khẩu</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Họ và đệm</label>
+                                        <input type="text" v-model:value="userInfo.lastName" readonly="readonly" required class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Tên</label>
+                                        <input type="text" v-model:value="userInfo.firstName" readonly="readonly" required class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Tài khoản</label>
+                                        <input type="text" v-model:value="userInfo.userName" readonly="readonly" required class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <div class="position-relative">
+                                            <input type="text" v-model:value="userInfo.email" readonly="readonly" required class="form-control">
+                                            <button type="button" v-on:click="onPopupModelChangeEmail()" class="btn btn-primary position-absolute top-50 end-0 translate-middle-y">
+                                                <i class="ph-pencil"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Số điện thoại</label>
+                                        <div class="position-relative">
+                                            <input type="text" v-model:value="userInfo.phoneNumber" readonly="readonly" required class="form-control">
+                                            <button type="button" v-on:click="onPopupModelChangePhone()" class="btn btn-primary position-absolute top-50 end-0 translate-middle-y">
+                                                <i class="ph-pencil"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Giới thiệu</label>
+                                        <textarea rows="2" v-model:value="userInfo.description" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="button" v-on:click="onPopupModelUpdateUserInfo()" class="btn btn-primary">Sửa thông tin</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="updateUserInfo" aria-hidden="true">
+                <div id="waitDialog" class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 id="staticBackdropLabel" class="modal-title">Cập nhật thông tin người dùng</h5>
+                            <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body">
+                                <form v-on:submit.prevent="onUpdateUserInfo" class="needs-validation" id="FormUpdateUserInfo" novalidate>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Tài khoản</label>
+                                                <input type="text" v-model:value="userInfo.userName" readonly="readonly" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Email</label>
+                                                <input type="text" v-model:value="userInfo.email" readonly="readonly" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Họ và đệm</label>
+                                                <input type="text" v-model:value="userInfoChange.lastName" required class="form-control">
+                                                <div class="invalid-feedback">Họ yêu cầu nhập</div>
+                                                <div class="valid-feedback">Success!</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Tên</label>
+                                                <input type="text" v-model:value="userInfoChange.firstName" required class="form-control">
+                                                <div class="invalid-feedback">Tên yêu cầu nhập</div>
+                                                <div class="valid-feedback">Success!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Số điện thoại</label>
+                                                <input type="text" v-model:value="userInfoChange.phoneNumber" readonly="readonly" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modelChangeEmail" aria-hidden="true">
+                <div id="waitDialog" class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 id="staticBackdropLabel" class="modal-title">Đổi email</h5>
+                            <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body" v-if="showFormChangeSentOtp">
+                                <form v-on:submit.prevent="onChangeEmailSentOtp" class="needs-validation" id="FormChangeEmailSentOtp" novalidate>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Email hiện tại</label>
+                                                <input type="text" v-model:value="userInfo.email" readonly="readonly" required class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Email mới</label>
+                                                <input type="text" v-model:value="changeEmail.email" required class="form-control">
+                                                <div class="invalid-feedback">Email yêu cầu nhập</div>
+                                                <div class="valid-feedback">Success!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-body" v-if="!showFormChangeSentOtp">
+                                <form v-on:submit.prevent="onChangeEmailConfirm" class="needs-validation" id="FormChangeEmailConfirm" novalidate>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Email</label>
+                                                <input type="text" v-model:value="changeEmail.email" readonly="readonly" required class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Nhập mã OTP (Kiểm tra email để lấy mã OTP)</label>
+                                                <input type="text" v-model:value="changeEmail.otp" required class="form-control">
+                                                <div class="invalid-feedback">Nhập mã OTP</div>
+                                                <div class="valid-feedback">Success!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Xác nhận</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modelChangePhone" aria-hidden="true">
+                <div id="waitDialog" class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 id="staticBackdropLabel" class="modal-title">Đổi số điện thoại</h5>
+                            <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body" v-if="showFormChangeSentOtp">
+                                <form v-on:submit.prevent="onChangePhoneSentOtp" class="needs-validation" id="FormChangePhoneSentOtp" novalidate>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Số điện thoại hiện tại</label>
+                                                <input type="text" v-model:value="userInfo.phoneNumber" readonly="readonly" required class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Số điện thoại mới</label>
+                                                <input type="text" v-model:value="changePhone.phone" required class="form-control">
+                                                <div class="invalid-feedback">Số điện thoại yêu cầu nhập</div>
+                                                <div class="valid-feedback">Success!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-body" v-if="!showFormChangeSentOtp">
+                                <form v-on:submit.prevent="onChangePhoneConfirm" class="needs-validation" id="FormChangePhoneConfirm" novalidate>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Số điện thoại</label>
+                                                <input type="text" v-model:value="changePhone.phone" readonly="readonly" required class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Nhập mã OTP (Kiểm tra tin nhắn để lấy mã OTP)</label>
+                                                <input type="text" v-model:value="changePhone.otp" required class="form-control">
+                                                <div class="invalid-feedback">Nhập mã OTP</div>
+                                                <div class="valid-feedback">Success!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Xác nhận</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modelChangeAvata" aria-hidden="true">
+                <div id="waitDialog" class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 id="staticBackdropLabel" class="modal-title">Thay đổi ảnh đại diện</h5>
+                            <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body">
+                                <form v-on:submit.prevent="onChangeAvataConfirm" class="needs-validation" id="FormChangeAvata" novalidate>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Upload profile Hình ảnh</label>
+                                                <input type="file" v-on:change="onpreviewFiles()" class="form-control">
+                                                <div class="form-text text-muted">Accepted formats: gif, png, jpg. Max file size 2Mb</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <img class="img-fluid rounded-circle " style="width: 150px; border-radius: 100% !important; height: 150px;" id="img-fluid" :src="base64String">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modelChangePassword" aria-hidden="true">
+                <div id="waitDialog" class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 id="staticBackdropLabel" class="modal-title">Thay đổi mật khẩu</h5>
+                            <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body">
+                                <form v-on:submit.prevent="onChangePassword" class="needs-validation" id="FormChangePassword" novalidate>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Mật khẩu hiện tại</label>
+                                                <input type="password" v-model:value="userPassword.curentPassword" autocorrect="off" autocapitalize="off" autocomplete="off" required class="form-control">
+                                                <div class="invalid-feedback">Mật khẩu yêu cầu nhập</div>
+                                                <div class="valid-feedback">Success!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Mật khẩu mới</label>
+                                                <input type="password" placeholder="" autocorrect="off" autocapitalize="off" autocomplete="off" required v-model:value="userPassword.password" class="form-control">
+                                                <div class="invalid-feedback">Mật khẩu mới yêu cầu nhập</div>
+                                                <div class="valid-feedback">Success!</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Xác nhận mật khẩu</label>
+                                                <input type="password" placeholder="" autocorrect="off" autocapitalize="off" autocomplete="off" required v-model:value="userPassword.confirmPassword" class="form-control">
+                                                <div class="invalid-feedback">Xác nhận mật khẩu yêu cầu nhập</div>
+                                                <div class="valid-feedback">Success!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@if (false)
+{
+    <div class="sidebar sidebar-end sidebar-expand-lg">
+        <!-- Expand button -->
+        <button type="button" class="btn btn-sidebar-expand sidebar-control sidebar-end-toggle h-100">
+            <i class="ph-caret-left"></i>
+        </button>
+        <!-- /expand button -->
+        <!-- Sidebar content -->
+        <div class="sidebar-content">
+
+            <!-- Header -->
+            <div class="sidebar-section sidebar-section-body d-flex align-items-center">
+                <h5 class="mb-0">Thông tin tài khoản</h5>
+                <div class="ms-auto">
+                    <button type="button" class="btn btn-light border-transparent btn-icon rounded-pill btn-sm sidebar-control sidebar-end-toggle d-none d-lg-inline-flex">
+                        <i class="ph-arrows-left-right"></i>
+                    </button>
+
+                    <button type="button" class="btn btn-light border-transparent btn-icon rounded-pill btn-sm sidebar-mobile-end-toggle d-lg-none">
+                        <i class="ph-x"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /header -->
+            <!-- Sidebar user -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-body text-center pt-0">
+                    <div class="card-img-actions d-inline-block mb-3">
+                        @*<img class="img-fluid rounded-circle" src="../../../assets/images/demo/users/face11.jpg" width="150" height="150" alt="">*@
+                        <img class="img-fluid rounded-circle " style="width: 150px; border-radius: 100% !important; height: 150px;" id="img-fluid" :src="getImageBase64(userInfo.avata)">
+                        <div class="card-img-actions-overlay card-img rounded-circle">
+                            <a href="#" class="btn btn-outline-white btn-icon rounded-pill">
+                                <i class="ph-pencil"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- /sidebar user -->
+            <!-- Sub navigation -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-header bg-light py-2">
+                    <div class="fw-semibold">Navigation</div>
+                </div>
+
+                <ul class="nav nav-sidebar">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="ph-user me-2"></i>
+                            My profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="ph-coins me-2"></i>
+                            Balance
+                            <span class="text-muted fs-sm fw ms-auto">$1,430</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="ph-share-network me-2"></i>
+                            Connections
+                            <span class="badge bg-danger rounded-pill ms-auto">29</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="ph-users-three me-2"></i>
+                            Friends
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="ph-calendar me-2"></i>
+                            Events
+                            <span class="badge bg-teal rounded-pill ms-auto">48</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="ph-gear me-2"></i>
+                            Account settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- /sidebar content -->
+    </div>
+}
+<script>
+    var _userProfile = new Vue({
+        el: "#content001",
+        data: {
+            token: '@Context.User.FindFirstValue("AccessToken")',
+            userId: '@Context.User.FindFirstValue(ClaimTypes.NameIdentifier)',
+            avata: '',
+            userInfo: {
+                id: '@Context.User.FindFirstValue(ClaimTypes.NameIdentifier)',
+                email: '@Context.User.FindFirstValue(ClaimTypes.Email)',
+                firstName: '',
+                lastName: '',
+                phone: '',
+            },
+
+
+            errors: {},
+
+            params: {
+                config: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+            /////// Change User Info
+            userInfoChange: {},
+            ///////Change email
+            showFormChangeSentOtp: true,
+            changeEmail: {
+                email: '',
+                otp: '',
+                code: '',
+                key: '',
+            },
+            ///////Change phone
+            changePhone: {
+                phone: '',
+                otp: '',
+                code: '',
+                key: '',
+            },
+            ///////Change avata
+            base64String: '',
+            changeAvata: {
+                imageBase64: '',
+            },
+            ///////Change Password
+            userPassword: {
+                curentPassword: '',
+                password: '',
+                confirmPassword: '',
+            },
+        },
+        methods: {
+            onGetUserInfo() {
+                const data = {
+                    id: this.userId
+                };
+                axios.get('/api/v1/UserProfile/GetUserInfo', this.params.config).then(response => {
+                    if (response.data.succeeded) {
+                        this.userInfo = response.data.data;
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+            onPopupModelUpdateUserInfo() {
+                this.userInfoChange = this.userInfo;
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('updateUserInfo')).show();
+            },
+            onUpdateUserInfo() {
+                this.userInfo.id = this.userId;
+                this.userInfo = { ... this.userInfo };
+
+                if (!validateForm("#FormUpdateUserInfo"))
+                    return true;
+
+                axios.post('/api/v1/UserProfile/UpdateUserInfo', this.userInfo, this.params.config).then(response => {
+                    console.warn("response", response);
+                    if (response.status == 200) {
+                        this.onGetUserInfo();
+                        showSuccessful();
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+
+            },
+
+
+            onGetAvata() {
+                axios.get('/api/v1/UserProfile/GetAvata', this.params.config).then(response => {
+                    this.avata = response.data.data;
+
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+
+            getImageBase64(imagebase64) {
+                var image = "data:image/png; base64, ".concat(imagebase64);
+                return image;
+            },
+
+
+            ////////////////////// đổi email
+            onPopupModelChangeEmail() {
+                this.showFormChangeSentOtp = true;
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('modelChangeEmail')).show();
+            },
+            onChangeEmailSentOtp() {
+                axios.get('/api/v1/UserProfile/ChangeEmail/SendOtp?email=' + this.changeEmail.email, this.params.config).then(response => {
+                    if (response.data.succeeded) {
+                        this.changeEmail.code = response.data.data.code;
+                        this.changeEmail.key = response.data.data.key;
+                        this.showFormChangeSentOtp = false;
+                    }
+                    else {
+                        alertify.warning(response.data.message);
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+            onChangeEmailConfirm() {
+                axios.post('/api/v1/UserProfile/ChangeEmail', this.changeEmail, this.params.config).then(response => {
+                    if (response.data.succeeded) {
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('modelChangeEmail')).hide();
+                        alertify.success(response.data.message);
+                    }
+                    else {
+                        alertify.warning(response.data.message);
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+            ////////////////////// đổi Phone
+            onPopupModelChangePhone() {
+                this.showFormChangeSentOtp = true;
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('modelChangePhone')).show();
+            },
+            onChangePhoneSentOtp() {
+                axios.get('/api/v1/UserProfile/ChangePhone/SendOtp?phone=' + this.changePhone.phone, this.params.config).then(response => {
+                    if (response.data.succeeded) {
+                        this.changePhone.code = response.data.data.code;
+                        this.changePhone.key = response.data.data.key;
+                        this.showFormChangeSentOtp = false;
+                    }
+                    else {
+                        alertify.warning(response.data.message);
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+            onChangePhoneConfirm() {
+                axios.post('/api/v1/UserProfile/ChangePhone', this.changePhone, this.params.config).then(response => {
+                    if (response.data.succeeded) {
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('modelChangePhone')).hide();
+                        alertify.success(response.data.message);
+                    }
+                    else {
+                        alertify.warning(response.data.message);
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+
+            ////////////////////// đổi ảnh đại diện
+            onPopupModelChangeAvata() {
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('modelChangeAvata')).show();
+            },
+            onChangeAvataConfirm() {
+                this.changeAvata.imageBase64 = this.base64String;
+                axios.post('/api/v1/UserProfile/SetAvata1', this.changeAvata, this.params.config).then(response => {
+                    if (response.data.succeeded) {
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('modelChangeAvata')).hide();
+                        alertify.success(response.data.message);
+                        this.onGetAvata();
+                    }
+                    else {
+                        alertify.warning(response.data.message);
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+            onpreviewFiles() {
+                const that = this;
+                if (event.target.files.length > 0) {
+                    const reader = new FileReader();
+                    const file = event.target.files[0];
+                    reader.onloadend = function () {
+                        that.base64String = reader.result;
+                    };
+                    //img1.src = e.target.result;
+                    reader.readAsDataURL(file);
+                }
+            },
+            ////////////////////// đổi Mật khẩu
+            onPopupModelChangePassword() {
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('modelChangePassword')).show();
+            },
+            onChangePassword() {
+                this.userPassword = { ... this.userPassword };
+
+                if (!this.validateChangePasswordForm())
+                    return true;
+
+                if (!validateForm("#FormChangePassword"))
+                    return true;
+
+                axios.post('/api/v1/UserProfile/ChangePassword', this.userPassword, this.params.config).then(response => {
+                    if (response.data.succeeded) {
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('modelChangePassword')).hide();
+                        alertify.success(response.data.message);
+                    }
+                    else {
+                        alertify.warning(response.data.message);
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+            validateChangePasswordForm() {
+                this.errors = {};
+                //const passwordRegex = new RegExp(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*_)(?!.*\W)(?!.* ).{8,30}$/);
+                const passwordRegex = new RegExp(/^(?=.*[0-9]).*$/);
+                let isCurrentPassword = passwordRegex.test(this.userPassword.curentPassword);
+                let isNewPassword = passwordRegex.test(this.userPassword.password);
+                let isConfirmPassword = passwordRegex.test(this.userPassword.confirmPassword);
+                let isValidPassword = this.userPassword.password == this.userPassword.confirmPassword;
+
+                if (!isCurrentPassword)
+                    this.errors.curentPassword = 'Mật khẩu yêu cầu 8 kí tự và có kí tự đặc biệt';
+                if (!isNewPassword)
+                    this.errors.password = 'Mật khẩu yêu cầu 8 kí tự và có kí tự đặc biệt';
+
+                if (!isConfirmPassword)
+                    this.errors.confirmPassword = 'Mật khẩu yêu cầu 8 kí tự và có kí tự đặc biệt';
+
+                if (!isValidPassword)
+                    this.errors.confirmPassword = 'Mật khẩu không khớp nhau';
+
+                console.warn("errors", this.errors);
+                return isCurrentPassword && isNewPassword && isConfirmPassword;
+            },
+
+        },
+        mounted() {
+            this.onGetUserInfo();
+            this.onGetAvata();
+        },
+    })
+</script>

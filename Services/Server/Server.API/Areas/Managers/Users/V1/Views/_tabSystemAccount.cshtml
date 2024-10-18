@@ -1,0 +1,657 @@
+﻿
+<div class="tab-content" id="tab_users">
+    <div class="accordion">
+        <div class="content-wrapper" id="tab_role_groups">
+            <div class="accordion-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <a v-on:click="openFormAdd()" class="btn btn-outline-primary btn-icon w-32px h-32px rounded-pill ms-3  mt-3">
+                                <i class="ph-plus"></i>
+                            </a>
+                        </div>
+                        <div class="row">
+                            <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header"><h5 id="staticBackdropLabel" class="modal-title">{{form_tile}} người dùng</h5> <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button></div>
+                <div class="modal-body">
+                    <form class="needs-validation" id="FormAddEdit" novalidate>
+
+                        <div class="row mb-3">
+                            <label class="col-form-label text-end col-lg-2">Tên<span class="text-danger">*</span></label>
+                            <div class="col-lg-8">
+                                <input type="text" class="form-control" required placeholder="Tên tài khoản" v-model="item.firstName">
+                                <div class="invalid-feedback">Vui lòng nhập tên tài khoản</div>
+                                <div class="valid-feedback"> </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-form-label text-end col-lg-2">Tài khoản<span class="text-danger">*</span></label>
+                            <div class="col-lg-8">
+                                <input type="text" class="form-control" required placeholder="Tài khoản đăng nhập" v-model="item.userName">
+                                <div class="invalid-feedback">Vui lòng nhập tên đăng nhập</div>
+                                <div class="valid-feedback"> </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3" v-if="!showRole">
+                            <label class="col-form-label text-end col-lg-2">Mật khẩu <span class="text-danger">*</span></label>
+                            <div class="col-lg-8">
+                                <input type="password" name="password" id="Password" class="form-control" required placeholder="Mật khẩu tối thiểu 6 ký tự" v-model="item.password">
+                                <div class="invalid-feedback">Vui lòng nhập mật khẩu</div>
+                                <div class="valid-feedback"> </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row mb-3" v-if="!showRole">
+                            <label class="col-form-label text-end col-lg-2">Nhập lại mật khẩu<span class="text-danger">*</span></label>
+                            <div class="col-lg-8">
+                                <input type="password" name="password" id="Password" class="form-control" required placeholder="Nhập lại mật khẩu" v-model="item.passwordConfirm">
+                                <div class="invalid-feedback">Vui lòng nhập mật khẩu</div>
+                                <div class="valid-feedback"> </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-form-label text-end col-lg-2">Email</label>
+                            <div class="col-lg-8">
+                                <input type="text" class="form-control" placeholder="Email" v-model="item.email">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-form-label text-end col-lg-2">Số điện thoại</label>
+                            <div class="col-lg-8">
+                                <input type="text" class="form-control" placeholder="Số điện thoại" v-model="item.phoneNumber">
+                            </div>
+                        </div>
+
+                        @*  <div class="row mb-3">
+                        <label class="col-form-label text-end col-lg-2">Ghi chú</label>
+                        <div class="col-lg-8">
+                        <textarea class="form-control" required placeholder="Mô tả" v-model="item.descriptions"></textarea>
+                        </div>
+                        </div> *@
+                        <div class="row mb-3">
+                            <label class="col-form-label text-end col-lg-2">Hoạt động</label>
+                            <div class="col-lg-8">
+                                <div class="form-check-horizontal">
+                                    <label class="form-check form-switch mb-0">
+                                        <input type="checkbox" class="form-check-input" v-model="item.actived">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="text-end">
+                                <button type="button" class="btn btn-primary" v-on:click="onSubmitFormAddEdit()">Lưu dữ liệu</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li v-if="showRole" class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#tab_role_details">Quyền </a>
+                        </li>
+                    </ul>
+                    <div v-if="showRole" class="tab-content" style="padding: inherit">
+                        <div id="tab_role_details" class=" tab-pane active">
+                            <p><b>Quyền đăng ký </b></p>
+                            <bootstrap-table :columns="columns_role_select" :data="data_role_select" :options="options"></bootstrap-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Model thông tin tài khoản người dùng hệ thống -->
+    <div class="modal fade" id="ModelUserInfo" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5 id="staticBackdropLabel" class="modal-title">Chi tiết người dùng</h5> <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button></div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#tab_user_roles_info">Quyền </a>
+                        </li>
+                        @* <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#tab_user_roleGroup_info">Nhóm quyền</a>
+                        </li> *@
+                    </ul>
+                    <div class="tab-content" style="padding: inherit">
+                        @* <div id="tab_user_roleGroup_info" class="  tab-pane fade">
+                        <bootstrap-table :columns="columns_user_roleGroup_info" :data="data_user_roleGroup_info" :options="options"></bootstrap-table>
+                        </div> *@
+                        <div id="tab_user_roles_info" class="  tab-pane active">
+                            <bootstrap-table :columns="columns_user_role_info" :data="data_user_role_info" :options="options"></bootstrap-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+
+    var _tab_users = new Vue({
+        el: "#tab_users",
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [
+                {
+                    field: '#action',
+                    title: 'Chức năng',
+                    align: 'center',
+                    formatter: function () {
+                        return ` <div style="white-space: nowrap;"><a href= "javascript:" class= "btn btn-sm btn-warning edit"  title = "Update " ><i class="fa fa-pencil" > </i><span class="sr-only">Update</span></a > &nbsp;<a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i><span class="sr-only">Delete</span></a> &nbsp;<a href="javascript:" class="btn btn-info btn-sm delete-asset info" title="Info "> <i class="fa fa-info" ></i><span class="sr-only">Info</span></a> &nbsp;</div>`;
+                    },
+
+                    events: {
+                        'click .edit': function (e, value, row) {
+                            _tab_users.openFormAddEidt(row);
+                        },
+                        'click .delete': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn xóa dòng này không?";
+                            var content = "Nhập nội dung xóa (không quá 250 kí tự)";
+                            alertify.prompt(question, content, ''
+                                , function (evt, value) {
+                                    axios.get('/api/v1/User/Delete?id=' + row.id + '&reasonDelete=Reason:' + value, _tab_users.object.config).then(response => {
+                                        if (response.data.succeeded) {
+                                            _tab_users.onGet();
+                                            alertify.success(response.data.message);
+                                        }
+                                    }).catch(error => {
+                                        console.warn(error);
+                                        alert("Lỗi: " + error.response.data.message);
+                                    });
+
+                                }, function () {
+                                    //alertify.error('Cancel')
+                                });
+                        },
+                        'click .info': function (e, value, row) {
+                            _tab_users.onGetUserDetail(row.id);
+                            bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelUserInfo')).show();
+                        },
+                    }
+                },
+                {
+                    title: 'Stt',
+                    field: 'stt',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        return index + 1;
+                    },
+                },
+                {
+                    title: 'Tên',
+                    sortable: true,
+                    field: 'firstName'
+                },
+                {
+                    title: 'Tài khoản',
+                    sortable: true,
+                    field: 'userName'
+                },
+                {
+                    title: 'Email',
+                    sortable: true,
+                    field: 'email'
+                },
+                {
+                    title: 'Phone Number',
+                    sortable: true,
+                    field: 'phoneNumber'
+                },
+                {
+                    title: 'Đơn vị',
+                    sortable: true,
+                    field: 'companyName'
+                },
+                {
+                    title: 'Trạng thái',
+                    sortable: true,
+                    field: 'descriptions'
+                },
+
+            ],
+            data: [],
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                sortable: true,
+                searchAlign: 'left',
+                paginationHAlign: 'left',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+            },
+            item: {},
+            item1: {},
+            item2: {},
+            errors: {},
+            form_tile: '',
+            showRole: false,
+            formAction: 'Add',
+
+            //Nhóm quyền
+            columns_roleGroups_unselect: [
+                {
+                    title: 'Stt',
+                    field: 'stt',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        return index + 1;
+                    },
+                },
+                {
+                    title: 'Tên',
+                    sortable: true,
+                    field: 'name'
+                },
+                {
+                    title: 'Mô tả',
+                    field: 'descriptions'
+                },
+                {
+                    field: '#action',
+                    title: 'Chức năng',
+                    align: 'center',
+                    formatter: function () {
+                        return ` <div style="white-space: nowrap;"><a href= "javascript:" class= "btn btn-sm btn-warning add"  title = "Add " ><i class="fa fa-plus" > </i><span class="sr-only">Add</span></a > &nbsp;</div>`;
+                    },
+
+                    events: {
+                        'click .add': function (e, value, row) {
+                            console.warn(row);
+                            _tab_users.onAddRoleGroup2User(_tab_users.item.id, row.id);
+                        },
+                    }
+                }
+            ],
+            data_roleGroups_unselect: [],
+            columns_roleGroups_select: [
+                {
+                    title: 'Stt',
+                    field: 'stt',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        return index + 1;
+                    },
+                },
+                {
+                    title: 'Tên',
+                    sortable: true,
+                    field: 'name'
+                },
+                {
+                    title: 'Mô tả',
+                    sortable: true,
+                    field: 'descriptions'
+                },
+                {
+                    field: '#action',
+                    title: 'Chức năng',
+                    align: 'center',
+                    formatter: function () {
+                        return ` <div style="white-space: nowrap;"><a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i><span class="sr-only">Delete</span></a> &nbsp;</div>`;
+                    },
+
+                    events: {
+                        'click .delete': function (e, value, row) {
+                            _tab_users.onDeleteRoleGroup2User(_tab_users.item.id, row.id);
+                        },
+                    }
+                }
+            ],
+            data_roleGroups_select: [],
+
+            //Quyền
+            columns_role_unselect: [
+                {
+                    title: 'Stt',
+                    field: 'stt',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        return index + 1;
+                    },
+                },
+                {
+                    title: 'Tên',
+                    sortable: true,
+                    field: 'name'
+                },
+                {
+                    title: 'Mô tả',
+                    field: 'descriptions'
+                },
+                {
+                    field: '#action',
+                    title: 'Chức năng',
+                    align: 'center',
+                    formatter: function () {
+                        return ` <div style="white-space: nowrap;"><a href= "javascript:" class= "btn btn-sm btn-warning add"  title = "Add " ><i class="fa fa-plus" > </i><span class="sr-only">Add</span></a > &nbsp;</div>`;
+                    },
+
+                    events: {
+                        'click .add': function (e, value, row) {
+                            console.warn(row);
+                            _tab_users.onAddRole2User(_tab_users.item.id, row.name);
+                        },
+                    }
+                }
+            ],
+            data_role_unselect: [],
+            columns_role_select: [
+                {
+                    title: 'Stt',
+                    field: 'stt',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        return index + 1;
+                    },
+                },
+                {
+                    title: 'Tên',
+                    sortable: true,
+                    field: 'name'
+                },
+                // {
+                //     field: '#action',
+                //     title: 'Chức năng',
+                //     align: 'center',
+                //     formatter: function () {
+                //         return ` <div style="white-space: nowrap;"><a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i><span class="sr-only">Delete</span></a> &nbsp;</div>`;
+                //     },
+
+                //     events: {
+                //         'click .delete': function (e, value, row) {
+                //             _tab_users.onDeleteRole2User(_tab_users.item.id, row.name);
+                //         },
+                //     }
+                // }
+            ],
+            data_role_select: [],
+
+
+            columns_user_roleGroup_info: [
+                {
+                    title: 'Stt',
+                    field: 'stt',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        return index + 1;
+                    },
+                },
+                {
+                    title: 'Tên',
+                    sortable: true,
+                    field: 'name'
+                },
+                {
+                    title: 'Mô tả',
+                    field: 'descriptions'
+                },
+            ],
+            data_user_roleGroup_info: [],
+            columns_user_role_info: [
+                {
+                    title: 'Stt',
+                    field: 'stt',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        return index + 1;
+                    },
+                },
+                {
+                    title: 'Tên',
+                    sortable: true,
+                    field: 'name'
+                },
+            ],
+            data_user_role_info: [],
+
+            object: {
+                config: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+        },
+        methods: {
+            onGet() {
+                // $('.loader').show();
+                // axios.get('/v1/User/Gets?tab=' + '@ViewBag.Tab').then(response => {
+                //     if (response.status == 200) {
+                //         this.data = response.data.data;
+                //     }
+                //     $('.loader').hide(0);
+                // }).catch(error => {
+                //     console.warn(error);
+                //     $('.loader').hide(0);
+                //     alert("Lỗi: " + error.response.data.message);
+                // });
+                $('.loader').show();
+                axios.get('/api/v1/User/GetAccountSystems', this.object.config).then(response => {
+                    if (response.status == 200) {
+                        this.data = response.data.data;
+                    }
+                    $('.loader').hide(0);
+                }).catch(error => {
+                    console.warn(error);
+                    $('.loader').hide(0);
+                    alert("Lỗi: " + error.response.data.message);
+                });
+            },
+
+            openFormAdd() {
+                _tab_users.form_tile = 'Thêm mới';
+                _tab_users.showRole = false;
+                _tab_users.formAction = 'Add';
+                _tab_users.item = {
+                    id: '',
+                    firstName: '',
+                    userName: '',
+                    password: '',
+                    password: '',
+                    passwordConfirm: '',
+                    email: '',
+                    phoneNumber: '',
+                    descriptions: '',
+                    actived: true,
+                };
+
+                _tab_users.item1 = {
+                    id: '',
+                    firstName: '',
+                    userName: '',
+                    password: '',
+                    password: '',
+                    passwordConfirm: '',
+                    email: '',
+                    phoneNumber: '',
+                    descriptions: '',
+                    companyId: null,
+                    actived: true,
+                };
+                _tab_users.item2 = {
+                    id: '',
+                    firstName: '',
+                    userName: '',
+                    password: '',
+                    password: '',
+                    passwordConfirm: '',
+                    email: '',
+                    phoneNumber: '',
+                    descriptions: '',
+                    companyId: null,
+                    actived: true,
+                };
+
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+
+            },
+
+            openFormAddEidt(row) {
+                _tab_users.form_tile = 'Chỉnh sửa';
+                _tab_users.showRole = true;
+                _tab_users.formAction = 'Edit';
+
+                _tab_users.item = row;
+                _tab_users.onGetDetail();
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+            },
+
+
+            onSubmitFormAddEdit() {
+                if (!validateForm("#FormAddEdit"))
+                    return true;
+
+                $('.loader').show();
+                axios.post('/api/v1/User/Update', this.item, this.object.config).then(response => {
+                    $('.loader').hide(0);
+                    if (_tab_users.formAction == 'Add') {
+
+                        _tab_users.item.Id = response.data.data.id;
+                        _tab_users.item.Name = response.data.data.name;
+                        _tab_users.item.Descriptions = response.data.data.Descriptions;
+                        console.log("data: " + response.data.succeeded);
+                        if (response.data.succeeded) {
+                            alertify.success(response.data.message);
+                            _tab_users.onGet();
+                            bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
+                            //_tab_users.showRole = true;
+                            _tab_users.onGetRoleDetail();
+                        }
+                    }
+                    if (response.data.succeeded) {
+                        this.data = response.data.data;
+                        alertify.success(response.data.message);
+                        this.onGet();
+                    }
+                    else {
+                        alertify.warning(response.data.message);
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+                    alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
+                });
+            },
+
+            onGetDetail() {
+                axios.get('/api/v1/User/Detail?userId=' + this.item.id, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    if (response.status == 200) {
+                        this.data_roleGroups_unselect = response.data.data.data_roleGroups_unselect;
+                        this.data_roleGroups_select = response.data.data.data_roleGroups_select;
+
+                        this.data_role_select = response.data.data.user_roles_selected;
+                        // this.data_role_unselect = response.data.data.user_roles_unselected;
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                    alert("Lỗi: " + error.response.data.message);
+                });
+            },
+
+            onGetUserDetail(userId) {
+                // axios.get('/v1/RoleGroup/GetUserInfo?userId=' + userId).then(response => {
+                //     if (response.status == 200) {
+                //         this.data_user_roleGroup_info = response.data.data.userRoleGroups;
+                //         this.data_user_role_info = response.data.data.userRoles;
+                //         bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelUserInfo')).show();
+                //     }
+                // }).catch(error => {
+                //     console.warn(error);
+                //     alert("Lỗi: " + error.response.data.message);
+                // });
+                axios.get('/api/v1/User/Detail?userId=' + userId, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    if (response.status == 200) {
+                        this.data_user_role_info = response.data.data.user_roles_selected;
+                        // this.data_role_unselect = response.data.data.user_roles_unselected;
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                    alert("Lỗi: " + error.response.data.message);
+                });
+            },
+
+            onAddRoleGroup2User(userId, roleGroupId) {
+                $('.loader').show();
+                axios.get('/v1/User/AddRoleGroup?roleGroupId=' + roleGroupId + '&userId=' + userId, this.object.config).then(response => {
+                    $('.loader').hide(0)
+                    this.onGetDetail();
+                }).catch(error => {
+                    $('.loader').hide(0);
+                    console.warn(error);
+                });
+            },
+
+            onDeleteRoleGroup2User(userId, roleGroupId) {
+                $('.loader').show();
+                axios.get('/v1/User/DeleteRoleGroup?roleGroupId=' + roleGroupId + '&userId=' + userId, this.object.config).then(response => {
+                    $('.loader').hide(0);
+                    this.onGetDetail();
+
+                }).catch(error => {
+                    $('.loader').hide(0);
+                    console.warn(error);
+                    //alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
+                });
+            },
+
+            onAddRole2User(userId, roleId) {
+                //$('.loader').show();
+                axios.get('/v1/User/AddRole?roleId=' + roleId + '&userId=' + userId, this.object.config).then(response => {
+                    //$('.loader').hide(0);
+                    this.onGetDetail();
+                    //});
+                }).catch(error => {
+                    //$('.loader').hide(0);
+                    console.warn(error);
+                    //alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
+                });
+            },
+
+            onDeleteRole2User(userId, roleId) {
+                //$('.loader').show();
+                axios.get('/v1/User/DeleteRole?roleId=' + roleId + '&userId=' + userId, this.object.config).then(response => {
+                    //$('.loader').hide(0);
+                    this.onGetDetail();
+                    //});
+                }).catch(error => {
+                    //$('.loader').hide(0);
+                    console.warn(error);
+                    //alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
+                });
+            },
+
+        },
+        mounted() {
+            this.onGet();
+        },
+    })
+
+</script>
+

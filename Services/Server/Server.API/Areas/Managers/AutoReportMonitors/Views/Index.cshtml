@@ -1,0 +1,461 @@
+﻿@{
+    ViewData["Title"] = "Danh sách gửi báo cáo";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+
+<!-- Main content -->
+<div class="content-wrapper" id="webui">
+
+    <!-- Inner content -->
+    <div class="content-inner">
+
+        <!-- Page header -->
+        <div class="page-header page-header-light shadow">
+            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+                <div class="d-flex">
+                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
+                        <span class="fw-normal">@ViewData["Title"]</span>
+                    </h4>
+                </div>
+
+                <div class=" d-lg-block my-lg-auto ms-lg-auto" id="page_header">
+                    <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
+                        <div class="d-inline-flex mt-3 mt-sm-0">
+                            <div class="pull-right">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Content area -->
+        <div class="content">
+            <div class="card">
+                <div class="card-body">
+
+                    <form v-on:submit.prevent="loadData">
+                        <div class="row mb-3  ">
+                            <div class="col-md-3">
+                                <label class="form-label">Từ ngày</label>
+                                <datetime type="date"
+                                          v-model="filter.startDate"
+                                          class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                          placeholder="Vui lòng chọn thời gian...">
+                                </datetime>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Đến ngày</label>
+                                <datetime type="date"
+                                          v-model="filter.endDate"
+                                          class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                          placeholder="Vui lòng chọn thời gian...">
+                                </datetime>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Tổ chức</label>
+                                <select class="form-select select" required data-placeholder="Vui lòng chọn tổ chức" id="FOrganization">
+                                    <option selected value="0">Tất cả </option>
+                                    <option v-for="option in combobox.organizations" v-bind:value="option.id">
+                                        {{ option.organizationName }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Trạng thái</label>
+                                <select id="FSent" class="form-control select">
+                                    <option selected value="">Tất cả </option>
+                                    <option value="1">Thành công </option>
+                                    <option value="2">Đang chờ </option>
+                                    <option value="0">Lỗi </option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row ">
+                            <div class="col-lg-3">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal hide  fade" id="ModelAddEdit" role="dialog" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}} @ViewData["Title"]</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"> </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class=" row">
+                            <div class="col-md-12">
+                                <bootstrap-table :columns=" columns_selected" :data="data_selected" :options="options"></bootstrap-table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#scheduleExportType').on("change", function () {
+            _schLog.item.scheduleExportType = $(this).val();
+        });
+        $('#scheduleSequentialSending').on("change", function () {
+            _schLog.item.scheduleSequentialSending = $(this).val();
+        });
+        $('#scheduleReportType').on("change", function () {
+            _schLog.item.scheduleReportType = $(this).val();
+        });
+        $('#organizationId').on("change", function () {
+            _schLog.item.organizationId = $(this).val();
+            _schLog.item.organizationName = $(this).find("option:selected").text()?.trim();
+        });
+
+        $("#FSent").on("change", function () {
+            _schLog.filter.sent = $(this).val();
+        });
+
+        $('#FOrganization').on("change", function () {
+            _schLog.filter.organizationId = $(this).val();
+        });
+    });
+
+
+    var _schLog = new Vue({
+        el: '#webui',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [
+                {
+                    title: "Stt",
+                    field: 'sothutu',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        var stt = index + 1;
+                        return "<span class ='black'> " + stt + "  </span>";
+                    },
+                },
+                {
+                    field: 'Xử lý',
+                    title: 'Xử lý',
+                    sortable: true,
+                    align: 'center',
+                    formatter: (value, row, index) => {
+                        var ele = `<div style="white-space: nowrap;">`;
+                        ele += `<a href = "javascript:" class= "btn btn-sm btn-info view" title = "Xem chi tiết" > <i class="fa fa-info-circle" ></i></a > &nbsp;`;
+                        ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit" title = "Gửi lại " > <i class="fa fa-repeat" > </i> </a > &nbsp;`;
+                        ele += `<a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i> </a>&nbsp;`;
+                        ele += ` </div>`;
+                        return ele;
+                    },
+                    events: {
+                        'click .view': function (e, value, row) {
+                            _schLog.onPopupModelEdit(row);
+                        },
+                        'click .delete': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn xóa dòng này khỏi cơ sở dữ liệu không? sau khi xóa không khôi phục lại được!";
+                            var content = "Nhập nội dung xóa (không quá 250 kí tự)";
+                            alertify.prompt(question, content, ''
+                                , function (evt, value) {
+                                    axios.post('/api/v1/SendEmail/Delete', { id: row.id, reason: value }, _schLog.object.bearerAuthorization).then(response => {
+                                        if (response.data.succeeded) {
+                                            alertify.success(response.data.message);
+                                            _schLog.loadData();
+                                        }
+                                        else {
+                                            alertify.warning(response.data.message || "Có lỗi xảy ra!");
+                                        }
+                                    }).catch(error => {
+                                        alert("Lỗi: " + error.response.data.message);
+                                    });
+                                }, function () {
+                                    //alertify.error('Cancel')
+                                });
+                        },
+                        'click .edit': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn kích hoạt dòng này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                row.sent = null;
+                                row.timeSent = null;
+                                row.numberOfResend = null;
+                                axios.put('/api/v1/SendEmail/Edit', row, _schLog.object.bearerAuthorization).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _schLog.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message || "Có lỗi xảy ra!");
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+                    }
+                },
+                {
+                    title: "Tiêu đề báo cáo",
+                    field: "subject",
+                    sortable: true,
+                },
+                {
+                    title: "Email nhận",
+                    field: "toEmails",
+                    sortable: true,
+                },
+                {
+                    title: "Trạng thái",
+                    field: "sent",
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.sent == true)
+                            return "<span class='badge bg-success bg-opacity-10 text-success'>Thành công</span>";
+                        else if (row.sent == false)
+                            return "<span class='badge bg-danger  bg-opacity-10 text-danger'>Lỗi</span>";
+                        else
+                            return "<span class='badge bg-secondary  bg-opacity-10 text-secondary'>Đang chờ</span>";
+                    },
+                },
+                {
+                    title: "Số lần gửi",
+                    field: "numberOfResend",
+                    sortable: true,
+                },
+                {
+                    title: "Thời gian tạo",
+                    field: 'createTime',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.createTime) {
+                            var createTime = moment(row.createTime).format('DD/MM/YYYY HH:mm:ss');
+                            return "<span class ='black'> " + createTime + "  </span>";
+                        }
+                    },
+                },
+                {
+                    title: "Thời gian gửi",
+                    field: 'timeSent',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.timeSent) {
+                            var timeSent = moment(row.timeSent).format('DD/MM/YYYY HH:mm:ss');
+                            return "<span class ='black'> " + timeSent + "  </span>";
+                        }
+                    },
+                },
+                {
+                    title: "Nội dung",
+                    field: "body",
+                    sortable: true,
+                },
+                {
+                    title: "File",
+                    field: "attachFile",
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.attachFile)
+                            return ` <div style="white-space: nowrap;" > <a href="javascript:;" class='badge bg-success bg-opacity-10 text-success download' > ` + row.attachFile + `</a> &nbsp; </div>`;
+                    },
+                    events: {
+                        'click .download': function (e, value, row) {
+                            _schLog.download(row);
+                        },
+                    }
+                },
+            ],
+            data: [],
+
+            columns_selected: [
+                {
+                    title: "Stt",
+                    field: 'sothutu',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        var stt = index + 1;
+                        return "<span class ='black'> " + stt + "  </span>";
+                    },
+                },
+                {
+                    title: "Trạng thái",
+                    field: "sent",
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.sent == true)
+                            return "<span class='badge bg-success bg-opacity-10 text-success'>Thành công</span>";
+                        else if (row.sent == false)
+                            return "<span class='badge bg-danger  bg-opacity-10 text-danger'>Lỗi</span>";
+                        else
+                            return "<span class='badge bg-secondary  bg-opacity-10 text-secondary'>Đang chờ</span>";
+                    },
+                },
+                {
+                    title: 'Thời gian gửi',
+                    field: 'scheduleUserName',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.timeSent) {
+                            var timeSent = moment(row.timeSent).format('DD/MM/YYYY HH:mm:ss');
+                            return "<span class ='black'> " + timeSent + "  </span>";
+                        }
+                    },
+                },
+                {
+                    title: 'Nội dung',
+                    field: 'messageLog',
+                    sortable: true,
+                },
+            ],
+            data_selected: [],
+
+            item: {},
+            item_add: {},
+            combobox: {
+                exportTypes: [],
+                sequentialSendings: [],
+                exportTypes: [],
+                organizations: [],
+            },
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                sortable: true,
+                searchAlign: 'right',
+                paginationHAlign: 'right',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+                pageList: [10, 25, 50, 100, 200],
+            },
+            filter: {
+                Sent: null,
+                organizationId: 0,
+                startDate: formatDateTime(new Date()),
+                endDate: formatDateTime(new Date()),
+            },
+            object: {
+                dateNow: formatDateTime(new Date()),
+                editAction: false,
+                bearerAuthorization: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.post('/api/v1/SendEmail/Gets', this.filter, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+                    $('.loader').delay(100).hide(0);
+
+
+                    this.data = response.data.data;
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+
+            openFormAdd() {
+                this.object.editAction = false;
+                this.onResetForm();
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+            },
+
+            onResetForm() {
+                this.item = { actived: true };
+                this.data_selected = [];
+                this.item_add = {};
+                resetFormJs();
+            },
+
+            onPopupModelEdit(row, editAction) {
+                this.item = row;
+                axios.get('/api/v1/SendEmailLog/Detail?id=' + this.item.id, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    $('.loader').delay(100).hide(0);
+                    if (response.data.succeeded)
+                        this.data_selected = response.data.data;
+
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+            },
+
+            onClickSaveData() {
+                if (!validateForm("#FormAddEdit")) {
+                    return true;
+                }
+
+                $('.loader').show();
+                axios.put('/api/v1/SendEmail/Edit', this.item, this.object.config).then(response => {
+                    $('.loader').hide(0);
+                    if (response.data.succeeded) {
+                        _schLog.object.editAction = true;
+
+                        _schLog.item = response.data.data;
+                        alertify.success(response.data.message);
+                        _schLog.loadData();
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+                    console.log(error);
+                });
+            },
+
+            download(row) {
+                var fileName = row.attachFile
+                window.location.href = '/' + fileName;
+            },
+
+            loadCombox() {
+                axios.get('/api/v1/ScheduleSendEmail/Organizations', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    this.combobox.organizations = response.data.items;
+                }).catch(error => {
+                    console.log(error);
+                });
+            },
+        },
+        mounted() {
+            this.loadData();
+            this.loadCombox();
+        },
+    })
+</script>
+

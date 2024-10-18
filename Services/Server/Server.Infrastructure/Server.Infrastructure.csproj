@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="Docs\**" />
+		<Compile Remove="Repositories\DataInOutAvgs\**" />
+		<Compile Remove="Repositories\DataInOutEvents\**" />
+		<Compile Remove="Repositories\DataInOutLogs\**" />
+		<Compile Remove="Repositories\DeviceNotifications\**" />
+		<Compile Remove="Repositories\Organizations\**" />
+		<EmbeddedResource Remove="Docs\**" />
+		<EmbeddedResource Remove="Repositories\DataInOutAvgs\**" />
+		<EmbeddedResource Remove="Repositories\DataInOutEvents\**" />
+		<EmbeddedResource Remove="Repositories\DataInOutLogs\**" />
+		<EmbeddedResource Remove="Repositories\DeviceNotifications\**" />
+		<EmbeddedResource Remove="Repositories\Organizations\**" />
+		<None Remove="Docs\**" />
+		<None Remove="Repositories\DataInOutAvgs\**" />
+		<None Remove="Repositories\DataInOutEvents\**" />
+		<None Remove="Repositories\DataInOutLogs\**" />
+		<None Remove="Repositories\DeviceNotifications\**" />
+		<None Remove="Repositories\Organizations\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="BiDbContext.cs" />
+	  <Compile Remove="BiEventDbContext.cs" />
+	  <Compile Remove="DataInOutCaching\DeviceCacheService.cs" />
+	  <Compile Remove="DataInOutCaching\PocDataInOutAvgTimeCacheRepo.cs" />
+	  <Compile Remove="DataInOutCaching\PocDataInOutAvgTimeCacheRepoExt.cs" />
+	  <Compile Remove="DataInOutCaching\PocDataInOutEventCacheRepo.cs" />
+	  <Compile Remove="DataInOutCaching\PocDataInOutEventCacheRepoExt.cs" />
+	  <Compile Remove="DataInOutCaching\PocDataInOutLogCacheRepo.cs" />
+	  <Compile Remove="DataInOutCaching\PocDataInOutLogCacheRepo1.cs" />
+	  <Compile Remove="DataInOutCaching\SiteCacheService.cs" />
+	  <Compile Remove="Repositories\RepositoryBiBase.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Docs\readme.txt" />
+	</ItemGroup>
+
+	<ItemGroup> 
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Share\AMMS.Notification\AMMS.Notification.csproj" />
+		<ProjectReference Include="..\..\Share\Shared.Core\Shared.Core.csproj" />
+		<ProjectReference Include="..\Server.Core\Server.Core.csproj" />
+	</ItemGroup>
+
+</Project>

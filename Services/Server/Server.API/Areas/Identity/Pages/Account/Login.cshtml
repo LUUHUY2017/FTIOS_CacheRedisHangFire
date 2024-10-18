@@ -1,0 +1,123 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<!-- Page content -->
+<div class="page-content">
+
+    <!-- Main content -->
+    <div class="content-wrapper">
+
+        <!-- Inner content -->
+        <div class="content-inner">
+
+            <!-- Content area -->
+            <div class="content d-flex justify-content-center align-items-center">
+
+                <form class="login-form  needs-validation id="account" method="post">
+                    <div class="card mb-0">
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <div class="d-inline-flex align-items-center justify-content-center mb-4 mt-2">
+                                    <img src="~/assets/images/logo_icon.png" class="h-48px" alt="">
+                                </div>
+                                <h3 class="mb-0"><b>ĐĂNG NHẬP</b></h3>
+                                <span class="d-block text-muted">Vui lòng nhập thông tin xác thực của bạn bên dưới </span>
+                            </div>
+                            <div asp-validation-summary="All" class="text-danger"></div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Tên đăng nhập</label>
+                                <div class="form-control-feedback form-control-feedback-start">
+                                    <input class="form-control" asp-for="Input.Email" class="form-control" />
+                                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                    <div class="form-control-feedback-icon">
+                                        <i class="ph-user-circle text-muted"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Mật khẩu</label>
+                                <div class="form-control-feedback form-control-feedback-start">
+                                    <input class="form-control" asp-for="Input.Password" class="form-control" />
+                                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                    <div class="form-control-feedback-icon">
+                                        <i class="ph-lock text-muted"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+
+                                <label class="form-check" asp-for="Input.RememberMe">
+                                    <input class="form-check-input" asp-for="Input.RememberMe" />
+                                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                </label>
+
+                            </div>
+
+
+                            <div class="d-flex align-items-center mb-3">
+                                <a href="@Url.Action("ForgotPassword", "Account")" class="ms-auto">Quên mật khẩu</a>
+                                <a href="@Url.Action("ResendEmailConfirmation", "Account")" class="ms-auto">Gửi lại email xác thực tài khoản</a>
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+
+                @if (false)
+                {
+                    <div class="col-md-6 col-md-offset-2">
+                        <section>
+                            <h4>Use another service to log in.</h4>
+                            <hr />
+                            @{
+                                if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                                {
+                                    <div>
+                                        <p>
+                                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                                            for details on setting up this ASP.NET application to support logging in via external services.
+                                        </p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                                        <div>
+                                            <p>
+                                                @foreach (var provider in Model.ExternalLogins)
+                                                {
+                                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                                }
+                                            </p>
+                                        </div>
+                                    </form>
+                                }
+                            }
+                        </section>
+                    </div>
+                }
+
+            </div>
+            <!-- /content area -->
+
+        </div>
+        <!-- /inner content -->
+
+    </div>
+    <!-- /main content -->
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

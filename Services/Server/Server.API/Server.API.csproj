@@ -1,0 +1,152 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+  <ItemGroup>
+    <Compile Remove="APIs\Brickstreams\**" />
+    <Compile Remove="APIs\Caching\**" />
+    <Compile Remove="APIs\DataInOutCaches\**" />
+    <Compile Remove="APIs\Data\**" />
+    <Compile Remove="APIs\Oauths\**" />
+    <Compile Remove="APIs\Test\**" />
+    <Compile Remove="Areas\Managers\AutoNotiDevices\**" />
+    <Compile Remove="Areas\Managers\AutoReportInOuts\**" />
+    <Compile Remove="Areas\Managers\Caching\**" />
+    <Compile Remove="Areas\Managers\Dashboards\**" />
+    <Compile Remove="Areas\Managers\DataCacheDetails\**" />
+    <Compile Remove="Areas\Managers\DataInOutAvgs\**" />
+    <Compile Remove="Areas\Managers\DataInOutEvents\**" />
+    <Compile Remove="Areas\Managers\DataInOutLogs\**" />
+    <Compile Remove="Areas\Managers\DeviceDetails\**" />
+    <Compile Remove="Areas\Managers\Schedules\**" />
+    <Compile Remove="bin\**" />
+    <Compile Remove="wwwroot\export_excel\**" />
+    <Content Remove="APIs\Brickstreams\**" />
+    <Content Remove="APIs\Caching\**" />
+    <Content Remove="APIs\DataInOutCaches\**" />
+    <Content Remove="APIs\Data\**" />
+    <Content Remove="APIs\Oauths\**" />
+    <Content Remove="APIs\Test\**" />
+    <Content Remove="Areas\Managers\AutoNotiDevices\**" />
+    <Content Remove="Areas\Managers\AutoReportInOuts\**" />
+    <Content Remove="Areas\Managers\Caching\**" />
+    <Content Remove="Areas\Managers\Dashboards\**" />
+    <Content Remove="Areas\Managers\DataCacheDetails\**" />
+    <Content Remove="Areas\Managers\DataInOutAvgs\**" />
+    <Content Remove="Areas\Managers\DataInOutEvents\**" />
+    <Content Remove="Areas\Managers\DataInOutLogs\**" />
+    <Content Remove="Areas\Managers\DeviceDetails\**" />
+    <Content Remove="Areas\Managers\Schedules\**" />
+    <Content Remove="bin\**" />
+    <Content Remove="wwwroot\export_excel\**" />
+    <EmbeddedResource Remove="APIs\Brickstreams\**" />
+    <EmbeddedResource Remove="APIs\Caching\**" />
+    <EmbeddedResource Remove="APIs\DataInOutCaches\**" />
+    <EmbeddedResource Remove="APIs\Data\**" />
+    <EmbeddedResource Remove="APIs\Oauths\**" />
+    <EmbeddedResource Remove="APIs\Test\**" />
+    <EmbeddedResource Remove="Areas\Managers\AutoNotiDevices\**" />
+    <EmbeddedResource Remove="Areas\Managers\AutoReportInOuts\**" />
+    <EmbeddedResource Remove="Areas\Managers\Caching\**" />
+    <EmbeddedResource Remove="Areas\Managers\Dashboards\**" />
+    <EmbeddedResource Remove="Areas\Managers\DataCacheDetails\**" />
+    <EmbeddedResource Remove="Areas\Managers\DataInOutAvgs\**" />
+    <EmbeddedResource Remove="Areas\Managers\DataInOutEvents\**" />
+    <EmbeddedResource Remove="Areas\Managers\DataInOutLogs\**" />
+    <EmbeddedResource Remove="Areas\Managers\DeviceDetails\**" />
+    <EmbeddedResource Remove="Areas\Managers\Schedules\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="wwwroot\export_excel\**" />
+    <None Remove="APIs\Brickstreams\**" />
+    <None Remove="APIs\Caching\**" />
+    <None Remove="APIs\DataInOutCaches\**" />
+    <None Remove="APIs\Data\**" />
+    <None Remove="APIs\Oauths\**" />
+    <None Remove="APIs\Test\**" />
+    <None Remove="Areas\Managers\AutoNotiDevices\**" />
+    <None Remove="Areas\Managers\AutoReportInOuts\**" />
+    <None Remove="Areas\Managers\Caching\**" />
+    <None Remove="Areas\Managers\Dashboards\**" />
+    <None Remove="Areas\Managers\DataCacheDetails\**" />
+    <None Remove="Areas\Managers\DataInOutAvgs\**" />
+    <None Remove="Areas\Managers\DataInOutEvents\**" />
+    <None Remove="Areas\Managers\DataInOutLogs\**" />
+    <None Remove="Areas\Managers\DeviceDetails\**" />
+    <None Remove="Areas\Managers\Schedules\**" />
+    <None Remove="bin\**" />
+    <None Remove="wwwroot\export_excel\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="clients_vivocity.json" />
+    <Content Remove="client_megamall.json" />
+    <Content Remove="client_retail.acs.vn.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="APIs\Data\Lanes\V1\Controllers\LaneController.cs" />
+    <Compile Include="APIs\Data\Devices\V1\Controllers\DeviceController.cs" />
+    <Compile Include="APIs\Data\ScheduleSendMails\V1\Controllers\ScheduleSendEmailController.cs" />
+    <Compile Include="APIs\Data\ScheduleSendMails\V1\Controllers\ScheduleSendEmailDetailController.cs" />
+    <Compile Include="APIs\Data\ScheduleSendMails\V1\Requests\ScheduleSendEmailDetailRequest.cs" />
+    <Compile Include="APIs\Data\ScheduleSendMails\V1\Requests\ScheduleSendEmailFilter.cs" />
+    <Compile Include="APIs\Data\ScheduleSendMails\V1\Requests\ScheduleSendEmailLogFilter.cs" />
+    <Compile Include="APIs\Data\ScheduleSendMails\V1\Requests\ScheduleSendEmailRequest.cs" />
+    <Compile Include="APIs\Data\ScheduleSendMails\V1\Requests\SendEmailDeteleRequest.cs" />
+    <Compile Include="APIs\Data\ScheduleSendMails\V1\Requests\SendEmailRequest.cs" />
+    <Compile Include="APIs\Data\ScheduleSendMails\V1\Responses\ScheduleSendEmailResponse.cs" />
+    <Compile Include="APIs\Data\SendEmails\V1\Controllers\SendEmailController.cs" />
+    <Compile Include="APIs\Data\SendEmails\V1\Controllers\SendEmailLogController.cs" />
+    <Compile Include="APIs\Data\Users\V1\Controllers\UserController.cs" />
+    <Compile Include="APIs\Data\Users\V1\Controllers\UserProfileController.cs" />
+    <Compile Include="APIs\Data\Users\V1\Models\ChangePasswordModel.cs" />
+    <Compile Include="APIs\Data\Users\V1\Models\ChangePhoneSendOTP.cs" />
+    <Compile Include="APIs\Data\Users\V1\Models\UserAvataModel.cs" />
+    <Compile Include="APIs\Data\Users\V1\Models\UserInfoModel.cs" />
+    <Compile Include="APIs\Data\Users\V1\Models\UserViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
+    <PackageReference Include="MassTransit" Version="8.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.33" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.33">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.17" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Share\AMMS.Notification\AMMS.Notification.csproj" />
+    <ProjectReference Include="..\..\Share\EventBus.Messages\EventBus.Messages.csproj" />
+    <ProjectReference Include="..\..\Share\IdentityServer4\IdentityServer4.EntityFramework.Storage\IdentityServer4.EntityFramework.Storage.csproj" />
+    <ProjectReference Include="..\..\Share\IdentityServer4\IdentityServer4.EntityFramework\IdentityServer4.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\Share\Share.WebApp\Share.WebApp.csproj" />
+    <ProjectReference Include="..\..\Share\Shared.Core\Shared.Core.csproj" />
+    <ProjectReference Include="..\Server.Application\Server.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="APIs\Reports\VehicleInOuts\V1\Requests\" />
+    <Folder Include="APIs\Reports\VehicleInOuts\V1\Responses\" />
+    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Areas\Managers\AutoReportMonitors\Views\Index.cshtml" />
+    <None Include="Areas\Managers\AutoReports\Views\Index.cshtml" />
+    <None Include="Areas\Managers\Devices\V1\Views\Index.cshtml" />
+    <None Include="Areas\Managers\UserProfiles\V1\Views\Index.cshtml" />
+  </ItemGroup>
+
+</Project>

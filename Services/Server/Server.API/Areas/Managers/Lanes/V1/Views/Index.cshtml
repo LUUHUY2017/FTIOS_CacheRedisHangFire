@@ -1,0 +1,318 @@
+﻿@{
+    ViewData["Title"] = "Quản lý vị trí";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+
+<!-- Main content -->
+<div class="content-wrapper" id="webui">
+
+    <!-- Inner content -->
+    <div class="content-inner">
+
+        <!-- Page header -->
+        <div class="page-header page-header-light shadow">
+            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+                <div class="d-flex">
+                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
+                        <span class="fw-normal">@ViewData["Title"]</span>
+                    </h4>
+                </div>
+
+                <div class="d-lg-block my-lg-auto ms-lg-auto" id="page_header">
+                    <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
+                        <div class="d-inline-flex mt-3 mt-sm-0">
+                            <div class="pull-right">
+                                <a v-on:click="onPopupModelEdit(null, false)" class="btn btn-primary " style="margin-right: 5px;"> Thêm mới</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /page header -->
+        <!-- Content area -->
+
+        <div class="content">
+
+            <div class="card">
+                <div class="card-body">
+                    <form v-on:submit.prevent="loadData">
+                        <div class="row mb-3">
+                            <div class="col-lg-2">
+                                <label class="form-label">Tìm kiếm theo</label>
+                                <select class="form-select" v-model:value="filter.columnTable">
+                                    <option value="LaneCode">Mã vị trí</option>
+                                    <option value="LaneName">Tên vị trí</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="form-label">Trạng thái</label>
+                                <select class="form-select" v-model:value="filter.actived">
+                                    <option value="1">Hoạt động</option>
+                                    <option value="0">Ngừng hoạt động</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="form-label">Từ khóa tìm kiếm</label>
+                                <input type="text" id="key" name="key" placeholder="Nhập từ khóa tìm kiếm" class="form-control" v-model="filter.key">
+                            </div>
+                            <div class="col-lg-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}} {{object.form_name}}</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate id="FormAddEdit">
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Mã vị trí <span class="text-danger">*</span></label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" required v-model="item.laneCode">
+                                    <div class="invalid-feedback">Vui lòng nhập mã vị trí</div>
+                                    <div class="valid-feedback"> </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Tên vị trí <span class="text-danger">*</span></label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" required v-model="item.laneName">
+                                    <div class="invalid-feedback">Vui lòng nhập tên vị trí</div>
+                                    <div class="valid-feedback"> </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Mô tả </label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" v-model="item.description">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end  col-lg-3">Hoạt động</label>
+                                <div class="col-lg-7">
+                                    <div class="form-check-horizontal">
+                                        <label class="form-check form-switch mb-0">
+                                            <input type="checkbox" class="form-check-input" v-model="item.actived">
+                                            <span class="form-check-label">Active</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-primary" v-on:click="onSubmitData()">Lưu dữ liệu</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var lane = new Vue({
+        el: '#webui',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [
+                {
+                    field: '#action',
+                    title: 'Chức năng',
+                    align: 'center',
+                    formatter: (value, row, index) => {
+                        var ele = `<div style="white-space: nowrap; ">`;
+                        ele += `<a href="javascript: " class="btn btn-sm btn-warning edit" title="Cập nhật đăng ký "><i class="fa fa-pencil" > </i> </a> &nbsp `;
+                        if (row.actived)
+                            ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset inactive " title="Ngừng hoạt động "> <i class="fa fa-minus-circle" ></i> </a> &nbsp; `;
+                        if (!row.actived)
+                            ele += ` <a href="javascript:" class="btn btn-danger btn-sm delete-asset active" title="Kích hoạt "> <i class="fa fa-plus-square" ></i> </a> &nbsp; `;
+                        ele += ` </div>`;
+
+                        return ele;
+                    },
+                    events: {
+                        'click .edit': function (e, value, row) {
+                            lane.onPopupModelEdit(row, true);
+                        },
+                        'click .inactive': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn xóa dòng này không?";
+                            var content = "Nhập nội dung xóa (không quá 250 kí tự)";
+                            alertify.prompt(question, content, ''
+                                , function (evt, value) {
+                                    axios.get('/v1/lane/inactive/' + row.id + '?reasonDelete= ' + value).then(response => {
+                                        if (response.request.responseURL.includes('~/Account/Login')) {
+                                            window.location = window.location.href;
+                                        }
+                                        lane.loadData();
+
+                                        alertify.success("Xóa thành công!");
+                                    }).catch(error => {
+                                        console.log(error);
+                                    });
+                                }, function () { });
+                        },
+                        'click .active': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn kích hoạt dòng này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.get('/v1/lane/active/' + row.id).then(response => {
+                                    if (response.request.responseURL.includes('~/Account/Login')) {
+                                        window.location = window.location.href;
+                                    }
+
+                                    lane.loadData();
+
+                                    alertify.success("Cập nhật thành công!");
+                                }).catch(error => {
+                                    console.log(error);
+                                });
+                            }, function () { });
+                        },
+                    }
+                },
+                {
+                    title: 'Mã vị trí',
+                    sortable: true,
+                    field: 'laneCode'
+                },
+                {
+                    title: 'Tên vị trí',
+                    sortable: true,
+                    field: 'laneName'
+                },
+                {
+                    title: 'Mô tả ',
+                    sortable: true,
+                    field: 'description'
+                },
+            ],
+            data: [],
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                sortable: true,
+                searchAlign: 'right',
+                paginationHAlign: 'right',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+                pageList: [10, 25, 50, 100, 200],
+            },
+            filter: {
+                columnTable: "LaneName",
+                actived: "1",
+                onlineStatus: "",
+                organizationId: -1,
+                key: "",
+                export: "0",
+            },
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                form_name: 'vị trí',
+                editAction: false,
+                infoAction: false,
+                config: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+            item: { actived: true, },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.post('/api/v1/Lane/Post', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        this.data = response.data.data;
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+            onResetForm() {
+                this.item = {
+                    actived: true,
+                    laneCode: null,
+                    lanename: null,
+                    description: "",
+                };
+            },
+            onPopupModelEdit(row, editAction) {
+                if (editAction)
+                    this.item = row;
+                else {
+                    this.onResetForm();
+                }
+
+                $('#deviceType').val(this.item.deviceType).trigger('change');
+
+                this.object.editAction = editAction;
+                this.object.form_tile = editAction ? 'Chỉnh sửa' : "Thêm mới";
+
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+            },
+            onSubmitData() {
+                if (!validateForm("#FormAddEdit"))
+                    return true;
+
+                $('.loader').show();
+                axios.put('/api/v1/lane/Edit', this.item, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    $('.loader').hide(0);
+                    if (response.data.succeeded) {
+                        lane.loadData();
+
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
+                        alertify.success(response.data.message);
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+                    console.log(error);
+                });
+            },
+        },
+        mounted() {
+            this.loadData();
+        },
+    })
+</script>
+

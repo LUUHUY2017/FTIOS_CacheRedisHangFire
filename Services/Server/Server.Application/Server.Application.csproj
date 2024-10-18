@@ -1,0 +1,86 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Brickstreams\**" />
+    <Compile Remove="CronJobs\**" />
+    <Compile Remove="Datas\**" />
+    <Compile Remove="Devices\**" />
+    <Compile Remove="EventBusConsumer\**" />
+    <Compile Remove="MasterDatas\DataInOutAvgs\**" />
+    <Compile Remove="MasterDatas\DataInOutEvents\**" />
+    <Compile Remove="MasterDatas\DataInOutLogs\**" />
+    <Compile Remove="MasterDatas\DeviceNotifications\**" />
+    <Compile Remove="MasterDatas\Locations\**" />
+    <Compile Remove="MasterDatas\Organizations\**" />
+    <Compile Remove="MasterDatas\Sites\**" />
+    <Compile Remove="PeopleCountDataServices\**" />
+    <Compile Remove="Test\**" />
+    <EmbeddedResource Remove="Brickstreams\**" />
+    <EmbeddedResource Remove="CronJobs\**" />
+    <EmbeddedResource Remove="Datas\**" />
+    <EmbeddedResource Remove="Devices\**" />
+    <EmbeddedResource Remove="EventBusConsumer\**" />
+    <EmbeddedResource Remove="MasterDatas\DataInOutAvgs\**" />
+    <EmbeddedResource Remove="MasterDatas\DataInOutEvents\**" />
+    <EmbeddedResource Remove="MasterDatas\DataInOutLogs\**" />
+    <EmbeddedResource Remove="MasterDatas\DeviceNotifications\**" />
+    <EmbeddedResource Remove="MasterDatas\Locations\**" />
+    <EmbeddedResource Remove="MasterDatas\Organizations\**" />
+    <EmbeddedResource Remove="MasterDatas\Sites\**" />
+    <EmbeddedResource Remove="PeopleCountDataServices\**" />
+    <EmbeddedResource Remove="Test\**" />
+    <None Remove="Brickstreams\**" />
+    <None Remove="CronJobs\**" />
+    <None Remove="Datas\**" />
+    <None Remove="Devices\**" />
+    <None Remove="EventBusConsumer\**" />
+    <None Remove="MasterDatas\DataInOutAvgs\**" />
+    <None Remove="MasterDatas\DataInOutEvents\**" />
+    <None Remove="MasterDatas\DataInOutLogs\**" />
+    <None Remove="MasterDatas\DeviceNotifications\**" />
+    <None Remove="MasterDatas\Locations\**" />
+    <None Remove="MasterDatas\Organizations\**" />
+    <None Remove="MasterDatas\Sites\**" />
+    <None Remove="PeopleCountDataServices\**" />
+    <None Remove="Test\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="MasterDatas\A2\AutoReportInOut\V1\AutoReportInOutService.cs" />
+    <Compile Remove="Services\PeopleCounttingService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="ClosedXML.Report" Version="0.2.10" />
+    <PackageReference Include="EntityFrameworkCore.UseRowNumberForPaging" Version="0.5.0" />
+    <PackageReference Include="Hangfire" Version="1.8.14" />
+    <PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />
+    <PackageReference Include="MailKit" Version="4.7.1.1" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.4" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+  </ItemGroup>
+
+  <ItemGroup> 
+    <ProjectReference Include="..\..\Share\AMMS.Notification\AMMS.Notification.csproj" /> 
+    <ProjectReference Include="..\..\Share\EventBus.Messages\EventBus.Messages.csproj" /> 
+    <ProjectReference Include="..\..\Share\Shared.Core\Shared.Core.csproj" /> 
+    <ProjectReference Include="..\Server.Infrastructure\Server.Infrastructure.csproj" />
+    <ProjectReference Include="..\Server.Core\Server.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MasterDatas\A0\Person\" />
+    <Folder Include="Reports\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>
