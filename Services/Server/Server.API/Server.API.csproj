@@ -91,6 +91,7 @@
   <ItemGroup>
     <Compile Include="APIs\Data\Lanes\V1\Controllers\LaneController.cs" />
     <Compile Include="APIs\Data\Devices\V1\Controllers\DeviceController.cs" />
+    <Compile Include="APIs\Data\Roles\V1\Controllers\RoleController.cs" />
     <Compile Include="APIs\Data\ScheduleSendMails\V1\Controllers\ScheduleSendEmailController.cs" />
     <Compile Include="APIs\Data\ScheduleSendMails\V1\Controllers\ScheduleSendEmailDetailController.cs" />
     <Compile Include="APIs\Data\ScheduleSendMails\V1\Requests\ScheduleSendEmailDetailRequest.cs" />
@@ -146,6 +147,8 @@
     <None Include="Areas\Managers\AutoReportMonitors\Views\Index.cshtml" />
     <None Include="Areas\Managers\AutoReports\Views\Index.cshtml" />
     <None Include="Areas\Managers\Devices\V1\Views\Index.cshtml" />
+    <None Include="Areas\Managers\RoleGroups\V1\Views\Index.cshtml" />
+    <None Include="Areas\Managers\RoleGroups\V1\Views\Index1.cshtml" />
     <None Include="Areas\Managers\UserProfiles\V1\Views\Index.cshtml" />
   </ItemGroup>
 

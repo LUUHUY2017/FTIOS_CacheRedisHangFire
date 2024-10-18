@@ -1,0 +1,960 @@
+﻿@{
+    ViewData["Title"] = "Quản lý nhóm quyền";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+<div class="w-100">
+    <!-- Inner content -->
+    @{
+        string tab_role_groups = "";
+        if (ViewBag.Tab == "role_groups")
+            tab_role_groups = "active";
+        string tab_roles = "";
+        if (ViewBag.Tab == "roles")
+            tab_roles = "active";
+    }
+
+    <ul class="nav nav-tabs nav-tabs-highlight">
+        <li class="nav-item">
+            <a href="@Url.Action("index", new { tab=  "role_groups"})" class="nav-link @tab_role_groups">
+                <i class="ph-gear-six m-2"></i>
+                Nhóm quyền
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="@Url.Action("index", new { tab=  "roles"})" class="nav-link @tab_roles">
+                <i class="ph-gear m-2"></i>
+                Quyền
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade  mt-1 show @tab_role_groups" role="tabpanel">
+            @if (ViewBag.Tab == "role_groups")
+            {
+                <div class="accordion">
+                    <div class="content-wrapper" id="tab_role_groups">
+                        <div class="accordion-body">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <a onclick="openFormAdd()" class="btn btn-outline-primary btn-icon w-32px h-32px rounded-pill ms-3  mt-3">
+                                            <i class="ph-plus"></i>
+                                        </a>
+                                    </div>
+                                    <div class="row">
+                                        <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                                    </div>
+
+                                    <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
+                                        <div id="waitDialog" class="modal-dialog modal-xl">
+                                            <div class="modal-content">
+                                                <div class="modal-header"><h5 id="staticBackdropLabel" class="modal-title">{{form_tile}} nhóm quyền</h5> <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button></div>
+                                                <div class="modal-body">
+                                                    <form class="needs-validation" novalidate>
+                                                        <div class="row mb-3">
+                                                            <label class="col-form-label col-lg-2">Tên<span class="text-danger">*</span></label>
+                                                            <div class="col-lg-7">
+                                                                <input type="text" class="form-control" required placeholder="Tên nhóm quyền" v-model="item.Name">
+                                                                <div class="invalid-feedback">Invalid feedback</div>
+                                                                <div class="valid-feedback">Valid feedback</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <label class="col-form-label col-lg-2">Ghi chú</label>
+                                                            <div class="col-lg-7">
+                                                                <textarea class="form-control" required placeholder="Mô tả nhóm quyền" v-model="item.Descriptions"></textarea>
+                                                                <div class="invalid-feedback">Invalid feedback</div>
+                                                                <div class="valid-feedback">Valid feedback</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <label class="col-form-label col-lg-2">Hoạt động</label>
+                                                            <div class="col-lg-7">
+                                                                <div class="form-check-horizontal">
+                                                                    <label class="form-check form-switch mb-0">
+                                                                        <input type="checkbox" class="form-check-input" required v-model="item.Actived">
+                                                                        <span class="form-check-label">Active</span>
+                                                                        <span class="invalid-feedback">Invalid feedback</span>
+                                                                        <span class="valid-feedback">Valid feedback</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="text-end">
+                                                                <button type="button" class="btn btn-primary" onclick="onClick()">Lưu dữ liệu</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+
+                                                    <ul class="nav nav-tabs" role="tablist">
+                                                        <li v-if="showRole" class="nav-item">
+                                                            <a class="nav-link active" data-bs-toggle="tab" href="#tab_user_details">Người dùng</a>
+                                                        </li>
+
+                                                        <li v-if="showRole" class="nav-item">
+                                                            <a class="nav-link " data-bs-toggle="tab" href="#tab_role_pages">Màn hình </a>
+                                                        </li>
+                                                        <li v-if="showRole" class="nav-item">
+                                                            <a class="nav-link " data-bs-toggle="tab" href="#tab_role_details">Quyền </a>
+                                                        </li>
+
+
+                                                    </ul>
+
+                                                    <div v-if="showRole" class="tab-content" style="padding: inherit">
+                                                        <div id="tab_user_details" class=" tab-pane  active ">
+                                                            <div class="table-1 mb-3">
+                                                                <p><b>Tài khoản chưa đăng ký </b></p>
+                                                                <bootstrap-table :columns="columns_user_unselect" :data="data_user_unselect" :options="options"></bootstrap-table>
+                                                            </div>
+                                                            <div class="table-2">
+                                                                <p><b>Tài khoản đã đăng ký</b></p>
+                                                                <bootstrap-table :columns="columns_user_select" :data="data_user_select" :options="options"></bootstrap-table>
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="tab_role_pages" class=" tab-pane  fade">
+                                                            <div class="table-1 mb-3">
+                                                                <p><b>Màn hình chưa đăng ký </b></p>
+                                                                <bootstrap-table :columns="columns_page_unselect" :data="data_page_unselect" :options="options"></bootstrap-table>
+                                                            </div>
+                                                            <div class="table-2">
+                                                                <p><b>Màn hình đã đăng ký</b></p>
+                                                                <bootstrap-table :columns="columns_page_select" :data="data_page_select" :options="options"></bootstrap-table>
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="tab_role_details" class=" tab-pane  fade">
+                                                            <div class="table-1 mb-3">
+                                                                <p><b>Quyền chưa đăng ký </b></p>
+                                                                <bootstrap-table :columns="columns_role_unselect" :data="data_role_unselect" :options="options"></bootstrap-table>
+                                                            </div>
+                                                            <div class="table-2">
+                                                                <p><b>Quyền đã đăng ký</b></p>
+                                                                <bootstrap-table :columns="columns_role_select" :data="data_role_select" :options="options"></bootstrap-table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="ModelUserInfo" aria-hidden="true">
+                                        <div id="waitDialog" class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header"><h5 id="staticBackdropLabel" class="modal-title">Chi tiết người dùng</h5> <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button></div>
+                                                <div class="modal-body">
+                                                    <div class="card-body">
+                                                        <ul class="nav nav-tabs" role="tablist">
+                                                            <li class="nav-item">
+                                                                <a class="nav-link active" data-bs-toggle="tab" href="#tab_user_roleGroup_info">Nhóm quyền</a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" data-bs-toggle="tab" href="#tab_user_roles_info">Quyền </a>
+                                                            </li>
+                                                        </ul>
+                                                        <div class="tab-content" style="padding: inherit">
+                                                            <div id="tab_user_roleGroup_info" class="  tab-pane active">
+                                                                <bootstrap-table :columns="columns_user_roleGroup_info" :data="data_user_roleGroup_info" :options="options"></bootstrap-table>
+                                                            </div>
+                                                            <div id="tab_user_roles_info" class="  tab-pane fade">
+                                                                <bootstrap-table :columns="columns_user_role_info" :data="data_user_role_info" :options="options"></bootstrap-table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    function onClick() {
+                        _tab_rolegroup.onSubmitFormAddEdit();
+
+                    }
+                    function openFormAdd() {
+                        _tab_rolegroup.form_tile = 'Thêm mới';
+                        _tab_rolegroup.showRole = false;
+                        _tab_rolegroup.formAction = 'Add';
+
+                        _tab_rolegroup.item.Id = '';
+                        _tab_rolegroup.item.Name = '';
+                        _tab_rolegroup.item.Descriptions = '';
+                        _tab_rolegroup.item.Actived = true;
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+                    }
+
+
+                    var _tab_rolegroup = new Vue({
+                        el: "#tab_role_groups",
+                        components: {
+                            'BootstrapTable': BootstrapTable
+                        },
+                        data: {
+                            columns: [
+                                {
+                                    title: 'Stt',
+                                    field: 'stt',
+                                    sortable: true,
+                                    formatter: (value, row, index) => {
+                                        return index + 1;
+                                    },
+                                },
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'name'
+                                },
+                                {
+                                    title: 'Mô tả',
+                                    sortable: true,
+                                    field: 'descriptions'
+                                },
+                                {
+                                    field: 'Sửa/Xóa',
+                                    sortable: true,
+                                    title: 'Sửa/Xóa',
+                                    align: 'center',
+                                    formatter: function () {
+                                        return ` <div style="white-space: nowrap;"><a href= "javascript:" class= "btn btn-sm btn-warning edit"  title = "Update " ><i class="fa fa-pencil" > </i><span class="sr-only">Update</span></a > &nbsp;<a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i><span class="sr-only">Delete</span></a> &nbsp; </div>`;
+                                    },
+
+                                    events: {
+                                        'click .edit': function (e, value, row) {
+                                            _tab_rolegroup.form_tile = 'Chỉnh sửa';
+                                            _tab_rolegroup.showRole = true;
+                                            _tab_rolegroup.formAction = 'Edit';
+
+                                            _tab_rolegroup.item.Id = row.id;
+                                            _tab_rolegroup.item.Name = row.name;
+                                            _tab_rolegroup.item.Descriptions = row.descriptions;
+                                            _tab_rolegroup.item.Actived = row.actived;
+
+
+
+                                            _tab_rolegroup.onGetRoleDetail();
+                                            bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+                                        },
+                                        'click .delete': function (e, value, row) {
+                                            var question = "Bạn có chắc chắn muốn xóa dòng này không?";
+                                            var content = "Nhập nội dung xóa (không quá 250 kí tự)";
+                                            alertify.prompt(question, content, ''
+                                                , function (evt, value) {
+
+                                                    axios.get('/v1/RoleGroup/Delete?id=' + row.id + '&reasonDelete=' + value).then(response => {
+                                                        _tab_rolegroup.onGet();
+                                                    }).catch(error => {
+                                                        console.log(error);
+                                                        alert("Lỗi: " + error.response.data.message);
+                                                    });
+
+                                                }, function () {
+                                                    //alertify.error('Cancel')
+                                                });
+                                        }
+                                    }
+                                }
+                            ],
+                            data: [],
+                            options: {
+                                search: true,
+                                pagination: true,
+                                showExtendedPagination: true,
+                                showExport: false,
+                                showButtonIcons: false,
+                                showColumns: false,
+                                showRefresh: false,
+                                sortable: true,
+                                searchAlign: 'left',
+                                paginationHAlign: 'left',
+                                paginationDetailHAlign: 'right',
+                                pageSize: 25,
+                            },
+                            item: {
+                                Id: '',
+                                Name: '',
+                                Descriptions: '',
+                                Actived: true,
+                            },
+                            errors: {},
+                            form_tile: '',
+
+                            showRole: false,
+                            formAction: 'Add',
+
+                            columns_page_unselect: [
+                                {
+                                    title: 'Stt',
+                                    field: 'stt',
+                                    sortable: true,
+                                    formatter: (value, row, index) => {
+                                        return index + 1;
+                                    },
+                                },
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'name'
+                                },
+                                {
+                                    title: 'Phân hệ',
+                                    sortable: true,
+                                    field: 'module'
+                                },
+                                {
+                                    title: 'Quyền',
+                                    sortable: true,
+                                    field: 'rolePermission'
+                                },
+                                {
+                                    title: 'Url',
+                                    sortable: true,
+                                    field: 'url'
+                                },
+                                {
+                                    field: '#action',
+                                    sortable: true,
+                                    title: 'Chức năng',
+                                    align: 'center',
+                                    formatter: function () {
+                                        return ` <div style="white-space: nowrap;"><a href= "javascript:" class= "btn btn-sm btn-warning edit"  title = "Add " ><i class="fa fa-plus" > </i><span class="sr-only">Add</span></a > &nbsp;</div>`;
+                                    },
+
+                                    events: {
+                                        'click .edit': function (e, value, row) {
+                                            console.log(row);
+                                            _tab_rolegroup.onAddRole2RoleGroup(_tab_rolegroup.item.Id, row.id);
+                                        },
+                                    }
+                                }
+                            ],
+                            data_page_unselect: [],
+                            columns_page_select: [
+                                {
+                                    title: 'Stt',
+                                    field: 'stt',
+                                    sortable: true,
+                                    formatter: (value, row, index) => {
+                                        return index + 1;
+                                    },
+                                },
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'name'
+                                },
+                                {
+                                    title: 'Phân hệ',
+                                    sortable: true,
+                                    field: 'module'
+                                },
+                                {
+                                    title: 'Quyền',
+                                    sortable: true,
+                                    field: 'rolePermission'
+                                },
+                                {
+                                    title: 'Url',
+                                    sortable: true,
+                                    field: 'url'
+                                },
+                                {
+                                    field: '#action',
+                                    sortable: true,
+                                    title: 'Chức năng',
+                                    align: 'center',
+                                    formatter: function () {
+                                        return ` <div style="white-space: nowrap;"><a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i><span class="sr-only">Delete</span></a> &nbsp;</div>`;
+                                    },
+
+                                    events: {
+                                        'click .delete': function (e, value, row) {
+                                            _tab_rolegroup.onDeleteRole2RoleGroup(_tab_rolegroup.item.Id, row.id);
+                                        },
+                                    }
+                                }
+                            ],
+                            data_page_select: [],
+
+
+                            columns_user_unselect: [
+                                {
+                                    title: 'Stt',
+                                    field: 'stt',
+                                    sortable: true,
+                                    formatter: (value, row, index) => {
+                                        return index + 1;
+                                    },
+                                },
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'userName'
+                                },
+                                {
+                                    title: 'Mô tả',
+                                    field: 'normalizedName'
+                                },
+                                {
+                                    field: '#action',
+                                    title: 'Chức năng',
+                                    align: 'center',
+                                    formatter: function () {
+                                        return ` <div style="white-space: nowrap;"><a href= "javascript:" class= "btn btn-sm btn-warning edit"  title = "Add " ><i class="fa fa-plus" > </i><span class="sr-only">Add</span></a > &nbsp;</div>`;
+                                    },
+
+                                    events: {
+                                        'click .edit': function (e, value, row) {
+                                            console.log(row);
+                                            _tab_rolegroup.onAddUser2RoleGroup(_tab_rolegroup.item.Id, row.id);
+                                        },
+                                    }
+                                }
+                            ],
+                            data_user_unselect: [],
+                            columns_user_select: [
+                                {
+                                    title: 'Stt',
+                                    field: 'stt',
+                                    sortable: true,
+                                    formatter: (value, row, index) => {
+                                        return index + 1;
+                                    },
+                                },
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'userName'
+                                },
+                                {
+                                    title: 'Mô tả',
+                                    sortable: true,
+                                    field: 'normalizedName'
+                                },
+                                {
+                                    field: '#action',
+                                    title: 'Chức năng',
+                                    sortable: true,
+                                    align: 'center',
+                                    formatter: function () {
+                                        return ` <div style="white-space: nowrap;"><a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i><span class="sr-only">Delete</span></a> &nbsp;<a href="javascript:" class="btn btn-info btn-sm delete-asset info" title="Info "> <i class="fa fa-info" ></i><span class="sr-only">Info</span></a> &nbsp;</div>`;
+                                    },
+
+                                    events: {
+                                        'click .delete': function (e, value, row) {
+                                            _tab_rolegroup.onDeleteUser2RoleGroup(_tab_rolegroup.item.Id, row.id);
+                                        },
+                                        'click .info': function (e, value, row) {
+                                            //Load User info
+                                            _tab_rolegroup.onGetUserDetail(row.id);
+
+                                        },
+                                    }
+                                }
+                            ],
+                            data_user_select: [],
+
+                            columns_user_roleGroup_info: [
+                                {
+                                    title: 'Stt',
+                                    field: 'stt',
+                                    sortable: true,
+                                    formatter: (value, row, index) => {
+                                        return index + 1;
+                                    },
+                                },
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'name'
+                                },
+                                {
+                                    title: 'Mô tả',
+                                    sortable: true,
+                                    field: 'descriptions'
+                                },
+                            ],
+                            data_user_roleGroup_info: [],
+                            columns_user_role_info: [
+                                {
+                                    title: 'Stt',
+                                    field: 'stt',
+                                    sortable: true,
+                                    formatter: (value, row, index) => {
+                                        return index + 1;
+                                    },
+                                },
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'name'
+                                },
+                            ],
+                            data_user_role_info: [],
+
+
+                            columns_role_unselect: [
+                                {
+                                    title: 'Stt',
+                                    field: 'stt',
+                                    sortable: true,
+                                    formatter: (value, row, index) => {
+                                        return index + 1;
+                                    },
+                                },
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'name'
+                                },
+                                {
+                                    title: 'Mô tả',
+                                    sortable: true,
+                                    field: 'normalizedName'
+                                },
+                                {
+                                    field: '#action',
+                                    title: 'Chức năng',
+                                    align: 'center',
+                                    formatter: function () {
+                                        return ` <div style="white-space: nowrap;"><a href= "javascript:" class= "btn btn-sm btn-warning edit"  title = "Add " ><i class="fa fa-plus" > </i><span class="sr-only">Add</span></a > &nbsp;</div>`;
+                                    },
+
+                                    events: {
+                                        'click .edit': function (e, value, row) {
+                                            console.log(row);
+                                            _tab_rolegroup.onAddRole2RoleGroup1(_tab_rolegroup.item.Id, row.id);
+                                        },
+                                    }
+                                }
+                            ],
+                            data_role_unselect: [],
+                            columns_role_select: [
+                                {
+                                    title: 'Stt',
+                                    field: 'stt',
+                                    sortable: true,
+                                    formatter: (value, row, index) => {
+                                        return index + 1;
+                                    },
+                                },
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'name'
+                                },
+                                {
+                                    title: 'Mô tả',
+                                    sortable: true,
+                                    field: 'normalizedName'
+                                },
+                                {
+                                    field: '#action',
+                                    title: 'Chức năng',
+                                    align: 'center',
+                                    formatter: function () {
+                                        return ` <div style="white-space: nowrap;"><a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i><span class="sr-only">Delete</span></a> &nbsp;</div>`;
+                                    },
+
+                                    events: {
+                                        'click .delete': function (e, value, row) {
+                                            _tab_rolegroup.onDeleteRole2RoleGroup1(_tab_rolegroup.item.Id, row.id);
+                                        },
+                                    }
+                                }
+                            ],
+                            data_role_select: [],
+
+
+                        },
+                        methods: {
+                            onGet() {
+
+                                axios.get('/v1/RoleGroup/Gets').then(response => {
+                                    if (response.data.succeeded) {
+                                        this.data = response.data.data;
+                                    }
+                                }).catch(error => {
+                                    console.warn(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            },
+                            onSubmitFormAddEdit() {
+                                //if ($('#FormAddEdit').valid())
+                                {
+                                    $('.loader').show();
+                                    axios.post('/v1/RoleGroup/Update', this.item).then(response => {
+                                        $('.loader').hide(0);
+                                        //alertify.alert('Thông báo', "Lưu dữ liệu thành công", function () {
+
+                                        if (_tab_rolegroup.formAction == 'Add') {
+
+                                            _tab_rolegroup.item.Id = response.data.data.id;
+                                            _tab_rolegroup.item.Name = response.data.data.name;
+                                            _tab_rolegroup.item.Descriptions = response.data.data.Descriptions;
+
+                                            _tab_rolegroup.showRole = true;
+                                            _tab_rolegroup.onGet();
+                                            _tab_rolegroup.onGetRoleDetail();
+                                        }
+
+                                        //});
+                                    }).catch(error => {
+                                        $('.loader').hide(0);
+                                        console.log(error);
+                                        //alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
+                                    });
+                                }
+                            },
+                            onGetRoleDetail() {
+                                axios.get('/v1/RoleGroup/GetPages?roleGroupId=' + this.item.Id).then(response => {
+                                    if (response.status == 200) {
+                                        this.data_page_unselect = response.data.data.datasUnSelected;
+                                        this.data_page_select = response.data.data.datasSelected;
+                                    }
+                                }).catch(error => {
+                                    console.warn(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+
+                                axios.get('/v1/RoleGroup/GetUsers?roleGroupId=' + this.item.Id).then(response => {
+                                    if (response.status == 200) {
+                                        this.data_user_unselect = response.data.data.datasUnSelected;
+                                        this.data_user_select = response.data.data.datasSelected;
+                                    }
+                                }).catch(error => {
+                                    console.warn(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+
+                                // axios.get('/v1/RoleGroup/GetRoles?roleGroupId=' + this.item.Id).then(response => {
+                                //     if (response.status == 200) {
+                                //         this.data_role_collect = response.data.data.datasSelected;
+                                //     }
+                                // }).catch(error => {
+                                //     console.warn(error);
+                                //     alert("Lỗi: " + error.response.data.message);
+                                // });
+
+                                axios.get('/v1/RoleGroup/GetRoles?roleGroupId=' + this.item.Id).then(response => {
+                                    if (response.status == 200) {
+                                        this.data_role_unselect = response.data.data.datasUnSelected;
+                                        this.data_role_select = response.data.data.datasSelected;
+                                    }
+                                }).catch(error => {
+                                    console.warn(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+
+
+                            },
+
+                            onAddRole2RoleGroup(roleGroupId, pageId) {
+                                $('.loader').show();
+                                axios.get('/v1/RoleGroup/AddPage?roleGroupId=' + roleGroupId + '&pageId=' + pageId).then(response => {
+                                    $('.loader').hide(0);
+                                    // if (_tab_rolegroup.formAction == 'Add') {
+                                    this.onGetRoleDetail();
+                                    // }
+
+                                    //});
+                                }).catch(error => {
+                                    $('.loader').hide(0);
+                                    console.log(error);
+                                    alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
+                                });
+                            },
+
+                            onAddRole2RoleGroup1(roleGroupId, roleId) {
+                                //$('.loader').show();
+                                axios.get('/v1/RoleGroup/AddRole?roleGroupId=' + roleGroupId + '&roleId=' + roleId).then(response => {
+                                    //$('.loader').hide(0);
+                                    // if (_tab_rolegroup.formAction == 'Add') {
+                                    this.onGetRoleDetail();
+                                    // }
+
+                                    //});
+                                }).catch(error => {
+                                    //$('.loader').hide(0);
+                                    console.log(error);
+                                    //alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
+                                });
+                            },
+                            onDeleteRole2RoleGroup1(roleGroupId, roleId) {
+                                //$('.loader').show();
+                                axios.get('/v1/RoleGroup/DeleteRole?roleGroupId=' + roleGroupId + '&roleId=' + roleId).then(response => {
+                                    //$('.loader').hide(0);
+                                    // if (_tab_rolegroup.formAction == 'Add') {
+                                    this.onGetRoleDetail();
+                                    // }
+                                    //});
+                                }).catch(error => {
+                                    //$('.loader').hide(0);
+                                    console.log(error);
+                                    //alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
+                                });
+                            },
+
+
+
+
+
+                            onDeleteRole2RoleGroup(roleGroupId, pageId) {
+                                $('.loader').show();
+                                axios.get('/v1/RoleGroup/DeletePage?roleGroupId=' + roleGroupId + '&pageId=' + pageId).then(response => {
+                                    $('.loader').hide(0);
+                                    // if (_tab_rolegroup.formAction == 'Add') {
+                                    this.onGetRoleDetail();
+                                    // }
+                                    //});
+                                }).catch(error => {
+                                    $('.loader').hide(0);
+                                    console.log(error);
+                                    //alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
+                                });
+                            },
+
+
+                            onAddUser2RoleGroup(roleGroupId, userId) {
+                                //$('.loader').show();
+                                axios.get('/v1/RoleGroup/AddUser?roleGroupId=' + roleGroupId + '&userId=' + userId).then(response => {
+                                    this.onGetRoleDetail();
+                                }).catch(error => {
+                                    console.log(error);
+                                });
+                            },
+                            onDeleteUser2RoleGroup(roleGroupId, userId) {
+                                //$('.loader').show();
+                                axios.get('/v1/RoleGroup/DeleteUser?roleGroupId=' + roleGroupId + '&userId=' + userId).then(response => {
+                                    this.onGetRoleDetail();
+                                }).catch(error => {
+                                    console.log(error);
+                                });
+                            },
+
+                            onGetUserDetail(userId) {
+                                axios.get('/v1/RoleGroup/GetUserInfo?userId=' + userId).then(response => {
+                                    if (response.status == 200) {
+                                        this.data_user_roleGroup_info = response.data.data.userRoleGroups;
+                                        this.data_user_role_info = response.data.data.userRoles;
+                                        bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelUserInfo')).show();
+                                    }
+                                }).catch(error => {
+                                    console.warn(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            },
+                        },
+                        mounted() {
+                            this.onGet();
+                        },
+                    })
+
+                </script>
+            }
+        </div>
+
+        <div class="tab-pane mt-1 show @tab_roles" role="tabpanel">
+            @if (ViewBag.Tab == "roles")
+            {
+                <div class="accordion">
+                    <div class="content-wrapper" id="tab_roles">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- <a onclick="SynRoles()" class="btn btn-outline-primary btn-icon w-32px h-32px rounded-pill ms-3  mt-3"> <i class="ph-plus"></i>  </a>-->
+                                </div>
+
+                                <div class="row">
+                                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                                </div>
+                                <div class="modal fade" id="ModelRoleInfo" aria-hidden="true">
+
+                                    <div id="waitDialog" class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header"><h5 id="staticBackdropLabel" class="modal-title">Chi tiết quyền</h5> <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button></div>
+                                            <div class="modal-body">
+                                                <div class="card-body">
+                                                    <ul class="nav nav-tabs" role="tablist">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link active" data-bs-toggle="tab" href="#tab_role_roleGroup_info">Nhóm quyền</a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" data-bs-toggle="tab" href="#tab_role_users_info">Người dùng </a>
+                                                        </li>
+                                                    </ul>
+                                                    <div class="tab-content" style="padding: inherit">
+                                                        <div id="tab_role_roleGroup_info" class="container tab-pane active">
+                                                            <bootstrap-table :columns="columns_role_roleGroup_info" :data="data_role_roleGroup_info" :options="options"></bootstrap-table>
+                                                        </div>
+                                                        <div id="tab_role_users_info" class="container tab-pane fade">
+                                                            <bootstrap-table :columns="columns_role_users_info" :data="data_role_users_info" :options="options"></bootstrap-table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+
+                    function SynRoles() {
+                        _tab_roles.onSynRoles();
+                    }
+
+                    var _tab_roles = new Vue({
+                        el: "#tab_roles",
+                        components: {
+                            'BootstrapTable': BootstrapTable
+                        },
+                        data: {
+                            columns: [
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'name'
+                                },
+                                {
+                                    title: 'Mô tả',
+                                    field: 'normalizedName'
+                                },
+                                {
+                                    field: '#action',
+                                    title: 'Chức năng',
+                                    align: 'center',
+                                    formatter: function () {
+                                        return ` <div style="white-space: nowrap;"><a href="javascript:" class="btn btn-info btn-sm delete-asset info" title="Info "> <i class="fa fa-info" ></i><span class="sr-only">Info</span></a> &nbsp;</div>`;
+                                    },
+
+                                    events: {
+                                        'click .info': function (e, value, row) {
+                                            _tab_roles.onLoadRoleInfo(row.id);
+                                            bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelRoleInfo')).show();
+                                        },
+                                    }
+
+
+                                }
+                            ],
+                            data: [],
+                            options: {
+                                search: true,
+                                pagination: true,
+                                showExtendedPagination: true,
+                                showExport: false,
+                                showButtonIcons: false,
+                                showColumns: false,
+                                showRefresh: false,
+                                sortable: true,
+                                searchAlign: 'left',
+                                paginationHAlign: 'left',
+                                paginationDetailHAlign: 'right',
+                                pageSize: 25,
+                            },
+                            item: {},
+                            errors: {},
+
+
+                            columns_role_roleGroup_info: [
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'name'
+                                },
+                                {
+                                    title: 'Mô tả',
+                                    field: 'descriptions'
+                                },
+                            ],
+                            data_role_roleGroup_info: [],
+                            columns_role_users_info: [
+                                {
+                                    title: 'Tài khoản',
+                                    sortable: true,
+                                    field: 'userName'
+                                },
+                                {
+                                    title: 'Họ và đệm',
+                                    sortable: true,
+                                    field: 'lastName'
+                                },
+                                {
+                                    title: 'Tên',
+                                    sortable: true,
+                                    field: 'firstName'
+                                },
+                                {
+                                    title: 'Email',
+                                    sortable: true,
+                                    field: 'email'
+                                },
+                                {
+                                    title: 'Số điện thoại',
+                                    sortable: true,
+                                    field: 'phoneNumber'
+                                },
+
+                            ],
+                            data_role_users_info: [],
+                        },
+                        methods: {
+                            onGet() {
+
+                                axios.get('/v1/RoleGroup/Roles').then(response => {
+                                    if (response.data.succeeded) {
+                                        this.data = response.data.data;
+                                    }
+                                }).catch(error => {
+                                    console.warn(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            },
+
+                            onLoadRoleInfo(roleId) {
+                                axios.get('/v1/RoleGroup/RoleInfo?roleId=' + roleId).then(response => {
+                                    if (response.status == 200) {
+                                        this.data_role_roleGroup_info = response.data.data.roleGroups;
+                                        this.data_role_users_info = response.data.data.users;
+                                    }
+                                }).catch(error => {
+                                    console.warn(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            },
+                            onSynRoles() {
+
+                                axios.get('/v1/RoleGroup/SynRoles').then(response => {
+                                    if (response.status == 200) {
+                                        this.data = response.data.data;
+                                    }
+                                }).catch(error => {
+                                    console.warn(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            },
+
+
+                        },
+                        mounted() {
+                            this.onGet();
+                        },
+                    })
+                </script>
+            }
+        </div>
+    </div>
+
+
+</div>
