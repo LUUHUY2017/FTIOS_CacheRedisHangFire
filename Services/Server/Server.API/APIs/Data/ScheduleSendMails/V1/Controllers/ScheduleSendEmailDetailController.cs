@@ -5,7 +5,7 @@ using Server.API.APIs.Data.ScheduleSendMails.V1.Requests;
 using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.ScheduleSendEmails;
 using Share.WebApp.Controllers;
-using Shared.Core.Identity.Object;
+using Shared.Core.Commons;
 
 namespace Server.API.APIs.Data.ScheduleSendMails.V1.Controllers;
 

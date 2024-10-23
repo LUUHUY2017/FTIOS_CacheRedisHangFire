@@ -1,5 +1,5 @@
-﻿using Shared.Core.Entities;
-using Shared.Core.Identity.Object;
+﻿using Shared.Core.Commons;
+using Shared.Core.Entities;
 
 namespace Server.Core.Entities.A2;
 

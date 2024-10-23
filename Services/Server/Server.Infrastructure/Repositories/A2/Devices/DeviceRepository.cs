@@ -6,7 +6,6 @@ using Server.Core.Interfaces.A2.Devices.RequeResponsessts;
 using Server.Core.Interfaces.A2.Devices.Requests;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
-using Shared.Core.Identity.Object;
 
 namespace Server.Infrastructure.Repositories.A2.Devices;
 

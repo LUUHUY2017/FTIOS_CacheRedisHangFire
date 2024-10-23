@@ -1,6 +1,5 @@
 ﻿using Server.Core.Entities.A2;
 using Shared.Core.Commons;
-using Shared.Core.Identity.Object;
 
 namespace Server.Core.Interfaces.A2.ScheduleSendEmails;
 

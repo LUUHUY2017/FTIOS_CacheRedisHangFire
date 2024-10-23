@@ -123,38 +123,4 @@ public class CacheService : ICacheService
         }
         return default;
     }
-
-    public async Task<bool> Test()
-    {
-        try
-        {
-            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost");
-            IDatabase db = redis.GetDatabase();
-
-            //db.StringSet("foo", "bar");
-            //Console.WriteLine(db.StringGet("foo")); // prints bar
-
-
-            var hash = new HashEntry[] {
-            new HashEntry("name", "John"),
-            new HashEntry("surname", "Smith"),
-            new HashEntry("company", "Redis"),
-            new HashEntry("age", "29"),
-        };
-            db.HashSet("user-session:123", hash);
-
-
-            var hashFields = db.HashGetAll("user-session:*");
-            //Logger.Info(String.Join("; ", hashFields));
-
-            return true;
-        }
-        catch(Exception e)
-        {
-            Logger.Error(e);
-            return false;
-        }
-       
-    }
-
 }

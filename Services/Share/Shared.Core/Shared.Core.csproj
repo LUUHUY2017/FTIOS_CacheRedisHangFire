@@ -35,5 +35,9 @@
 
 	<ItemGroup>
 		<None Remove="Loggers\" />
+		<None Remove="Datas\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Datas\" />
 	</ItemGroup>
 </Project>

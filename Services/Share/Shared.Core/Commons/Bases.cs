@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Core.Identity.Object;
+namespace Shared.Core.Commons;
 
 public class ActiveRequest
 {

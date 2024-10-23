@@ -31,7 +31,6 @@ public interface ICacheService
 
     Task<List<T>> Gets<T>(string keyName);
 
-
-    Task<bool> Test();
+     
 
 }

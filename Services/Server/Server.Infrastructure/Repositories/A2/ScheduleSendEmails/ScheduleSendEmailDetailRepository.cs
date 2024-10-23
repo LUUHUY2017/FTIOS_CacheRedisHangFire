@@ -4,7 +4,6 @@ using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.ScheduleSendEmails;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
-using Shared.Core.Identity.Object;
 
 namespace Server.Infrastructure.Repositories.A2.ScheduleSendEmails;
 

@@ -122,3 +122,10 @@
 /Services/Server/Server.API/wwwroot/image/2024/10/16
 /Services/Server/Server.Infrastructure/Datas/MasterData/MySqlMigrations/20241016040224_MasterData_Init_Lane.cs
 /Services/Server/Server.Infrastructure/Datas/MasterData/MySqlMigrations/20241016040224_MasterData_Init_Lane.Designer.cs
+/Share/AMMS.ZkAutoPush/obj
+/AMMS.DeviceData/obj
+/Share/AMMS.ZkAutoPush/bin/Debug/net6.0
+/AMMS.DeviceData/bin/Debug/net6.0
+/Share/AMMS.ZkAutoPush/Properties/launchSettings.json
+/AMMS.Hanet/bin/Debug/net6.0
+/AMMS.Hanet/obj

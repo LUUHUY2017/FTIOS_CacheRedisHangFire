@@ -2,7 +2,6 @@
 using Server.Core.Interfaces.A2.Devices.RequeResponsessts;
 using Server.Core.Interfaces.A2.Devices.Requests;
 using Shared.Core.Commons;
-using Shared.Core.Identity.Object;
 
 namespace Server.Core.Interfaces.A2.Devices;
 

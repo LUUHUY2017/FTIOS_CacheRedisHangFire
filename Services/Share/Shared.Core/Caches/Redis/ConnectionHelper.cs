@@ -9,9 +9,9 @@ public class ConnectionHelper
     {
         ConnectionHelper.lazyConnection = new Lazy<ConnectionMultiplexer>(() =>
         {
-            //"127.0.0.1:6379"
             //return ConnectionMultiplexer.Connect("127.0.0.1:6379");
-            return ConnectionMultiplexer.Connect(ConfigurationManager.AppSetting["RedisURL"]);
+            string url = $"{ConfigurationManager.AppSetting["Redis:Host"]}:{ConfigurationManager.AppSetting["Redis:Post"]}";
+            return ConnectionMultiplexer.Connect(url);
         });
     }
 
