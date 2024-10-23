@@ -94,9 +94,6 @@
                                                         </li>
 
                                                         <li v-if="showRole" class="nav-item">
-                                                            <a class="nav-link " data-bs-toggle="tab" href="#tab_role_pages">Màn hình </a>
-                                                        </li>
-                                                        <li v-if="showRole" class="nav-item">
                                                             <a class="nav-link " data-bs-toggle="tab" href="#tab_role_details">Quyền </a>
                                                         </li>
 
@@ -112,17 +109,6 @@
                                                             <div class="table-2">
                                                                 <p><b>Tài khoản đã đăng ký</b></p>
                                                                 <bootstrap-table :columns="columns_user_select" :data="data_user_select" :options="options"></bootstrap-table>
-                                                            </div>
-                                                        </div>
-
-                                                        <div id="tab_role_pages" class=" tab-pane  fade">
-                                                            <div class="table-1 mb-3">
-                                                                <p><b>Màn hình chưa đăng ký </b></p>
-                                                                <bootstrap-table :columns="columns_page_unselect" :data="data_page_unselect" :options="options"></bootstrap-table>
-                                                            </div>
-                                                            <div class="table-2">
-                                                                <p><b>Màn hình đã đăng ký</b></p>
-                                                                <bootstrap-table :columns="columns_page_select" :data="data_page_select" :options="options"></bootstrap-table>
                                                             </div>
                                                         </div>
 
@@ -614,15 +600,15 @@
                                 }
                             },
                             onGetRoleDetail() {
-                                axios.get('/v1/RoleGroup/GetPages?roleGroupId=' + this.item.Id).then(response => {
-                                    if (response.status == 200) {
-                                        this.data_page_unselect = response.data.data.datasUnSelected;
-                                        this.data_page_select = response.data.data.datasSelected;
-                                    }
-                                }).catch(error => {
-                                    console.warn(error);
-                                    alert("Lỗi: " + error.response.data.message);
-                                });
+                                // axios.get('/v1/RoleGroup/GetPages?roleGroupId=' + this.item.Id).then(response => {
+                                //     if (response.status == 200) {
+                                //         this.data_page_unselect = response.data.data.datasUnSelected;
+                                //         this.data_page_select = response.data.data.datasSelected;
+                                //     }
+                                // }).catch(error => {
+                                //     console.warn(error);
+                                //     alert("Lỗi: " + error.response.data.message);
+                                // });
 
                                 axios.get('/v1/RoleGroup/GetUsers?roleGroupId=' + this.item.Id).then(response => {
                                     if (response.status == 200) {

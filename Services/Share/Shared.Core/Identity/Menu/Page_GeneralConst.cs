@@ -11,9 +11,6 @@ public partial class PagesConst
         {
             var _ListMenu = new List<PageObject>();
             _ListMenu.AddRange(_Menu_MD_Left);
-            _ListMenu.AddRange(_Menu_OD_Left);
-            _ListMenu.AddRange(_Menu_ID_Left);
-            _ListMenu.AddRange(_Menu_TI_Left);
 
             return _ListMenu;
         }

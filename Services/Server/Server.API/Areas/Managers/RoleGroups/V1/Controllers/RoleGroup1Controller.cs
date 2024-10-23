@@ -12,7 +12,7 @@ using Shared.Core.Identity;
 namespace Server.API.Areas.Managers.RoleGroups.V1.Controllers;
 
 [Route("v1/[controller]")]
-[AuthorizeMaster(Roles = $"{RoleConst.Role_Manage}")]
+[AuthorizeMaster(Roles = $"{RoleConst.MasterDataPage}")]
 
 public class RoleGroup1Controller : Controller
 {

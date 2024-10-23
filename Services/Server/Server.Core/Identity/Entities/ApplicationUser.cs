@@ -5,6 +5,7 @@ namespace Server.Core.Identity.Entities;
 
 public class ApplicationUser : IdentityUser
 {
+    public string? OrganizationId { get; set; } 
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
