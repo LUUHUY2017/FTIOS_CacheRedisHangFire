@@ -27,7 +27,8 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
     public DbSet<A0_RoleGroupUser> A0_RoleGroupUser { get; set; }
     public DbSet<A0_Page> A0_Page { get; set; }
     public DbSet<A0_RoleGroupPage> A0_RoleGroupPage { get; set; }
-
+    public DbSet<A0_AttendanceConfig> A0_AttendanceConfig { get; set; }
+    public DbSet<A0_TimeConfig> A0_TimeConfig { get; set; }
     #endregion
 
 

@@ -7,6 +7,7 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.PersistedGrantDb
 {
     public partial class InitialIdentityServerPersistedGrantDbMigration : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
@@ -16,9 +17,9 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.PersistedGrantDb
                 name: "DeviceCodes",
                 columns: table => new
                 {
-                    UserCode = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
+                    UserCode = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DeviceCode = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
+                    DeviceCode = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     SubjectId = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -43,7 +44,7 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.PersistedGrantDb
                 name: "PersistedGrants",
                 columns: table => new
                 {
-                    Key = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
+                    Key = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Type = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -94,6 +95,7 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.PersistedGrantDb
                 columns: new[] { "SubjectId", "SessionId", "Type" });
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

@@ -13,16 +13,23 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Server.Application.MasterDatas.A0.Accounts.V1;
+using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
+using Server.Application.MasterDatas.A0.TimeConfigs.V1;
 using Server.Application.MasterDatas.A2.Devices;
+using Server.Application.MasterDatas.A2.Organizations.V1;
 using Server.Core.Identity.Interfaces.Accounts.Services;
 using Server.Core.Interfaces.A0;
 using Server.Core.Interfaces.A2.Devices;
+using Server.Core.Interfaces.A2.Organizations;
 using Server.Core.Interfaces.A2.ScheduleSendEmails;
 using Server.Core.Interfaces.A2.SendEmails;
 using Server.Core.Interfaces.GIO.VehicleInOuts;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
+using Server.Infrastructure.Repositories.A0.AttendanceConfigs;
+using Server.Infrastructure.Repositories.A0.TimeConfigs;
 using Server.Infrastructure.Repositories.A2.Devices;
+using Server.Infrastructure.Repositories.A2.Organizations;
 using Server.Infrastructure.Repositories.A2.ScheduleSendEmails;
 using Server.Infrastructure.Repositories.A2.SendEmails;
 using Server.Infrastructure.Repositories.GIO.VehicleInOuts;
@@ -201,6 +208,18 @@ public static class DependencyInjection
 
         // GIO_VehicleInOut
         service.AddScoped<IGIOVehicleInOutRepository, GIOVehicleInOutRepository>();
+
+        // AttendanceConfig
+        service.AddScoped<IAttendanceConfigRepository, AttendanceConfigRepository>();
+        service.AddScoped<AttendanceConfigService>();
+
+        //Organization
+        service.AddScoped<IOrganizationRepository, OrganizationRepository>();
+        service.AddScoped<OrganizationService>();
+
+        //TimeConfig
+        service.AddScoped<ITimeConfigRepository, TimeConfigRepository>();
+        service.AddScoped<TimeConfigService>();
 
 
     }

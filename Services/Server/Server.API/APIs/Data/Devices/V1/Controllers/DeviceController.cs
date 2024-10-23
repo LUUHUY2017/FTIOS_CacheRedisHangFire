@@ -50,6 +50,25 @@ namespace Server.API.APIs.Data.Devices.V1.Controllers
         }
 
         /// <summary>
+        /// Lấy danh sách đang hoạt động
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("GetFirstOrDefault")]
+        public async Task<IActionResult> GetFirstOrDefault()
+        {
+            try
+            {
+                var data = await _deviceService.GetAll();
+                return Ok(new Result<List<A2_Device>>(data, "Thành công!", true));
+            }
+            catch (Exception ex)
+            {
+                return Ok(new Result<TotalDevice>(null, "Lỗi:" + ex.Message, false));
+            }
+        }
+
+        /// <summary>
         /// Lấy tổng quan thiết bị
         /// </summary>
         /// <returns></returns>

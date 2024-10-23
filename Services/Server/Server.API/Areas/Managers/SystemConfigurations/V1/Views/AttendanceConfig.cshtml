@@ -1,0 +1,163 @@
+﻿
+<div class="content-wrapper" id="webui_attendenceConfig">
+    <div class="content">
+        <div class="card-body">
+            <form class="needs-validation" novalidate id="FormAddEdit">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td class="p-2 fw-bold">Kết nối SSO</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <!--Endpoint-identity-->
+                                <div class="row mb-3">
+                                    <label class="col-form-label text-start col-lg-3">Endpoint-identity <span class="text-danger">*</span></label>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" required v-model="item.endpointIdentity">
+                                        <div class="invalid-feedback">Vui lòng nhập Endpoint-identity</div>
+                                        <div class="valid-feedback"> </div>
+                                    </div>
+                                </div>
+                                <!--Tài khoản-->
+                                <div class="row mb-3">
+                                    <label class="col-form-label text-start col-lg-3">Tài khoản <span class="text-danger">*</span></label>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" required v-model="item.accountName">
+                                        <div class="invalid-feedback">Vui lòng nhập tên tài khoản</div>
+                                        <div class="valid-feedback"> </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="col-form-label text-start col-lg-3">Mật khẩu <span class="text-danger">*</span></label>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" required v-model="item.password">
+                                        <div class="invalid-feedback">Vui lòng nhập mật khẩu</div>
+                                        <div class="valid-feedback"> </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-2 fw-bold ">Kết nối Gateway</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <!--Endpoint-gateway-->
+                                <div class="row mb-3">
+                                    <label class="col-form-label text-start col-lg-3">Endpoint-gateway <span class="text-danger">*</span></label>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" required v-model="item.endpointGateway">
+                                        <div class="invalid-feedback">Vui lòng nhập Endpoint-gateway</div>
+                                        <div class="valid-feedback"> </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-2">
+                                <div class="row mb-3">
+                                    <div class="text-start">
+                                        <button type="button" class="btn btn-primary" v-on:click="onSaveData()">Lưu dữ liệu</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        
+    });
+    var _config = new Vue({
+        el: '#webui_attendenceConfig',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            data: {},
+            item: {},
+            column: [],
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                showExport: false,
+                sortable: true,
+                groupBy: true,
+                paginationHAlign: 'right',
+                paginationDetailHAlign: 'right',
+                pageSize: 10,
+                pageList: [10, 25, 50, 100, 200],
+            },
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                editAction: false,
+                infoAction: false,
+                bearerAuthorization: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.get('/api/v1/AttendanceConfig/GetFirstOrDefault', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        //this.data = response.data.data;
+                        this.item = response.data.data || {};
+
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+            onSaveData() {
+                console.log("Bắt đầu conf");
+                if (!validateForm("#FormAddEdit"))
+                    return true;
+                console.log("Kết thúc conf");
+                $('.loader').show();
+                axios.post('/api/v1/AttendanceConfig/AddOrEdit', this.item, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        alertify.success("Thành công");
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    console.log(error);
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+        },
+        mounted() {
+            this.loadData();
+        },
+    })
+</script>
+

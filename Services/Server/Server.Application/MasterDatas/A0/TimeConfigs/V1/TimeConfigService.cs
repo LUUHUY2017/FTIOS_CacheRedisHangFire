@@ -1,0 +1,101 @@
+﻿using AutoMapper;
+using Server.Application.MasterDatas.A0.AttendanceConfigs.V1.Models;
+using Server.Application.MasterDatas.A0.TimeConfigs.V1.Models;
+using Server.Core.Entities.A0;
+using Server.Core.Interfaces.A0;
+using Shared.Core.Commons;
+using Shared.Core.Identity.Object;
+
+namespace Server.Application.MasterDatas.A0.TimeConfigs.V1;
+
+public class TimeConfigService
+{
+    private readonly ITimeConfigRepository _timeConfigRepository;
+    private readonly IMapper _mapper;
+    public TimeConfigService(ITimeConfigRepository timeConfigRepository, IMapper mapper)
+    {
+        _timeConfigRepository = timeConfigRepository;
+        _mapper = mapper;
+    }
+
+    public async Task<Result<A0_TimeConfig>> SaveAsync(TimeConfigRequest request)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(request.Id))
+            {
+                var dataAdd = _mapper.Map<A0_TimeConfig>(request);
+                var retVal = await _timeConfigRepository.AddAsync(dataAdd);
+                return retVal;
+            }
+            else
+            {
+                var data = await _timeConfigRepository.GetByIdAsync(request.Id);
+                var dataUpdate = data.Data;
+                //dataUpdate.OrganizationId = request.OrganizationId;
+                dataUpdate.MorningStartTime = request.MorningStartTime;
+                dataUpdate.MorningEndTime = request.MorningEndTime;
+                dataUpdate.MorningLateTime = request.MorningLateTime;
+                dataUpdate.MorningBreakTime = request.MorningBreakTime;
+                dataUpdate.AfternoonStartTime = request.AfternoonStartTime;
+                dataUpdate.AfternoonEndTime = request.AfternoonEndTime;
+                dataUpdate.AfternoonLateTime = request.AfternoonLateTime;
+                dataUpdate.AfternoonBreakTime = request.AfternoonBreakTime;
+
+                var retVal = await _timeConfigRepository.UpdateAsync(dataUpdate);
+                return retVal;
+            }
+        }
+        catch (Exception ex)
+        {
+            return new Result<A0_TimeConfig>(null, $"Lỗi: {ex.Message}", false);
+        }
+    }
+
+    public async Task<Result<TimeConfigResponse>> DeleteAsync(DeleteRequest request)
+    {
+        try
+        {
+            var item = await _timeConfigRepository.GetByIdAsync(request.Id);
+            var retVal = await _timeConfigRepository.DeleteAsync(request);
+            var itemMap = _mapper.Map<TimeConfigResponse>(item);
+
+            return new Result<TimeConfigResponse>(itemMap, retVal.Message, false);
+        }
+        catch (Exception ex)
+        {
+            return new Result<TimeConfigResponse>(null, $"Lỗi: {ex.Message}", false);
+        }
+    }
+
+    public async Task<Result<List<TimeConfigResponse>>> Gets()
+    {
+        try
+        {
+            var retVal = await _timeConfigRepository.GetAllAsync();
+
+            var listMap = _mapper.Map<List<TimeConfigResponse>>(retVal);
+            return new Result<List<TimeConfigResponse>>(listMap, "Thành công", true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<List<TimeConfigResponse>>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
+    public async Task<Result<TimeConfigResponse>> GetFirstOrDefault()
+    {
+        try
+        {
+            var retVal = await _timeConfigRepository.GetByFirstAsync(x => x.Actived == true);
+
+            var itemMap = _mapper.Map<TimeConfigResponse>(retVal.Data);
+            return new Result<TimeConfigResponse>(itemMap, "Thành công", true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<TimeConfigResponse>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
+}

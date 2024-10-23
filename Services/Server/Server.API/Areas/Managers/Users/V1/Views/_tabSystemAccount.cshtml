@@ -46,7 +46,7 @@
                         <div class="row mb-3" v-if="!showRole">
                             <label class="col-form-label text-end col-lg-2">Mật khẩu <span class="text-danger">*</span></label>
                             <div class="col-lg-8">
-                                <input type="text" name="password" id="Password" class="form-control" pattern=".{6,}" required placeholder="Mật khẩu tối thiểu 6 ký tự" v-model="item.password">
+                                <input type="password" name="password" id="Password" class="form-control" pattern=".{6,}" required placeholder="Mật khẩu tối thiểu 6 ký tự" v-model="item.password">
                                 <div class="invalid-feedback">Vui lòng nhập mật khẩu tối thiểu 6 ký tự</div>
                                 <div class="valid-feedback"> </div>
                             </div>
@@ -56,7 +56,7 @@
                         <div class="row mb-3" v-if="!showRole">
                             <label class="col-form-label text-end col-lg-2">Nhập lại mật khẩu<span class="text-danger">*</span></label>
                             <div class="col-lg-8">
-                                <input type="text" name="passwordConfirm" id="passwordConfirm" class="form-control" required placeholder="Nhập lại mật khẩu" v-model="item.passwordConfirm">
+                                <input type="password" name="passwordConfirm" id="passwordConfirm" class="form-control" required placeholder="Nhập lại mật khẩu" v-model="item.passwordConfirm">
                                 <div class="invalid-feedback">Vui lòng nhập mật khẩu</div>
                                 <div class="valid-feedback"> </div>
                             </div>
@@ -523,7 +523,7 @@
             onSubmitFormAddEdit() {
                 if (!validateForm("#FormAddEdit"))
                     return true;
-                if (this.item.password !== this.item.passwordConfirm) {
+                if (this.item.password !== this.item.passwordConfirm && this.formAction === 'Add') {
                     alertify.warning("Mật khẩu và mật khẩu nhập lại phải giống nhau!");
                     return;
                 }
