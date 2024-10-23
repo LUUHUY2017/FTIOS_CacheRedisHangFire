@@ -106,31 +106,6 @@
                             </div>
 
                             <div class="row mb-3">
-                                <label class="col-form-label text-end col-lg-3">Vị trí<span class="text-danger">*</span></label>
-                                <div class="col-lg-7">
-                                    <select data-dropdown-parent="#ModelAddEdit" class="form-control select" data-placeholder="Vui lòng chọn vị trí" id="laneId">
-                                        <option v-for="option in combobox.lanes" v-bind:value="option.id">
-                                            {{ option.laneName }}
-                                        </option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn vị trí</div>
-                                    <div class="valid-feedback"> </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label class="col-form-label text-end col-lg-3">Loại Camera<span class="text-danger">*</span></label>
-                                <div class="col-lg-7">
-                                    <select data-dropdown-parent="#ModelAddEdit" class="form-control select" data-placeholder="Vui lòng chọn loại camera" id="deviceType">
-                                        <option value="CAMERAIN">Camera vào</option>
-                                        <option value="CAMERAOUT">Camera ra</option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn loại Camera</div>
-                                    <div class="valid-feedback"> </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
                                 <label class="col-form-label text-end col-lg-3">Ip Address <span class="text-danger">*</span></label>
                                 <div class="col-lg-7">
                                     <input type="text" class="form-control" required v-model="item.ipAddress">
@@ -292,16 +267,6 @@
                     title: 'SerialNumber',
                     sortable: true,
                     field: 'serialNumber'
-                },
-                {
-                    title: 'Vị trí',
-                    sortable: true,
-                    field: 'laneName'
-                }, 
-                {
-                    title: 'Loại Camera',
-                    sortable: true,
-                    field: 'deviceType'
                 },
                 {
                     title: 'Tài khoản',

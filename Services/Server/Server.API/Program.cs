@@ -459,68 +459,18 @@ using (var scope = app.Services.CreateScope())
         var identityContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
         await identityContext.Database.MigrateAsync();
 
-        //var configurationDbContext = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-        //await configurationDbContext.Database.MigrateAsync();
-
-        //var persistedGrantDbContext = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-        //await persistedGrantDbContext.Database.MigrateAsync();
-
-
-        //var biDbContext = scope.ServiceProvider.GetRequiredService<BiDbContext>();
 
         var notificationDbContext = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
         await notificationDbContext.Database.MigrateAsync();
 
-
-        //var siteCacheService = scope.ServiceProvider.GetRequiredService<SiteCacheService>();
-        //await siteCacheService.LoadFromDb();
-
-        //var deviceCacheService = scope.ServiceProvider.GetRequiredService<DeviceCacheService>();
-        //var terminals = await deviceCacheService.LoadFromDb();
-
-        //var pocDataInOutAvgTimeCacheService = scope.ServiceProvider.GetRequiredService<PeopleCountDataService>();
-        //await pocDataInOutAvgTimeCacheService.RemoveCahe(); //Reset cache
-
-
-        //var _pocDataInOutEventCacheRepo = scope.ServiceProvider.GetRequiredService<PocDataInOutEventCacheRepo>();
-        //var date = DateTime.Now.Date;
-        //await _pocDataInOutEventCacheRepo.LoadFromDb(date);
-        //await _pocDataInOutEventCacheRepo.SetToCacheByDay(date);
 
         var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
         signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
         signalRClient.Start();
 
         //var conJobService = scope.ServiceProvider.GetRequiredService<IConJobService>();
-        //var sendMailRepository = scope.ServiceProvider.GetRequiredService<IScheduleSendMailRepository>();
         //var scheduleLists = await sendMailRepository.GetAlls(new ScheduleSendEmailModel() { Actived = "1" });
 
-        //conJobService.CreateScheduleSendMailCronJob(scheduleLists);
-        //RecurringJob.AddOrUpdate("ScheduleReSendMailReport", () => conJobService.POC_Report_ScheduleReSendMailReport(), "0 * * * *", TimeZoneInfo.Local);   // 0P đầu tiên mỗi giờ
-        //RecurringJob.AddOrUpdate(() => conJobService.CheckDeviceOnline(), Cron.MinuteInterval(5), TimeZoneInfo.Local); //5 phút chạy 1 lần
-
-
-        //var pOC_Convert_poc_data_in_out_from_to_logs1 = scope.ServiceProvider.GetRequiredService<POC_Convert_poc_data_in_out_from_to_logs1>();
-
-        //RecurringJob.AddOrUpdate(() => pOC_Convert_poc_data_in_out_from_to_logs1.ProcessData(), Cron.MinuteInterval(2), TimeZoneInfo.Local); //5 phút chạy 1 lần
-
-        //conJobService.CreateScheduleReportInOutCronJob(scheduleLists);
-        ////RecurringJob.AddOrUpdate("GuiEmailCanhBaoHomNaySoVoiHomQua", () => conJobService.LayDuLieuDeGuiEmailCanhBaoHomNaySoVoiHomQua(), "30 0 * * *", TimeZoneInfo.Local);   // 0P đầu tiên mỗi giờ
-
-
-
-        ////app.UseFileServer();
-        //new BrickstreamConfig();
-        //BrickstreamConfig.Brickstream_xml_Follder = builder.Configuration.GetSection("BrickstreamProcessData:DataFolder").Value;
-
-        //var notificationService = scope.ServiceProvider.GetRequiredService<IRedisNotificationService>();
-        //notificationService.SubscribeToKeyspaceEvents();
-
-
-        //DbContextOptionsBuilder<BiDbContext> optionsBuilder = new DbContextOptionsBuilder<BiDbContext>();
-        //optionsBuilder.UseSqlServer(configuration.GetConnectionString("BiDbConnection"));
-        //POC_Convert_poc_data_in_out_from_to_logs.DbOptions = optionsBuilder.Options;
-        //POC_Convert_poc_data_in_out_from_to_logs.Start();
     }
     catch (Exception e)
     {

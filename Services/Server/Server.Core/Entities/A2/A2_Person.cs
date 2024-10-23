@@ -1,13 +1,10 @@
 ﻿using Shared.Core.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.Core.Entities.A0
+namespace Server.Core.Entities.A2
 {
-    public class A0_Person : EntityBase
+    public class A2_Person : EntityBase
     {
-        [MaxLength(50)]
-        public string? BusinessUnitId { get; set; }
-
         [MaxLength(50)]
         public string? OrganizationId { get; set; }
 
@@ -31,7 +28,7 @@ namespace Server.Core.Entities.A0
         [MaxLength(500)]
         public string? PersonNote { get; set; }
 
-        public Int64 PersonNo { get; set; }
+        public long? PersonNo { get; set; }
 
         [MaxLength(50)]
         public string? PersonAccountNumber { get; set; }
@@ -48,7 +45,7 @@ namespace Server.Core.Entities.A0
 
         [MaxLength(50)]
         public string? PersonTypeId { get; set; }
-        public A0_PersonType? PersonType { get; set; }
+        public A2_PersonType? PersonType { get; set; }
 
         [MaxLength(50)]
         public string? Language { get; set; }

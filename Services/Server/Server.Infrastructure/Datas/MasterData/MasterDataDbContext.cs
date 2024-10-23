@@ -5,6 +5,7 @@ using Server.Core.Entities.A0;
 using Server.Core.Entities.A2;
 using Server.Core.Entities.A3;
 using Server.Core.Entities.GIO;
+using Server.Core.Entities.TA;
 
 namespace Server.Infrastructure.Datas.MasterData;
 
@@ -19,8 +20,6 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
 
     #region A0
     public DbSet<A0_EmailConfiguration> A0_EmailConfiguration { get; set; }
-    public DbSet<A0_PersonType> A0_PersonType { get; set; }
-    public DbSet<A0_Person> A0_Person { get; set; }
 
     public DbSet<A0_RoleGroup> A0_RoleGroup { get; set; }
     public DbSet<A0_RoleGroupDetail> A0_RoleGroupDetail { get; set; }
@@ -30,7 +29,6 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
     public DbSet<A0_AttendanceConfig> A0_AttendanceConfig { get; set; }
     public DbSet<A0_TimeConfig> A0_TimeConfig { get; set; }
     #endregion
-
 
     #region A1
     #endregion
@@ -45,9 +43,14 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
     public DbSet<A2_BusinessUnit> A2_BusinessUnit { get; set; }
     public DbSet<A2_Notification> A2_Notification { get; set; }
     public DbSet<A2_Lane> A2_Lane { get; set; }
+    public DbSet<A2_Person> A2_Person { get; set; }
+    public DbSet<A2_PersonType> A2_PersonType { get; set; }
+    public DbSet<A2_Student> A2_Student { get; set; }
+    public DbSet<A2_PersonFace> A2_PersonFace { get; set; }
+    public DbSet<A2_PersonSynToDevice> A2_PersonSynToDevice { get; set; }
     #endregion
 
-    #region
+    #region A3
     public DbSet<A3_Image> A3_Image { get; set; }
     #endregion
 
@@ -56,6 +59,9 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
 
     #endregion
 
+    #region TA
+    public DbSet<TA_TimeAttendenceEvent> TA_TimeAttendenceEvent { get; set; }
+    #endregion
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

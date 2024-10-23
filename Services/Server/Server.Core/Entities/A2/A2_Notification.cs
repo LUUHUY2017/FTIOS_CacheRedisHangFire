@@ -5,7 +5,7 @@ namespace Server.Core.Entities.A2;
 
 public class A2_Notification : EntityBase
 {
-    public Guid? UserId { get; set; }
+    public string? UserId { get; set; }
     public string? Title { get; set; }
     public string? Message { get; set; }
     [MaxLength(500)]

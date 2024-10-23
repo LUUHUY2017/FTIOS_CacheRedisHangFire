@@ -6,7 +6,7 @@ using Server.Core.Entities.A0;
 using Server.Core.Identity.Entities;
 using Server.Core.Identity.Interfaces.Accounts.Requests;
 using Server.Core.Identity.Interfaces.Accounts.Services;
-using Server.Core.Interfaces.A0;
+using Server.Core.Interfaces.A2.Persons;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Shared.Core.Commons;

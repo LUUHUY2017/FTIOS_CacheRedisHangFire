@@ -1,12 +1,10 @@
 ﻿using Shared.Core.Entities;
 
-namespace Server.Core.Entities.A0
+namespace Server.Core.Entities.A2
 {
-    public class A0_PersonType : EntityBase
+    public class A2_PersonType : EntityBase
     {
         public string? Name { get; set; }
         public string? Note { get; set; }
     }
-
-
 }

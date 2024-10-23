@@ -89,7 +89,11 @@
     <Content Remove="client_retail.acs.vn.json" />
   </ItemGroup>
   <ItemGroup>
+
     <Compile Include="APIs\Data\AttendanceConfigs\V1\Controllers\AttendanceConfigController.cs" />
+
+    <Compile Include="APIs\Data\Students\V1\Controllers\StudentController.cs" />
+
     <Compile Include="APIs\Data\Lanes\V1\Controllers\LaneController.cs" />
     <Compile Include="APIs\Data\Devices\V1\Controllers\DeviceController.cs" />
     <Compile Include="APIs\Data\Organizations\V1\Controllers\OrganizationController.cs" />
@@ -105,7 +109,12 @@
     <Compile Include="APIs\Data\ScheduleSendMails\V1\Responses\ScheduleSendEmailResponse.cs" />
     <Compile Include="APIs\Data\SendEmails\V1\Controllers\SendEmailController.cs" />
     <Compile Include="APIs\Data\SendEmails\V1\Controllers\SendEmailLogController.cs" />
+
     <Compile Include="APIs\Data\TimeConfigs\V1\Controllers\TimeConfigController.cs" />
+
+    <Compile Include="APIs\Data\Students\V1\Requests\StudentSearchRequest.cs" />
+    <Compile Include="APIs\Data\Students\V1\Requests\ClassSearchRequest.cs" />
+
     <Compile Include="APIs\Data\Users\V1\Controllers\UserController.cs" />
     <Compile Include="APIs\Data\Users\V1\Controllers\UserProfileController.cs" />
     <Compile Include="APIs\Data\Users\V1\Models\ChangePasswordModel.cs" />

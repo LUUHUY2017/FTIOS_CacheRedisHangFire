@@ -28,7 +28,7 @@ public class A2_Organization : EntityBase
     public string? OrganizationNote { get; set; }
 
 
-    public Guid? OrganizationTypeId { get; set; }
+    public string? OrganizationTypeId { get; set; }
 
     public string? OrganizationLogo { get; set; }
     public string? OrganizationFavicon { get; set; }

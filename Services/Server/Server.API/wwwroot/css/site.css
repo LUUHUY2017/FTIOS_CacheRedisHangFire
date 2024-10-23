@@ -284,3 +284,24 @@
 
 */
 
+.cropper-container {
+    width: 500px !important;
+    height: 450px !IMPORTANT;
+}
+
+.cropper-crop-box {
+    width: 500px !important;
+    height: 450px !important;
+    transform: translateX(468.1px) translateY(115.6px);
+}
+
+.cropper-canvas {
+    width: 500px !important;
+    height: 450px !important;
+    transform: translateX(55.5625px) !important;
+}
+
+    .cropper-canvas img {
+        width: 100% !important;
+        height: 100% !important;
+    }

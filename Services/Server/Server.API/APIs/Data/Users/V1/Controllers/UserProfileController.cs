@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Server.API.APIs.Data.Users.V1.Models;
-using Server.Core.Entities.A0;
+using Server.Core.Entities.A2;
 using Server.Core.Identity.Entities;
-using Server.Core.Interfaces.A0;
+using Server.Core.Interfaces.A2.Persons;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
 using Shared.Core.Identity;
@@ -187,7 +187,7 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
         {
             try
             {
-                A0_Person request = new A0_Person();
+                A2_Person request = new A2_Person();
                 request.Note = model.Description;
                 request.FirstName = model.FirstName;
                 request.LastName = model.LastName;
