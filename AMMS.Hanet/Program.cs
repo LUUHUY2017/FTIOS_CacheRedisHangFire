@@ -6,6 +6,10 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Share.WebApp.Controllers;
 using Share.WebApp.Settings;
+using AMMS.Hanet.Extensions;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +20,7 @@ IConfiguration configuration = builder.Configuration;
 IConfigurationRoot configRoot = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
 
 services.AddOptions(); //Kích hoạt Options
-
+services.AddVersion();// Versioning
 
 services.AddCors(options =>
 {
@@ -37,6 +41,7 @@ AppSettings appSettings = new AppSettings();
 configuration.Bind(appSettings);
 AuthBaseController.AMMS_Master_HostAddress = builder.Configuration["Authentication:Authority"];
 
+services.AddDbContext(configuration);
 
 // Add Auth
 services.Configure<Authentication>(configuration.GetSection("Authentication"));
@@ -106,7 +111,87 @@ services.AddAuthorization(options =>
 
 builder.Services.AddControllers();
 services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
+//Swagger
+//services.AddSwaggerGen();
+services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc(
+               "v1",
+           new OpenApiInfo()
+           {
+               Title = appSettings.ApplicationDetail.ApplicationName.ToString(),
+               Version = "1",
+               Description = appSettings.ApplicationDetail.Description,
+               Contact = new OpenApiContact()
+               {
+                   Email = "info@amms.acs.vn",
+                   Name = "AMMS Solution",
+                   Url = new Uri(appSettings.ApplicationDetail.ContactWebsite),
+               },
+               License = new OpenApiLicense()
+               {
+                   Name = "MIT License",
+                   Url = new Uri(appSettings.ApplicationDetail.LicenseDetail)
+               }
+           });
+    c.SwaggerDoc(
+       "v2",
+   new OpenApiInfo()
+   {
+       Title = appSettings.ApplicationDetail.ApplicationName.ToString(),
+       Version = "2",
+       Description = appSettings.ApplicationDetail.Description,
+       Contact = new OpenApiContact()
+       {
+           Email = "info@amms.acs.vn",
+           Name = "AMMS Solution",
+           Url = new Uri(appSettings.ApplicationDetail.ContactWebsite)
+       },
+       License = new OpenApiLicense()
+       {
+           Name = "MIT License",
+           Url = new Uri(appSettings.ApplicationDetail.LicenseDetail)
+       }
+   });
+
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.OAuth2,
+        Flows = new OpenApiOAuthFlows
+        {
+            Implicit = new OpenApiOAuthFlow
+            {
+                AuthorizationUrl = new Uri(builder.Configuration["Authentication:Authority"] + "/connect/authorize"),
+                Scopes = new Dictionary<string, string> { { "amms.hanet", "AMMS Hanet API" } }
+            },
+        },
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            new List<string>{ "amms.hanet" }
+        }
+    });
+
+    // Add comment
+    string fileName = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+    if (!File.Exists(fileName))
+    {
+        var myFile = File.Create(fileName);
+        var content = $"<?xml version=\"1.0\"?>\r\n<doc>\r\n    <assembly>\r\n        <name>{Assembly.GetExecutingAssembly().GetName().Name}</name>\r\n    </assembly>\r\n    <members>\r\n \r\n    </members>\r\n</doc>\r\n";
+        var contentarr = Encoding.ASCII.GetBytes(content);
+        myFile.Write(contentarr, 0, contentarr.Count());
+        myFile.Close();
+    }
+    c.IncludeXmlComments(fileName);
+
+});
+
 services.AddHttpClient();
 services.AddControllersWithViews();
 

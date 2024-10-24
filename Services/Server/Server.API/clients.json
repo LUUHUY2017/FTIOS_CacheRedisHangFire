@@ -391,7 +391,7 @@
     "ProtocolType": "oidc",
     "ClientSecrets": [],
     "RequireClientSecret": true,
-    "ClientName": "Device Webserver Swagger",
+    "ClientName": "AMMS Hanet Webserver Swagger",
     "Description": null,
     "ClientUri": null,
     "LogoUri": null,

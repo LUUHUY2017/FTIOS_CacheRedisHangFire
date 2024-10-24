@@ -50,11 +50,19 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.4" />
 
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+		
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\AMMS.DeviceData\AMMS.DeviceData.csproj" />
 	  <ProjectReference Include="..\Services\Share\Share.WebApp\Share.WebApp.csproj" />
 	  <ProjectReference Include="..\Services\Share\Shared.Core\Shared.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Datas\Migrations\MsSQL\" />
+	  <Folder Include="Datas\Migrations\MySQL\" />
 	</ItemGroup>
 </Project>
