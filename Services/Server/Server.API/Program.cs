@@ -431,7 +431,7 @@ app.UseEndpoints(endpoints =>
       name: "areas",
       pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
     )
-    //.RequireAuthorization()
+    .RequireAuthorization()
     ;
 
 });
@@ -483,9 +483,6 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
-
-
     if (!UserIdentityServer4Memory)
     {
         using (var scope = app.Services.CreateScope())
@@ -621,6 +618,11 @@ if (app.Environment.IsDevelopment())
         }
     }
 
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
 }
 else
 {

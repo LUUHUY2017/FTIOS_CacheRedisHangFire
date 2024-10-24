@@ -82,12 +82,7 @@
     <None Remove="Areas\Managers\Schedules\**" />
     <None Remove="bin\**" />
     <None Remove="wwwroot\export_excel\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="clients_vivocity.json" />
-    <Content Remove="client_megamall.json" />
-    <Content Remove="client_retail.acs.vn.json" />
-  </ItemGroup>
+  </ItemGroup> 
   <ItemGroup>
 
     <Compile Include="APIs\Data\AttendanceConfigs\V1\Controllers\AttendanceConfigController.cs" />

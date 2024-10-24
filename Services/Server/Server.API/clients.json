@@ -270,9 +270,10 @@
     "AllowedCorsOrigins": [],
     "Properties": {}
   },
+  
   {
     "Enabled": true,
-    "ClientId": "bi.device.webapi.dev",
+    "ClientId": "amms.hanet.webapi.dev",
     "ProtocolType": "oidc",
     "ClientSecrets": [
       {
@@ -283,7 +284,7 @@
       }
     ],
     "RequireClientSecret": true,
-    "ClientName": "BI Device WebAPI DEV",
+    "ClientName": "Hanet WebAPI DEV",
     "Description": null,
     "ClientUri": null,
     "LogoUri": null,
@@ -301,7 +302,7 @@
     "BackChannelLogoutUri": null,
     "BackChannelLogoutSessionRequired": true,
     "AllowOfflineAccess": false,
-    "AllowedScopes": [ "openid", "profile", "offline_access", "address", "email", "phone", "masterapi", "deviceapi" ],
+    "AllowedScopes": [ "openid", "profile", "offline_access", "address", "email", "phone", "masterapi", "amms.hanet" ],
     "AlwaysIncludeUserClaimsInIdToken": false,
     "IdentityTokenLifetime": 300,
     "AllowedIdentityTokenSigningAlgorithms": [],
@@ -329,7 +330,7 @@
   },
   {
     "Enabled": true,
-    "ClientId": "bi.device.webapi.prod",
+    "ClientId": "amms.hanet.webapi.prod",
     "ProtocolType": "oidc",
     "ClientSecrets": [
       {
@@ -351,14 +352,14 @@
     "AllowPlainTextPkce": false,
     "RequireRequestObject": false,
     "AllowAccessTokensViaBrowser": true,
-    "RedirectUris": [ "https://vivocity.acs.vn:8003/signin-oidc" ],
-    "PostLogoutRedirectUris": [ "https://vivocity.acs.vn:8003/signout-callback-oidc" ],
+    "RedirectUris": [ "https://viettelhanet.acs.vn:8003/signin-oidc" ],
+    "PostLogoutRedirectUris": [ "https://viettelhanet.acs.vn:8003/signout-callback-oidc" ],
     "FrontChannelLogoutUri": null,
     "FrontChannelLogoutSessionRequired": true,
     "BackChannelLogoutUri": null,
     "BackChannelLogoutSessionRequired": true,
     "AllowOfflineAccess": false,
-    "AllowedScopes": [ "openid", "profile", "offline_access", "address", "email", "phone", "masterapi", "deviceapi" ],
+    "AllowedScopes": [ "openid", "profile", "offline_access", "address", "email", "phone", "masterapi", "amms.hanet" ],
     "AlwaysIncludeUserClaimsInIdToken": false,
     "IdentityTokenLifetime": 300,
     "AllowedIdentityTokenSigningAlgorithms": [],
@@ -386,7 +387,7 @@
   },
   {
     "Enabled": true,
-    "ClientId": "bi.device.webapi.swagger.dev",
+    "ClientId": "amms.hanet.webapi.swagger.dev",
     "ProtocolType": "oidc",
     "ClientSecrets": [],
     "RequireClientSecret": true,
@@ -408,7 +409,7 @@
     "BackChannelLogoutUri": null,
     "BackChannelLogoutSessionRequired": true,
     "AllowOfflineAccess": false,
-    "AllowedScopes": [ "openid", "profile", "masterapi", "deviceapi" ],
+    "AllowedScopes": [ "openid", "profile", "masterapi", "amms.hanet" ],
     "AlwaysIncludeUserClaimsInIdToken": false,
     "IdentityTokenLifetime": 300,
     "AllowedIdentityTokenSigningAlgorithms": [],
@@ -436,7 +437,7 @@
   },
   {
     "Enabled": true,
-    "ClientId": "bi.device.webapi.swagger.prod",
+    "ClientId": "amms.hanet.webapi.swagger.prod",
     "ProtocolType": "oidc",
     "ClientSecrets": [],
     "RequireClientSecret": true,
@@ -451,14 +452,14 @@
     "AllowPlainTextPkce": false,
     "RequireRequestObject": false,
     "AllowAccessTokensViaBrowser": true,
-    "RedirectUris": [ "https://vivocity.acs.vn:8003/swagger/oauth2-redirect.html" ],
-    "PostLogoutRedirectUris": [ "https://vivocity.acs.vn:8003/swagger/oauth2-redirect.html" ],
+    "RedirectUris": [ "https://viettelhanet.acs.vn:8003/swagger/oauth2-redirect.html" ],
+    "PostLogoutRedirectUris": [ "https://viettelhanet.acs.vn:8003/swagger/oauth2-redirect.html" ],
     "FrontChannelLogoutUri": null,
     "FrontChannelLogoutSessionRequired": true,
     "BackChannelLogoutUri": null,
     "BackChannelLogoutSessionRequired": true,
     "AllowOfflineAccess": false,
-    "AllowedScopes": [ "openid", "profile", "masterapi", "deviceapi" ],
+    "AllowedScopes": [ "openid", "profile", "masterapi", "amms.hanet" ],
     "AlwaysIncludeUserClaimsInIdToken": false,
     "IdentityTokenLifetime": 300,
     "AllowedIdentityTokenSigningAlgorithms": [],
@@ -481,7 +482,7 @@
     "UserSsoLifetime": null,
     "UserCodeType": null,
     "DeviceCodeLifetime": 300,
-    "AllowedCorsOrigins": [ "https://vivocity.acs.vn:8003" ],
+    "AllowedCorsOrigins": [ "https://viettelhanet.acs.vn:8003" ],
     "Properties": {}
   }
 ]

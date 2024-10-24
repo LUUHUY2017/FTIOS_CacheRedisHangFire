@@ -1,11 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+	
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
@@ -41,9 +45,16 @@
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.29" />
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.3" />
 
+		<PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
+		<PackageReference Include="MassTransit" Version="8.2.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.4" />
+
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Controllers\" />
+	  <ProjectReference Include="..\AMMS.DeviceData\AMMS.DeviceData.csproj" />
+	  <ProjectReference Include="..\Services\Share\Share.WebApp\Share.WebApp.csproj" />
+	  <ProjectReference Include="..\Services\Share\Shared.Core\Shared.Core.csproj" />
 	</ItemGroup>
 </Project>

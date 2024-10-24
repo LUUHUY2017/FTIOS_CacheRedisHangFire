@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>AMMS IoT BI | @ViewData["Title"]</title>
+
+    <!-- Global stylesheets -->
+    <link href="~/assets/fonts/inter/inter.css?v=@DateTime.Now" rel="stylesheet" type="text/css">
+    <link href="~/assets/icons/phosphor/styles.min.css?v=@DateTime.Now" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/ltr/all.min.css?v=@DateTime.Now" id="stylesheet" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=@DateTime.Now" type="text/css">
+
+    <link rel="stylesheet" href="~/lib/alertifyjs/css/alertify.css">
+    <link rel="stylesheet" href="~/lib/alertifyjs/css/themes/semantic.css">
+    <link rel="stylesheet" href="~/lib/vue-datetime/vue-datetime.min.css">
+    <link rel="stylesheet" href="~/assets/libs/bootstrap-table/bootstrap-table.min.css">
+    <link rel="stylesheet" href="~/css/site.css?v=@DateTime.Now" type="text/css">
+    <!-- /global stylesheets -->
+    <!-- Core JS files -->
+    <script src="~/assets/demo/demo_configurator.js?v=@DateTime.Now"></script>
+    <script src="~/assets/js/bootstrap/bootstrap.bundle.min.js?v=@DateTime.Now"></script>
+
+    <script src="~/assets/js/app.js?v=@DateTime.Now"></script>
+
+    <script src="~/assets/js/vue/vue.js?v=@DateTime.Now"></script>
+    <script src="~/assets/js/axios/axios.js?v=@DateTime.Now"></script>
+    <script src="~/assets/js/jquery/jquery.min.js?v=@DateTime.Now"></script>
+
+    <script src="~/assets/js/vendor/forms/validation/validator.min.js?v=@DateTime.Now"></script>
+
+    <script src="~/assets/libs/bootstrap-table/bootstrap-table_vh.min.js"></script>
+    <script src="~/assets/libs/bootstrap-table/bootstrap-table-vue_vh.min.js"></script>
+
+    <script src="~/lib/alertifyjs/alertify.js?v=@DateTime.Now"></script>
+    <script src="~/lib/vue-datetime/luxon.min.js?v=@DateTime.Now"></script>
+    <script src="~/lib/vue-datetime/vue-datetime.js?v=@DateTime.Now"></script>
+
+    <script src="~/js/datetime/DateTime.js" asp-append-version="true"></script>
+    <script src="~/js/datetime/moment.min.js" asp-append-version="true"></script>
+
+    <script src="~/assets/libs/select2/select2.min.js"></script>
+    <script src="~/assets/demo/pages/form_select2.js"></script>
+
+
+    <script src="~/lib/microsoft-signalr/signalr.js"></script>
+
+    <script>
+        "use strict";
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/ammsHub")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        async function StartSignalR() {
+            try {
+                await connection.start();
+                console.log("SignalR connected");
+            } catch (err) {
+                console.log(err);
+                setTimeout(() => start(), 5000);
+            }
+        };
+
+        connection.onclose(async () => {
+            await StartSignalR();
+        });
+        // connection.on("DeviceMonitorReload", function (items) {
+        //     console.log("DeviceMonitorReload");
+        // });
+        connection.on("SystemLog", function (items) {
+            console.log("SystemLog");
+        });
+
+        connection.on("ServerTime", function (dateTime, dateTimeTicks) {
+            console.log("ServerTime " + dateTime);
+        });
+
+
+        // Start the connection.
+        function Start() {
+            StartSignalR();
+        }
+
+    </script>
+</head>
+
+<body>
+    <!-- Hiệu ứng loading -->
+    <div class="loader">
+        <span class="fa fa-spinner xoay icon"></span>
+    </div>
+
+    <!-- Main navbar -->
+    @await Html.PartialAsync("/Views/Shared/Components/_Navbar-HeaderPartial.cshtml")
+    <!-- Demo config -->
+    @await Html.PartialAsync("/Views/Shared/Components/_Demo-ConfigPartial.cshtml")
+
+    <div class="page-content" id="page-content">
+        <!-- Main sidebar -->
+        @await Html.PartialAsync("/Views/Shared/Components/_sidebar-ContentPartial.cshtml")
+        @RenderBody()
+    </div>
+    <script src="~/assets/js/styles/custom.js?v=@DateTime.Now"></script>
+</body>
+</html>
