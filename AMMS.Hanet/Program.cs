@@ -12,7 +12,6 @@ using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
 
 IServiceCollection services = builder.Services;
@@ -20,8 +19,6 @@ IConfiguration configuration = builder.Configuration;
 IConfigurationRoot configRoot = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
 
 services.AddOptions(); //Kích hoạt Options
-services.AddVersion();// Versioning
-
 services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
@@ -36,12 +33,14 @@ services.AddCors(options =>
         ;
     });
 });
+services.AddVersion();// Versioning
+
+services.AddApplicationServices();
+services.AddDbContext(configuration);
 
 AppSettings appSettings = new AppSettings();
 configuration.Bind(appSettings);
 AuthBaseController.AMMS_Master_HostAddress = builder.Configuration["Authentication:Authority"];
-
-services.AddDbContext(configuration);
 
 // Add Auth
 services.Configure<Authentication>(configuration.GetSection("Authentication"));
