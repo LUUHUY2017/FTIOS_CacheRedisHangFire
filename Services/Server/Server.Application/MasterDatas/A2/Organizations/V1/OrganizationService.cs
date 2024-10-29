@@ -1,7 +1,13 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Server.Application.MasterDatas.A2.Organizations.V1.Models;
 using Server.Core.Entities.A2;
+using Server.Core.Identity.Entities;
 using Server.Core.Interfaces.A2.Organizations;
+using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
 using Shared.Core.Identity.Object;
 
@@ -9,16 +15,15 @@ namespace Server.Application.MasterDatas.A2.Organizations.V1;
 
 public class OrganizationService
 {
-    public OrganizationService(IOrganizationRepository organizationRepository)
-    {
-        _organizationRepository = organizationRepository;
-    }
+    public string? UserId {  get; set; }
+    private readonly UserManager<ApplicationUser> _userManager;
 
     private readonly IOrganizationRepository _organizationRepository;
     private readonly IMapper _mapper;
-    public OrganizationService(IOrganizationRepository organizationRepository, IMapper mapper)
+    public OrganizationService(IOrganizationRepository organizationRepository, IMapper mapper, UserManager<ApplicationUser> userManager)
     {
         _organizationRepository = organizationRepository;
+        _userManager = userManager;
         _mapper = mapper;
     }
 
@@ -82,6 +87,26 @@ public class OrganizationService
         }
     }
 
+    public async Task<Result<List<OrganizationResponse>>> GetForUser()
+    {
+        try
+        {
+            var retVal = await _organizationRepository.GetAllAsync();
+            var userOrg = (await _userManager.FindByIdAsync(UserId))?.OrganizationId;
+
+            if (userOrg != "" && userOrg != null && userOrg != "0")
+            {
+                retVal = retVal.Where(x => x.Id == userOrg).ToList();
+            }
+            var listMap = _mapper.Map<List<OrganizationResponse>>(retVal);
+            return new Result<List<OrganizationResponse>>(listMap, "Thành công", true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<List<OrganizationResponse>>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
     public async Task<Result<OrganizationResponse>> GetFirstOrDefault()
     {
         try
@@ -96,4 +121,9 @@ public class OrganizationService
             return new Result<OrganizationResponse>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
+
+
+
+
+
 }

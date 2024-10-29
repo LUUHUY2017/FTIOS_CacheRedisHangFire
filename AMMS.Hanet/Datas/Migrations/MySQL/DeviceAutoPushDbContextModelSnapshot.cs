@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace AMMS.Hanet.Datas.Migrations.MySQL
+namespace AMMS.Hanet.Datas.Migrations.MySql
 {
     [DbContext(typeof(DeviceAutoPushDbContext))]
     partial class DeviceAutoPushDbContextModelSnapshot : ModelSnapshot
@@ -19,6 +19,46 @@ namespace AMMS.Hanet.Datas.Migrations.MySQL
                 .HasDefaultSchema("Hanet")
                 .HasAnnotation("ProductVersion", "6.0.33")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("AMMS.Hanet.Datas.Entities.app_config", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(95)");
+
+                    b.Property<string>("AccessToken")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ClientScret")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("longtext");
+
+                    b.Property<long?>("Expire")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("GrantType")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TokenType")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("app_config", "Hanet");
+                });
 
             modelBuilder.Entity("AMMS.Hanet.Datas.Entities.hanet_terminal", b =>
                 {

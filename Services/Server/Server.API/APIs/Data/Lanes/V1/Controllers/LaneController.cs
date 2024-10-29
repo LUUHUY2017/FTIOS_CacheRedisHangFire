@@ -46,7 +46,7 @@ namespace Server.API.APIs.Data.Lanes.V1.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new Result<TotalDevice>(null, "Lỗi:" + ex.Message, false));
+                return Ok(new Result<List<A2_Lane>>(null, "Lỗi:" + ex.Message, false));
             }
         }
 
@@ -64,7 +64,7 @@ namespace Server.API.APIs.Data.Lanes.V1.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new Result<TotalDevice>(null, "Lỗi:" + ex.Message, false));
+                return Ok(new Result<List<A2_Lane>>(null, "Lỗi:" + ex.Message, false));
             }
         }
 

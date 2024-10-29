@@ -45,17 +45,6 @@ public class AMMS_Client
             request.Content = content;
             var response = await client.SendAsync(request);
 
-            //var client = new HttpClient();
-            //var request = new HttpRequestMessage(HttpMethod.Post, "https://amms.acs.vn:8000/connect/token");
-            //var collection = new List<KeyValuePair<string, string>>();
-            //collection.Add(new("client_id", "amms.delivery.api"));
-            //collection.Add(new("client_secret", "secret"));
-            //collection.Add(new("grant_type", "client_credentials"));
-            //var content = new FormUrlEncodedContent(collection);
-            //request.Content = content;
-            //var response = await client.SendAsync(request);
-
-
             var retContent = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {

@@ -1,7 +1,7 @@
-﻿using AMMS.Notification.Datas;
+﻿using AMMS.DeviceData.RabbitMq;
+using AMMS.Notification.Datas;
 using AMMS.Notification.Datas.Interfaces.SendEmails;
 using AMMS.Notification.Datas.Repositories.SendEmails;
-using AMMS.Notification.Workers.Emails;
 using EntityFrameworkCore.UseRowNumberForPaging;
 using EventBus.Messages;
 using MassTransit;
@@ -16,43 +16,36 @@ using Server.Application.MasterDatas.A0.Accounts.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
 using Server.Application.MasterDatas.A2.Devices;
-
 using Server.Application.MasterDatas.A2.Organizations.V1;
-using Server.Core.Identity.Interfaces.Accounts.Services;
-using Server.Core.Interfaces.A0;
-
+using Server.Application.MasterDatas.A2.Students.V1;
+using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 using Server.Application.Services.VTSmart;
 using Server.Core.Identity.Interfaces.Accounts.Services;
-
+using Server.Core.Interfaces.A0;
 using Server.Core.Interfaces.A2.Devices;
-
 using Server.Core.Interfaces.A2.Organizations;
-
 using Server.Core.Interfaces.A2.Persons;
-
 using Server.Core.Interfaces.A2.ScheduleSendEmails;
 using Server.Core.Interfaces.A2.SendEmails;
 using Server.Core.Interfaces.A2.Students;
 using Server.Core.Interfaces.GIO.VehicleInOuts;
+using Server.Core.Interfaces.TA.TimeAttendenceDetails;
+using Server.Core.Interfaces.TA.TimeAttendenceEvents;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Server.Infrastructure.Repositories.A0.AttendanceConfigs;
 using Server.Infrastructure.Repositories.A0.TimeConfigs;
 using Server.Infrastructure.Repositories.A2.Devices;
-
 using Server.Infrastructure.Repositories.A2.Organizations;
-
 using Server.Infrastructure.Repositories.A2.Persons;
-
 using Server.Infrastructure.Repositories.A2.ScheduleSendEmails;
 using Server.Infrastructure.Repositories.A2.SendEmails;
 using Server.Infrastructure.Repositories.A2.Students;
+using Server.Infrastructure.Repositories.GIO.TimeAttendenceDetails;
 using Server.Infrastructure.Repositories.GIO.VehicleInOuts;
 using Share.Core.Pagination;
 using Shared.Core.Caches.Redis;
-using Shared.Core.Emails.V1;
 using Shared.Core.Emails.V1.Adapters;
-using Shared.Core.Emails.V1.Commons;
 using Shared.Core.Repositories;
 using Shared.Core.SignalRs;
 using System.Reflection;
@@ -85,35 +78,39 @@ public static class DependencyInjection
 
     public static void AddEventBusService(this IServiceCollection services, IConfiguration configuration)
     {
-        var eventBusSettings = configuration.GetSection("EventBusSettings");  // đọc config
-        services.Configure<EventBusSettings>(eventBusSettings);
+        // Đọc Config AppSetting
+        var eventBusSettings = configuration.GetSection("EventBusSettings");
+        // Đăng ký EventBusAdapter
         services.AddScoped<IEventBusAdapter, EventBusAdapter>();
+        // Kết nối RabbitMQ
+        services.Configure<EventBusSettings>(eventBusSettings);
+
+        // Đăng ký dịch vụ Email
+        //services.AddScoped<SendEmailMessageService1>();
+        //services.AddScoped<EmailSenderServiceV1>();
+        //services.AddScoped<EmailRabbitMQConsummerV1>();
+        //services.AddScoped<SendEmailMessageResponseConsumer1>();
+
+        // Đăng ký dịch vụ SyncDevice&Ta
+        services.AddScoped<TimeAttendenceEventService>();
+        services.AddScoped<StudentConsumer>();
 
 
+        services.AddScoped<TimeAttendenceEventService>();
+        services.AddScoped<TimeAttendenceEventConsumer>();
 
-        services.AddScoped<SendEmailMessageService1>();
-        services.AddScoped<EmailSenderServiceV1>();
-        services.AddScoped<EmailRabbitMQConsummerV1>();
-        services.AddScoped<SendEmailMessageResponseConsumer1>();
-
-
-        //services.AddScoped<BrickstreamConsumer>();
-        //services.AddScoped<PeopleCounttingConsumer>();
-        //services.AddScoped<DeviceConsumer>();
-        //services.AddScoped<PeopleCounttingConsumer>();
 
 
         services.AddMassTransit(config =>
         {
-            config.AddConsumer<EmailRabbitMQConsummerV1>();
-            config.AddConsumer<SendEmailMessageResponseConsumer1>();
+            // Đăng ký dịch vụ nghe vào Rabbbit
+            //config.AddConsumer<EmailRabbitMQConsummerV1>();
+            //config.AddConsumer<SendEmailMessageResponseConsumer1>();
 
 
             ////Đăng ký xử lý bản tin data XML của Brickstream
-            //config.AddConsumer<BrickstreamConsumer>();
-            //config.AddConsumer<PeopleCounttingConsumer>();
-            //config.AddConsumer<DeviceConsumer>();
-            ////config.AddConsumer<PeopleCounttingConsumer>();
+            config.AddConsumer<StudentConsumer>();
+            config.AddConsumer<TimeAttendenceEventConsumer>();
 
 
             config.UsingRabbitMq((ct, cfg) =>
@@ -126,40 +123,40 @@ public static class DependencyInjection
 
                 cfg.Host(configuration["EventBusSettings:HostAddress"]);
 
-
-                ////provide the queue name with consumer settings
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.BrickstreamXMLData}", c =>
-                ////cfg.ReceiveEndpoint(EventBusConstants.BrickstreamXMLData, c =>
-                //{
-                //    c.ConfigureConsumer<BrickstreamConsumer>(ct);
-                //});
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.BrickstreamData}", c =>
-                ////cfg.ReceiveEndpoint(EventBusConstants.BrickstreamData, c =>
-                //{
-                //    c.ConfigureConsumer<PeopleCounttingConsumer>(ct);
-                //});
-
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.DeviceOnlineOffline_Queue}", c =>
-                ////cfg.ReceiveEndpoint(EventBusConstants.DeviceOnlineOffline_Queue, c =>
-                //{
-                //    c.ConfigureConsumer<DeviceConsumer>(ct);
-                //});
-
-                //Email Sending
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EmailConst.EventBusChanelSendEmail}", c =>
+                #region  Device
+                //// Nhận Response từ Sự kiện đồng bộ thiết bị trả về
+                cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Device_Auto_Push_D2S}", c =>
+                //cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Server_Auto_Push_S2D}", c =>
                 {
-                    c.ConfigureConsumer<EmailRabbitMQConsummerV1>(ct);
+                    c.ConfigureConsumer<StudentConsumer>(ct);
                 });
-                //Email Receiving
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EmailConst.EventBusChanelSendEmailResponse}", c =>
-                {
-                    c.ConfigureConsumer<SendEmailMessageResponseConsumer1>(ct);
-                });
+                #endregion
 
-                //cfg.ReceiveEndpoint(EventBusConstants.BrickstreamData, c =>
+                #region  Report
+                //// Nhận Response từ Sự kiện đồng bộ thiết bị trả về
+                cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Data_Auto_Push_D2S}", c =>
+                {
+                    c.ConfigureConsumer<TimeAttendenceEventConsumer>(ct);
+                });
+                #endregion
+
+
+
+
+                #region Email 
+                ////Email Sending
+                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EmailConst.EventBusChanelSendEmail}", c =>
                 //{
-                //    c.ConfigureConsumer<PeopleCounttingConsumer>(ct);
+                //    c.ConfigureConsumer<EmailRabbitMQConsummerV1>(ct);
                 //});
+                ////Email Receiving
+                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EmailConst.EventBusChanelSendEmailResponse}", c =>
+                //{
+                //    c.ConfigureConsumer<SendEmailMessageResponseConsumer1>(ct);
+                //});
+                #endregion
+
+
 
                 cfg.ConfigureEndpoints(ct);
             });
@@ -170,11 +167,12 @@ public static class DependencyInjection
 
     public static void AddAppService(this IServiceCollection service)
     {
+        service.AddMediatR(Assembly.GetExecutingAssembly());
+
         //MasterData
         service.AddScoped(typeof(IAsyncRepository<>), typeof(RepositoryBaseMasterData<>));
         service.AddScoped<IMasterDataDbContext, MasterDataDbContext>();
 
-        service.AddMediatR(Assembly.GetExecutingAssembly());
 
         //Cache
         service.AddSingleton<ICacheService, CacheService>();
@@ -193,11 +191,10 @@ public static class DependencyInjection
         service.AddScoped<IScheduleSendEmailDetailRepository, ScheduleSendEmailDetailRepository>();
         service.AddScoped<IScheduleSendMailRepository, ScheduleSendEmailRepository>();
 
-        // Organization
-        //service.AddScoped<IOrganizationRepository, OrganizationRepository>();
 
         // Person
         service.AddScoped<IPersonRepository, PersonRepository>();
+        service.AddScoped<SyncDeviceServerService>();
 
         //SendEmail
         service.AddScoped<ISendEmailRepository, SendEmailRepository>();
@@ -209,13 +206,19 @@ public static class DependencyInjection
         //Device
         service.AddScoped<IDeviceRepository, DeviceRepository>();
         service.AddScoped<DeviceService>();
+        service.AddScoped<DeviceAdminService>();
 
         //Lane
         service.AddScoped<ILaneRepository, LaneRepository>();
 
         // Students
         service.AddScoped<IStudentRepository, StudentRepository>();
+        service.AddScoped<StudentService>();
 
+
+        //  TimeAttendenceEvents
+        service.AddScoped<ITATimeAttendenceEventRepository, TATimeAttendenceEventRepository>();
+        service.AddScoped<ITATimeAttendenceDetailRepository, TATimeAttendenceDetailRepository>();
 
 
         // AMMS. Notification -  SendEmail
@@ -241,7 +244,7 @@ public static class DependencyInjection
         service.AddScoped<TimeConfigService>();
 
         // Đồng bộ dữ liệu
-        service.AddScoped<SyncDataSmartService>();
+        service.AddScoped<SmartService>();
 
 
     }
@@ -263,13 +266,16 @@ public static class DependencyInjection
                 options.UseMySql(
                         configuration.GetConnectionString("MasterDBConnection")
                         , ServerVersion.AutoDetect(configuration.GetConnectionString("MasterDBConnection"))
+
                         //, o => o.SchemaBehavior(MySqlSchemaBehavior.Ignore) 
                         , o => o.SchemaBehavior(MySqlSchemaBehavior.Translate, (schema, table) => $"{schema}.{table}")
                         )
                     //.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
                     //.EnableSensitiveDataLogging()
                     //.EnableDetailedErrors()
+                    , ServiceLifetime.Scoped
                     );
+
             }
             else if (IdentityDBConnectionType == "PostgreSQL")
             {

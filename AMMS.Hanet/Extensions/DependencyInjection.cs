@@ -1,4 +1,5 @@
 ﻿using AMMS.DeviceData.RabbitMq;
+using AMMS.Hanet.Applications.AppConfigs.V1;
 using AMMS.Hanet.Datas.Databases;
 using EventBus.Messages;
 using MassTransit;
@@ -14,6 +15,11 @@ namespace AMMS.Hanet.Extensions;
 
 public static class DependencyInjection
 {
+    public static IServiceCollection AddAddAutoMapperServices(this IServiceCollection services)
+    {
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        return services;
+    }
     public static void AddVersion(this IServiceCollection service)
     {
         service.AddApiVersioning(options =>
@@ -28,6 +34,12 @@ public static class DependencyInjection
             options.SubstituteApiVersionInUrl = true;
 
         });
+    }
+
+    public static void AddScopedServices(this IServiceCollection service)
+    {
+        // AppConfig
+        service.AddScoped<AppConfigService>();
     }
 
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)

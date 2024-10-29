@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMMS.DeviceData.RabbitMq
+﻿namespace AMMS.DeviceData.RabbitMq
 {
     public class RB_ServerRequest
     {
@@ -21,6 +15,10 @@ namespace AMMS.DeviceData.RabbitMq
         /// Id thiết bị
         /// </summary>
         public string DeviceId { get; set; }
+        /// <summary>
+        /// SerialNumber thiết bị
+        /// </summary>
+        public string SerialNumber { get; set; }
         /// <summary>
         /// Loại thiết bị
         /// </summary>
@@ -42,5 +40,7 @@ namespace AMMS.DeviceData.RabbitMq
         public static string UserInfo = "UserInfo";
         public static string UserFace = "UserFace";
         public static string UserFinger = "UserFinger";
+        public static string Device = "Device";
+
     }
 }

@@ -404,6 +404,86 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.ToTable("A0_RoleGroupUser");
                 });
 
+            modelBuilder.Entity("Server.Core.Entities.A0.A0_TimeConfig", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<bool?>("Actived")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<TimeSpan?>("AfternoonBreakTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("AfternoonEndTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("AfternoonLateTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("AfternoonStartTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<TimeSpan?>("EveningBreakTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("EveningEndTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("EveningLateTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("EveningStartTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Logs")
+                        .HasColumnType("longtext");
+
+                    b.Property<TimeSpan?>("MorningBreakTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("MorningEndTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("MorningLateTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<TimeSpan?>("MorningStartTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OrganizationId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("ReferenceId")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("A0_TimeConfig");
+                });
+
             modelBuilder.Entity("Server.Core.Entities.A0.A2_PersonFace", b =>
                 {
                     b.Property<string>("Id")
@@ -503,9 +583,9 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.Property<string>("ReferenceId")
                         .HasColumnType("longtext");
 
-                    b.Property<bool?>("SynAction")
+                    b.Property<string>("SynAction")
                         .HasMaxLength(50)
-                        .HasColumnType("tinyint(50)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("SynCardMessage")
                         .HasColumnType("longtext");
@@ -528,77 +608,12 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.Property<string>("SynMessage")
                         .HasColumnType("longtext");
 
+                    b.Property<bool?>("SynStatus")
+                        .HasColumnType("tinyint(1)");
+
                     b.HasKey("Id");
 
                     b.ToTable("A2_PersonSynToDevice");
-                });
-
-            modelBuilder.Entity("Server.Core.Entities.A0.A0_TimeConfig", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<bool?>("Actived")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<TimeSpan?>("AfternoonBreakTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeSpan?>("AfternoonEndTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeSpan?>("AfternoonLateTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeSpan?>("AfternoonStartTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Logs")
-                        .HasColumnType("longtext");
-
-                    b.Property<TimeSpan?>("MorningBreakTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeSpan?>("MorningEndTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeSpan?>("MorningLateTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeSpan?>("MorningStartTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("OrganizationId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Reason")
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("A0_TimeConfig");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_BusinessUnit", b =>
@@ -1691,14 +1706,103 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.ToTable("GIO_VehicleInOut");
                 });
 
+            modelBuilder.Entity("Server.Core.Entities.TA.TA_TimeAttendenceDetail", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime?>("AbsenceTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool?>("Actived")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool?>("IsLate")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("IsOffPeriod")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("IsOffSoon")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("LateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Logs")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("OffSoonTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("OrganizationId")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool?>("PeriodI")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("PeriodII")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("PeriodIII")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("PeriodIV")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("PeriodV")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("PeriodVI")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("ReferenceId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TA_TimeAttendenceEventId")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TA_TimeAttendenceDetail");
+                });
+
             modelBuilder.Entity("Server.Core.Entities.TA.TA_TimeAttendenceEvent", b =>
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<DateTime?>("AbsenceDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<bool?>("Actived")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("AttendenceSection")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClassCode")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(50)
@@ -1724,6 +1828,9 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.Property<bool?>("EventType")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("FormSendSMS")
+                        .HasColumnType("int");
 
                     b.Property<byte?>("GetMode")
                         .HasColumnType("tinyint unsigned");
@@ -1754,10 +1861,22 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.Property<string>("ReferenceId")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("SchoolCode")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SchoolYearCode")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ShiftCode")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("StudentCode")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("TAMessage")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ValueAbSent")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");

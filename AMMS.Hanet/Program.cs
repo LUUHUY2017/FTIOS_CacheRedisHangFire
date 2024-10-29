@@ -110,6 +110,14 @@ services.AddAuthorization(options =>
 
 builder.Services.AddControllers();
 services.AddEndpointsApiExplorer();
+
+//AutoMapper
+services.AddAutoMapper(typeof(Program));
+services.AddAddAutoMapperServices();
+
+//ScopedServices
+services.AddScopedServices();
+
 //Swagger
 //services.AddSwaggerGen();
 services.AddSwaggerGen(c =>

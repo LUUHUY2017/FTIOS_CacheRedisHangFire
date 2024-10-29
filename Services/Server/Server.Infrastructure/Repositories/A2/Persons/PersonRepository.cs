@@ -1,39 +1,41 @@
 ﻿using AMMS.Shared.Commons;
 using Microsoft.EntityFrameworkCore;
+using Server.Core.Entities.A0;
 using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.Persons;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
-using Shared.Core.Identity.Object;
-using System.Linq.Expressions;
 
 namespace Server.Infrastructure.Repositories.A2.Persons;
 
-public class PersonRepository : IPersonRepository
+public class PersonRepository : RepositoryBaseMasterData<A2_Person>, IPersonRepository
 {
-    private readonly IMasterDataDbContext _db;
 
     public string UserId { get; set; }
-
-    public PersonRepository(IMasterDataDbContext biDbContext)
+    public PersonRepository(MasterDataDbContext dbContext) : base(dbContext)
     {
-        _db = biDbContext;
     }
 
-    public async Task<Result<A2_Person>> ActiveAsync(ActiveRequest data)
+    public async Task<Result<A2_Person>> SaveAsync(A2_Person cus)
     {
         string message = "";
         try
         {
-            var _order = _db.A2_Person.FirstOrDefault(o => o.Id == data.Id);
-            if (_order != null)
+            var org = await _dbContext.A2_Person.FirstOrDefaultAsync(o => o.Id == cus.Id);
+            if (org != null)
             {
-                _order.Actived = true;
-                _db.A2_Person.Update(_order);
+                cus.CopyPropertiesTo(org);
+                await UpdateAsync(org);
                 message = "Cập nhật thành công";
             }
-            var retVal = await _db.SaveChangesAsync();
-            return new Result<A2_Person>(_order, message, true);
+            else
+            {
+                org = new A2_Person();
+                cus.CopyPropertiesTo(org);
+                await AddAsync(org);
+                message = "Thêm mới thành công";
+            }
+            return new Result<A2_Person>(org, message, true);
         }
         catch (Exception ex)
         {
@@ -41,87 +43,35 @@ public class PersonRepository : IPersonRepository
         }
     }
 
-    public async Task<Result<A2_Person>> UpdateAsync(A2_Person data)
+    public async Task<Result<A2_PersonFace>> SaveImageAsync(string personId, string base64String)
     {
         string message = "";
         try
         {
-            var _order = await _db.A2_Person.SingleOrDefaultAsync(o => o.Id == data.Id); // Use async version of query
-            if (_order != null)
+            var org = await _dbContext.A2_PersonFace.FirstOrDefaultAsync(o => o.PersonId == personId);
+            if (org != null)
             {
-                data.CopyPropertiesTo(_order);
-                _db.A2_Person.Update(_order);
+                org.FaceData = base64String;
+                _dbContext.A2_PersonFace.Update(org);
                 message = "Cập nhật thành công";
             }
             else
             {
-                _order = new A2_Person();
-                data.CopyPropertiesTo(_order);
-                await _db.A2_Person.AddAsync(_order);
+                org = new A2_PersonFace();
+                org.PersonId = personId;
+                org.FaceIndex = 1;
+                org.FaceData = base64String;
+                _dbContext.A2_PersonFace.Add(org);
                 message = "Thêm mới thành công";
             }
+            await _dbContext.SaveChangesAsync();
 
-            try
-            {
-                var retVal = await _db.SaveChangesAsync();
-
-            }
-            catch (Exception ex)
-            {
-                // Log and handle the exception, if necessary
-                message = $"Error occurred: {ex.Message}";
-            }
-
-            return new Result<A2_Person>(_order, message, true);
+            return new Result<A2_PersonFace>(org, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_Person>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<A2_PersonFace>("Lỗi: " + ex.ToString(), false);
         }
     }
 
-    public Task<List<A2_Person>> GetAllAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<A2_Person>> GetAllAsync(Expression<Func<A2_Person, bool>> predicate)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Result<A2_Person?>> GetByIdAsync(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Result<A2_Person?>> GetByFirstAsync(Expression<Func<A2_Person, bool>> predicate)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Result<A2_Person>> AddAsync(A2_Person entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Result<List<A2_Person>>> AddRangeAsync(List<A2_Person> entities)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Result<List<A2_Person>>> UpdateRangeAsync(List<A2_Person> entities)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Result<int>> DeleteAsync(DeleteRequest request)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Result<A2_Person>> InactiveAsync(InactiveRequest request)
-    {
-        throw new NotImplementedException();
-    }
 }

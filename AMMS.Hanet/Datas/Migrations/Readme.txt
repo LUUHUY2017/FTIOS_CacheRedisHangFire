@@ -1,3 +1,3 @@
-﻿add-migration Init_DB -context DeviceAutoPushDbContext -Project AMMS.ZkAutoPush -o Datas/Migrations/MySql
-Remove-Migration -context DeviceAutoPushDbContext -Project AMMS.ZkAutoPush
+﻿add-migration Init_DB -context DeviceAutoPushDbContext -Project AMMS.Hanet -o Datas/Migrations/MySql
+Remove-Migration -context DeviceAutoPushDbContext -Project AMMS.Hanet
 update-database -context DeviceAutoPushDbContext

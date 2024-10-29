@@ -16,5 +16,10 @@ public class A0_TimeConfig : EntityBase
     public TimeSpan? AfternoonLateTime { get; set; }
     public TimeSpan? AfternoonBreakTime { get; set; }
 
+    public TimeSpan? EveningStartTime { get; set; }
+    public TimeSpan? EveningEndTime { get; set; }
+    public TimeSpan? EveningLateTime { get; set; }
+    public TimeSpan? EveningBreakTime { get; set; }
+
     public string? Note { get; set; }
 }

@@ -23,9 +23,10 @@ public static class RoleConst
 
     #region Role
 
-    public const string DashboardPage = $"{SuperAdmin_Role}";
-    public const string AdminPage = $"{SuperAdmin_Role},{Admin_Role}";
-    public const string MasterDataPage = $"{SuperAdmin_Role}";
+    public const string SuperAdminPage = $"{SuperAdmin_Role}";
+    public const string AdminPage = $"{Admin_Role}";
+    public const string ManagerPage = $"{Manager_Role}";
+    public const string OperatorPage = $"{Operator_Role}";
 
 
     #endregion

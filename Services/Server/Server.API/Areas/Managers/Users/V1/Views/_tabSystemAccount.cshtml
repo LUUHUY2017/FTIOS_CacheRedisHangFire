@@ -35,10 +35,23 @@
                             </div>
                         </div>
 
+                        @* <div class="row mb-3">
+                            <label class="col-form-label text-end col-lg-2">Loại tài khoản <span class="text-danger">*</span></label>
+                            <div class="col-lg-8">
+                                <select class="form-select" data-placeholder="Vui lòng chọn loại tài khoản" required v-model="item.type">
+                                    <option v-for="option in combobox.types" v-bind:value="option.id">
+                                        {{ option.name }}
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback">Vui lòng chọn loại tài khảon</div>
+                                <div class="valid-feedback"> </div>
+                            </div>
+                        </div> *@
+
                         <div class="row mb-3">
                             <label class="col-form-label text-end col-lg-2">Tài khoản<span class="text-danger">*</span></label>
                             <div class="col-lg-8">
-                                <input type="text" class="form-control" pattern="[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required placeholder="Tài khoản đăng nhập(Email)" v-model="item.userName">
+                                <input type="text" class="form-control"  required placeholder="Tài khoản đăng nhập(Email)" v-model="item.userName">
                                 <div class="invalid-feedback">Vui lòng nhập tên đăng nhập là email</div>
                                 <div class="valid-feedback"> </div>
                             </div>
@@ -65,7 +78,7 @@
                         <div class="row mb-3">
                             <label class="col-form-label text-end col-lg-2">Email</label>
                             <div class="col-lg-8">
-                                <input type="text" pattern="[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" class="form-control" placeholder="Email" v-model="item.email">
+                                <input type="text" class="form-control" placeholder="Email" v-model="item.email">
                                 <div class="invalid-feedback">Vui lòng nhập đúng định dạng email</div>
                                 <div class="valid-feedback"> </div>
                             </div>
@@ -188,6 +201,15 @@
                     field: 'firstName'
                 },
                 {
+                    title: 'Loại tài khoản',
+                    sortable: true,
+                    field: 'type',
+                    formatter: (value, row, index) => {
+                        const _type = _tab_users.combobox.types.find(b => b.id === value);
+                        return _type ? _type.name : '';
+                    },
+                },
+                {
                     title: 'Tài khoản',
                     sortable: true,
                     field: 'userName'
@@ -198,7 +220,7 @@
                     field: 'email'
                 },
                 {
-                    title: 'Phone Number',
+                    title: 'Số điện thọai',
                     sortable: true,
                     field: 'phoneNumber'
                 },
@@ -437,6 +459,7 @@
             data_user_role_info: [],
 
             combobox: {
+                types: [],
             },
             object: {
                 config: {
@@ -513,6 +536,7 @@
                 _tab_users.formAction = 'Edit';
 
                 {
+                    console.log(row);
                     _tab_users.item = row;
                     _tab_users.onGetDetail();
                     bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
@@ -526,6 +550,9 @@
                 if (this.item.password !== this.item.passwordConfirm && this.formAction === 'Add') {
                     alertify.warning("Mật khẩu và mật khẩu nhập lại phải giống nhau!");
                     return;
+                }
+                if (this.formAction == 'Add') {
+                    this.item.type = "System";
                 }
                 $('.loader').show();
                 axios.post('/v1/User/Update', this.item).then(response => {
@@ -633,8 +660,20 @@
                 });
             },
 
+            loadCombox() {
+                axios.get('/api/v1/user/GetTypes', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.types = response.data.data;
+                }).catch(error => {
+                    console.warn(error);
+                });;
+            },
+
         },
         mounted() {
+            this.loadCombox();
             this.onGet();
         },
     })

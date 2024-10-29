@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Cấu hình";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+<div class="content-wrapper" id="webui">
+    <!-- Inner content -->
+    <div class="content-inner">
+        <div class="content">
+            <div class="card">
+                <div class="card-body">
+                    @{
+                        string tab = Context.Request.Query["tab"].ToString().ToLower();
+                        if (string.IsNullOrEmpty(tab))
+                            tab = "cauhinhthongtinungdung";
+
+                        string tab_cauhinhthongtinungdung = "";
+                        if (tab == "cauhinhthongtinungdung")
+                            tab_cauhinhthongtinungdung = "active";
+
+                        // string tab_cauhinhtruong = "";
+                        // if (tab == "cauhinhtruong")
+                        //     tab_cauhinhtruong = "active";
+                        // <li class="nav-item">
+                        //     <a href="@Url.Action("index", new { tab="cauhinhtruong" })" class="nav-link @tab_cauhinhtruong">
+                        //         <i class="ph-house m-2"></i>
+                        //         Trường học
+                        //     </a>
+                        // </li>
+                        // <div class="tab-pane fade mt-1 show @tab_cauhinhtruong" role="tabpanel">
+                        //     @if (tab == "cauhinhtruong")
+                        //     {
+                        //         <div class="accordion" id="tab_cauhinhtruong">
+                        //             @await Html.PartialAsync("/Areas/Managers/Configurations/V1/Views/SchoolConfig.cshtml")
+                        //         </div>
+                        //     }
+                        // </div>
+
+                    }
+                    <ul class="nav nav-tabs nav-tabs-highlight">
+                        <li class="nav-item">
+                            <a href="@Url.Action("index", new { tab="cauhinhthongtinungdung" })" class="nav-link @tab_cauhinhthongtinungdung">
+                                <i class="ph-house m-2"></i>
+                                Cấu hình Api
+                            </a>
+                        </li>
+                        
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade mt-1 show @tab_cauhinhthongtinungdung" role="tabpanel">
+                            @if (tab == "cauhinhthongtinungdung")
+                            {
+                                <div class="accordion" id="tab_cauhinhthongtinungdung">
+                                    @await Html.PartialAsync("/Areas/Managers/Configurations/V1/Views/InfoAppConfig.cshtml")
+                                </div>
+                            }
+                        </div>
+                       
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

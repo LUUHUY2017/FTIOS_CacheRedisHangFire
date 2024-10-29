@@ -209,6 +209,9 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.Identity
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("Type")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");

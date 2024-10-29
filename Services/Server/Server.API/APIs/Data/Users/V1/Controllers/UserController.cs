@@ -4,13 +4,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Server.API.APIs.Data.Users.V1.Commons;
 using Server.API.APIs.Data.Users.V1.Models;
+using Server.Application.MasterDatas.A0.Accounts.V1.Commons;
 using Server.Core.Identity.Entities;
 using Server.Core.Identity.Interfaces.Accounts.Requests;
 using Server.Core.Identity.Interfaces.Accounts.Services;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Shared.Core.Commons;
+using Shared.Core.Identity.Menu;
+using Shared.Core.Identity.Object;
+using Shared.Core.Identity.User;
 
 namespace Server.API.APIs.Data.Users.V1.Controllers
 {
@@ -297,5 +302,57 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
                 Succeeded = true,
             });
         }
+
+
+
+
+        /// <summary>
+        /// Lấy danh sách page đăng nhập
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("GetPagesById")]
+        public async Task<IActionResult> GetPagesById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+
+                var pageObjects = new List<PageObject>();
+
+                var pages = PagesConst._Menu_General_Left.ToList();
+                var categories = Category.ListCategory.ToList();
+
+                var _RoleGroupUser = await _context.A0_RoleGroupUser.Where(o => o.UserId == id).ToListAsync();
+                var GroupIds = _RoleGroupUser.Select(o => o.RoleGroupId).ToList();
+                var _RoleGroupPage = await _context.A0_RoleGroupPage.Where(o => GroupIds.Contains(o.RoleGroupId)).ToListAsync();
+
+                pageObjects = (from groupPage in _RoleGroupPage
+                               join _page in pages on groupPage.PageId equals _page.Id into PA
+                               from pa in PA.DefaultIfEmpty()
+                               select pa).ToList();
+
+                var pageId = pageObjects.Where(o => o != null).Select(o => o.Id).ToList();
+                var item = new UserAccountGeneralResponse()
+                {
+                    PageId = pageId
+                };
+                return Ok(new Result<UserAccountGeneralResponse>(item, "Succeed", true));
+            }
+            return Ok(new Result<UserAccountGeneralResponse>("Không tìm thấy tài khoản người dùng", false));
+        }
+
+
+        /// <summary>
+        /// Lấy danh sách loại tài khoản
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetTypes")]
+        public async Task<IActionResult> GetTypes()
+        {
+            return Ok(new Result<object>(UserTypeConst.UserTypes, "Succeed", true));
+        }
+
     }
 }

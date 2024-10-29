@@ -10,7 +10,8 @@ namespace Server.Core.Entities.A0
         [MaxLength(50)]
         public string? DeviceId { get; set; }
         [MaxLength(50)]
-        public bool? SynAction { get; set; }
+        public string? SynAction { get; set; }
+        public bool? SynStatus { get; set; }
         public string? SynMessage { get; set; }
 
         public bool? SynFaceStatus { get; set; }

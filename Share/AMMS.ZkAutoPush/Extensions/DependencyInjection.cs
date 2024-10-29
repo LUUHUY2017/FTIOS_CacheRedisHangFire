@@ -1,14 +1,15 @@
-﻿
-
+﻿using AMMS.DeviceData.Data;
 using AMMS.DeviceData.RabbitMq;
+using AMMS.ZkAutoPush.Applications.V1;
+using AMMS.ZkAutoPush.Applications.V1.Consummer;
 using AMMS.ZkAutoPush.Datas.Databases;
 using EventBus.Messages;
 using MassTransit;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Shared.Core.Caches.Redis;
-using Shared.Core.Emails.V1;
 using Shared.Core.Repositories;
 using System.Reflection;
 
@@ -16,6 +17,22 @@ namespace AMMS.ZkAutoPush.Extensions;
 
 public static class DependencyInjection
 {
+    public static void AddVersion(this IServiceCollection service)
+    {
+        service.AddApiVersioning(options =>
+        {
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+            options.ReportApiVersions = true;
+        });
+        service.AddVersionedApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+
+        });
+    }
+
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         //services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -39,17 +56,17 @@ public static class DependencyInjection
         if (MasterDBConnectionType == "MySQL")
         {
             string mySqlConntectionString = configuration.GetConnectionString("DefaultConnection");
-        services.AddDbContext<DeviceAutoPushDbContext>(options =>
-       options.UseMySql(
-              mySqlConntectionString
-              , ServerVersion.AutoDetect(mySqlConntectionString)
-              , o => o.SchemaBehavior(MySqlSchemaBehavior.Ignore)
+            services.AddDbContext<DeviceAutoPushDbContext>(options =>
+           options.UseMySql(
+                  mySqlConntectionString
+                  , ServerVersion.AutoDetect(mySqlConntectionString)
+                  , o => o.SchemaBehavior(MySqlSchemaBehavior.Ignore)
+                  )
+              //.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
+              //.EnableSensitiveDataLogging()
+              //.EnableDetailedErrors()
               )
-          //.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
-          //.EnableSensitiveDataLogging()
-          //.EnableDetailedErrors()
-          )
-      ;
+          ;
         }
         else if (MasterDBConnectionType == "PostgreSQL")
         {
@@ -81,13 +98,18 @@ public static class DependencyInjection
         services.AddScoped<IEventBusAdapter, EventBusAdapter>();
 
 
-        //services.AddScoped<BrickstreamConsumer>(); 
-        //services.AddScoped<DeviceConsumer>(); 
+        services.AddScoped<ZK_DEVICE_RPConsummer>();
+        services.AddScoped<ZK_SV_PUSHConsummer>();
+        services.AddScoped<ZK_TA_DataConsummer>();
+        services.AddScoped<Server_RequestConsummer>();
 
 
         services.AddMassTransit(config =>
         {
-            //config.AddConsumer<BrickstreamConsumer>();
+            config.AddConsumer<ZK_TA_DataConsummer>();
+            config.AddConsumer<ZK_SV_PUSHConsummer>();
+            config.AddConsumer<ZK_DEVICE_RPConsummer>();
+            config.AddConsumer<Server_RequestConsummer>();
             //config.AddConsumer<DeviceConsumer>(); 
 
 
@@ -103,10 +125,27 @@ public static class DependencyInjection
 
 
                 //provide the queue name with consumer settings
+                //Data to SV
                 cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.ZK_Auto_Push_D2S}", c =>
                 {
-                    //c.ConfigureConsumer<BrickstreamConsumer>(ct);
+                    c.ConfigureConsumer<ZK_TA_DataConsummer>(ct);
                 });
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.ZK_Response_Push_D2S}", c =>
+                {
+                    c.ConfigureConsumer<ZK_DEVICE_RPConsummer>(ct);
+                });
+                //Request from SV
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.ZK_Server_Push_S2D}", c =>
+                {
+                    c.ConfigureConsumer<ZK_SV_PUSHConsummer>(ct);
+                });
+                //Request from SV
+                cfg.ReceiveEndpoint($"{"MQDevice"}{EventBusConstants.Server_Auto_Push_S2D}", c =>
+                {
+                    c.ConfigureConsumer<Server_RequestConsummer>(ct);
+                });
+
+
                 //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.BrickstreamData}", c =>
                 //{
                 //    c.ConfigureConsumer<PeopleCounttingConsumer>(ct);
@@ -128,5 +167,11 @@ public static class DependencyInjection
     {
         services.AddSingleton<ICacheService, CacheService>();
     }
-
+    public static void AddScopedServices(this IServiceCollection service)
+    {
+        service.AddScoped<ZK_TA_DataService>();
+        service.AddScoped<ZK_DEVICE_RPService>();
+        service.AddScoped<ZK_SV_PUSHService>();
+        service.AddScoped<StartupDataService>();
+    }
 }

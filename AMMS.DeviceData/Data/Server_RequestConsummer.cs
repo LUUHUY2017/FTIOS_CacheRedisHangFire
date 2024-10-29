@@ -1,4 +1,5 @@
 ﻿using AMMS.DeviceData.RabbitMq;
+using EventBus.Messages;
 using MassTransit;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,49 @@ namespace AMMS.DeviceData.Data
 {
     public class Server_RequestConsummer : IConsumer<RB_ServerRequest>
     {
-        public Task Consume(ConsumeContext<RB_ServerRequest> context)
+        private readonly IEventBusAdapter _eventBusAdapter;
+        public Server_RequestConsummer(IEventBusAdapter eventBusAdapter)
         {
-            throw new NotImplementedException();
+            _eventBusAdapter = eventBusAdapter;
+        }
+
+        public async Task Consume(ConsumeContext<RB_ServerRequest> context)
+        {
+            try
+            {
+                if (context.Message == null)
+                    return;
+
+                var data = context.Message;
+
+                #region Zkteco
+                if (data.DeviceModel == "zkteco")
+                {
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync(("ViettelZkteco") + EventBusConstants.ZK_Server_Push_S2D);
+                    await aa.Send(data);
+                }
+
+                #endregion
+
+                #region Hanet
+                //if (data.DeviceModel == "Hanet")
+                //{
+                //    if (data.DeviceModel == "Hanet")
+                //    {
+                //        var aa = await _eventBusAdapter.GetSendEndpointAsync(("HanetServerToDevice") + EventBusConstants.HANET_Server_Push_S2D);
+                //        await aa.Send(data);
+                //    }
+                //}
+
+                #endregion
+
+                return;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

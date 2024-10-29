@@ -28,7 +28,7 @@ namespace AMMS.DeviceData.RabbitMq
         /// Loại sự kiện 
         /// </summary>
         public int? Type { get; set; }
- 
+
 
     }
     public class TA_AttendenceImage
@@ -36,6 +36,12 @@ namespace AMMS.DeviceData.RabbitMq
         public string Id { get; set; }
 
         public string PersonId { get; set; }
+        /// <summary>
+        /// Mã học sinh
+        /// </summary>
+        public string? PersonCode { get; set; }
+        public string? SerialNumber { get; set; }
+
         public DateTime? TimeEvent { get; set; }
         /// <summary>
         /// ImageBase64 ảnh điểm danh

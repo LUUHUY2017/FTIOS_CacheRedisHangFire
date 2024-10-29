@@ -6,7 +6,8 @@ using Shared.Core.Loggers;
 using AMMS.ZkAutoPush.Data;
 using Shared.Core.Caches.Redis;
 using AMMS.DeviceData.RabbitMq;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using AMMS.ZkAutoPush.Applications.V1;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AMMS.ZkAutoPush.Controllers;
 
@@ -24,12 +25,14 @@ public class IclockController : ControllerBase
     private readonly IEventBusAdapter _eventBusAdapter;
     private readonly IConfiguration _configuration;
     private readonly ICacheService _cacheService;
-
+    private readonly StartupDataService _startupDataService;
     public IclockController(ILogger<IclockController> logger
         , IConfiguration configuration
         , IOptions<EventBusSettings> eventBusSettings
         , IEventBusAdapter eventBusAdapter
         , ICacheService cacheService
+        , StartupDataService startupDataService
+
         )
     {
         _logger = logger;
@@ -37,6 +40,7 @@ public class IclockController : ControllerBase
         _eventBusSettings = eventBusSettings.Value;
         _eventBusAdapter = eventBusAdapter;
         _cacheService = cacheService;
+        _startupDataService = startupDataService;
     }
     /// <summary>
     /// Khởi tạo
@@ -51,35 +55,35 @@ public class IclockController : ControllerBase
         Logger.Warning($"cdata: method: {Request.Method}, sn: {sn}");
         try
         {
-
+            var thietbi = _startupDataService.GetDevice(sn);
             string sessionId = HttpContext.Session.Id;
             string randomString = "1234567890"; //Util.GetRandomString(10);
 
             var retVal = "registry=ok\n"
-                        + $"RegistryCode={randomString}\n"
-                        + "ServerVersion=3.1.2\n"
-                        + "ServerName=ADMS\n"
-                        + $"PushProtVer={pushver}\n"
-                        + "ErrorDelay=60\n" //Interval time for the client to reconnect to the server after networking connection failure. The recommended value is 30 to 300s.
-                        + "RequestDelay=60\n" //The interval (in seconds) at which the client sends the command acquiring request. If no value is configured at the client, the default value 30s are used.
-                        + "TransTimes=00:00;23:59\n" //Time at which the client checks for and transmits new data regularly (in a 24 - hour format: hour: minute) and multiple times are separated by semicolons.Up to 10 times are supported.For example, TransTimes = 00: 00; 14: 00
-                        + "TransInterval=2\n" //The interval (in minutes) at which the system checks whether any new data needs to be transmitted. If no value is configured at the client, the default value 2 min is used.
-                                              //+ "TransTables=\n" //The new data that needs to be checked and uploaded. The default value is User Transaction, which means the user and access control records need to be automatically uploaded
-                        + $"SessionID={sessionId}\n"
+                                   + $"RegistryCode={randomString}\n"
+                                   + "ServerVersion=3.1.2\n"
+                                   + "ServerName=ADMS\n"
+                                   + $"PushProtVer={pushver}\n"
+                                   + "ErrorDelay=60\n" //Interval time for the client to reconnect to the server after networking connection failure. The recommended value is 30 to 300s.
+                                   + "RequestDelay=60\n" //The interval (in seconds) at which the client sends the command acquiring request. If no value is configured at the client, the default value 30s are used.
+                                   + "TransTimes=00:00;23:59\n" //Time at which the client checks for and transmits new data regularly (in a 24 - hour format: hour: minute) and multiple times are separated by semicolons.Up to 10 times are supported.For example, TransTimes = 00: 00; 14: 00
+                                   + "TransInterval=2\n" //The interval (in minutes) at which the system checks whether any new data needs to be transmitted. If no value is configured at the client, the default value 2 min is used.
+                                                         //+ "TransTables=\n" //The new data that needs to be checked and uploaded. The default value is User Transaction, which means the user and access control records need to be automatically uploaded
+                                   + $"SessionID={sessionId}\n"
 
-                        //+ "\nStamp=664562654"
-                        //+ "\nOpStamp=664571571"
-                        + "PhotoStamp=664562654\n"
+                                   //+ "\nStamp=664562654"
+                                   //+ "\nOpStamp=664571571"
+                                   + "PhotoStamp=664562654\n"
 
-                        + "EncryptFlag=1000000000\n"
-                        + "PushOptionsFlag=1\n"
-                        + "SupportPing=1\n"
-                        + "PushOptions=UserCount,TransactionCount,FingerFunOn,FPVersion,FPCount,FaceFunOn,FaceVersion,FaceCount,FvFunOn,FvVersion,FvCount,PvFunOn,PvVersion,PvCount,BioPhotoFun,BioDataFun,PhotoFunOn,~LockFunOn\n"
-                        + "TransFlag=TransData AttLog OpLog   AttPhoto EnrollFP    EnrollUser FPImag  ChgUser ChgFP   FACE UserPic FVEIN BioPhoto\n"
-                        + "TimeZone=7\n"
-                        + "Realtime=1\n"
-                        + "Encrypt=0\n"
-                        ;
+                                   + "EncryptFlag=1000000000\n"
+                                   + "PushOptionsFlag=1\n"
+                                   + "SupportPing=1\n"
+                                   + "PushOptions=UserCount,TransactionCount,FingerFunOn,FPVersion,FPCount,FaceFunOn,FaceVersion,FaceCount,FvFunOn,FvVersion,FvCount,PvFunOn,PvVersion,PvCount,BioPhotoFun,BioDataFun,PhotoFunOn,~LockFunOn\n"
+                                   + "TransFlag=TransData AttLog OpLog   AttPhoto EnrollFP    EnrollUser FPImag  ChgUser ChgFP   FACE UserPic FVEIN BioPhoto\n"
+                                   + "TimeZone=7\n"
+                                   + "Realtime=1\n"
+                                   + "Encrypt=0\n"
+                                   ;
 
             return retVal;
 
@@ -136,7 +140,6 @@ public class IclockController : ControllerBase
             return Retval_404;
         }
     }
-
     [HttpPost("cdata")]
     public async Task<string> cdata(string sn, string table)
     {
@@ -190,12 +193,81 @@ public class IclockController : ControllerBase
     /// </summary>
     /// <param name="sn"></param>
     /// <returns></returns>
-    [HttpGet]
-    [Route("getrequest")]
+    [HttpGet("getrequest")]
     public string getrequest(string sn)
     {
+        Logger.Warning($"getrequest: method: {Request.Method}, sn: {sn}");
+
         try
         {
+
+            if (!ZK_SV_PUSHService.ListIclockCommand.Any())
+                return Retval_OK;
+
+            List<IclockCommand> xx = new List<IclockCommand>();
+            if (ZK_SV_PUSHService.ListIclockCommand.Count > 0)
+                xx = ZK_SV_PUSHService.ListIclockCommand.Where(o => o != null && o.SerialNumber == sn && !o.IsRequest).ToList();
+
+            if (xx == null || xx.Count() < 1)
+            {
+                return Retval_OK;
+            }
+
+            string commanText = "";
+            int i = 0;
+            int totalkb = 1000 * 1024;
+            int contentkb = 0;
+            while (i < 200 || contentkb < totalkb)
+            {
+                IclockCommand x = null;
+                try
+                {
+                    if (xx != null && xx.Count > 0)
+                    {
+                        x = xx.Where(o => o != null).FirstOrDefault(o => o.SerialNumber == sn && !o.IsRequest);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Warning(e.Message);
+                }
+                if (x != null)
+                {
+                    int emlkb = Encoding.Unicode.GetByteCount(x.Command);
+                    if (emlkb > totalkb)
+                    {
+                        if (x.DataTable == IclockDataTable.A2NguoiIclockUserPicSyn)
+                        {
+                            ZK_SV_PUSHService.ListIclockCommand.Remove(x);
+                        }
+                        continue;
+                    }
+                    if (contentkb + emlkb < totalkb)
+                    {
+                        x.IsRequest = true;
+                        x.CommitTime = DateTime.Now;
+
+                        if (commanText == "")
+                            commanText = x.Command;
+                        else
+                            commanText = commanText + "\n" + x.Command;
+
+                        contentkb = Encoding.Unicode.GetByteCount(commanText);
+                    }
+                    else
+                        break;
+                }
+                else
+                    break;
+                i++;
+            }
+            if (string.IsNullOrEmpty(commanText))
+            {
+                return "OK";
+            }
+
+            return commanText;
+
 
         }
         catch (Exception)
@@ -210,10 +282,11 @@ public class IclockController : ControllerBase
     /// </summary>
     /// <param name="sn"></param>
     /// <returns></returns>
-    [HttpGet]
-    [Route("devicecmd")]
+    [HttpPost("devicecmd")]
     public async Task<string> devicecmd(string sn)
     {
+        Logger.Warning($"devicecmd: method: {Request.Method}, sn: {sn}");
+
         try
         {
             var req = HttpContext.Request;
@@ -223,16 +296,40 @@ public class IclockController : ControllerBase
             using (StreamReader reader = new StreamReader(req.Body, Encoding.UTF8, true, 4096, true))
                 content = reader.ReadToEndAsync().Result;
             Logger.Warning(content);
+            if (string.IsNullOrEmpty(content))
+                return Retval_OK;
 
             //Đẩy dữ liệu lên RabbitMQ
-            ZK_TA_DATA data = new ZK_TA_DATA();
+            ZK_DEVICE_RP data = new ZK_DEVICE_RP();
             data.ReceivedIp = HttpContext.Connection.RemoteIpAddress?.ToString();
             data.Content = content;
             data.SN = sn;
             data.ReceivedTime = DateTime.Now;
-            var aa = await _eventBusAdapter.GetSendEndpointAsync(_configuration.GetValue<string>("DeviceCMDArea") + EventBusConstants.ZK_Response_Push_D2S);
+
+            var aa = await _eventBusAdapter.GetSendEndpointAsync(_configuration.GetValue<string>("DataArea") + EventBusConstants.ZK_Response_Push_D2S);
             await aa.Send(data);
 
+            var contentArr1 = content.Split('\n');
+            if (contentArr1.Length > 0)
+            {
+                foreach (var elm in contentArr1)
+                {
+
+                    if (!string.IsNullOrEmpty(elm))
+                    {
+                        var contentArr = elm.Split('&');
+                        if (contentArr.Length == 3)
+                        {
+                            var ID = contentArr[0].Split('=')[1];
+                            var x = ZK_SV_PUSHService.ListIclockCommand.FirstOrDefault(o => o.SerialNumber == sn && o.Id.ToString() == ID);
+                            if (x != null)
+                            {
+                                x.RevicedTime = DateTime.Now;
+                            }
+                        }
+                    }
+                }
+            }
         }
         catch (Exception e)
         {

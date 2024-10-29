@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shared.Core.Commons;
 using Shared.Core.Entities;
-using Shared.Core.Identity.Object;
 using Shared.Core.Repositories;
 using System.Linq.Expressions;
 

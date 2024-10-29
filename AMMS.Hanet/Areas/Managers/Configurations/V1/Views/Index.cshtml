@@ -11,11 +11,11 @@
                     @{
                         string tab = Context.Request.Query["tab"].ToString().ToLower();
                         if (string.IsNullOrEmpty(tab))
-                            tab = "cauhinhthoigian";
+                            tab = "cauhinhthongtinungdung";
 
-                        string tab_cauhinhthoigian = "";
-                        if (tab == "cauhinhthoigian")
-                            tab_cauhinhthoigian = "active";
+                        string tab_cauhinhthongtinungdung = "";
+                        if (tab == "cauhinhthongtinungdung")
+                            tab_cauhinhthongtinungdung = "active";
 
                         // string tab_cauhinhtruong = "";
                         // if (tab == "cauhinhtruong")
@@ -38,20 +38,20 @@
                     }
                     <ul class="nav nav-tabs nav-tabs-highlight">
                         <li class="nav-item">
-                            <a href="@Url.Action("index", new { tab="cauhinhthoigian" })" class="nav-link @tab_cauhinhthoigian">
+                            <a href="@Url.Action("index", new { tab="cauhinhthongtinungdung" })" class="nav-link @tab_cauhinhthongtinungdung">
                                 <i class="ph-house m-2"></i>
-                                Thời gian điểm danh
+                                Hanet
                             </a>
                         </li>
                         
                     </ul>
 
                     <div class="tab-content">
-                        <div class="tab-pane fade mt-1 show @tab_cauhinhthoigian" role="tabpanel">
-                            @if (tab == "cauhinhthoigian")
+                        <div class="tab-pane fade mt-1 show @tab_cauhinhthongtinungdung" role="tabpanel">
+                            @if (tab == "cauhinhthongtinungdung")
                             {
-                                <div class="accordion" id="tab_cauhinhthoigian">
-                                    @await Html.PartialAsync("/Areas/Managers/Configurations/V1/Views/TimeConfig.cshtml")
+                                <div class="accordion" id="tab_cauhinhthongtinungdung">
+                                    @await Html.PartialAsync("/Areas/Managers/Configurations/V1/Views/InfoAppConfig.cshtml")
                                 </div>
                             }
                         </div>

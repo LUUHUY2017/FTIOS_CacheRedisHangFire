@@ -283,25 +283,22 @@
 }
 
 */
-
-.cropper-container {
-    width: 500px !important;
-    height: 450px !IMPORTANT;
+.modal-header {
+    padding: 8px 20px !important;
 }
 
-.cropper-crop-box {
-    width: 500px !important;
-    height: 450px !important;
-    transform: translateX(468.1px) translateY(115.6px);
+.modal-footer {
+    padding: 3px 20px !important;
 }
 
-.cropper-canvas {
-    width: 500px !important;
-    height: 450px !important;
-    transform: translateX(55.5625px) !important;
+.image-div {
+    height: 230px;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC);
 }
 
-    .cropper-canvas img {
-        width: 100% !important;
-        height: 100% !important;
-    }
+#output {
+    height: 230px;
+    width: 100%;
+    object-fit: contain;
+    border: 1px dotted #0ef114;
+}
