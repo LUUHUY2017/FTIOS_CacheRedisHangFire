@@ -18,6 +18,7 @@ public class DeviceAutoPushDbContext : BaseDbContext, IDeviceAutoPushDbContext
     }
 
     public DbSet<hanet_terminal> hanet_terminal { get; set; }
+    public DbSet<app_config> app_config { get; set; }
 
 
 

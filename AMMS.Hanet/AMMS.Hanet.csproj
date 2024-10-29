@@ -11,6 +11,7 @@
 	<PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
 	
 	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
@@ -63,6 +64,5 @@
 
 	<ItemGroup>
 	  <Folder Include="Datas\Migrations\MsSQL\" />
-	  <Folder Include="Datas\Migrations\MySQL\" />
 	</ItemGroup>
 </Project>
