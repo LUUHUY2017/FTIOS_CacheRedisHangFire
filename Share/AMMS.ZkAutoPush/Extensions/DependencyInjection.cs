@@ -109,7 +109,6 @@ public static class DependencyInjection
             config.AddConsumer<ZK_TA_DataConsummer>();
             config.AddConsumer<ZK_SV_PUSHConsummer>();
             config.AddConsumer<ZK_DEVICE_RPConsummer>();
-            config.AddConsumer<Server_RequestConsummer>();
             //config.AddConsumer<DeviceConsumer>(); 
 
 
@@ -138,11 +137,6 @@ public static class DependencyInjection
                 cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.ZK_Server_Push_S2D}", c =>
                 {
                     c.ConfigureConsumer<ZK_SV_PUSHConsummer>(ct);
-                });
-                //Request from SV
-                cfg.ReceiveEndpoint($"{"MQDevice"}{EventBusConstants.Server_Auto_Push_S2D}", c =>
-                {
-                    c.ConfigureConsumer<Server_RequestConsummer>(ct);
                 });
 
 

@@ -1,4 +1,5 @@
-﻿using AMMS.DeviceData.RabbitMq;
+﻿using AMMS.DeviceData.Data;
+using AMMS.DeviceData.RabbitMq;
 using AMMS.Notification.Datas;
 using AMMS.Notification.Datas.Interfaces.SendEmails;
 using AMMS.Notification.Datas.Repositories.SendEmails;
@@ -111,7 +112,8 @@ public static class DependencyInjection
             ////Đăng ký xử lý bản tin data XML của Brickstream
             config.AddConsumer<StudentConsumer>();
             config.AddConsumer<TimeAttendenceEventConsumer>();
-
+            //Đăng ký xử lý bản tin xuống thiết bị
+            config.AddConsumer<Server_RequestConsummer>();
 
             config.UsingRabbitMq((ct, cfg) =>
             {
@@ -140,6 +142,13 @@ public static class DependencyInjection
                 });
                 #endregion
 
+                #region Gửi request xuống máy trạm
+                //Request from SV
+                cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Server_Auto_Push_S2D}", c =>
+                {
+                    c.ConfigureConsumer<Server_RequestConsummer>(ct);
+                });
+                #endregion
 
 
 

@@ -344,15 +344,5 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
         }
 
 
-        /// <summary>
-        /// Lấy danh sách loại tài khoản
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("GetTypes")]
-        public async Task<IActionResult> GetTypes()
-        {
-            return Ok(new Result<object>(UserTypeConst.UserTypes, "Succeed", true));
-        }
-
     }
 }

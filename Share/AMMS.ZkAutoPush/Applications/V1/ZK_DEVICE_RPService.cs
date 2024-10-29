@@ -89,6 +89,22 @@ public class ZK_DEVICE_RPService
 
                                 }
 
+
+                                //RB_ServerResponse response = new RB_ServerResponse()
+                                //{
+                                //    Action = ServerRequestAction.ActionGetDeviceInfo,
+                                //    Content = content,
+                                //    Id = x.DataId,
+                                //    RequestId = x.DataId,
+                                //    IsSuccessed = true,
+                                //    DateTimeResponse = DateTime.Now,
+                                //    Message = true ? RB_ServerResponseMessage.Complete : RB_ServerResponseMessage.InComplete,
+                                //};
+
+                                //var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Device_Auto_Push_D2S);
+                                //await aa.Send(response);
+
+
                             }
                             //Xoá lệnh khỏi danh sách
                             var x = ZK_SV_PUSHService.ListIclockCommand.FirstOrDefault(o => o.SerialNumber == data.SN && o.Id.ToString() == ID);

@@ -24,7 +24,7 @@
         /// </summary>
         public string DeviceModel { get; set; }
         /// <summary>
-        /// ListData json
+        ///  Json obj requet
         /// </summary>
         public string? RequestParam { get; set; }
 
@@ -34,6 +34,7 @@
         public static string ActionAdd = "Add";
         public static string ActionDelete = "Delete";
         public static string ActionGetData = "GetData";
+        public static string ActionGetDeviceInfo = "GetDeviceInfo";
     }
     public class ServerRequestType
     {

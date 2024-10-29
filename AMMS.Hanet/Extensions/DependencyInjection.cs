@@ -1,7 +1,8 @@
 ﻿using AMMS.DeviceData.RabbitMq;
-using AMMS.Hanet.Applications.AppConfigs.V1;
+using AMMS.Hanet.Applications.V1.Consummer;
+using AMMS.Hanet.Applications.V1.Service;
 using AMMS.Hanet.Datas.Databases;
-using EventBus.Messages;
+ using EventBus.Messages;
 using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -107,14 +108,16 @@ public static class DependencyInjection
         services.AddScoped<IEventBusAdapter, EventBusAdapter>();
 
 
-        //services.AddScoped<BrickstreamConsumer>(); 
-        //services.AddScoped<DeviceConsumer>(); 
+        services.AddScoped<HANET_Checkin_DataConsummer>();
+        services.AddScoped<HANET_DEVICE_PUSHConsummer>();
+        services.AddScoped<HANET_SERVER_PUSHConsummer>();
 
 
         services.AddMassTransit(config =>
         {
-            //config.AddConsumer<BrickstreamConsumer>();
-            //config.AddConsumer<DeviceConsumer>(); 
+            config.AddConsumer<HANET_Checkin_DataConsummer>();
+            config.AddConsumer<HANET_DEVICE_PUSHConsummer>();
+            config.AddConsumer<HANET_SERVER_PUSHConsummer>();
 
 
             config.UsingRabbitMq((ct, cfg) =>
@@ -129,19 +132,18 @@ public static class DependencyInjection
 
 
                 //provide the queue name with consumer settings
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.ZK_Auto_Push_D2S}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Hanet_Auto_Push_D2S}", c =>
                 {
-                    //c.ConfigureConsumer<BrickstreamConsumer>(ct);
+                    c.ConfigureConsumer<HANET_Checkin_DataConsummer>(ct);
                 });
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.BrickstreamData}", c =>
-                //{
-                //    c.ConfigureConsumer<PeopleCounttingConsumer>(ct);
-                //});
-
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.DeviceOnlineOffline_Queue}", c =>
-                //{
-                //    c.ConfigureConsumer<DeviceConsumer>(ct);
-                //});
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Hanet_Device_Push_D2S}", c =>
+                {
+                    c.ConfigureConsumer<HANET_DEVICE_PUSHConsummer>(ct);
+                });
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Hanet_Server_Push_S2D}", c =>
+                {
+                    c.ConfigureConsumer<HANET_SERVER_PUSHConsummer>(ct);
+                });
 
 
                 cfg.ConfigureEndpoints(ct);
@@ -154,5 +156,8 @@ public static class DependencyInjection
     {
         services.AddSingleton<ICacheService, CacheService>();
     }
-
+    public static void AddScopedServices(this IServiceCollection service)
+    {
+        service.AddScoped<HANET_Process_Service>();
+    }
 }

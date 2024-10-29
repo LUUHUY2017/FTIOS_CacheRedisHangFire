@@ -410,6 +410,24 @@
                             alertify.confirm('Thông báo!', question, function () {
                                 _deviceAdmin.addModel = true;
                                 _deviceAdmin.onPopupModelEdit(row);
+                                if (_deviceAdmin.checkAdd === false) {
+                                    return;
+                                }
+                                axios.post('/api/v1/deviceAdmin/Update', row, _deviceAdmin.object.config).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _deviceAdmin.data = [];
+                                        _deviceAdmin.loadData();
+                                        _deviceAdmin.loadSelectData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
                             }, function () { });
                         },
                     }
@@ -432,6 +450,15 @@
                         const brand = _deviceAdmin.combobox.deviceBrands.find(b => b.id === value);
                         return brand ? brand.name : '';
                     },
+                {
+                    title: 'Http Port',
+                    sortable: true,
+                    field: 'httpPort'
+                },
+                {
+                    title: 'Port Connect',
+                    sortable: true,
+                    field: 'portConnect'
                 },
                 {
                     title: 'Mô tả ',

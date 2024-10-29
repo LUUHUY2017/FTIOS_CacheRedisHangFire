@@ -16,6 +16,7 @@
     {
         public static string UserInfo = "UserInfo";
         public static string UserImage = "UserImage";
+        public static string DeviceInfo = "DeviceInfo";
     }
     public class RB_ServerResponseMessage
     {

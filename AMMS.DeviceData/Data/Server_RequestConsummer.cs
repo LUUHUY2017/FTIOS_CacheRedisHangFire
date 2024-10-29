@@ -27,7 +27,7 @@ namespace AMMS.DeviceData.Data
                 var data = context.Message;
 
                 #region Zkteco
-                if (data.DeviceModel == "zkteco")
+                if (data.DeviceModel.ToUpper() == "ZKTECO")
                 {
                     var aa = await _eventBusAdapter.GetSendEndpointAsync(("ViettelZkteco") + EventBusConstants.ZK_Server_Push_S2D);
                     await aa.Send(data);
@@ -36,14 +36,11 @@ namespace AMMS.DeviceData.Data
                 #endregion
 
                 #region Hanet
-                //if (data.DeviceModel == "Hanet")
-                //{
-                //    if (data.DeviceModel == "Hanet")
-                //    {
-                //        var aa = await _eventBusAdapter.GetSendEndpointAsync(("HanetServerToDevice") + EventBusConstants.HANET_Server_Push_S2D);
-                //        await aa.Send(data);
-                //    }
-                //}
+                if (data.DeviceModel.ToUpper() == "HANET")
+                {
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync(("HanetServerToDevice") + EventBusConstants.Hanet_Server_Push_S2D);
+                    await aa.Send(data);
+                }
 
                 #endregion
 

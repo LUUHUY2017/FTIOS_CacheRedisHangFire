@@ -15,11 +15,11 @@ namespace AMMS.ZkAutoPush.Applications.V1
         /// <summary>
         /// Danh sách thiết bị (sẽ chuyển sang caches)
         /// </summary>
-        public static List<zk_terminal> ListTerminal = new List<zk_terminal>();
+        public static List<zk_terminal> ListTerminal { get; set; } = new List<zk_terminal>();
         /// <summary>
         /// Danh sách lệnh gửi xuống thiết bị (sẽ chuyển sang caches)
         /// </summary>
-        public static List<IclockCommand> ListIclockCommand = new List<IclockCommand>();
+        public static List<IclockCommand> ListIclockCommand { get; set; } = new List<IclockCommand>();
         private readonly IConfiguration _configuration;
 
 
@@ -93,6 +93,13 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     if (data == null)
                         return;
                     await SaveDevice(data);
+                    return;
+                }
+                else if (rB_ServerRequest.Action == ServerRequestAction.ActionGetDeviceInfo && rB_ServerRequest.RequestType == ServerRequestType.Device)
+                {
+                    TA_Device? data = JsonConvert.DeserializeObject<TA_Device>(rB_ServerRequest.RequestParam);
+
+                    command = IclockOperarion.GetDeviceInfo(data.SerialNumber);
                     return;
                 }
 

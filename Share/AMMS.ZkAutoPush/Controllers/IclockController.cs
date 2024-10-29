@@ -140,6 +140,12 @@ public class IclockController : ControllerBase
             return Retval_404;
         }
     }
+    /// <summary>
+    /// Dữ liệu chấm công, log thiết bị trả về
+    /// </summary>
+    /// <param name="sn"></param>
+    /// <param name="table"></param>
+    /// <returns></returns>
     [HttpPost("cdata")]
     public async Task<string> cdata(string sn, string table)
     {
@@ -152,7 +158,7 @@ public class IclockController : ControllerBase
             string content = "";
             using (StreamReader reader = new StreamReader(req.Body, Encoding.UTF8, true, 4096, true))
                 content = reader.ReadToEndAsync().Result;
-            Logger.Warning(content);
+            //Logger.Warning(content);
 
             //Đẩy dữ liệu lên RabbitMQ
             ZK_TA_DATA data = new ZK_TA_DATA();
@@ -185,6 +191,23 @@ public class IclockController : ControllerBase
     public async Task<string> ping(string sn)
     {
         Logger.Warning($"ping: method: {Request.Method}, sn: {sn}");
+
+        var thietBiUpdate = ZK_SV_PUSHService.ListTerminal.FirstOrDefault(o => o.sn == sn);
+        if (thietBiUpdate != null)
+        {
+            thietBiUpdate.last_activity = DateTime.Now;
+            thietBiUpdate.isconnect = true;
+            ////Cập nhật vào csdl
+            //try
+            //{
+            //    await SaveDevice(thietBiUpdate);
+            //}
+            //catch (Exception e)
+            //{
+
+            //}
+        }
+
         return Retval_OK;
     }
 
