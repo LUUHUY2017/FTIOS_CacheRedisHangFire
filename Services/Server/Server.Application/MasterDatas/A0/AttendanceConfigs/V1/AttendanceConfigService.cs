@@ -3,7 +3,6 @@ using Server.Application.MasterDatas.A0.AttendanceConfigs.V1.Models;
 using Server.Core.Entities.A0;
 using Server.Core.Interfaces.A0;
 using Shared.Core.Commons;
-using Shared.Core.Identity.Object;
 
 namespace Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
 
@@ -89,7 +88,7 @@ public class AttendanceConfigService
     {
         try
         {
-            var retVal = await _attendanceConfigRepository.GetByFirstAsync(x  => x.Actived == true);
+            var retVal = await _attendanceConfigRepository.GetByFirstAsync(x => x.Actived == true);
 
             var itemMap = _mapper.Map<AttendanceConfigResponse>(retVal.Data);
             return new Result<AttendanceConfigResponse>(itemMap, "Thành công", true);

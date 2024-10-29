@@ -1,5 +1,4 @@
-﻿using AMMS.Share.WebApp.Helps;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Server.API.Areas.Managers.Users.V1.Models;
 using Server.Core.Entities.A0;
@@ -10,12 +9,12 @@ using Server.Core.Interfaces.A2.Persons;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Shared.Core.Commons;
-using Shared.Core.Identity;
 
 namespace Server.API.Areas.Managers.Users.V1.Controllers;
 
 [Route("v1/[controller]")]
-[AuthorizeMaster(Roles = RoleConst.AdminPage)]
+//[Authorize("Bearer")]
+//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 public class UserController : Controller
 {
     const string pathUrl = "~/Areas/Managers/Users/V1/Views/";
@@ -143,7 +142,8 @@ public class UserController : Controller
                 FirstName = model.FirstName,
                 UserName = model.UserName,
                 Email = model.Email,
-                PhoneNumber = model.PhoneNumber
+                PhoneNumber = model.PhoneNumber,
+                Type = model.Type,
             };
 
             var xx = await _userManager.CreateAsync(user, model.Password);
@@ -210,6 +210,7 @@ public class UserController : Controller
             curent_user.UserName = model.UserName;
             curent_user.Email = model.Email;
             curent_user.PhoneNumber = model.PhoneNumber;
+            curent_user.Type = model.Type;
 
 
             var user = await _userManager.UpdateAsync(curent_user);

@@ -10,4 +10,9 @@
 	<ItemGroup>
 		<PackageReference Include="MassTransit" Version="8.2.4" />
 	</ItemGroup>
+
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Services\Share\EventBus.Messages\EventBus.Messages.csproj" />
+	</ItemGroup>
 </Project>

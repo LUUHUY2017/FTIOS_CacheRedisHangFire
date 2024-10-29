@@ -1,6 +1,4 @@
 ﻿using AMMS.Notification.Datas;
-using Hangfire;
-using Hangfire.MySql;
 using IdentityModel.Client;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
@@ -11,7 +9,6 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Serilog;
-using Server.API.Helps.Authorizations;
 using Server.API.SignalRs;
 using Server.Application.Extensions;
 using Server.Core.Identity.Entities;
@@ -86,19 +83,19 @@ services.AddSignalRService(configuration);
 
 
 // Hangfire MySQL Server
-services.AddHangfire(x => x.UseStorage(
-      new MySqlStorage(builder.Configuration["ConnectionStrings:HangfireDBConnection"],
-          new MySqlStorageOptions
-          {
-              QueuePollInterval = TimeSpan.FromSeconds(15), // Khoảng thời gian kiểm tra hàng đợi
-              JobExpirationCheckInterval = TimeSpan.FromHours(1), // Kiểm tra công việc hết hạn
-              CountersAggregateInterval = TimeSpan.FromMinutes(5), // Thời gian gom các bộ đếm
-              PrepareSchemaIfNecessary = true, // Tự động tạo bảng nếu chưa tồn tại
-              DashboardJobListLimit = 5000, // Giới hạn công việc hiển thị trên dashboard
-          }
-      )
-  ));
-services.AddHangfireServer();
+//services.AddHangfire(x => x.UseStorage(
+//      new MySqlStorage(builder.Configuration["ConnectionStrings:HangfireDBConnection"],
+//          new MySqlStorageOptions
+//          {
+//              QueuePollInterval = TimeSpan.FromSeconds(15), // Khoảng thời gian kiểm tra hàng đợi
+//              JobExpirationCheckInterval = TimeSpan.FromHours(1), // Kiểm tra công việc hết hạn
+//              CountersAggregateInterval = TimeSpan.FromMinutes(5), // Thời gian gom các bộ đếm
+//              PrepareSchemaIfNecessary = true, // Tự động tạo bảng nếu chưa tồn tại
+//              DashboardJobListLimit = 5000, // Giới hạn công việc hiển thị trên dashboard
+//          }
+//      )
+//  ));
+//services.AddHangfireServer();
 
 
 
@@ -440,13 +437,15 @@ app.UseEndpoints(endpoints =>
 
 //Tạo các job chạy tự động, theo dõi trạng thái của các job     
 //app.UseHangfireDashboard("/hangfire_dashboard");
-app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
-{
-    IgnoreAntiforgeryToken = true,
-    Authorization = new[] { new DashboardNoAuthorizationFilter() }
-});
+//app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
+//{
+//    IgnoreAntiforgeryToken = true,
+//    Authorization = new[] { new DashboardNoAuthorizationFilter() }
+//});
+//app.UseHangfireServer();
 
-app.UseHangfireServer();
+
+
 
 app.MapHub<AmmsHub>("/ammshub");
 using (var scope = app.Services.CreateScope())

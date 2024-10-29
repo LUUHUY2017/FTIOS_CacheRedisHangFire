@@ -26,6 +26,4 @@
         public int? SortOrderByClass { get; set; }
         public string? GradeCode { get; set; }
     }
-
-
 }

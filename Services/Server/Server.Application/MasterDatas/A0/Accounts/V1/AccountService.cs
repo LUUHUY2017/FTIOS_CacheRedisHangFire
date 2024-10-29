@@ -61,6 +61,7 @@ namespace Server.Application.MasterDatas.A0.Accounts.V1
 
         public async Task<List<UserAccountRes>> GetAccountSystems()
         {
+            //var all_accounts = _userManager.Users.Where(x => x.Type != null).ToList();
             var all_accounts = _userManager.Users.ToList();
             //var all_persons = await _biDbContext.Users.ToListAsync();
             //var accounts = all_accounts.Where(o => all_persons.All(x => x.Id.ToString() != o.Id)).Select(u => new UserAccountRes()
@@ -75,6 +76,7 @@ namespace Server.Application.MasterDatas.A0.Accounts.V1
                 LastName = u.LastName,
                 Email = u.Email,
                 UserType = UserType.User,
+                Type = u.Type,
             }).ToList();
 
             if (accounts == null)

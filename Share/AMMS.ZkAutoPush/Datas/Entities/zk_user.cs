@@ -12,6 +12,7 @@ namespace AMMS.ZkAutoPush.Datas.Entities
         public string? area_id { get; set; }
         public string? first_name { get; set; }
         public string? last_name { get; set; }
+        public string? full_name { get; set; }
         public string? user_code { get; set; }
         public string? card_no { get; set; }
         public int? privilege { get; set;}

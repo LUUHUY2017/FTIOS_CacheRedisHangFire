@@ -11,6 +11,7 @@
         public string? SerialNumber { get; set; }
         public string? DeviceName { get; set; }
         public string? DeviceID { get; set; }
+        public string? DeviceModel { get; set; }
         /// <summary>
         /// CAMERAIN & CAMERAOUT
         /// </summary>

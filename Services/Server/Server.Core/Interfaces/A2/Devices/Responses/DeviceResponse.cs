@@ -3,5 +3,37 @@
 namespace Server.Core.Interfaces.A2.Devices.RequeResponsessts;
 public class DeviceResponse : A2_Device
 {
-    public string? LaneName { get; set; }
+    public DeviceResponse()
+    {
+        
+    }
+    public DeviceResponse(A2_Device o)
+    {
+        Id = o.Id;
+        Actived = o.Actived;
+        CreatedBy = o.CreatedBy;
+        CreatedDate = o.CreatedDate;
+        DeviceIn = o.DeviceIn;
+        DeviceName = o.DeviceName;
+        SerialNumber = o.SerialNumber;
+        DeviceID = o.DeviceID;
+        Password = o.Password;
+
+        ActiveKey = o.ActiveKey;
+        DeviceCode = o.DeviceCode;
+        DeviceDescription = o.DeviceDescription;
+        DeviceInfo = o.DeviceInfo;
+        DeviceInput = o.DeviceInput;
+        IPAddress = o.IPAddress;
+        MacAddress = o.MacAddress;
+        HTTPPort = o.HTTPPort;
+        PortConnect = o.PortConnect;
+        ConnectionStatus = o.ConnectionStatus;
+        BrandName = o.BrandName;
+        DeviceModel = o.DeviceModel;
+        DeviceType = o.DeviceType;
+        OrganizationId = o.OrganizationId;
+        //GateId = o.GateId;
+        //LaneId = o.LaneId;
+    }
 }

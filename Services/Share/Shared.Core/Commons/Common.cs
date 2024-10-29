@@ -1,5 +1,6 @@
 ﻿using Shared.Core.Loggers;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Net;
@@ -107,6 +108,7 @@ public class Common
         }
     }
 
+
     public static string GetExcelDateFullFolder(DateTime date)
     {
         try
@@ -138,7 +140,7 @@ public class Common
     {
         try
         {
-            var dataFollder = string.Format("{0}{1}", GetCurentFolder() + "image\\", GetDateFolder(date));
+            var dataFollder = string.Format("{0}{1}", GetCurentFolder() + "images\\", GetDateFolder(date));
             dataFollder = CheckFolder(dataFollder);
             return dataFollder;
         }
@@ -151,7 +153,7 @@ public class Common
     {
         try
         {
-            var dataFollder = string.Format("{0}{1}", "image\\", GetDateFolder(date));
+            var dataFollder = string.Format("{0}{1}", "images\\", GetDateFolder(date));
             return dataFollder;
         }
         catch (Exception e)
@@ -159,6 +161,36 @@ public class Common
             throw e;
         }
     }
+
+    public static string GetImageDateFullFolder(DateTime date, string folderName)
+    {
+        try
+        {
+            var dataFollder = string.Format("{0}{1}", GetCurentFolder() + $"{folderName}\\", GetDateFolder(date));
+            dataFollder = CheckFolder(dataFollder);
+            return dataFollder;
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+    }
+    public static string GetImageDatePathFolder(DateTime date, string folderName)
+    {
+        try
+        {
+            var dataFollder = string.Format("{0}{1}", $"{folderName}\\", GetDateFolder(date));
+            return dataFollder;
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+    }
+
+
+
+
 
     /// <summary>
     /// Hàm này dùng để check tồn tại của Folder, Trả về chuỗi gồm "tên_folder\\"
@@ -646,7 +678,48 @@ public class Common
         return tempBmp;
     }
 
+    // Use
+    //    try
+    //{
+    //    Image img = Common.Base64ToImage(message.vehicle_snapshot);
+    //  string fileName = imageFullFolder + imageName;
+    //    if (System.IO.File.Exists(fileName))
+    //        System.IO.File.Delete(fileName);
+    //    //img.Save(fileName);
+
+    //    Common.SaveJpeg(fileName, img, 30);
+    //}
+    //catch (Exception e)
+    //{ }
     public static void SaveJpeg(string path, Image img, int quality)
+    {
+        //if (quality < 0 || quality > 100)
+        //    throw new ArgumentOutOfRangeException("quality must be between 0 and 100.");
+
+        //// Encoder parameter for image quality 
+        //EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+        //// JPEG image codec 
+        //ImageCodecInfo jpegCodec = GetEncoderInfo("image/jpeg");
+        //EncoderParameters encoderParams = new EncoderParameters(1);
+        //encoderParams.Param[0] = qualityParam;
+
+        //img.Save(path, jpegCodec, encoderParams);
+
+
+
+        int with = img.Width;
+        int height = img.Height;
+        if (with > 300)
+        {
+            with = 300;
+            height = (int)((img.Height * with) / img.Width);
+        }
+        var resizedImg = ResizeImage(img, with, height);
+        SaveJpegWithQuality(resizedImg, path, 50L);
+
+    }
+
+    public static void SaveJpeg1(string path, Image img, int quality)
     {
         if (quality < 0 || quality > 100)
             throw new ArgumentOutOfRangeException("quality must be between 0 and 100.");
@@ -657,11 +730,35 @@ public class Common
         ImageCodecInfo jpegCodec = GetEncoderInfo("image/jpeg");
         EncoderParameters encoderParams = new EncoderParameters(1);
         encoderParams.Param[0] = qualityParam;
+
         img.Save(path, jpegCodec, encoderParams);
     }
-    /// <summary> 
-    /// Returns the image codec with the given mime type 
-    /// </summary> 
+
+    public static void SaveJpegWithQuality(Image img, string path, long quality)
+    {
+        ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
+
+        System.Drawing.Imaging.Encoder qualityEncoder = System.Drawing.Imaging.Encoder.Quality;
+        EncoderParameters encoderParams = new EncoderParameters(1);
+        EncoderParameter qualityParam = new EncoderParameter(qualityEncoder, quality);
+        encoderParams.Param[0] = qualityParam;
+
+        img.Save(path, jpgEncoder, encoderParams);
+    }
+    public static Image ResizeImage(Image img, int width, int height)
+    {
+        Bitmap b = new Bitmap(width, height);
+        using (Graphics g = Graphics.FromImage(b))
+        {
+            g.DrawImage(img, 0, 0, width, height);
+
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.CompositingQuality = CompositingQuality.HighQuality;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+        }
+        return (Image)b;
+    }
     private static ImageCodecInfo GetEncoderInfo(string mimeType)
     {
         // Get image codecs for all image formats 
@@ -674,4 +771,47 @@ public class Common
 
         return null;
     }
+    private static ImageCodecInfo GetEncoder(ImageFormat format)
+    {
+        ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+        foreach (ImageCodecInfo codec in codecs)
+        {
+            if (codec.FormatID == format.Guid)
+            {
+                return codec;
+            }
+        }
+        return null;
+    }
+
+
+
+    /// <summary>
+    /// Download ảnh từ link
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="savePath"></param>
+    /// <returns></returns>
+    public static async Task DownloadAndSaveImage(string url, string savePath)
+    {
+        using (HttpClient client = new HttpClient())
+        {
+            // Tải dữ liệu từ URL
+            byte[] imageData = await client.GetByteArrayAsync(url);
+
+            // Chuyển dữ liệu byte thành hình ảnh và lưu nó
+            using (MemoryStream ms = new MemoryStream(imageData))
+            {
+                using (Image img = Image.FromStream(ms))
+                {
+                    if (File.Exists(savePath))
+                        File.Delete(savePath);
+                    img.Save(savePath);
+                    SaveJpeg1(savePath, img, 100);
+                }
+            }
+        }
+    }
+
+
 }

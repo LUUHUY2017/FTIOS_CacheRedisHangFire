@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.API.APIs.Data.Students.V1.Requests;
-using Server.Application.MasterDatas.A2.Devices;
-using Server.Application.MasterDatas.A2.Devices.Models;
+using Server.Application.MasterDatas.A2.Students.V1;
+using Server.Application.MasterDatas.A2.Students.V1.Model;
 using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
-using Server.Core.Entities.A2;
+using Server.Core.Interfaces.A2.Persons;
+using Server.Core.Interfaces.A2.Students;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
@@ -19,44 +20,47 @@ namespace Server.API.APIs.Data.Students.V1.Controllers
     //[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
     public class StudentController : AuthBaseAPIController
     {
-        private readonly DeviceService _deviceService;
         private readonly IMapper _mapper;
-        private readonly SyncDataSmartService _service;
+        private readonly SmartService _smartService;
+        private readonly StudentService _studentService;
+        private readonly IPersonRepository _personRepository;
+        private readonly IStudentRepository _studentRepository;
 
 
-        public StudentController(DeviceService deviceService, IMapper mapper, SyncDataSmartService service)
+        public StudentController(StudentService studentService, IMapper mapper, SmartService smartService, IPersonRepository personRepository,
+   IStudentRepository studentRepository)
         {
-            _deviceService = deviceService;
             _mapper = mapper;
-            _service = service;
+            _smartService = smartService;
+            _studentService = studentService;
+
+            _personRepository = personRepository;
+            _studentRepository = studentRepository;
         }
+
 
 
         /// <summary>
-        /// Lấy danh sách đang hoạt động
+        /// Cập nhật thông tin Học sinh
         /// </summary>
+        /// <param name="request"></param>
         /// <returns></returns>
-        [AllowAnonymous]
-        [HttpGet("Gets")]
-        public async Task<IActionResult> Gets()
+        [HttpPut("Edit")]
+        public async Task<IActionResult> Edit(DtoStudentRequest request)
         {
-            try
-            {
-                var data = await _deviceService.GetAll();
-                return Ok(new Result<List<A2_Device>>(data, "Thành công!", true));
-            }
-            catch (Exception ex)
-            {
-                return Ok(new Result<TotalDevice>(null, "Lỗi:" + ex.Message, false));
-            }
+            var data = await _studentService.Save(request);
+            return Ok(data);
         }
+
 
         /// <summary>
         /// Post Student
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+
         [HttpPost("Post")]
+        [AllowAnonymous]
         public async Task<IActionResult> Post(StudentSearchRequest request)
         {
             try
@@ -65,17 +69,18 @@ namespace Server.API.APIs.Data.Students.V1.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    students = await _service.PostStudents(request.ClassId, request.SchoolyearId);
+                    students = await _smartService.PostStudents(request.ClassId, request.SchoolyearId);
                 }
                 var data = new
                 {
                     students = students,
                 };
                 return Ok(new Result<object>(data, "Thành công!", true));
+
             }
             catch (Exception ex)
             {
-                return Ok(new Result<TotalDevice>(null, "Lỗi:" + ex.Message, false));
+                return Ok(new Result<object>(null, "Lỗi:" + ex.Message, false));
             }
         }
 
@@ -83,13 +88,15 @@ namespace Server.API.APIs.Data.Students.V1.Controllers
         /// Post School
         /// </summary>
         /// <returns></returns>
+        /// 
+        [AllowAnonymous]
         [HttpPost("PostSchool")]
         public async Task<IActionResult> PostSchool()
         {
             try
             {
                 List<SchoolLevel> schools = new List<SchoolLevel>();
-                var schoolsRaw = await _service.PostSchool();
+                var schoolsRaw = await _smartService.PostSchool();
                 if (schoolsRaw != null)
                 {
                     foreach (var item in schoolsRaw.SchoolLevels)
@@ -106,7 +113,7 @@ namespace Server.API.APIs.Data.Students.V1.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new Result<TotalDevice>(null, "Lỗi:" + ex.Message, false));
+                return Ok(new Result<object>(null, "Lỗi:" + ex.Message, false));
             }
         }
 
@@ -114,12 +121,14 @@ namespace Server.API.APIs.Data.Students.V1.Controllers
         /// Post SchoolYears 
         /// </summary>
         /// <returns></returns>
+        /// 
+        [AllowAnonymous]
         [HttpPost("PostSchoolYears")]
         public async Task<IActionResult> PostSchoolYears()
         {
             try
             {
-                var schoolYears = await _service.PostSchoolYears();
+                var schoolYears = await _smartService.PostSchoolYears();
                 var data = new
                 {
                     schoolYears = schoolYears,
@@ -138,6 +147,8 @@ namespace Server.API.APIs.Data.Students.V1.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        /// 
+        [AllowAnonymous]
         [HttpPost("PostClass")]
         public async Task<IActionResult> PostClass(ClassSearchRequest request)
         {
@@ -146,7 +157,7 @@ namespace Server.API.APIs.Data.Students.V1.Controllers
                 List<ClassResponse> classes = new List<ClassResponse>();
                 if (ModelState.IsValid)
                 {
-                    var classesRaw = await _service.PostClass(request.SchoolLevelCode, request.SchoolYearId, request.Schoolyear);
+                    var classesRaw = await _smartService.PostClass(request.SchoolLevelCode, request.SchoolYearId, request.Schoolyear);
                     if (classesRaw.Any())
                     {
                         foreach (var group in classesRaw)
@@ -173,24 +184,6 @@ namespace Server.API.APIs.Data.Students.V1.Controllers
         }
 
 
-        /// <summary>
-        /// Cập nhật dữ liệu thiết bị
-        /// </summary>
-        /// <returns></returns>
-        [HttpPut("Edit")]
-        public async Task<IActionResult> Edit(DeviceRequest model)
-        {
-            return Ok(await _deviceService.Update(model));
-        }
 
-        /// <summary>
-        /// Xóa thiết bị
-        /// </summary>
-        /// <returns></returns>
-        //[HttpPost("Delete")]
-        //public async Task<IActionResult> Delete(DeleteRequest request)
-        //{
-        //    //return Ok(await _deviceService.Delete(request.Id));
-        //}
     }
 }

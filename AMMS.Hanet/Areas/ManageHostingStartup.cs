@@ -1,7 +1,7 @@
-﻿using Server.API.Areas;
+﻿using AMMS.Hanet.Areas;
 
 [assembly: HostingStartup(typeof(ManageHostingStartup))]
-namespace Server.API.Areas;
+namespace AMMS.Hanet.Areas;
 
 public class ManageHostingStartup : IHostingStartup
 {

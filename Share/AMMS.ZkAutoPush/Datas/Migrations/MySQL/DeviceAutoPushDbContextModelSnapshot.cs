@@ -23,7 +23,7 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_biodata", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("FingerData")
                         .HasColumnType("longtext");
@@ -42,7 +42,7 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_biophoto", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("FileName")
                         .HasColumnType("longtext");
@@ -61,10 +61,9 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_terminal", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("area_id")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("change_time")
@@ -86,8 +85,10 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
                         .HasColumnType("int");
 
                     b.Property<string>("ip_address")
-                        .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<bool?>("isconnect")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime?>("last_activity")
                         .HasColumnType("datetime(6)");
@@ -120,7 +121,7 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_terminalcommandlog", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<double>("command_id")
                         .HasColumnType("double");
@@ -131,13 +132,28 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
                     b.Property<string>("content")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("parent_id")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("request_id")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("return_content")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime?>("return_time")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int?>("return_value")
                         .HasColumnType("int");
 
+                    b.Property<bool?>("successed")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("terminal_id")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("terminal_sn")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("transfer_time")
@@ -148,10 +164,47 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
                     b.ToTable("zk_terminalcommandlog", "Zkteco");
                 });
 
+            modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_transaction", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("CreatedTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DeviceId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PersonCode")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PersonId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SerrialNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("TimeEvent")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("VerifyType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("zk_transaction", "Zkteco");
+                });
+
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_user", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("area_id")
                         .HasColumnType("longtext");
@@ -160,6 +213,9 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
                         .HasColumnType("longtext");
 
                     b.Property<string>("first_name")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("full_name")
                         .HasColumnType("longtext");
 
                     b.Property<string>("last_name")

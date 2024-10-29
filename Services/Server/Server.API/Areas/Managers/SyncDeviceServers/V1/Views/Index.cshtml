@@ -1,0 +1,547 @@
+﻿@{
+    ViewData["Title"] = "Lịch sử đồng bộ thiết bị";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+
+<!-- Main content -->
+<div class="content-wrapper" id="webui">
+
+    <!-- Inner content -->
+    <div class="content-inner">
+
+        <!-- Page header -->
+        <div class="page-header page-header-light shadow">
+            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+                <div class="d-flex">
+                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
+                        <span class="fw-normal">@ViewData["Title"]</span>
+                    </h4>
+                </div>
+                <div class="d-lg-block my-lg-auto ms-lg-auto" id="page_header">
+                    <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
+                        <div class="d-inline-flex mt-3 mt-sm-0">
+                            <div class="pull-right">
+                                @* <a v-on:click="onPopupModelEdit(null)" class="btn btn-primary " style="margin-right: 5px;"> Đồng bộ học sinh</a> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /page header -->
+        <!-- Content area -->
+        <div class="content">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3  ">
+                        <div class="col-md-3">
+                            <label class="form-label">Từ ngày</label>
+                            <datetime type="date"
+                                      v-model="filter.startDate"
+                                      class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                      placeholder="Vui lòng chọn thời gian...">
+                            </datetime>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Đến ngày</label>
+                            <datetime type="date"
+                                      v-model="filter.endDate"
+                                      class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                      placeholder="Vui lòng chọn thời gian...">
+                            </datetime>
+                        </div>
+                       @*  <div class="col-md-2">
+                            <label class="form-label">Lớp</label>
+                            <select id="classId" class="form-control select">
+                                <option selected value=null>Vui lòng chọn lớp </option>
+                                <option v-for="option in combobox.classes" v-bind:value="option.id">
+                                    {{ option.className }}
+                                </option>
+                            </select>
+                        </div> *@
+                    </div>
+                    <div class="row ">
+                        <div class="text-start">
+                            <button type="button" v-on:click=onLoadData() class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}}</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <form class="form-horizontal has-validation-callback" v-on:submit.prevent="onSubmitFormAddEdit" id="FormAddEdit">
+                    <div class="modal-body">
+                        <div class="box">
+                            <div class="row">
+                                <div class="row mb-4">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="col-md-2">
+                                        <div class="form-group mb-3">
+                                            <div class="text-center" id="khung-chup">
+                                                <div class="anh-chup image-div">
+                                                    <a id="aoutput" data-fancybox="gallery" v-bind:href="item.imageSrc">
+                                                        <img id="output" v-bind:src="item.imageSrc">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-12 col-sm-12  ">
+                                                <input type="file" id="imageInput" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <label class="col-md-4 control-label text-nowrap fw-bold mb-1 ">Mã học sinh   </label>
+                                        <div class="col-md-10 col-sm-12  ">
+                                            <input class="form-control  mb-1 " type="text" readonly required id="studentCode" name="studentCode" v-model:value="item.studentCode">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Căn cước  </label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <input class="form-control  mb-1 " type="text" readonly required id="identifyNumber" name="identifyNumber" v-model:value="item.identifyNumber">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Lớp  </label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <input class="form-control  mb-1  " type="text" readonly required id="className" name="className" v-model:value="item.className">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Giới tính</label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="01"> Nam</label>
+                                                <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="02">Nữ </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Họ và tên    </label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <input type="text" id="fullName" name="fullName" readonly required class="form-control  mb-1  " v-model:value="item.fullName">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Trạng thái </label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <input type="text" id="status" name="status" readonly required class="form-control  mb-1  " v-model:value="item.status">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Năm sinh</label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <input type="text" id="syncCode" name="syncCode" readonly required class="form-control  mb-1" v-model:value="item.dateOfBirth">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="text-end">
+                            <button type="button" class="btn mr-5" data-bs-dismiss="modal"> Bỏ qua </button>
+                            <button type="submit" class="btn btn-primary"> Lưu </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModelImage" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">Cắt ảnh</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div style="width:500px; height: 450px">
+                                        <img id="image" style="max-width: 100%; display: none;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="text-end">
+                                        <button id="cropBtn" type="button" class="btn btn-info noradius " style="display: none;"><i class="fa fa-check icon-white"></i> Cắt ảnh </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    connection.on("RefreshStudent", function (data) {
+        var data1 = JSON.parse(data);
+        _syncD.onLoadData();
+    });
+
+    $(document).ready(function () {
+        $('#schoolLevelCode').on("change", function () {
+            _syncD.dtoClass.schoolLevelCode = $(this).val();
+
+            _syncD.combobox.classes = [];
+            _syncD.combobox.data = [];
+
+            _syncD.onPostClass();
+            _syncD.onLoadData();
+
+            localStorage.setItem('schoolLevelCode', $(this).val());
+
+        });
+
+        $('#schoolYearId').on("change", function () {
+            _syncD.filter.schoolYearId = $(this).val();
+            _syncD.dtoClass.schoolYearId = $(this).val();
+            _syncD.dtoClass.Schoolyear = $(this).find(":selected").text()?.trim();
+
+            _syncD.combobox.classes = [];
+            _syncD.combobox.data = [];
+
+            _syncD.onPostClass();
+            _syncD.onLoadData();
+
+
+            localStorage.setItem('schoolYearId', $(this).val());
+            localStorage.setItem('schoolyear', $(this).find(":selected").text()?.trim());
+
+        });
+
+        $('#classId').on("change", function () {
+            _syncD.filter.classId = $(this).val();
+            _syncD.combobox.data = [];
+            _syncD.onLoadData();
+        });
+    });
+
+</script>
+
+<script>
+    var _syncD = new Vue({
+        el: '#webui',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [
+                {
+                    field: '#',
+                    title: 'Thao tác',
+                    align: 'center',
+                    formatter: (value, row, index) => {
+                        var ele = `<div style="white-space: nowrap; ">`;
+                        ele += ` <a href="javascript: " class="btn btn-warning btn-sm delete-asset sync_again " title="Inactive "> <i class="fa fa-refresh" ></i> </a> &nbsp; `;
+                        ele += ` </div>`;
+                        return ele;
+                    },
+                    events: {
+                        'click .sync_again': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn sync dòng này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.get('v1/SyncDeviceServer/SyncUserAgain/' + row.id).then(response => {
+                                    alertify.success("Thao tác thành công!");
+                                    _syncD.onLoadUserSyncLog();
+                                }).catch(error => {
+                                    console.log(error);
+                                });
+                            }, function () { });
+                        },
+
+                        'click .config': function (e, value, row) {
+                            _syncD.onPopupModelConfig(row);
+                        }
+                    }
+                },
+
+                {
+                    title: "Stt",
+                    field: 'sothutu',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        var stt = index + 1;
+                        return "<span class ='black'> " + stt + "  </span>";
+                    },
+                },
+                {
+                    title: "Thiết bị",
+                    sortable: true,
+                    field: 'deviceName'
+                },
+                {
+                    title: 'IP',
+                    sortable: true,
+                    field: 'ipAddress'
+                },
+                {
+                    title: 'Mã học sinh',
+                    sortable: true,
+                    field: 'studentCode'
+                },
+                {
+                    title: 'Họ tên',
+                    sortable: true,
+                    field: 'studentName'
+                },
+                {
+                    title: 'SynAction',
+                    sortable: true,
+                    field: 'synAction'
+                },
+                {
+                    title: 'Status',
+                    sortable: true,
+                    field: 'synStatus',
+                    formatter: (value, row, index) => {
+                        var rel = row.synStatus;
+                        if (rel == null)
+                            return "";
+                        if (rel)
+                            return "<span class='label label-success'> " + rel + "</span>";
+                        else
+                            return "<span class='label label-warning'> " + rel + "</span>";
+                    },
+                },
+
+                {
+                    title: 'FaceStatus',
+                    sortable: true,
+                    field: 'synFaceStatus',
+                    formatter: (value, row, index) => {
+                        var rel = row.synFaceStatus;
+                        if (rel == null)
+                            return "";
+                        if (rel)
+                            return "<input type='checkbox'  class='checked' checked />";
+                        else
+                            return "<input type='checkbox'  class='checked' />";
+                    },
+                },
+
+                {
+                    title: 'Message',
+                    sortable: true,
+                    field: 'synMessage'
+                },
+                {
+                    title: 'FaceMessage',
+                    sortable: true,
+                    field: 'synFaceMessage'
+                },
+            ],
+            data: [],
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                sortable: true,
+                searchAlign: 'right',
+                paginationHAlign: 'lefft',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+                pageList: [10, 25, 50, 100, 200],
+            },
+            filter: {
+                export: 0,
+                classId: null,
+                classId: null,
+                schoolYearId: null,
+                startDate: formatDateTime(new Date()),
+                endDate: formatDateTime(new Date()),
+            },
+            dtoClass: {
+                schoolLevelCode: null,
+                schoolYearId: null,
+                Schoolyear: null,
+            },
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                editAction: false,
+                infoAction: false,
+                config: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+            item: {},
+            combobox: { schools: [], schoolYears: [], classes: [] },
+        },
+        methods: {
+            onLoadData() {
+                $('.loader').show();
+                axios.post('/api/v1/SyncDeviceServer/Post', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        this.data = response.data.data;
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+            onResetForm() {
+                this.item = {};
+            },
+            onPopupModelEdit(row) {
+                this.item = row;
+                this.item.dateOfBirth = moment(row.dateOfBirth).format('DD/MM/YYYY');
+                this.item = { ...this.item };
+
+
+                this.object.form_tile = "Thông tin học sinh";
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+            },
+
+            onSubmitFormAddEdit() {
+                if (!validateForm("#FormAddEdit"))
+                    return true;
+
+                $('.loader').show();
+                axios.put('/api/v1/SyncDeviceServer/Edit', this.item, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    $('.loader').hide(0);
+                    if (response.data.succeeded) {
+                        _syncD.onLoadData();
+
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
+                        alertify.success(response.data.message);
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+
+                });
+            },
+
+            onLoadCombobox() {
+                axios.post('/api/v1/SyncDeviceServer/PostSchool', null, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+                    if (response.data.succeeded) {
+                        this.combobox.schools = {
+                            ...response.data.data.schools
+                        };
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                })
+
+                axios.post('/api/v1/SyncDeviceServer/PostSchoolYears', null, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        this.combobox.schoolYears = {
+                            ...response.data.data.schoolYears
+                        };
+
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                })
+
+
+            },
+            onPostClass() {
+                axios.post('/api/v1/SyncDeviceServer/PostClass', this.dtoClass, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        this.combobox.classes = {
+                            ...response.data.data.classes
+                        };
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                })
+            },
+
+            onLoadLocalStorage() {
+                const _schoolLevelCode = localStorage.getItem('schoolLevelCode');
+                if (_schoolLevelCode) {
+                    this.dtoClass.schoolLevelCode = _schoolLevelCode;
+                }
+
+                const _schoolYearId = localStorage.getItem('schoolYearId');
+                if (_schoolYearId) {
+                    this.dtoClass.schoolYearId = _schoolYearId;
+                }
+
+                const _schoolyear = localStorage.getItem('schoolyear');
+                if (_schoolyear) {
+                    this.dtoClass.schoolyear = _schoolyear;
+                }
+
+            },
+        },
+        mounted() {
+            this.onLoadLocalStorage();
+            this.onLoadCombobox();
+            this.onPostClass();
+            this.onLoadData();
+
+        },
+    })
+</script>
+

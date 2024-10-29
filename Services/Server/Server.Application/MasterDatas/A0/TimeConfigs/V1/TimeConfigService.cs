@@ -41,6 +41,10 @@ public class TimeConfigService
                 dataUpdate.AfternoonEndTime = request.AfternoonEndTime;
                 dataUpdate.AfternoonLateTime = request.AfternoonLateTime;
                 dataUpdate.AfternoonBreakTime = request.AfternoonBreakTime;
+                dataUpdate.EveningStartTime = request.EveningStartTime;
+                dataUpdate.EveningEndTime = request.EveningEndTime;
+                dataUpdate.EveningLateTime = request.EveningLateTime;
+                dataUpdate.EveningBreakTime = request.EveningBreakTime;
 
                 var retVal = await _timeConfigRepository.UpdateAsync(dataUpdate);
                 return retVal;
@@ -83,11 +87,11 @@ public class TimeConfigService
         }
     }
 
-    public async Task<Result<TimeConfigResponse>> GetFirstOrDefault()
+    public async Task<Result<TimeConfigResponse>> GetFirstOrDefault(string orgId)
     {
         try
         {
-            var retVal = await _timeConfigRepository.GetByFirstAsync(x => x.Actived == true);
+            var retVal = await _timeConfigRepository.GetByFirstAsync(x => x.Actived == true && x.OrganizationId == orgId);
 
             var itemMap = _mapper.Map<TimeConfigResponse>(retVal.Data);
             return new Result<TimeConfigResponse>(itemMap, "Thành công", true);

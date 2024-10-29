@@ -1,5 +1,4 @@
-﻿using AMMS.Share.WebApp.Helps;
-using AMMS.WebAPI.Areas.Manage.RoleGroups.V1.Models;
+﻿using AMMS.WebAPI.Areas.Manage.RoleGroups.V1.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Server.Core.Entities.A0;
@@ -13,7 +12,8 @@ using Shared.Core.Identity.Menu;
 namespace Server.API.Areas.Managers.RoleGroups.V1.Controllers;
 
 [Route("v1/[controller]")]
-[AuthorizeMaster(Roles = RoleConst.AdminPage)]
+//[Authorize("Bearer")]
+//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 
 public class RoleGroupController : Controller
 {

@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MediatR;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared.Core.Entities;
 

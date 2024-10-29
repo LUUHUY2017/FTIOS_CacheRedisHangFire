@@ -1,0 +1,596 @@
+﻿@{
+    ViewData["Title"] = "Quản lý thiết bị";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+
+<!-- Main content -->
+<div class="content-wrapper" id="webui">
+
+    <!-- Inner content -->
+    <div class="content-inner">
+
+        <!-- Page header -->
+        <div class="page-header page-header-light shadow">
+            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+                <div class="d-flex">
+                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
+                        <span class="fw-normal">@ViewData["Title"]</span>
+                    </h4>
+                </div>
+
+                <div class="d-lg-block my-lg-auto ms-lg-auto" id="page_header">
+                    <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
+                        <div class="d-inline-flex mt-3 mt-sm-0">
+                            <div class="pull-right">
+                                <a v-on:click="onPopupModelAddDevice()" class="btn btn-primary " style="margin-right: 5px;"> Thêm mới</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /page header -->
+        <!-- Content area -->
+
+        <div class="content">
+
+            <div class="card">
+                <div class="card-body">
+                    <form v-on:submit.prevent="loadData">
+                        <div class="row mb-3">
+                            <div class="col-lg-2 my-1">
+                                <label class="form-label">Trạng thái</label>
+                                <select class="form-select" v-model:value="filter.actived">
+                                    <option value="1">Hoạt động</option>
+                                    <option value="0">Ngừng hoạt động</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 my-1">
+                                <label class="form-label">Nhãn hiệu</label>
+                                <select class="form-select" data-placeholder="Vui lòng chọn nhãn hiệu" v-model="filter.deviceModel">
+                                    <option value="">Tất cả</option>
+                                    <option v-for="option in combobox.deviceBrands" v-bind:value="option.id">
+                                        {{ option.name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 my-1">
+                                <label class="form-label">Trường học</label>
+                                <select id="FilterOrgainization" class="form-control select" data-dropdown-parent="#webui" data-placeholder="Vui lòng chọn trường">
+                                    <option value="">Tất cả</option>
+                                    <option v-for="option in combobox.schools" v-bind:value="option.id">
+                                        {{ option.organizationName }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 my-1">
+                                <label class="form-label">Tìm kiếm theo</label>
+                                <select class="form-select" v-model:value="filter.columnTable">
+                                    <option value="" hidden disabled>Vui lòng chọn tìm kiếm</option>
+                                    <option value="SerialNumber">Số serial</option>
+                                    <option value="DeviceName">Tên thiết bị</option>
+                                    @* <option value="DeviceCode">Mã thiết bị</option> *@
+                                    <option value="IPAddress">IP</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3 my-1">
+                                <label class="form-label">Từ khóa tìm kiếm</label>
+                                <input type="text" id="key" name="key" placeholder="Nhập từ khóa tìm kiếm" class="form-control" v-model="filter.key">
+                            </div>
+                            <div class="col-lg-2 d-flex align-items-end my-1">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModelAddDevice" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}} @ViewData["Title"]</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <bootstrap-table :columns="source_columns" :data="source_data" :options="options"></bootstrap-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">Chỉnh sửa {{object.form_name}}</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate id="FormAddEdit">
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">SerialNumber</label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" style="opacity: 0.7;" v-model="item.serialNumber" readonly="readonly" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Tên thiết bị <span class="text-danger">*</span></label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" required v-model="item.deviceName">
+                                    <div class="invalid-feedback">Vui lòng nhập tên thiết bị</div>
+                                    <div class="valid-feedback"> </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Trường học <span class="text-danger">*</span></label>
+                                <div class="col-lg-7">
+                                    <select data-dropdown-parent="#ModelAddEdit" class="form-control select" data-placeholder="Vui lòng chọn trường" required id="FOrganization">
+                                        <option v-for="option in combobox.schools" v-bind:value="option.id">
+                                            {{ option.organizationName }}
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback">Vui lòng chọn trường học</div>
+                                    <div class="valid-feedback"> </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Ip Address</label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" v-model="item.ipAddress">
+                                    <div class="invalid-feedback">Vui lòng nhập IpAddress</div>
+                                    <div class="valid-feedback"> </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Http Port</label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" v-model="item.httpPort" pattern="\d+">
+                                    <div class="invalid-feedback">Vui lòng nhập HttpPort là số</div>
+                                    <div class="valid-feedback"> </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Port Connect</label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" v-model="item.portConnect" pattern="\d+">
+                                    <div class="invalid-feedback">Vui lòng nhập PortConnect là số</div>
+                                    <div class="valid-feedback"> </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Tài khoản kết nối</label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" v-model="item.deviceID">
+                                    <div class="invalid-feedback">Vui lòng nhập tài khoản kết nối</div>
+                                    <div class="valid-feedback"> </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-md-3  text-end control-label">Mật khẩu kết nối</label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" v-model="item.password ">
+                                    <div class="invalid-feedback">Vui lòng nhập mật khẩu kết nối</div>
+                                    <div class="valid-feedback"> </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Mô tả </label>
+                                <div class="col-lg-7">
+                                    <input type="text" class="form-control" v-model="item.deviceDescription">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end  col-lg-3">Hoạt động</label>
+                                <div class="col-lg-7">
+                                    <div class="form-check-horizontal">
+                                        <label class="form-check form-switch mb-0">
+                                            <input type="checkbox" class="form-check-input" v-model="item.actived">
+                                            <span class="form-check-label">Active</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-primary" v-on:click="onSubmitData()">Lưu dữ liệu</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // connection.on("RefreshDevice", function (data) {
+    //     var data1 = JSON.parse(data);
+    //     _deviceAdmin.loadData();
+    // });
+
+    $(document).ready(function () {
+        $('#FOrganization').on("change", function () {
+            _deviceAdmin.item.organizationId = $(this).val();
+        });
+        $('#FilterOrgainization').on("change", function () {
+            _deviceAdmin.filter.organizationId = $(this).val();
+        });
+    });
+
+</script>
+
+
+<script>
+    var _deviceAdmin = new Vue({
+        el: '#webui',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [
+                {
+                    field: '#action',
+                    title: 'Chức năng',
+                    align: 'center',
+                    formatter: (value, row, index) => {
+                        var ele = `<div style="white-space: nowrap; ">`;
+
+                        if (row.actived) {
+                            ele += `<a href="javascript: " class="btn btn-sm btn-warning edit" title="Cập nhật đăng ký "><i class="fa fa-pencil" > </i> </a> &nbsp `;
+                            ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset inactive " title="Ngừng hoạt động "> <i class="fa fa-minus-circle" ></i> </a> &nbsp; `;
+
+                        }
+                        if (!row.actived) {
+                            ele += ` <a href="javascript:" class="btn btn-danger btn-sm delete-asset active" title="Kích hoạt "> <i class="fa fa-plus-square" ></i> </a> &nbsp; `;
+                            ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset delete " title="Xóa "> <i class="fa fa-trash" ></i> </a> &nbsp; `;
+                        }
+                        ele += ` </div>`;
+
+                        return ele;
+                    },
+                    events: {
+                        'click .edit': function (e, value, row) {
+                            _deviceAdmin.onPopupModelEdit(row);
+                        },
+                        'click .delete': function (e, value, row) {
+                            var question = "Bạn có chắc chắn xóa thiết bị này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/deviceAdmin/UnSelected', row, _deviceAdmin.object.config).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _deviceAdmin.data = [];
+                                        _deviceAdmin.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+                        'click .inactive': function (e, value, row) {
+                            var question = "Bạn có chắc chắn kích hoạt thiết bị này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/deviceAdmin/active', { id: row.id, reason: "" }, _deviceAdmin.object.config).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _deviceAdmin.data = [];
+                                        _deviceAdmin.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+                        'click .active': function (e, value, row) {
+                            var question = "Bạn có chắc chắn hủy kích hoạt thiết bị này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/deviceAdmin/inactive', { id: row.id, reason: "" }, _deviceAdmin.object.config).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _deviceAdmin.data = [];
+                                        _deviceAdmin.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+                    }
+                },
+                {
+                    title: 'Tên thiết bị',
+                    sortable: true,
+                    field: 'deviceName'
+                },
+                {
+                    title: 'SerialNumber',
+                    sortable: true,
+                    field: 'serialNumber'
+                },
+                {
+                    title: 'Nhãn hiệu',
+                    sortable: true,
+                    field: 'deviceModel',
+                    formatter: (value, row, index) => {
+                        const brand = _deviceAdmin.combobox.deviceBrands.find(b => b.id === value);
+                        return brand ? brand.name : '';
+                    },
+                },
+                {
+                    title: 'Trường',
+                    sortable: true,
+                    field: 'organizationId',
+                    formatter: (value, row, index) => {
+                        const org = _deviceAdmin.combobox.schools.find(b => b.id === value);
+                        return org ? org.organizationName : '';
+                    },
+                },
+                {
+                    title: 'Tài khoản',
+                    sortable: true,
+                    field: 'deviceID'
+                },
+                {
+                    title: 'Mật khẩu',
+                    sortable: true,
+                    field: 'password'
+                },
+                {
+                    title: 'IP',
+                    sortable: true,
+                    field: 'ipAddress'
+                },
+                {
+                    title: 'Http Port',
+                    sortable: true,
+                    field: 'httpPort'
+                },
+                {
+                    title: 'Port Connect',
+                    sortable: true,
+                    field: 'portConnect'
+                },
+                {
+                    title: 'Mô tả ',
+                    sortable: true,
+                    field: 'deviceDescription'
+                },
+
+
+            ],
+            data: [],
+            source_columns: [
+                {
+                    field: '#action',
+                    title: 'Chức năng',
+                    align: 'center',
+                    formatter: (value, row, index) => {
+                        var ele = `<div style="white-space: nowrap;">`;
+                        ele += `<a href="javascript:" class="btn btn-info btn-sm delete-asset active" title="Active "> <i class="fa fa-plus-square" ></i><span class="sr-only">Active</span></a> &nbsp;`;
+                        ele += ` </div>`;
+                        return ele;
+                    },
+                    events: {
+                        'click .active': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn thêm thiết bị này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                _deviceAdmin.addModel = true;
+                                _deviceAdmin.onPopupModelEdit(row);
+                            }, function () { });
+                        },
+                    }
+                },
+                {
+                    title: 'Tên thiết bị',
+                    sortable: true,
+                    field: 'deviceName'
+                },
+                {
+                    title: 'SerialNumber',
+                    sortable: true,
+                    field: 'serialNumber'
+                },
+                {
+                    title: 'Nhãn hiệu',
+                    sortable: true,
+                    field: 'deviceModel',
+                    formatter: (value, row, index) => {
+                        const brand = _deviceAdmin.combobox.deviceBrands.find(b => b.id === value);
+                        return brand ? brand.name : '';
+                    },
+                },
+                {
+                    title: 'Mô tả ',
+                    sortable: true,
+                    field: 'deviceDescription'
+                },
+            ],
+            source_data: [],
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                sortable: true,
+                searchAlign: 'right',
+                paginationHAlign: 'right',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+                pageList: [10, 25, 50, 100, 200],
+            },
+            
+            filter: {
+                columnTable: "SerialNumber",
+                actived: "1",
+                deviceModel: "",
+                organizationId: "",
+                key: "",
+                export: "0",
+            },
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                form_name: 'thiết bị',
+                editAction: false,
+                infoAction: false,
+                config: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+            item: { actived: true, },
+            combobox: { schools: [], },
+            addModel: false,
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.post('/api/v1/DeviceAdmin/GetDevices', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    this.data = [];
+                    if (response.data.succeeded) {
+                        this.data = response.data.data;
+                    }
+                    else {
+                        //alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+            onPopupModelAddDevice() {
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddDevice')).show();
+                this.loadSelectData();
+            },
+            loadSelectData() {
+                $('.loader').show();
+                axios.get('/api/v1/DeviceAdmin/GetDeviceSelect', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        this.source_data = response.data.data.deviceUnSelected;
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+            onPopupModelEdit(row) {
+                this.item = row;
+                console.log(this.item);
+                $('#FOrganization').val(this.item.organizationId).trigger('change');
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+            },
+            onSubmitData() {
+                if (!validateForm("#FormAddEdit"))
+                    return true;
+                $('.loader').show();
+                axios.post('/api/v1/DeviceAdmin/Update', this.item, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    $('.loader').hide(0);
+                    if (response.data.succeeded) {
+                        if (this.addModel) {
+                            this.onAddDevice(this.item);
+                            this.addModel = false;
+                        }
+                        this.data = [];
+                        setTimeout(() => {
+                            this.data = [];
+                            this.loadData();
+                        }, 500);
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
+                        alertify.success(response.data.message);
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+
+                });
+            },
+            onAddDevice(row) {
+                axios.post('/api/v1/deviceAdmin/Update', row, this.object.config).then(response => {
+                    if (response.data.succeeded) {
+                        this.loadSelectData();
+                    }
+                    else {
+                        alertify.warning(response.data.message);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    alert("Lỗi: " + error.response.data.message);
+                });
+            },
+            loadCombox() {
+                axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.schools = response.data.data;
+                }).catch(error => {
+                    console.warn(error);
+                });
+
+                axios.get('/api/v1/device/GetDeviceBrands', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.deviceBrands = response.data.data;
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+        },
+        mounted() {
+            this.loadData();
+            this.loadCombox();
+        },
+    })
+</script>
+

@@ -37,9 +37,9 @@ public class TimeConfigController : AuthBaseAPIController
     /// <returns></returns>
     [AllowAnonymous]
     [HttpGet("GetFirstOrDefault")]
-    public async Task<IActionResult> GetFirstOrDefault()
+    public async Task<IActionResult> GetFirstOrDefault(string? orgId)
     {
-        var data = await _timeConfigService.GetFirstOrDefault();
+        var data = await _timeConfigService.GetFirstOrDefault(orgId);
         return Ok(data);
     }
 

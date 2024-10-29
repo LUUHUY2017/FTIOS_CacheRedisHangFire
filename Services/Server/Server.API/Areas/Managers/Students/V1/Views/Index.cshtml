@@ -21,7 +21,7 @@
                     <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
                         <div class="d-inline-flex mt-3 mt-sm-0">
                             <div class="pull-right">
-                                <a v-on:click="onPopupModelEdit(null)" class="btn btn-primary " style="margin-right: 5px;"> Đồng bộ học sinh</a>
+                                @* <a v-on:click="onPopupModelEdit(null)" class="btn btn-primary " style="margin-right: 5px;"> Đồng bộ học sinh</a> *@
                             </div>
                         </div>
                     </div>
@@ -92,126 +92,110 @@
                     <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}}</h5>
                     <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="box">
-                        <div class="box-body" style="">
+                <form class="form-horizontal has-validation-callback" v-on:submit.prevent="onSubmitFormAddEdit" id="FormAddEdit">
+                    <div class="modal-body">
+                        <div class="box">
                             <div class="row">
-                                <form class="form-horizontal has-validation-callback" v-on:submit.prevent="onSubmitFormAddEdit" id="FormAddEdit">
-                                    <div class="row mb-4">
-                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                                        <div class="col-md-2">
-                                            <div class="form-group mb-3">
-                                                <div class="text-center" id="khung-chup">
-                                                    <div class="anh-chup image-div">
-                                                        <a id="aoutput" data-fancybox="gallery" v-bind:href="item.imageSrc">
-                                                            <img id="output" v-bind:src="item.imageSrc" style=" height: 210px; width: 100%; object-fit: fill; border: 1px dotted #0ef114;">
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="col-md-12 col-sm-12  ">
-                                                    <input type="file" id="imageInput" class="form-control">
+                                <div class="row mb-4">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="col-md-2">
+                                        <div class="form-group mb-3">
+                                            <div class="text-center" id="khung-chup">
+                                                <div class="anh-chup image-div">
+                                                    <a id="aoutput" data-fancybox="gallery" v-bind:href="item.imageSrc">
+                                                        <img id="output" v-bind:src="item.imageSrc">
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="col-md-5">
-                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1 ">Mã học sinh   </label>
-                                            <div class="col-md-8 col-sm-12  ">
-                                                <input class="form-control  mb-1 " type="text" readonly required id="studentCode" name="studentCode" v-model:value="item.studentCode">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Căn cước  </label>
-                                                <div class="col-md-8 col-sm-12  ">
-                                                    <input class="form-control  mb-1 " type="text" readonly required id="identifyNumber" name="identifyNumber" v-model:value="item.identifyNumber">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Lớp  </label>
-                                                <div class="col-md-8 col-sm-12  ">
-                                                    <input class="form-control  mb-1  " type="text" readonly required id="className" name="className" v-model:value="item.className">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Giới tính</label>
-                                                <div class="col-md-8 col-sm-12  ">
-                                                    <label> <input type="radio" class="form-check-input" readonly required v-model:value="item.genderCode" value="01"> Nam</label>
-                                                    <label> <input type="radio" class="form-check-input" readonly required v-model:value="item.genderCode" value="02">Nữ </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-5">
-                                            <div class="form-group">
-                                                <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Họ và tên    </label>
-                                                <div class="col-md-8 col-sm-12  ">
-                                                    <input type="text" id="fullName" name="fullName" readonly required class="form-control  mb-1  " v-model:value="item.fullName">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Trạng thái </label>
-                                                <div class="col-md-8 col-sm-12  ">
-                                                    <input type="text" id="status" name="status" readonly required class="form-control  mb-1  " v-model:value="item.status">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Năm sinh</label>
-                                                <div class="col-md-8 col-sm-12  ">
-                                                    <input type="text" id="syncCode" name="syncCode" readonly required class="form-control  mb-1" v-model:value="item.dateOfBirth">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="text-end">
-                                                <button type="submit" class="btn btn-info noradius "><i class="fa fa-check icon-white"></i> Lưu thông tin</button>
+                                        <div class="form-group">
+                                            <div class="col-md-12 col-sm-12  ">
+                                                <input type="file" id="imageInput" class="form-control">
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+
+                                    <div class="col-md-5">
+                                        <label class="col-md-4 control-label text-nowrap fw-bold mb-1 ">Mã học sinh   </label>
+                                        <div class="col-md-10 col-sm-12  ">
+                                            <input class="form-control  mb-1 " type="text" readonly required id="studentCode" name="studentCode" v-model:value="item.studentCode">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Căn cước  </label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <input class="form-control  mb-1 " type="text" readonly required id="identifyNumber" name="identifyNumber" v-model:value="item.identifyNumber">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Lớp  </label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <input class="form-control  mb-1  " type="text" readonly required id="className" name="className" v-model:value="item.className">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Giới tính</label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="01"> Nam</label>
+                                                <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="02">Nữ </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Họ và tên    </label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <input type="text" id="fullName" name="fullName" readonly required class="form-control  mb-1  " v-model:value="item.fullName">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Trạng thái </label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <input type="text" id="status" name="status" readonly required class="form-control  mb-1  " v-model:value="item.status">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Năm sinh</label>
+                                            <div class="col-md-10 col-sm-12  ">
+                                                <input type="text" id="syncCode" name="syncCode" readonly required class="form-control  mb-1" v-model:value="item.dateOfBirth">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                    <div class="modal-footer">
+                        <div class="text-end">
+                            <button type="button" class="btn mr-5" data-bs-dismiss="modal"> Bỏ qua </button>
+                            <button type="submit" class="btn btn-primary"> Lưu </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-
     <div class="modal fade" id="ModelImage" aria-hidden="true">
-        <div id="waitDialog" class="modal-dialog modal-xl">
+        <div id="waitDialog" class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 id="staticBackdropLabel" class="modal-title">Cắt ảnh</h5>
                     <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="box">
-                        <div class="box-body">
-                            <div class="row mb-4">
-                                <div class="col-md-12">
-                                    <div style="width:500px; height: 450px">
-                                        <img id="image" style="max-width: 100%; display: none;">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="text-end">
-                                        <button id="cropBtn" type="submit" class="btn btn-info noradius "><i class="fa fa-check icon-white"></i> Cắt ảnh </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div>
+                        <img id="image" style="max-width: 100%; display: none;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="text-end">
+                        <button type="button" class="btn mr-5" data-bs-dismiss="modal"> Bỏ qua </button>
+                        <button id="cropBtn" type="button" class="btn btn-info noradius "> </i> Cắt ảnh </button>
                     </div>
                 </div>
             </div>
@@ -413,7 +397,7 @@
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
             },
 
-            onSubmitData() {
+            onSubmitFormAddEdit() {
                 if (!validateForm("#FormAddEdit"))
                     return true;
 
@@ -532,13 +516,12 @@
 <script>
     let cropper;
     const image = document.getElementById('image');
+    const aoutput = document.getElementById('aoutput');
     const imageInput = document.getElementById('imageInput');
     const cropBtn = document.getElementById('cropBtn');
     const croppedImage = document.getElementById('croppedImage');
 
     imageInput.addEventListener('change', function (e) {
-
-
         const file = e.target.files[0];
         if (file) {
             bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelImage')).show();
@@ -553,24 +536,39 @@
                 }
 
                 cropper = new Cropper(image, {
-                    aspectRatio: 1, // ratio 1:1 (square)
+                    preview: '.preview',
+                    aspectRatio: 1, // Tỉ lệ hình vuông
                     viewMode: 1,
-                    preview: '.preview'
+                    autoCropArea: 1, // Vùng crop bao phủ toàn bộ ảnh
+                    movable: true,
+                    zoomable: true,
                 });
             };
             reader.readAsDataURL(file);
         }
+        imageInput.value = '';
     });
 
     // Handle the crop button
     cropBtn.addEventListener('click', function () {
         const canvas = cropper.getCroppedCanvas({
-            width: 300,
+            width: 250,
             height: 300
         });
 
+        let _img = canvas.toDataURL('image/png');
+        let imgBase64 = _img.replace('data:image/png;base64,', '')
+            .replace('data:image/jpeg;base64,', '')
+            .replace('data:image/gif;base64,', '')
+            .replace('data:image/heic;base64,', '')
+            //.replace('data:image/webp;base64,', '')
+            .replace('data:image/jpg;base64,', '');
 
-        _Student.item.imageSrc = canvas.toDataURL('image/png');
+
+        _Student.item.imageSrc = _img;
+        _Student.item.imageBase64 = imgBase64;
+
+        aoutput.style.display = 'block';
         bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelImage')).hide();
     });
 </script>

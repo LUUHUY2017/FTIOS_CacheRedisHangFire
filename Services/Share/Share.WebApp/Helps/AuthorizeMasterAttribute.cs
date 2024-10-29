@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AMMS.WebApp.Share.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Shared.Core.Identity.Menu;
+using Shared.Core.Identity.Object;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace AMMS.Share.WebApp.Helps;
@@ -15,6 +18,11 @@ public class AuthorizeMasterAttribute : Attribute, IAuthorizationFilter, IAuthor
     public string? Policy { get; set; }
     public string? Roles { get; set; }
     public string? AuthenticationSchemes { get; set; }
+
+    public string? UserId { get; set; }
+    public string? VHost { get; set; }
+    public string? AccessToken { get; set; }
+
 
     //public AuthorizeMasterAttribute()
     //{
@@ -36,9 +44,21 @@ public class AuthorizeMasterAttribute : Attribute, IAuthorizationFilter, IAuthor
         {
             var accessToken = context.HttpContext.Request.Cookies["amms.master.webapp.access_token"];
             context.HttpContext.Items["AMMS_AccessToken"] = accessToken;
+            AccessToken = accessToken;
             if (!string.IsNullOrEmpty(accessToken))
             {
                 var jwtToken = new JwtSecurityToken(accessToken);
+
+                try
+                {
+                    //Roles = string.Join(",", UserRoles);
+                    //PageIds = jwtToken.Claims.Where(c => c.Type == "pageIds").Select(o => o.Value).ToList();
+                    VHost = jwtToken.Issuer;
+                    UserId = jwtToken.Subject;
+                }
+                catch (Exception ex) { }
+
+
                 var accessToken_isExpires = (jwtToken == null) || (jwtToken.ValidFrom > DateTime.UtcNow) || (jwtToken.ValidTo < DateTime.UtcNow);
                 if (accessToken_isExpires)
                 {
@@ -69,6 +89,13 @@ public class AuthorizeMasterAttribute : Attribute, IAuthorizationFilter, IAuthor
                     }
                 }
 
+                if (!accessToken_isExpires)
+                {
+                    var pages = PagesConst._Menu_MD_Left.ToList();
+                    var categories = Category.ListCategory.ToList();
+                    var items = AMMS_Client_Call_API.GetPageApiByUser(VHost, AccessToken, UserId);
+                    PagesConst.Menu_MD_Left = AMMS_Get_Menu_User.GetMenuByUser(pages, categories, items.PageId);
+                }
             }
         }
         else
@@ -79,6 +106,6 @@ public class AuthorizeMasterAttribute : Attribute, IAuthorizationFilter, IAuthor
         }
 
     }
-     
+
 
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMMS.DeviceData.RabbitMq
+﻿namespace AMMS.DeviceData.RabbitMq
 {
     public class TA_PersonInfo
     {
@@ -16,6 +10,7 @@ namespace AMMS.DeviceData.RabbitMq
 
         public string? FisrtName { get; set; }
         public string? LastName { get; set; }
+        public string FullName { get; set; }
         /// <summary>
         /// ImageBase64 ảnh nhận dạng
         /// </summary>
@@ -43,7 +38,7 @@ namespace AMMS.DeviceData.RabbitMq
         /// ImageBase64 ảnh nhận dạng
         /// </summary>
         public string? UserFace { get; set; }
- 
+
         /// <summary>
         /// SerialNumber của máy muốn đẩy xuống
         /// </summary>

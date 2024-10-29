@@ -11,4 +11,5 @@ public class UserViewModel
     public string? Descriptions { get; set; }
     public bool? Actived { get; set; }
     public string? CompanyId { get; set; }
+    public string? Type {  get; set; }
 }

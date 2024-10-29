@@ -261,4 +261,20 @@ public class RepositoryBase<T> : IAsyncRepository<T> where T : EntityBase
             Message = "Cập nhật dữ liệu không thành công",
         };
     }
+
+    Task<List<T>> IAsyncRepository<T>.GetAllAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<List<T>> IAsyncRepository<T>.GetAllAsync(Expression<Func<T, bool>> predicate)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<Result<T?>> IAsyncRepository<T>.GetByIdAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
+     
 }
