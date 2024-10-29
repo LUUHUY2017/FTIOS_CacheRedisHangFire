@@ -6,6 +6,18 @@
                 <table class="table table-bordered">
                     <tbody>
                         <tr>
+                            <td>
+                                <div class="col-lg-3 my-1">
+                                    <label class="form-label fw-bold">Trường học</label>
+                                    <select id="FilterOrgainization" class="form-control select" data-dropdown-parent="#webui_attendenceConfig" data-placeholder="Vui lòng chọn trường">
+                                        <option v-for="option in combobox.schools" v-bind:value="option.id">
+                                            {{ option.organizationName }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
                             <td class="p-2 fw-bold">Kết nối SSO</td>
                         </tr>
                         <tr>
@@ -75,7 +87,10 @@
 
 <script>
     $(document).ready(function () {
-        
+        $('#FilterOrgainization').on("change", function () {
+            _config.filter.organizationId = $(this).val();
+            _config.loadData();
+        });
     });
     var _config = new Vue({
         el: '#webui_attendenceConfig',
@@ -107,18 +122,25 @@
                     headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
                 }
             },
+            filter: {
+                organizationId: null,
+            },
+            combobox: { schools: [], },
         },
         methods: {
             loadData() {
                 $('.loader').show();
-                axios.get('/api/v1/AttendanceConfig/GetFirstOrDefault', this.object.bearerAuthorization).then(response => {
+                axios.get('/api/v1/AttendanceConfig/GetFirstOrDefault?orgId=' + this.filter.organizationId, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
 
                     if (response.data.succeeded) {
                         //this.data = response.data.data;
-                        this.item = response.data.data || {};
+                        this.item = response.data.data || {
+                            endpointIdentity: 'https://sso.vtsmas.vn/connect/token',
+                            endpointGateway: 'https://gateway.vtsmas.vn',
+                        };
 
                     }
                     else {
@@ -131,11 +153,10 @@
                 });
             },
             onSaveData() {
-                console.log("Bắt đầu conf");
                 if (!validateForm("#FormAddEdit"))
                     return true;
-                console.log("Kết thúc conf");
                 $('.loader').show();
+                this.item.organizationId = this.filter.organizationId;
                 axios.post('/api/v1/AttendanceConfig/AddOrEdit', this.item, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
@@ -154,9 +175,23 @@
                     $('.loader').delay(100).hide(0);
                 });
             },
+            loadCombox() {
+                axios.get('/api/v1/Organization/GetForUser', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.schools = response.data.data;
+                    $('#FilterOrganization').val(this.combobox.schools.length > 0 ? this.combobox.schools[0].id : null).trigger('change');
+                    this.filter.organizationId = this.combobox.schools[0].id;
+                    this.loadData();
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
         },
         mounted() {
-            this.loadData();
+            this.loadCombox();
+            //this.loadData();
         },
     })
 </script>

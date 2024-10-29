@@ -8,6 +8,8 @@ public class AttendanceConfigRequest
     public string? Password { get; set; }
     public string? EndpointGateway { get; set; }
 
+    public string? OrganizationId { get; set; }
+
     //public TimeSpan? MorningStartTime { get; set; }
     //public TimeSpan? MorningEndTime { get; set; }
     //public TimeSpan? MorningLateTime { get; set; }

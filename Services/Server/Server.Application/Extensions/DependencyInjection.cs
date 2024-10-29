@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Server.Application.MasterDatas.A0.Accounts.V1;
+using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
 using Server.Application.MasterDatas.A2.Devices;
@@ -254,6 +255,9 @@ public static class DependencyInjection
 
         // Đồng bộ dữ liệu
         service.AddScoped<SmartService>();
+
+        //Account
+        service.AddScoped<AccountVTSmartService>();
 
 
     }

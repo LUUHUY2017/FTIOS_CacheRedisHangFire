@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1.Models;
 using Share.WebApp.Controllers;
@@ -14,9 +15,18 @@ namespace Server.API.APIs.Data.AttendanceConfigs.V1.Controllers;
 public class AttendanceConfigController : AuthBaseAPIController
 {
     private readonly AttendanceConfigService _attendanceConfigService;
-    public AttendanceConfigController(AttendanceConfigService attendanceConfigService)
+    private readonly AccountVTSmartService _accountVTSmartService;
+    public AttendanceConfigController(AttendanceConfigService attendanceConfigService, AccountVTSmartService accountVTSmartService)
     {
         _attendanceConfigService = attendanceConfigService;
+        _accountVTSmartService = accountVTSmartService;
+    }
+
+    [HttpGet("Test")]
+    public async Task<IActionResult> Test(string accountName, string password)
+    {
+        var data = await _accountVTSmartService.PostUserVT(accountName, password);
+        return Ok(data);
     }
 
     /// <summary>
@@ -37,9 +47,9 @@ public class AttendanceConfigController : AuthBaseAPIController
     /// <returns></returns>
     [AllowAnonymous]
     [HttpGet("GetFirstOrDefault")]
-    public async Task<IActionResult> GetFirstOrDefault()
+    public async Task<IActionResult> GetFirstOrDefault(string orgId)
     {
-        var data = await _attendanceConfigService.GetFirstOrDefault();
+        var data = await _attendanceConfigService.GetFirstOrDefault(orgId);
         return Ok(data);
     }
 

@@ -22,7 +22,7 @@ public class AttendanceConfigService
         {
             if (string.IsNullOrEmpty(request.Id))
             {
-                var dataAdd = _mapper.Map<A0_AttendanceConfig>(request);
+                var dataAdd = _mapper.Map<A0_AttendanceConfig>(request); 
                 var retVal = await _attendanceConfigRepository.AddAsync(dataAdd);
                 return retVal;
             }
@@ -84,11 +84,11 @@ public class AttendanceConfigService
         }
     }
 
-    public async Task<Result<AttendanceConfigResponse>> GetFirstOrDefault()
+    public async Task<Result<AttendanceConfigResponse>> GetFirstOrDefault(string orgId)
     {
         try
         {
-            var retVal = await _attendanceConfigRepository.GetByFirstAsync(x => x.Actived == true);
+            var retVal = await _attendanceConfigRepository.GetByFirstAsync(x => x.Actived == true && x.OrganizationId == orgId);
 
             var itemMap = _mapper.Map<AttendanceConfigResponse>(retVal.Data);
             return new Result<AttendanceConfigResponse>(itemMap, "Thành công", true);

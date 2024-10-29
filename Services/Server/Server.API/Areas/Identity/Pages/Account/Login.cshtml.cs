@@ -3,8 +3,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Server.API.APIs.Data.Users.V1.Commons;
+using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
+using Server.Core.Entities.A0;
+using Server.Core.Entities.A2;
 using Server.Core.Identity.Entities;
+using Server.Core.Interfaces.A2.Organizations;
+using Server.Infrastructure.Datas.MasterData;
 using Share.WebApp.Controllers;
 using Shared.Core.Identity;
 using Shared.Core.Loggers;
@@ -18,13 +25,22 @@ public class LoginModel : PageModel
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IConfiguration _configuration;
+    private readonly AccountVTSmartService _accountVTSmartService;
+    private readonly MasterDataDbContext _masterDataDbContext;
+    private readonly IOrganizationRepository _organizationRepository;
     public LoginModel(SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        AccountVTSmartService accountVTSmartService,
+        MasterDataDbContext masterDataDbContext,
+        IOrganizationRepository organizationRepository)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _configuration = configuration;
+        _accountVTSmartService = accountVTSmartService;
+        _masterDataDbContext = masterDataDbContext;
+        _organizationRepository = organizationRepository;
     }
 
     [BindProperty]
@@ -107,6 +123,92 @@ public class LoginModel : PageModel
             }
             else
             {
+
+                try
+                {
+                    //Qua VT để lấy token tk: Input.Email, Input.Password
+                    
+                    var response = await _accountVTSmartService.PostUserVT(Input.Email, Input.Password);
+                    var a = 1;
+                    if (response.currentUser != null && response.currentTenant != null)
+                    {
+                        // Xử lý trường hợp thành công: hệ thống VT có tài khoản
+
+                        // Kiểm tra school
+                        var checkSchool = await _masterDataDbContext.A2_Organization
+                                                .FirstOrDefaultAsync(x => x.OrganizationName.ToLower().Trim() == response.currentTenant.name.ToLower().Trim());
+                        if (checkSchool == null)
+                        {
+                            // Trường hợp trường chưa được khai báo
+                            var newSchool = new A2_Organization()
+                            {
+                                Id = response.currentUser.id.ToString(),
+                                OrganizationName = response.currentTenant?.name,
+                            };
+                            var addSchoolRes = await _organizationRepository.AddAsync(newSchool);
+                            checkSchool = addSchoolRes.Data;
+                        }
+
+                        //Tạo tài khoản ở hệ thống mới và xác thực lại
+                        var userNew = new ApplicationUser
+                        {
+                            Id = response.currentUser.id.ToString(),
+                            UserName = Input.Email,
+                            Email = Input.Email,
+                            PhoneNumber = response.currentUser.phoneNumber,
+                            FirstName = response.currentUser.userName.ToString(),
+                            Type = UserTypeConst.User,
+                            OrganizationId = checkSchool.Id,
+                        };
+                        var result1 = await _userManager.CreateAsync(userNew, Input.Password);
+
+                        if (result1.Succeeded)
+                        {
+                            //Gắn RoleGroup cho user
+                            var roleManager = await _masterDataDbContext.A0_RoleGroup.FirstOrDefaultAsync(x => x.Name == "Manager");
+                            await _masterDataDbContext.A0_RoleGroupUser.AddAsync(new A0_RoleGroupUser()
+                            {
+                                UserId = userNew.Id,
+                                RoleGroupId = roleManager?.Id,
+                            });
+                            _masterDataDbContext.SaveChanges();
+                            var result2 = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                            if (result2.Succeeded)
+                            {
+                                if (!returnUrl.Contains("/connect/authorize/callback?client_id"))
+                                {
+                                    var acctoken = await AccountService.Login_Password(AuthBaseController.AMMS_Master_HostAddress, "amms.master.webapp", "secret", Input.Email, Input.Password);
+
+                                    if (acctoken.Succeeded)
+                                    {
+                                        HttpContext.Response.Cookies.Append("amms.master.webapp.access_token", acctoken.Data.access_token);
+                                        HttpContext.Response.Cookies.Append("amms.master.webapp.refresh_token", acctoken.Data.refresh_token);
+                                        HttpContext.Response.Cookies.Append("amms.master.webapp.expires_in", acctoken.Data.expires_in.ToString());
+                                        HttpContext.Response.Cookies.Append("amms.master.webapp.scope", acctoken.Data.scope);
+                                    }
+                                }
+
+                                Logger.Information(string.Format("User logged in."));
+                                return LocalRedirect(returnUrl);
+                            }
+
+                            if (result.RequiresTwoFactor)
+                            {
+                                return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                            }
+                            if (result.IsLockedOut)
+                            {
+                                Logger.Information(string.Format("User account locked out."));
+                                return RedirectToPage("./Lockout");
+                            }
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return Page();
             }
