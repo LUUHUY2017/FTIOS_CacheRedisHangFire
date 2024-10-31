@@ -3,11 +3,8 @@ using AMMS.Hanet.Applications.V1.Service;
 using AMMS.Hanet.Data;
 using AMMS.Hanet.Data.Response;
 using EventBus.Messages;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Share.WebApp.Controllers;
-using Share.WebApp.Helps;
 using System.Text;
 
 namespace AMMS.Hanet.APIControllers;
@@ -15,18 +12,15 @@ namespace AMMS.Hanet.APIControllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[AuthorizeClientAPI(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = RoleConst.AdminPage)]
-//[AuthorizeClientAPI(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-//public class DeviceController : AuthBaseAPIController
 public class DeviceController : ControllerBase
 {
     HANET_Server_Push_Service _HANET_Process_Service;
-    private readonly IEventBusAdapter _eventBusAdapter;
+     private readonly IEventBusAdapter _eventBusAdapter;
     private readonly IConfiguration _configuration;
 
-    public DeviceController(HANET_Server_Push_Service HANET_Process_Service, IConfiguration configuration,EventBusAdapter eventBusAdapter)
+    public DeviceController(HANET_Server_Push_Service HANET_Process_Service, IConfiguration configuration,   IEventBusAdapter eventBusAdapter)
     {
-        _HANET_Process_Service = HANET_Process_Service;
+         _HANET_Process_Service = HANET_Process_Service;
         _eventBusAdapter = eventBusAdapter;
         _configuration = configuration;
     }
@@ -78,7 +72,7 @@ public class DeviceController : ControllerBase
     {
         TA_PersonInfo user = new TA_PersonInfo()
         {
-            PersonCode = "333",
+            PersonCode = "47916397",
             FullName = @"Lê Hoàng Bảo",
 
         };

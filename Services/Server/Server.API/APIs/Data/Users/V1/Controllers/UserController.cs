@@ -61,6 +61,16 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
         }
 
         /// <summary>
+        /// Danh sách type
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetTypes")]
+        public async Task<IActionResult> GetTypes()
+        {
+            return Ok(new Result<object>(UserTypeConst.UserTypes, "Thành công!", true));
+        }
+
+        /// <summary>
         /// Danh sách các tài khoản
         /// </summary>
         /// <returns></returns>

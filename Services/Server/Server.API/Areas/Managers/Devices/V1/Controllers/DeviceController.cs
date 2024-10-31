@@ -5,7 +5,7 @@ using Shared.Core.Identity;
 namespace Server.API.Areas.Managers.Devices.V1.Controllers;
 
 [Route("v1/[controller]")]
-[AuthorizeMaster(Roles = RoleConst.SuperAdminPage)]
+//[AuthorizeMaster(Roles = RoleConst.SuperAdminPage)]
 public class DeviceController : Controller
 {
     const string pathUrl = "~/Areas/Managers/Devices/V1/Views/";

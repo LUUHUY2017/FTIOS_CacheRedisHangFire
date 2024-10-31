@@ -5,7 +5,7 @@ using Shared.Core.Identity;
 namespace Server.API.Areas.Reports.TimeAttendenceEvents.CheckInByDay.V1.Controllers;
 
 [Route("v1/[controller]")]
-[AuthorizeMaster(Roles = RoleConst.AdminPage)]
+//[AuthorizeMaster(Roles = RoleConst.AdminPage)]
 public class DeviceAdminController : Controller
 {
     const string pathUrl = "~/Areas/Managers/DeviceAdmins/V1/Views/";

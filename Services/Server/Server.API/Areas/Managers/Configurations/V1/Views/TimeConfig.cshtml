@@ -224,9 +224,10 @@
                 });
             },
             onSaveData() {
-                console.log(this.item);
+                //console.log(this.item);
                 if (!validateForm("#FormAddEdit"))
                     return true;
+                this.item.organizationId = this.filter.organizationId;
                 $('.loader').show();
                 axios.post('/api/v1/TimeConfig/AddOrEdit', this.item, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {

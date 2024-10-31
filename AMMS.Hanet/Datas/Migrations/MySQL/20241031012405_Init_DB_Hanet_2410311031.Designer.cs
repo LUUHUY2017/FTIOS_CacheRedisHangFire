@@ -3,6 +3,7 @@ using System;
 using AMMS.Hanet.Datas.Databases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMMS.Hanet.Datas.Migrations.MySql
 {
     [DbContext(typeof(DeviceAutoPushDbContext))]
-    partial class DeviceAutoPushDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241031012405_Init_DB_Hanet_2410311031")]
+    partial class Init_DB_Hanet_2410311031
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
