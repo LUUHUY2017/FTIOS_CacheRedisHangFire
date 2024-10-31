@@ -13,11 +13,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Server.Application.CronJobs;
 using Server.Application.MasterDatas.A0.Accounts.V1;
 using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
 using Server.Application.MasterDatas.A2.Devices;
+using Server.Application.MasterDatas.A2.MonitorDevices.V1;
 using Server.Application.MasterDatas.A2.Organizations.V1;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
@@ -100,6 +102,7 @@ public static class DependencyInjection
 
         services.AddScoped<TimeAttendenceEventService>();
         services.AddScoped<TimeAttendenceEventConsumer>();
+        services.AddScoped<TimeAttendenceSyncSmasConsumer>();
 
 
 
@@ -113,6 +116,7 @@ public static class DependencyInjection
             ////Đăng ký xử lý bản tin data XML của Brickstream
             config.AddConsumer<StudentConsumer>();
             config.AddConsumer<TimeAttendenceEventConsumer>();
+            config.AddConsumer<TimeAttendenceSyncSmasConsumer>();
             //Đăng ký xử lý bản tin xuống thiết bị
             config.AddConsumer<Server_RequestConsummer>();
 
@@ -140,6 +144,11 @@ public static class DependencyInjection
                 cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Data_Auto_Push_D2S}", c =>
                 {
                     c.ConfigureConsumer<TimeAttendenceEventConsumer>(ct);
+                });
+
+                cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Server_Auto_Push_SMAS}", c =>
+                {
+                    c.ConfigureConsumer<TimeAttendenceSyncSmasConsumer>(ct);
                 });
                 #endregion
 
@@ -188,7 +197,7 @@ public static class DependencyInjection
         service.AddSingleton<ICacheService, CacheService>();
 
         ////ConJob chạy các dịch vụ tự động
-        //service.AddScoped<IConJobService, ConJobService>();
+        service.AddScoped<ICronJobService, CronJobService>();
 
         service.AddScoped<SMTP_Email_Adpater>();
         service.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailSenderService>();
@@ -258,6 +267,9 @@ public static class DependencyInjection
 
         //Account
         service.AddScoped<AccountVTSmartService>();
+
+        //Monitor thiết bị
+        service.AddScoped<MonitorDeviceService>();
 
 
     }

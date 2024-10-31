@@ -9,7 +9,7 @@ public class AutoMapper : Profile
 {
     public AutoMapper()
     {
-        CreateMap<ScheduleReportInOutFilter, ScheduleSendEmailModel>().ReverseMap();
+        CreateMap<ScheduleReportInOutFilter, ScheduleSendEmailFilterRequest>().ReverseMap();
         CreateMap<A2_ScheduleSendMail, ScheduleReportInOutRequest>().ReverseMap();
         CreateMap<A2_ScheduleSendMail, ScheduleReportInOutResponse>().ReverseMap();
     }

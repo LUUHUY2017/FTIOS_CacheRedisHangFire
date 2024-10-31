@@ -1,10 +1,11 @@
-﻿using IdentityServer4.Extensions;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A2.Organizations.V1;
 using Server.Application.MasterDatas.A2.Organizations.V1.Models;
 using Server.Core.Entities.A2;
-using Server.Core.Interfaces.A2.Lanes.Requests;
+using Server.Core.Interfaces.A2.Organizations;
+using Server.Core.Interfaces.A2.ScheduleSendEmails.Requests;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
@@ -17,10 +18,14 @@ namespace Server.API.APIs.Data.Organizations.V1.Controllers;
 //[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 public class OrganizationController : AuthBaseAPIController
 {
+    private readonly IMapper _mapper;
     private readonly OrganizationService _organizationService;
-    public OrganizationController(OrganizationService organizationService)
+    private readonly IOrganizationRepository _organizationRepository;
+    public OrganizationController(IMapper mapper, OrganizationService organizationService, IOrganizationRepository organizationRepository)
     {
+        _mapper = mapper;
         _organizationService = organizationService;
+        _organizationRepository = organizationRepository;
     }
 
     /// <summary>
@@ -40,55 +45,57 @@ public class OrganizationController : AuthBaseAPIController
     /// </summary>
     /// <returns></returns>
     [HttpPost("Post")]
-    public async Task<IActionResult> Post(LaneFilterRequest request)
+    public async Task<IActionResult> Post(OrganizationFilterRequest request)
+    {
+        var data = await _organizationRepository.GetAlls(request);
+        return Ok(data);
+
+    }
+    /// <summary>
+    /// Cập nhật
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPut("Edit")]
+    public async Task<ActionResult> Edit(OrganizationRequest request)
     {
         try
         {
-            var data = await _organizationService.Gets();
-            return Ok(data);
+            var model = _mapper.Map<A2_Organization>(request);
+            var retVal = await _organizationRepository.UpdateAsync(model);
+
+            return Ok(retVal);
         }
         catch (Exception ex)
         {
-            return Ok(new Result<List<A2_Lane>>(null, "Lỗi:" + ex.Message, false));
+            return BadRequest(ex.Message);
         }
     }
 
 
-
-
     /// <summary>
-    /// Lấy danh sách
+    /// Kích hoạt
     /// </summary>
+    /// <param name="request"></param>
     /// <returns></returns>
-    [AllowAnonymous]
-    [HttpGet("GetForUser")]
-    public async Task<IActionResult> GetForUser()
+    [HttpPost("Active")]
+    public async Task<IActionResult> Active([FromBody] ActiveRequest request)
     {
-        _organizationService.UserId = User.GetSubjectId();
-        var data = await _organizationService.GetForUser();
-        return Ok(data);
+        var result = await _organizationRepository.ActiveAsync(request);
+        return Ok(result);
     }
 
     /// <summary>
-    /// Lấy cấu hình trường đầu tiên
+    /// Ngừng kích hoạt
     /// </summary>
+    /// <param name="request"></param>
     /// <returns></returns>
-    [AllowAnonymous]
-    [HttpGet("GetFirstOrDefault")]
-    public async Task<IActionResult> GetFirstOrDefault()
+    [HttpPost("Inactive")]
+    public async Task<ActionResult> Inactive([FromBody] InactiveRequest request)
     {
-        var data = await _organizationService.GetFirstOrDefault();
-        return Ok(data);
+        var result = await _organizationRepository.InActiveAsync(request);
+        return Ok(result);
     }
 
-
-    /// <summary>
-    /// Tạo hoặc cập nhật trường
-    /// <returns></returns>
-    [HttpPost("AddOrEdit")]
-    public async Task<IActionResult> AddOrEdit(OrganizationRequest model)
-    {
-        return Ok(await _organizationService.SaveAsync(model));
-    }
 }
 

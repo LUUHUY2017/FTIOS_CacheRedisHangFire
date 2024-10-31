@@ -23,7 +23,7 @@ namespace AMMS.Hanet.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.Hanet.Datas.Entities.app_config", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("AccessToken")
                         .HasColumnType("longtext");
@@ -60,10 +60,59 @@ namespace AMMS.Hanet.Datas.Migrations.MySql
                     b.ToTable("app_config", "Hanet");
                 });
 
+            modelBuilder.Entity("AMMS.Hanet.Datas.Entities.hanet_commandlog", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("change_time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("command_ation")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("command_type")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("commit_time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("content")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("create_time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("return_content")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("return_time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("return_value")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("successed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("terminal_id")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("terminal_sn")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("transfer_time")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("commandlog", "Hanet");
+                });
+
             modelBuilder.Entity("AMMS.Hanet.Datas.Entities.hanet_terminal", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("area_id")
                         .IsRequired()

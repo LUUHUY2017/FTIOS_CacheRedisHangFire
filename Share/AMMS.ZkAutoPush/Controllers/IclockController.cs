@@ -7,7 +7,7 @@ using AMMS.ZkAutoPush.Data;
 using Shared.Core.Caches.Redis;
 using AMMS.DeviceData.RabbitMq;
 using AMMS.ZkAutoPush.Applications.V1;
-using Microsoft.AspNetCore.Authorization;
+using AMMS.ZkAutoPush.Applications;
 
 namespace AMMS.ZkAutoPush.Controllers;
 
@@ -26,13 +26,17 @@ public class IclockController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly ICacheService _cacheService;
     private readonly StartupDataService _startupDataService;
+    private readonly DeviceCacheService _deviceCacheService;
+    private readonly DeviceCommandCacheService _deviceCommandCacheService;
+
     public IclockController(ILogger<IclockController> logger
         , IConfiguration configuration
         , IOptions<EventBusSettings> eventBusSettings
         , IEventBusAdapter eventBusAdapter
         , ICacheService cacheService
         , StartupDataService startupDataService
-
+        , DeviceCacheService deviceCacheService
+        , DeviceCommandCacheService deviceCommandCacheService
         )
     {
         _logger = logger;
@@ -41,6 +45,8 @@ public class IclockController : ControllerBase
         _eventBusAdapter = eventBusAdapter;
         _cacheService = cacheService;
         _startupDataService = startupDataService;
+        _deviceCacheService = deviceCacheService;
+        _deviceCommandCacheService = deviceCommandCacheService;
     }
     /// <summary>
     /// Khởi tạo
@@ -50,12 +56,13 @@ public class IclockController : ControllerBase
     /// <param name="options"></param>
     /// <returns></returns>
     [HttpGet("cdata")]
-    public string cdata(string sn, string pushver, string options)
+    public async Task<string> cdata(string sn, string pushver, string options)
     {
         Logger.Warning($"cdata: method: {Request.Method}, sn: {sn}");
         try
         {
-            var thietbi = _startupDataService.GetDevice(sn);
+            var thietbi = await _deviceCacheService.Get(sn);
+            //var thietbi = _startupDataService.GetDevice(sn);
             string sessionId = HttpContext.Session.Id;
             string randomString = "1234567890"; //Util.GetRandomString(10);
 
@@ -193,6 +200,7 @@ public class IclockController : ControllerBase
         Logger.Warning($"ping: method: {Request.Method}, sn: {sn}");
 
         var thietBiUpdate = ZK_SV_PUSHService.ListTerminal.FirstOrDefault(o => o.sn == sn);
+        //var thietBiUpdate = await _deviceCacheService.Get(sn);
         if (thietBiUpdate != null)
         {
             thietBiUpdate.last_activity = DateTime.Now;
@@ -217,7 +225,7 @@ public class IclockController : ControllerBase
     /// <param name="sn"></param>
     /// <returns></returns>
     [HttpGet("getrequest")]
-    public string getrequest(string sn)
+    public async Task<string> getrequest(string sn)
     {
         Logger.Warning($"getrequest: method: {Request.Method}, sn: {sn}");
 
@@ -230,6 +238,8 @@ public class IclockController : ControllerBase
             List<IclockCommand> xx = new List<IclockCommand>();
             if (ZK_SV_PUSHService.ListIclockCommand.Count > 0)
                 xx = ZK_SV_PUSHService.ListIclockCommand.Where(o => o != null && o.SerialNumber == sn && !o.IsRequest).ToList();
+
+            //var xx = await _deviceCommandCacheService.Gets(sn);
 
             if (xx == null || xx.Count() < 1)
             {
@@ -262,6 +272,7 @@ public class IclockController : ControllerBase
                         if (x.DataTable == IclockDataTable.A2NguoiIclockUserPicSyn)
                         {
                             ZK_SV_PUSHService.ListIclockCommand.Remove(x);
+                            //await _deviceCommandCacheService.Clear(x.DataId);
                         }
                         continue;
                     }
@@ -293,12 +304,11 @@ public class IclockController : ControllerBase
 
 
         }
-        catch (Exception)
+        catch (Exception e)
         {
-
-            throw;
+            Logger.Error(e);
+            return Retval_404;
         }
-        return Retval_OK;
     }
     /// <summary>
     /// Thiết bị đẩy lại trạng thái lệnh thực hiện

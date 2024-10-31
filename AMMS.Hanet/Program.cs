@@ -10,6 +10,12 @@ using AMMS.Hanet.Extensions;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using Hangfire;
+using Hangfire.MySql;
+using Server.API.Helps.Authorizations;
+using System.Transactions;
+using Shared.Core.Loggers;
+using AMMS.Hanet.Applications.CronJobs;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
@@ -41,6 +47,30 @@ services.AddDbContext(configuration);
 AppSettings appSettings = new AppSettings();
 configuration.Bind(appSettings);
 AuthBaseController.AMMS_Master_HostAddress = builder.Configuration["Authentication:Authority"];
+
+//Hangfire MySQL Server
+services.AddHangfire(configuration => configuration
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseStorage(
+        new MySqlStorage(
+            builder.Configuration["ConnectionStrings:HangfireDBConnection"],
+            new MySqlStorageOptions
+            {
+                QueuePollInterval = TimeSpan.FromSeconds(10),
+                JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                PrepareSchemaIfNecessary = true,
+                DashboardJobListLimit = 5000,
+                TransactionTimeout = TimeSpan.FromMinutes(1),
+                TablesPrefix = "Hangfire",
+            }
+        )
+    ));
+
+
+services.AddHangfireServer();
+
 
 // Add Auth
 services.Configure<Authentication>(configuration.GetSection("Authentication"));
@@ -114,6 +144,9 @@ services.AddEndpointsApiExplorer();
 //AutoMapper
 services.AddAutoMapper(typeof(Program));
 services.AddAddAutoMapperServices();
+
+services.AddEventBusService(configuration);
+services.AddCaheService(configuration);
 
 //ScopedServices
 services.AddScopedServices();
@@ -244,6 +277,31 @@ app.UseEndpoints(endpoints =>
     ;
 
 });
+
+//Tạo các job chạy tự động, theo dõi trạng thái của các job     
+//app.UseHangfireDashboard("/hangfire_dashboard");
+app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
+{
+    IgnoreAntiforgeryToken = true,
+    Authorization = new[] { new DashboardNoAuthorizationFilter() }
+});
+//app.UseHangfireDashboard();
+app.UseHangfireServer();
+
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
+        RecurringJob.AddOrUpdate("Test" ,() => conJobService.Write(), "*/1 * * * *", TimeZoneInfo.Local);
+        //RecurringJob.AddOrUpdate("CheckDeviceOnline" ,() => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);
+    }
+    catch (Exception e)
+    {
+        Logger.Error(e);
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

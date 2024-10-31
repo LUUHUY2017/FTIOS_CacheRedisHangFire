@@ -20,5 +20,7 @@ public class zk_terminalcommandlog
     public DateTime? return_time { get; set; }
     public int? return_value { get; set; }
     public bool? successed { get; set; }
+    public string? command_type { get; set; }
+    public string? command_ation { get; set; }
 
 }

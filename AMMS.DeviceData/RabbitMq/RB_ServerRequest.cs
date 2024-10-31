@@ -27,6 +27,10 @@
         ///  Json obj requet
         /// </summary>
         public string? RequestParam { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string SchoolId { get; set; }
 
     }
     public class ServerRequestAction

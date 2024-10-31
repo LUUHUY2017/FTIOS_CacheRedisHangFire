@@ -38,7 +38,7 @@ namespace AMMS.DeviceData.Data
                 #region Hanet
                 if (data.DeviceModel.ToUpper() == "HANET")
                 {
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync(("HanetServerToDevice") + EventBusConstants.Hanet_Server_Push_S2D);
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync(("ViettelHanet") + EventBusConstants.Hanet_Server_Push_S2D);
                     await aa.Send(data);
                 }
 

@@ -676,7 +676,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.Property<string>("BrandName")
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime?>("ConnectUpdaeTime")
+                    b.Property<DateTime?>("ConnectUpdateTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<bool?>("ConnectionStatus")

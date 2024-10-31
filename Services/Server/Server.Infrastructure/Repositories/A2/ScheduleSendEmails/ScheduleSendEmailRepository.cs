@@ -56,7 +56,7 @@ public class ScheduleSendEmailRepository : IScheduleSendMailRepository
             return new Result<A2_ScheduleSendMail>("Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<List<A2_ScheduleSendMail>> GetAlls(ScheduleSendEmailModel request)
+    public async Task<List<A2_ScheduleSendMail>> GetAlls(ScheduleSendEmailFilterRequest request)
     {
         try
         {

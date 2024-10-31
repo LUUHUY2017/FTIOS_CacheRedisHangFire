@@ -1,5 +1,6 @@
 ﻿using AMMS.DeviceData.Data;
 using AMMS.DeviceData.RabbitMq;
+using AMMS.ZkAutoPush.Applications;
 using AMMS.ZkAutoPush.Applications.V1;
 using AMMS.ZkAutoPush.Applications.V1.Consummer;
 using AMMS.ZkAutoPush.Datas.Databases;
@@ -44,6 +45,8 @@ public static class DependencyInjection
         //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
 
+      
+        
         return services;
     }
 
@@ -167,5 +170,10 @@ public static class DependencyInjection
         service.AddScoped<ZK_DEVICE_RPService>();
         service.AddScoped<ZK_SV_PUSHService>();
         service.AddScoped<StartupDataService>();
+
+        //Cache
+        service.AddSingleton<ICacheService, CacheService>();
+        service.AddScoped<DeviceCacheService>();
+        service.AddScoped<DeviceCommandCacheService>();
     }
 }

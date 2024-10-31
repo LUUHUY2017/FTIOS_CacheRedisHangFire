@@ -1,21 +1,16 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Server.Application.MasterDatas.A2.Organizations.V1.Models;
 using Server.Core.Entities.A2;
 using Server.Core.Identity.Entities;
 using Server.Core.Interfaces.A2.Organizations;
-using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
-using Shared.Core.Identity.Object;
 
 namespace Server.Application.MasterDatas.A2.Organizations.V1;
 
 public class OrganizationService
 {
-    public string? UserId {  get; set; }
+    public string? UserId { get; set; }
     private readonly UserManager<ApplicationUser> _userManager;
 
     private readonly IOrganizationRepository _organizationRepository;

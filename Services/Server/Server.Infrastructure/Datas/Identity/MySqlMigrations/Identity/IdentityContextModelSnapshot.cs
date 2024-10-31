@@ -23,7 +23,7 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.Identity
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -60,7 +60,7 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.Identity
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -83,7 +83,7 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.Identity
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -95,17 +95,17 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.Identity
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -117,10 +117,10 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.Identity
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -132,13 +132,13 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.Identity
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Value")
                         .HasColumnType("longtext");
@@ -151,7 +151,7 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.Identity
             modelBuilder.Entity("Server.Core.Identity.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -235,7 +235,7 @@ namespace Server.Infrastructure.Datas.Identity.MySqlMigrations.Identity
                         .HasColumnType("int");
 
                     b.Property<string>("ApplicationUserId")
-                        .HasColumnType("varchar(95)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");

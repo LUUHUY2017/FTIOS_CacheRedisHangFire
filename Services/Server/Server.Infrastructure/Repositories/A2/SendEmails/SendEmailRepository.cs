@@ -38,7 +38,7 @@ public class SendEmailRepository : ISendEmailRepository
                                orderby _do.CreatedDate descending
                                select _do).ToListAsync();
 
-            return new Result<List<A2_SendEmail>>(_data, "Xóa thành công!", true);
+            return new Result<List<A2_SendEmail>>(_data, "Thành công!", true);
         }
         catch (Exception ex)
         {

@@ -6,7 +6,6 @@ using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 using Shared.Core.Loggers;
 
 namespace Server.Application.MasterDatas.A2.Students.V1;
-//public class TimeAttendenceEventConsumer : IConsumer<RB_ServerResponse>
 public class TimeAttendenceEventConsumer : IConsumer<RB_DataResponse>
 {
     private readonly IEventBusAdapter _eventBusAdapter;

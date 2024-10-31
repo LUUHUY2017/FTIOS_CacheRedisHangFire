@@ -92,6 +92,8 @@
 
     <Compile Include="APIs\Data\Devices\V1\Controllers\DeviceAdminController.cs" />
 
+    <Compile Include="APIs\Data\MonitorDevices\V1\Controllers\MonitorDeviceController.cs" />
+
     <Compile Include="APIs\Data\Students\V1\Controllers\StudentController.cs" />
 
     <Compile Include="APIs\Data\Lanes\V1\Controllers\LaneController.cs" />

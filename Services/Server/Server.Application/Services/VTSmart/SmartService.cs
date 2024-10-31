@@ -30,6 +30,10 @@ public sealed class SmartService
     public static string urlSSO = "https://sso.vtsmas.vn/connect/token";
     public static AccessToken _accessToken;
 
+    public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
+    public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
+    public static string secretKey = "Smas!@#2023";
+
     public async Task<A0_AttendanceConfig> GetConfig()
     {
         A0_AttendanceConfig retval = null;
@@ -273,45 +277,46 @@ public sealed class SmartService
     #endregion
 
     #region POST
-    public async Task<List<GradeClasseReponse>> PostSyncAttendence2VSMAS()
+    public async Task<SyncDataResponse> PostSyncAttendence2Smas(SyncDataRequest req)
     {
-        List<GradeClasseReponse> retval = null;
+        SyncDataResponse retval = null;
         try
         {
             if (_accessToken == null || !_accessToken.IsTokenValid())
                 await GetToken();
             if (_accessToken != null)
             {
-                string secretKey = "";
+                string _secretKey = GetSecretKeyVMSAS(secretKey, key, keyIV, "20186511");
 
+                var extra = new ExtraProperties()
+                {
+                    IsLate = false,
+                    IsOffSoon = false,
+                    IsOffPeriod = false,
+                    LateTime = DateTime.UtcNow,
+                    OffSoonTime = DateTime.UtcNow,
+                    PeriodI = false,
+                    PeriodII = false,
+                    PeriodIII = false,
+                    PeriodIV = false,
+                    PeriodV = false,
+                    PeriodVI = false,
+                    AbsenceTime = DateTime.UtcNow,
+                };
                 var studentAbsenceByDevices = new List<StudentAbsenceByDevice>()
                 {
                     new StudentAbsenceByDevice
                     {
                       StudentCode =  "HS0001",
                       Value= "X",
-                      ExtraProperties= new ExtraProperties()
-                      {
-                            IsLate= true,
-                            IsOffSoon= true,
-                            IsOffPeriod= true,
-                            LateTime= DateTime.UtcNow,
-                            OffSoonTime=DateTime.UtcNow,
-                            PeriodI= false,
-                            PeriodII= true,
-                            PeriodIII= true,
-                            PeriodIV= false,
-                            PeriodV= false,
-                            PeriodVI= false,
-                            AbsenceTime= DateTime.UtcNow,
-                      }
+                      ExtraProperties= extra
                     }
                 };
-                var paramData = new SyncDataResponse()
+                var paramData = new SyncDataRequest()
                 {
-                    SecretKey = secretKey,
-                    SchoolCode = "7900001",
-                    SchoolYearCode = "2023-2024",
+                    SecretKey = _secretKey,
+                    SchoolCode = "20186511",
+                    SchoolYearCode = "2024-2025",
                     ClassCode = "LH0001",
                     AbsenceDate = DateTime.UtcNow,
                     Section = 0,
@@ -321,7 +326,7 @@ public sealed class SmartService
 
 
                 var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/diem-danh-tich-hop-thiet-bi");
-                var parameter = new StringContent(JsonConvert.SerializeObject(paramData), Encoding.UTF8, "application/json");
+                var parameter = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
@@ -331,10 +336,9 @@ public sealed class SmartService
                     if (result.IsSuccessStatusCode)
                     {
                         var data = await result.Content.ReadAsStringAsync();
-                        retval = await ConvertDicToGradeClasseReponse(JsonConvert.DeserializeObject<Dictionary<string, List<ClassResponse>>>(data));
+                        retval = JsonConvert.DeserializeObject<SyncDataResponse>(data);
                     }
                 }
-
             }
         }
         catch (Exception e)
@@ -361,7 +365,7 @@ public sealed class SmartService
             }
         }
     }
-    public static string GetSecretKeyVMSAS(string secretKey, string keyHas, string ivHas, string schoolCode)
+    public static string GetSecretKeyVMSAS(string secretKey, string keyHas, string keyIV, string schoolCode)
     {
         TimeZoneInfo timezone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); // UTC+7 (Indochina Time)
         DateTime currentDateTime = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
@@ -375,7 +379,7 @@ public sealed class SmartService
         string plaintext = $"{secretKey}||{schoolCode}||{dateTimeFormatted}";
 
         byte[] key = Convert.FromBase64String(keyHas);
-        byte[] iv = Convert.FromBase64String(ivHas);
+        byte[] iv = Convert.FromBase64String(keyIV);
         string encryptedString = EncryptStringVSMAS(plaintext, key, iv);
 
         return encryptedString;

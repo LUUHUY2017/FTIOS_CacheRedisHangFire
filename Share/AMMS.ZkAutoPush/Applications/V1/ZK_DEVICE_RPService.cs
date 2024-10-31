@@ -3,10 +3,6 @@ using AMMS.ZkAutoPush.Data;
 using AMMS.ZkAutoPush.Datas.Databases;
 using AMMS.ZkAutoPush.Datas.Entities;
 using EventBus.Messages;
-using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Shared.Core.Loggers;
 
 namespace AMMS.ZkAutoPush.Applications.V1;
@@ -16,11 +12,16 @@ public class ZK_DEVICE_RPService
     private readonly IConfiguration _configuration;
 
     private readonly DeviceAutoPushDbContext _deviceAutoPushDbContext;
-    public ZK_DEVICE_RPService(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter, IConfiguration configuration)
+    private readonly DeviceCacheService _deviceCacheService;
+
+    public ZK_DEVICE_RPService(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter, IConfiguration configuration
+        , DeviceCacheService deviceCacheService
+        )
     {
         _deviceAutoPushDbContext = deviceAutoPushDbContext;
         _eventBusAdapter = eventBusAdapter;
         _configuration = configuration;
+        _deviceCacheService = deviceCacheService;
     }
     public async Task ProcessData(ZK_DEVICE_RP data)
     {
@@ -63,6 +64,7 @@ public class ZK_DEVICE_RPService
                                 try
                                 {
                                     var thietBiUpdate = ZK_SV_PUSHService.ListTerminal.FirstOrDefault(o => o.sn == data.SN);
+                                    //var thietBiUpdate = await _deviceCacheService.Get( data.SN);
                                     if (thietBiUpdate != null)
                                     {
                                         thietBiUpdate.face_count = int.Parse(faceQty);

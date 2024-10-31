@@ -53,7 +53,7 @@ public class BaoCaoXeController : AuthBaseAPIController
     [HttpPost("Gets")]
     public async Task<ActionResult> Filter(ScheduleSendEmailFilter request)
     {
-        var model = _mapper.Map<ScheduleSendEmailModel>(request);
+        var model = _mapper.Map<ScheduleSendEmailFilterRequest>(request);
         var data = await _sheduleSendEmailReponsity.GetAlls(model);
 
         var items = new List<ScheduleSendEmailResponse>();

@@ -66,6 +66,22 @@ public class ConfigurationController : AuthBaseController
             var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
+            #region Lấy không cần xác thực đăng nhập lại
+            //var client = new HttpClient();
+            //var request = new HttpRequestMessage(HttpMethod.Post, "https://oauth.hanet.com/token");
+            //var collection = new List<KeyValuePair<string, string>>();
+            //collection.Add(new("grant_type", "refresh_token"));
+            //collection.Add(new("client_id", config.ClientId));
+            //collection.Add(new("client_secret", config.ClientScret));
+            //collection.Add(new("refresh_token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxMjYyMTM0MDE3Mjc3NDY2NDEiLCJlbWFpbCI6Im5hbW5kQGFjcy52biIsImNsaWVudF9pZCI6ImUwZjM0NWRhNWYxODdkMjZiMDE4ZTFkMzYwM2FkOGE4IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJpYXQiOjE3MzAxNzgxNzQsImV4cCI6MTc2MTcxNDE3NH0.fk8cRmNsRwvrsnvm_b7xtZd8tpYhLPATHZ5_S_Xtsbs"));
+            //var content = new FormUrlEncodedContent(collection);
+            //request.Content = content;
+            //var response = await client.SendAsync(request);
+            //response.EnsureSuccessStatusCode();
+            //string strcontent = await response.Content.ReadAsStringAsync();
+
+            #endregion
+
             string content = await response.Content.ReadAsStringAsync();
             Logger.Warning(content);
             Console.WriteLine(content);

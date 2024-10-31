@@ -243,11 +243,12 @@ app.UseSession();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
-    //app.UseSwaggerUI(c =>
-    //{
-    //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zkteco AutoPush Api v1");
-    //});
+    //app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.OAuthClientId(configuration["Authentication:Swagger:ClientId"]);
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zkteco AutoPush Api v1");
+    });
 
 }
 // Configure the HTTP request pipeline.

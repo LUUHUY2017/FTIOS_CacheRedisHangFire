@@ -23,7 +23,7 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_biodata", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(95)");
 
                     b.Property<string>("FingerData")
                         .HasColumnType("longtext");
@@ -42,7 +42,7 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_biophoto", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(95)");
 
                     b.Property<string>("FileName")
                         .HasColumnType("longtext");
@@ -61,7 +61,7 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_terminal", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(95)");
 
                     b.Property<string>("area_id")
                         .HasColumnType("longtext");
@@ -121,10 +121,16 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_terminalcommandlog", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(95)");
+
+                    b.Property<string>("command_ation")
+                        .HasColumnType("longtext");
 
                     b.Property<double>("command_id")
                         .HasColumnType("double");
+
+                    b.Property<string>("command_type")
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("commit_time")
                         .HasColumnType("datetime(6)");
@@ -167,7 +173,7 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_transaction", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(95)");
 
                     b.Property<string>("Content")
                         .HasColumnType("longtext");
@@ -204,7 +210,7 @@ namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
             modelBuilder.Entity("AMMS.ZkAutoPush.Datas.Entities.zk_user", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(95)");
 
                     b.Property<string>("area_id")
                         .HasColumnType("longtext");

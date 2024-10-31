@@ -77,6 +77,16 @@ public partial class PagesConst
         CategoryMenu = Category.KhaiBaoDuLieu.Id,
     };
 
+    public static readonly PageObject URL_V1_MonitorDevice = new PageObject
+    {
+        Id = "257961e3-0ed6-480f-a414-ce7341818d65",
+        Name = "Giám sát thiết bị",
+        Url = "V1/MonitorDevice",
+        Module = Module.Master,
+        RolePermission = RoleConst.SuperAdmin_Role,
+        CategoryMenu = Category.TheoDoiGiamSat.Id,
+    };
+
 
     public static readonly PageObject URL_V1_User = new PageObject
     {
@@ -136,6 +146,7 @@ public partial class PagesConst
             _ListMenu.Add(URL_V1_DeviceSuperAdmin);
             _ListMenu.Add(URL_V1_DeviceAdmin);
             _ListMenu.Add(URL_V1_Organization);
+            _ListMenu.Add(URL_V1_MonitorDevice);
 
             _ListMenu.Add(URL_V1_Configuration);
             _ListMenu.Add(URL_V1_SystemConfiguration);

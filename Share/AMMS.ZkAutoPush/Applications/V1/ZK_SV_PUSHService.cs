@@ -20,6 +20,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
         /// Danh sách lệnh gửi xuống thiết bị (sẽ chuyển sang caches)
         /// </summary>
         public static List<IclockCommand> ListIclockCommand { get; set; } = new List<IclockCommand>();
+
         private readonly IConfiguration _configuration;
 
 
@@ -47,7 +48,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
                     if (data == null)
                         return;
-                    //await SaveUserInfo(data);
+                    await SaveUserInfo(data);
 
                     command = IclockOperarion.CommandUploadUser(sn, data.PersonCode, data.FullName, "", "0", data.UserCard, rB_ServerRequest.Id);
                     //Đẩy thêm ảnh
@@ -112,7 +113,6 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 {
                     await AddCommand(rB_ServerRequest, command);
                 }
-
 
                 ListIclockCommand.Add(command);
                 //Thêm lệnh ảnh nếu có
@@ -237,6 +237,8 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 data.request_id = request.Id;
                 data.content = command.Command;
                 data.command_id = command.Id;
+                data.command_type = request.RequestType;
+                data.command_ation =request.Action;
                 if (add)
                 {
                     _deviceAutoPushDbContext.zk_terminalcommandlog.Add(data);

@@ -18,6 +18,15 @@ public static class EventBusConstants
     /// </summary>
     public static string Device_Auto_Push_D2S { get; private set; } = @"_device-auto-push_d2s";
 
+    /// <summary>
+    /// Phản hồi của Server lên Rabbit sau khi thực hiện lệnh
+    /// </summary>
+    public static string Server_Auto_Push_SMAS { get; private set; } = @"_server_auto_push_SMAS";
+
+    /// <summary>
+    /// Phản hồi của SMAS trả Rabbit sau khi thực hiện lệnh
+    /// </summary>
+    public static string SMAS_Auto_Push_Server { get; private set; } = @"_SMAS_auto_push_server";
     #endregion
 
     #region Zkteco

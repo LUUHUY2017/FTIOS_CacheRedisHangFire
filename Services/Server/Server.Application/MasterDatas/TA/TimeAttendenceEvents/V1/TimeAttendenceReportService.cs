@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Server.Core.Interfaces.A2.SyncDeviceServers.Requests;
-using Server.Core.Interfaces.A2.SyncDeviceServers.Responses;
 using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
 using Server.Core.Interfaces.TimeAttendenceEvents.Responses;
 using Shared.Core.Commons;
@@ -72,7 +70,6 @@ public partial class TimeAttendenceEventService
             return new Result<List<AttendenceEventReportRes>>("Lỗi: " + ex.ToString(), false);
         }
     }
-
 
 
 

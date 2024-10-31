@@ -1,12 +1,15 @@
 ﻿using AMMS.DeviceData.RabbitMq;
+using AMMS.Shared.Commons;
 using EventBus.Messages;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
+using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A2;
 using Server.Core.Entities.TA;
 using Server.Core.Interfaces.A2.Persons;
 using Server.Core.Interfaces.A2.Students;
 using Server.Infrastructure.Datas.MasterData;
+using Shared.Core.Commons;
 using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
 using System.Text.Json;
@@ -56,6 +59,25 @@ public partial class TimeAttendenceEventService
         return true;
     }
 
+
+    public async Task<Result<SyncDataRequest>> PushAttendence2SMAS(SyncDataRequest data)
+    {
+        try
+        {
+            var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Server_Auto_Push_SMAS);
+            await aa.Send(data);
+
+            return new Result<SyncDataRequest>($"Gửi thành công", true);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+            return new Result<SyncDataRequest>($"Gửi email lỗi: {e.Message}", false);
+        }
+    }
+
+
+
     public async Task<string> ProcessAtendenceData(List<TA_AttendenceHistory> data)
     {
         try
@@ -73,8 +95,9 @@ public partial class TimeAttendenceEventService
                     {
                         TimeSpan timeOfDay = info.TimeEvent.Value.TimeOfDay;
                         DateTime date = info.TimeEvent.Value.Date;
-                        int hour = info.TimeEvent.Value.Hour;
                         DateTime dateTime = info.TimeEvent.Value;
+
+                        int hour = info.TimeEvent.Value.Hour;
                         int dayOfWeek = (int)dateTime.DayOfWeek;
 
                         // Buổi sáng
@@ -105,7 +128,6 @@ public partial class TimeAttendenceEventService
                             sectionTime = 2;
                         }
 
-
                         /// Buổi sáng
                         if (sectionTime == 0 && timeOfDay >= config.MorningBreakTime)
                         {
@@ -135,8 +157,6 @@ public partial class TimeAttendenceEventService
                         }
 
                         // Buổi tối
-
-
                         var time = _dbContext.TA_TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode
                         && o.EventTime.Value.Date == info.TimeEvent.Value.Date
                         && o.AttendenceSection == sectionTime
@@ -162,11 +182,13 @@ public partial class TimeAttendenceEventService
                         time.ValueAbSent = valueAttendence;
                         time.AttendenceSection = sectionTime;
 
-
                         if (addEvent)
                             _dbContext.TA_TimeAttendenceEvent.Add(time);
                         else
                             _dbContext.TA_TimeAttendenceEvent.Update(time);
+
+
+                        ExtraProperties extra = null;
 
                         if (valueAttendence == "X" && valueAttendence == "C")
                         {
@@ -196,8 +218,34 @@ public partial class TimeAttendenceEventService
                                 _dbContext.TA_TimeAttendenceDetail.Add(history);
                             else
                                 _dbContext.TA_TimeAttendenceDetail.Update(history);
+
+                            CopyProperties.CopyPropertiesTo(history, extra);
                         }
+
+                        var studentAbsenceByDevices = new List<StudentAbsenceByDevice>()
+                        {
+                            new StudentAbsenceByDevice
+                            {
+                                    StudentCode = info.PersonCode,
+                                    Value= valueAttendence,
+                                    ExtraProperties= extra
+                            }
+                        };
+
+                        var paramData = new SyncDataRequest()
+                        {
+                            //SecretKey = _secretKey,
+                            SchoolCode = time.SchoolCode,
+                            SchoolYearCode = time.SchoolYearCode,
+                            ClassCode = time.ClassCode,
+                            AbsenceDate = date,
+                            Section = sectionTime,
+                            FormSendSMS = 1,
+                            StudentAbsenceByDevices = studentAbsenceByDevices,
+                        };
+                        await PushAttendence2SMAS(paramData);
                     }
+
                     await _dbContext.SaveChangesAsync();
                 }
             }

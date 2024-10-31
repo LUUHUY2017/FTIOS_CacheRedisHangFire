@@ -118,7 +118,7 @@
                                         </label>
                                     </div>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
                     </div>
 
@@ -167,7 +167,7 @@
                             var content = "Nhập nội dung xóa (không quá 250 kí tự)";
                             alertify.prompt(question, content, ''
                                 , function (evt, value) {
-                                    axios.get('/v1/Organization/inactive/' + row.id + '?reasonDelete= ' + value).then(response => {
+                                    axios.post('/api/v1/Organization/Inactive', { id: row.id, reason: value }, _org.object.config).then(response => {
                                         if (response.request.responseURL.includes('~/Account/Login')) {
                                             window.location = window.location.href;
                                         }
@@ -182,13 +182,12 @@
                         'click .active': function (e, value, row) {
                             var question = "Bạn có chắc chắn muốn kích hoạt dòng này không?";
                             alertify.confirm('Thông báo!', question, function () {
-                                axios.get('/v1/Organization/active/' + row.id).then(response => {
+                                axios.post('/api/v1/Organization/active', { id: row.id, reason: 'Kích hoạt lại bản ghi' }, _org.object.config).then(response => {
                                     if (response.request.responseURL.includes('~/Account/Login')) {
                                         window.location = window.location.href;
                                     }
 
                                     _org.loadData();
-
                                     alertify.success("Cập nhật thành công!");
                                 }).catch(error => {
                                     console.log(error);

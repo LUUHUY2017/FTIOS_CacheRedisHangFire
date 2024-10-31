@@ -1,4 +1,5 @@
 ﻿using AMMS.Hanet.Applications.AppConfigs.V1.Models;
+using AMMS.Hanet.Data;
 using AMMS.Hanet.Datas.Databases;
 using AMMS.Hanet.Datas.Entities;
 using AutoMapper;
@@ -20,6 +21,15 @@ public class AppConfigService
     public async Task<Result<app_config>> GetFirstOrDefault()
     {
         var data = await _dbContext.app_config.FirstOrDefaultAsync();
+        HanetParam.Token = new AccessToken()
+        {
+            access_token = data.AccessToken,
+            refresh_token = data.RefreshToken,
+            email = data.Email,
+            userID = data.UserId,
+            expire = data.Expire ?? 0,
+            token_type = data.TokenType,
+        };
         return new Result<app_config>(data, "Thành công!", true);
     }
 
@@ -48,7 +58,7 @@ public class AppConfigService
                 dataUpdate.UserId = request.UserId;
                 dataUpdate.Email = request.Email;
                 dataUpdate.AccessToken = request.AccessToken;
-                dataUpdate.RefreshToken = request.RefreshToken; 
+                dataUpdate.RefreshToken = request.RefreshToken;
                 dataUpdate.TokenType = request.TokenType;
                 dataUpdate.Expire = request.Expire;
                 dataUpdate.ClientScret = request.ClientScret;

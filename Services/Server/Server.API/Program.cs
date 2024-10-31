@@ -1,4 +1,6 @@
 ﻿using AMMS.Notification.Datas;
+using Hangfire;
+using Hangfire.MySql;
 using IdentityModel.Client;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
@@ -9,7 +11,9 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Serilog;
+using Server.API.Helps.Authorizations;
 using Server.API.SignalRs;
+using Server.Application.CronJobs;
 using Server.Application.Extensions;
 using Server.Core.Identity.Entities;
 using Server.Infrastructure.Datas.MasterData;
@@ -72,30 +76,28 @@ var eventBusSettings = configuration.GetSection("EventBusSettings");
 //SignalR
 services.AddSignalRService(configuration);
 
-//Hangfire SQL Server
-//services.AddHangfire(x => x.UseSqlServerStorage("Server=171.244.10.93;uid=amms_us;pwd=123456a@;database=bi_vivocity_Dev;TrustServerCertificate=True"));
-//services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration["ConnectionStrings:HangfireDBConnection"]
-//    , new Hangfire.SqlServer.SqlServerStorageOptions()
-//    {
-//        SchemaName = "HangfireMaster",
-//    })
-//);
+//Hangfire MySQL Server
+services.AddHangfire(configuration => configuration
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseStorage(
+        new MySqlStorage(
+            builder.Configuration["ConnectionStrings:HangfireDBConnection"],
+            new MySqlStorageOptions
+            {
+                QueuePollInterval = TimeSpan.FromSeconds(10),
+                JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                PrepareSchemaIfNecessary = true,
+                DashboardJobListLimit = 5000,
+                TransactionTimeout = TimeSpan.FromMinutes(1),
+                TablesPrefix = "Hangfire",
+            }
+        )
+    ));
 
 
-// Hangfire MySQL Server
-//services.AddHangfire(x => x.UseStorage(
-//      new MySqlStorage(builder.Configuration["ConnectionStrings:HangfireDBConnection"],
-//          new MySqlStorageOptions
-//          {
-//              QueuePollInterval = TimeSpan.FromSeconds(15), // Khoảng thời gian kiểm tra hàng đợi
-//              JobExpirationCheckInterval = TimeSpan.FromHours(1), // Kiểm tra công việc hết hạn
-//              CountersAggregateInterval = TimeSpan.FromMinutes(5), // Thời gian gom các bộ đếm
-//              PrepareSchemaIfNecessary = true, // Tự động tạo bảng nếu chưa tồn tại
-//              DashboardJobListLimit = 5000, // Giới hạn công việc hiển thị trên dashboard
-//          }
-//      )
-//  ));
-//services.AddHangfireServer();
+services.AddHangfireServer();
 
 
 
@@ -392,6 +394,31 @@ var app = builder.Build();
 //Seriglog
 //app.UseSerilogRequestLogging();
 
+//Tạo các job chạy tự động, theo dõi trạng thái của các job     
+//app.UseHangfireDashboard("/hangfire_dashboard");
+app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
+{
+    IgnoreAntiforgeryToken = true,
+    Authorization = new[] { new DashboardNoAuthorizationFilter() }
+});
+//app.UseHangfireDashboard();
+app.UseHangfireServer();
+
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
+       // RecurringJob.AddOrUpdate("Test", () => conJobService.Write(), "*/1 * * * *", TimeZoneInfo.Local);
+        //RecurringJob.AddOrUpdate("CheckDeviceOnline" ,() => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);
+    }
+    catch (Exception e)
+    {
+        Logger.Error(e);
+    }
+}
+
+
 app.UseCors("CorsPolicy");
 Common.Follder = app.Environment.WebRootPath;
 
@@ -452,15 +479,15 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
-        var masterDataDbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
-        await masterDataDbContext.Database.MigrateAsync();
+        //var masterDataDbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
+        //await masterDataDbContext.Database.MigrateAsync();
 
         var identityContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
         await identityContext.Database.MigrateAsync();
 
 
-        var notificationDbContext = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
-        await notificationDbContext.Database.MigrateAsync();
+        //var notificationDbContext = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
+        //await notificationDbContext.Database.MigrateAsync();
 
 
         var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();

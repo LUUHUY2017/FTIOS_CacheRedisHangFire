@@ -18,6 +18,8 @@
 	
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="Hangfire" Version="1.8.14" />
+		<PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
@@ -69,6 +71,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Applications\CronJobs\Devices\" />
 	  <Folder Include="Datas\Migrations\MsSQL\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Areas\Managers\MonitorDevices\V1\Views\Index.cshtml" />
 	</ItemGroup>
 </Project>

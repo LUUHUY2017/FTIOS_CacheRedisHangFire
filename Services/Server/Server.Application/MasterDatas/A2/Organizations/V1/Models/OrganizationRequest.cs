@@ -3,6 +3,7 @@
 public class OrganizationRequest
 {
     public string? Id { get; set; } = "";
+    public bool? Actived { get; set; }
     public string? OrganizationCode { get; set; } = "";
     public string? OrganizationShortName { get; set; } = "";
     public string? OrganizationName { get; set; } = "";

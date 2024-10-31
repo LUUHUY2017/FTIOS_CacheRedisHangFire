@@ -1,4 +1,7 @@
 ﻿using AMMS.DeviceData.RabbitMq;
+using AMMS.Hanet.Applications.AppConfigs.V1;
+using AMMS.Hanet.Applications.CronJobs;
+using AMMS.Hanet.Applications.MonitorDevices.V1;
 using AMMS.Hanet.Applications.V1.Consummer;
 using AMMS.Hanet.Applications.V1.Service;
 using AMMS.Hanet.Datas.Databases;
@@ -39,8 +42,17 @@ public static class DependencyInjection
 
     public static void AddScopedServices(this IServiceCollection service)
     {
+        //Device
+        //service.AddScoped<HANET_Process_Service>();
+
         // AppConfig
         service.AddScoped<AppConfigService>();
+        service.AddScoped<HANET_Server_Push_Service>();
+        service.AddScoped<HANET_Device_Reponse_Service>();
+
+        // Monitor Device
+        service.AddScoped<MonitorDeviceService>();
+
     }
 
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
@@ -54,6 +66,8 @@ public static class DependencyInjection
         //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
 
+        //ConJob chạy các dịch vụ tự động
+        services.AddScoped<ICronJobService, CronJobService>();
         return services;
     }
 
@@ -156,8 +170,5 @@ public static class DependencyInjection
     {
         services.AddSingleton<ICacheService, CacheService>();
     }
-    public static void AddScopedServices(this IServiceCollection service)
-    {
-        service.AddScoped<HANET_Process_Service>();
-    }
+ 
 }

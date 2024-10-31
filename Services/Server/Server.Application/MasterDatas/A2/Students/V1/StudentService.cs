@@ -81,8 +81,9 @@ public class StudentService
             Logger.Error(e);
             return new Result<RB_ServerRequest>($"Gửi email lỗi: {e.Message}", false);
         }
-
     }
+
+
 
     public async Task<Result<DtoStudentRequest>> Save(DtoStudentRequest request)
     {
@@ -211,6 +212,7 @@ public class StudentService
                         DeviceModel = device.DeviceModel,
                         RequestType = ServerRequestType.UserInfo,
                         RequestParam = param,
+                        SchoolId = device.OrganizationId,
                     };
                     list_Sync.Add(list_SyncItem);
                 }
@@ -223,6 +225,8 @@ public class StudentService
         }
         return list_Sync;
     }
+
+
 
     public async Task<bool> SaveStatuSyncDevice(RB_ServerResponse request)
     {

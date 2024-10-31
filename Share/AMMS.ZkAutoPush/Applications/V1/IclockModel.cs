@@ -24,7 +24,6 @@
         public DateTime RevicedTime { get; set; } = DateTime.Now;
         public DateTime CommitTime { get; set; } = DateTime.Now;
         public int? returnCode { get; set; }
-
     }
 
 

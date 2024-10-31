@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Compile Remove="Brickstreams\**" />
-    <Compile Remove="CronJobs\**" />
     <Compile Remove="Datas\**" />
     <Compile Remove="Devices\**" />
     <Compile Remove="EventBusConsumer\**" />
@@ -22,7 +21,6 @@
     <Compile Remove="PeopleCountDataServices\**" />
     <Compile Remove="Test\**" />
     <EmbeddedResource Remove="Brickstreams\**" />
-    <EmbeddedResource Remove="CronJobs\**" />
     <EmbeddedResource Remove="Datas\**" />
     <EmbeddedResource Remove="Devices\**" />
     <EmbeddedResource Remove="EventBusConsumer\**" />
@@ -36,7 +34,6 @@
     <EmbeddedResource Remove="PeopleCountDataServices\**" />
     <EmbeddedResource Remove="Test\**" />
     <None Remove="Brickstreams\**" />
-    <None Remove="CronJobs\**" />
     <None Remove="Datas\**" />
     <None Remove="Devices\**" />
     <None Remove="EventBusConsumer\**" />
