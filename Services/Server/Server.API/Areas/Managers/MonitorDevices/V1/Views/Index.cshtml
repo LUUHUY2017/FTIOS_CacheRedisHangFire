@@ -260,21 +260,28 @@
     });
 
     connection.on("RefreshDevice", function (data) {
-        var data1 = JSON.parse(data);
-        //console.log(data1);
-       
-        let deviceToUpdate = _mDevice.data.find(device => device.serialNumber === data1.serialNumber);
-        let deviceAllToUpdate = _mDevice.devicesAll.find(device => device.serialNumber === data1.serialNumber);
-        if (deviceToUpdate && deviceToUpdate.connectionStatus != data1.connectionStatus) {
-            deviceToUpdate.connectionStatus = data1.connectionStatus;
-            deviceToUpdate.connectUpdateTime = data1.connectUpdateTime;
-            drawChart(_mDevice.data, 'devices-online-filter');
+        var data1s = JSON.parse(data);
+        //console.log(data1s);
+        for (var i = 0; i < data1s.length; i++) {
+            var data1 = data1s[i];
+            console.log(data1);
+
+            let deviceToUpdate = _mDevice.data.find(device => device.serialNumber === data1.serialNumber);
+            let deviceAllToUpdate = _mDevice.devicesAll.find(device => device.serialNumber === data1.serialNumber);
+
+            if (deviceToUpdate && deviceToUpdate.connectionStatus !== data1.connectionStatus) {
+                deviceToUpdate.connectionStatus = data1.connectionStatus;
+                deviceToUpdate.connectUpdateTime = data1.connectUpdateTime;
+            }
+            if (deviceAllToUpdate && deviceAllToUpdate.connectionStatus !== data1.connectionStatus) {
+                deviceAllToUpdate.connectionStatus = data1.connectionStatus;
+                deviceAllToUpdate.connectUpdateTime = data1.connectUpdateTime;
+            }
         }
-        if (deviceAllToUpdate && deviceAllToUpdate.connectionStatus != data1.connectionStatus) {
-            deviceAllToUpdate.connectionStatus = data1.connectionStatus;
-            deviceAllToUpdate.connectUpdateTime = data1.connectUpdateTime;
-            drawChart(_mDevice.devicesAll, 'devices-online');
-        }
+
+        drawChart(_mDevice.devicesAll, 'devices-online');
+        drawChart(_mDevice.data, 'devices-online-filter');
+
         //console.log("data: " + _mDevice.data);
         //console.log("devicesAll: " + _mDevice.devicesAll);
         // _mDevice.devicesAll = JSON.parse(data);

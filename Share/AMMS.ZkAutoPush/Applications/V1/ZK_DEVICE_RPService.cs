@@ -13,15 +13,17 @@ public class ZK_DEVICE_RPService
 
     private readonly DeviceAutoPushDbContext _deviceAutoPushDbContext;
     private readonly DeviceCacheService _deviceCacheService;
+    private readonly DeviceCommandCacheService _deviceCommandCacheService;
 
     public ZK_DEVICE_RPService(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter, IConfiguration configuration
-        , DeviceCacheService deviceCacheService
+        , DeviceCacheService deviceCacheService, DeviceCommandCacheService deviceCommandCacheService
         )
     {
         _deviceAutoPushDbContext = deviceAutoPushDbContext;
         _eventBusAdapter = eventBusAdapter;
         _configuration = configuration;
         _deviceCacheService = deviceCacheService;
+        _deviceCommandCacheService = deviceCommandCacheService;
     }
     public async Task ProcessData(ZK_DEVICE_RP data)
     {
@@ -72,7 +74,7 @@ public class ZK_DEVICE_RPService
                                         thietBiUpdate.fv_count = int.Parse(fpQty);
                                         thietBiUpdate.last_activity = DateTime.Now;
                                         thietBiUpdate.push_time = DateTime.Now;
-                                        thietBiUpdate.isconnect = true;
+                                        thietBiUpdate.online_status = true;
                                         //Cập nhật vào csdl
                                         try
                                         {
@@ -109,7 +111,7 @@ public class ZK_DEVICE_RPService
 
                             }
                             //Xoá lệnh khỏi danh sách
-                            var x = ZK_SV_PUSHService.ListIclockCommand.FirstOrDefault(o => o.SerialNumber == data.SN && o.Id.ToString() == ID);
+                            var x = await _deviceCommandCacheService.GetByCode(data.SN, ID);
                             if (x != null)
                             {
 
@@ -124,12 +126,10 @@ public class ZK_DEVICE_RPService
                                     int.TryParse(Return, out returnCode);
                                     x.returnCode = returnCode;
                                     x.IsSuccessed = false;
-                                    //Logger.ShowLog("Co loi khi thuc hienh lenh");
-                                    //Logger.ShowLog(sn);
-                                    //Logger.ShowLog(content);
                                 }
+
                                 await UpdateCommand(x, content);
-                                ZK_SV_PUSHService.ListIclockCommand.Remove(x);
+                                await _deviceCommandCacheService.Remove(data.SN, ID);
 
 
                                 //Đẩy dữ liệu lại rabbitmq cho sv
@@ -176,7 +176,7 @@ public class ZK_DEVICE_RPService
                 data.create_time = DateTime.Now;
                 data.sn = terminal.sn;
             }
-            data.isconnect = terminal.isconnect;
+            data.online_status = terminal.online_status;
             data.ip_address = terminal.ip_address;
             data.fv_count = terminal.fv_count;
             data.user_count = terminal.user_count;
@@ -185,6 +185,8 @@ public class ZK_DEVICE_RPService
             data.last_activity = terminal.last_activity;
             data.name = terminal.name;
             data.port = terminal.port;
+            data.time_online = terminal.time_online;
+            data.time_offline = terminal.time_offline;
             if (add)
             {
                 await _deviceAutoPushDbContext.zk_terminal.AddAsync(data);

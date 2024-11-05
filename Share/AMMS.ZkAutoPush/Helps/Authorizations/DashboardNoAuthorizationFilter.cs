@@ -1,6 +1,6 @@
 ﻿using Hangfire.Dashboard;
 
-namespace AMMS.Hanet.Helps.Authorizations
+namespace AMMS.ZkAutoPush.Helps.Authorizations
 {
     public class DashboardNoAuthorizationFilter : IDashboardAuthorizationFilter
     {

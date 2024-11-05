@@ -1,6 +1,7 @@
 ﻿using AMMS.DeviceData.RabbitMq;
 using AMMS.ZkAutoPush.Datas.Databases;
 using AMMS.ZkAutoPush.Datas.Entities;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Shared.Core.Loggers;
 using System.Drawing;
@@ -12,6 +13,9 @@ namespace AMMS.ZkAutoPush.Applications.V1
     public class ZK_SV_PUSHService
     {
         private readonly DeviceAutoPushDbContext _deviceAutoPushDbContext;
+        private readonly DeviceCacheService _deviceCacheService;
+        private readonly DeviceCommandCacheService _deviceCommandCacheService;
+
         /// <summary>
         /// Danh sách thiết bị (sẽ chuyển sang caches)
         /// </summary>
@@ -19,15 +23,17 @@ namespace AMMS.ZkAutoPush.Applications.V1
         /// <summary>
         /// Danh sách lệnh gửi xuống thiết bị (sẽ chuyển sang caches)
         /// </summary>
-        public static List<IclockCommand> ListIclockCommand { get; set; } = new List<IclockCommand>();
+        //public static List<IclockCommand> ListIclockCommand { get; set; } = new List<IclockCommand>();
 
         private readonly IConfiguration _configuration;
 
 
-        public ZK_SV_PUSHService(DeviceAutoPushDbContext deviceAutoPushDbContext, IConfiguration configuration)
+        public ZK_SV_PUSHService(DeviceAutoPushDbContext deviceAutoPushDbContext, IConfiguration configuration, DeviceCacheService deviceCacheService, DeviceCommandCacheService deviceCommandCacheService)
         {
             _deviceAutoPushDbContext = deviceAutoPushDbContext;
             _configuration = configuration;
+            _deviceCacheService = deviceCacheService;
+            _deviceCommandCacheService = deviceCommandCacheService;
         }
         public async Task Process(RB_ServerRequest rB_ServerRequest)
         {
@@ -94,6 +100,24 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     if (data == null)
                         return;
                     await SaveDevice(data);
+
+                    //Lưu thông tin caches
+                    var terminal = await _deviceAutoPushDbContext.zk_terminal.FirstOrDefaultAsync(x => x.Id == data.Id);
+                    if (terminal != null)
+                        await _deviceCacheService.Save(terminal);
+
+
+                    return;
+                }
+                else if (rB_ServerRequest.Action == ServerRequestAction.ActionDelete && rB_ServerRequest.RequestType == ServerRequestType.Device)
+                {
+                    TA_Device? data = JsonConvert.DeserializeObject<TA_Device>(rB_ServerRequest.RequestParam);
+                    if (data == null)
+                        return;
+                    await RemoveDevice(data);
+                    //Xoá thông tin caches
+                    await _deviceCacheService.Remove(data.SerialNumber);
+
                     return;
                 }
                 else if (rB_ServerRequest.Action == ServerRequestAction.ActionGetDeviceInfo && rB_ServerRequest.RequestType == ServerRequestType.Device)
@@ -114,11 +138,11 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     await AddCommand(rB_ServerRequest, command);
                 }
 
-                ListIclockCommand.Add(command);
+                await _deviceCommandCacheService.Set(command);
                 //Thêm lệnh ảnh nếu có
                 if (command2 != null)
                 {
-                    ListIclockCommand.Add(command2);
+                    await _deviceCommandCacheService.Set(command2);
                 }
             }
             catch (Exception e)
@@ -238,7 +262,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 data.content = command.Command;
                 data.command_id = command.Id;
                 data.command_type = request.RequestType;
-                data.command_ation =request.Action;
+                data.command_ation = request.Action;
                 if (add)
                 {
                     _deviceAutoPushDbContext.zk_terminalcommandlog.Add(data);
@@ -265,6 +289,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     data = new zk_terminal();
                     data.Id = tA_Device.Id;
                 }
+                data.device_id = tA_Device.Id;
                 data.ip_address = tA_Device.IpAdress;
                 data.port = tA_Device.Port;
                 data.sn = tA_Device.SerialNumber;
@@ -280,6 +305,25 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 return;
             }
         }
+        public async Task RemoveDevice(TA_Device tA_Device)
+        {
+            try
+            {
+                var data = _deviceAutoPushDbContext.zk_terminal.FirstOrDefault(x => x.Id == tA_Device.Id);
+                if (data == null)
+                {
+                    return;
+                }
+                _deviceAutoPushDbContext.zk_terminal.Remove(data);
+                await _deviceAutoPushDbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.Warning(ex.Message);
+                return;
+            }
+        }
+
         public string ConvertBase64ToPngBase64(string base64Image)
         {
             byte[] imageBytes = Convert.FromBase64String(base64Image);

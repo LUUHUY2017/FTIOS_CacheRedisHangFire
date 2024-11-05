@@ -24,6 +24,8 @@ public class DeviceCacheService
     }
     public async Task<zk_terminal> Get(string serialNumber)
     {
+        serialNumber = serialNumber.ToUpper();
+
         var entity = await _cacheService.GetData<zk_terminal>(GetKey(serialNumber));
         if (entity == null)
         {
@@ -33,8 +35,18 @@ public class DeviceCacheService
                 if (obj != null)
                 {
                     entity = obj;
-                    await Set(obj);
                 }
+                else
+                {
+                    obj = new zk_terminal();
+                    obj.sn = serialNumber;
+                    obj.Id = Guid.NewGuid().ToString();
+                    obj.create_time = DateTime.Now;
+                    _dbContext.zk_terminal.Add(obj);
+                    _dbContext.SaveChanges();
+                }
+                await Set(obj);
+
             }
             catch (Exception e)
             {
@@ -51,9 +63,42 @@ public class DeviceCacheService
         var entity = await _cacheService.SetData(sub_key, data, expirationTime);
         return entity;
     }
+    public async Task<bool> Remove(string serialNumber)
+    {
+        var sub_key = GetKey(serialNumber);
+        await _cacheService.Removes(sub_key);
+        return true;
+    }
+    public async Task<List<zk_terminal>> Gets()
+    {
+
+        var listterminal = await _cacheService.Gets<zk_terminal>(GetKey());
+
+        return listterminal;
+    }
+
     private string GetKey(string serialNumber)
     {
         return $"{_configuration.GetValue<string>("DataArea")}:{key}:{serialNumber}";
+    }
+    private string GetKey()
+    {
+        return $"{_configuration.GetValue<string>("DataArea")}:{key}:*";
+    }
+
+    //Cập nhật thông tin vào caches
+    public async Task<bool> Save(zk_terminal data)
+    {
+        var sub_key = GetKey(data.sn);
+        var entity = await _cacheService.GetData<zk_terminal>(sub_key);
+        if (entity != null)
+        {
+            await _cacheService.RemoveData(sub_key);
+        }
+        var expirationTime = DateTime.Now.AddMinutes(timeExp_Minute);
+        await _cacheService.SetData(sub_key, data, expirationTime);
+
+        return true;
     }
 }
 
@@ -73,42 +118,49 @@ public class DeviceCommandCacheService
         _configuration = configuration;
     }
 
-    /// <summary>
-    /// Lấy tất cả các lệnh của thiết bị
-    /// </summary>
-    /// <param name="dataId"></param>
-    /// <returns></returns>
-    public async Task<List<IclockCommand>> Gets(string sn)
-    {
-        var entities = await _cacheService.Gets<IclockCommand>(GetKey(sn));
-        return entities;
-    }
+    ///// <summary>
+    ///// Lấy tất cả các lệnh của thiết bị
+    ///// </summary>
+    ///// <param name="dataId"></param>
+    ///// <returns></returns>
+    //public async Task<List<IclockCommand>> Gets(string sn)
+    //{
+    //    var entities = await _cacheService.Gets<IclockCommand>(GetKey(sn,));
+    //    return entities;
+    //}
 
-    public async Task<IclockCommand> Get(string dataId)
-    {
-        var entity = await _cacheService.GetData<IclockCommand>(GetKey(dataId));
-        if (entity == null)
-        {
-            try
-            {
-                var obj = await _dbContext.zk_terminalcommandlog.FirstOrDefaultAsync(o => o.terminal_sn == dataId);
+    //public async Task<IclockCommand> GetAvaible(string dataId)
+    //{
+    //    var entity = await _cacheService.GetData<IclockCommand>(GetKey(dataId));
+    //    if (entity == null)
+    //    {
+    //        try
+    //        {
+    //            var obj = await _dbContext.zk_terminalcommandlog.FirstOrDefaultAsync(o => o.terminal_sn == dataId && o.successed == null);
 
-                if (obj != null)
-                {
-                    //entity = obj;
-                    //await Set(obj);
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
+    //            if (obj != null)
+    //            {
+    //                //entity = obj;
+    //                //await Set(obj);
+    //            }
+    //        }
+    //        catch (Exception e)
+    //        {
+    //            Logger.Error(e);
+    //        }
+    //    }
+    //    return entity;
+    //}
+    public async Task<IclockCommand> GetByCode(string sn, string id)
+    {
+        var entity = await _cacheService.GetData<IclockCommand>(GetKey(sn, id));
+
         return entity;
     }
-    public async Task<bool> Clear(string sn)
+
+    public async Task<bool> Remove(string sn, string id)
     {
-        var sub_key = GetKey(sn);
+        var sub_key = GetKey(sn, id);
         var cache = await _cacheService.GetData<IclockCommand>(sub_key);
         if (cache != null)
             await _cacheService.RemoveData(sub_key);
@@ -117,19 +169,32 @@ public class DeviceCommandCacheService
         return retVal;
     }
 
+    /// <summary>
+    /// Set lệnh vào
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public async Task<IclockCommand> Set(IclockCommand data)
+    {
+        var sub_key = GetKey(data.SerialNumber, data.Id.ToString());
+        var entity = await _cacheService.SetData(sub_key, data);
+        return entity;
+    }
 
+    //Cập nhật thông tin vào caches
+    public async Task<bool> Save(IclockCommand data)
+    {
+        var sub_key = GetKey(data.SerialNumber, data.Id.ToString());
+        var entity = await _cacheService.GetData<IclockCommand>(sub_key);
+        if (entity != null)
+        {
+            await _cacheService.RemoveData(sub_key);
+        }
+        var expirationTime = DateTime.Now.AddMinutes(timeExp_Minute);
+        await _cacheService.SetData(sub_key, data, expirationTime);
 
-
-
-
-
-
-
-
-
-
-
-
+        return true;
+    }
 
     //public async Task<IclockCommand> Get(string dataId)
     //{
@@ -153,19 +218,23 @@ public class DeviceCommandCacheService
     //    }
     //    return entity;
     //}
-    public async Task<zk_terminal> Set(zk_terminal data)
+    private string GetKey(string serialNumber, string id)
     {
-        var sub_key = GetKey(data.sn);
+        return $"{_configuration.GetValue<string>("DataArea")}:{key}:{serialNumber}:{id} ";
+    }
 
-        var expirationTime = DateTime.Now.AddMinutes(timeExp_Minute);
-        var entity = await _cacheService.SetData(sub_key, data, expirationTime);
-        return entity;
+    public async Task<List<IclockCommand>> Gets(string sn)
+    {
+
+        var listterminal = await _cacheService.Gets<IclockCommand>(GetKey(sn));
+
+        return listterminal;
     }
     private string GetKey(string serialNumber)
     {
-        return $"{_configuration.GetValue<string>("DataArea")}:{key}:{serialNumber}";
+        return $"{_configuration.GetValue<string>("DataArea")}:{key}:{serialNumber}:*";
     }
-
+ 
     //private List<IclockCommand> Convert(List<zk_terminalcommandlog> cmds)
     //{
 

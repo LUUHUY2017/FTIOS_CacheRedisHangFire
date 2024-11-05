@@ -19,6 +19,14 @@ public interface ICacheService
     /// <param name="expirationTime"></param>
     /// <returns></returns>
     Task<T> SetData<T>(string keyName, T value, DateTimeOffset expirationTime);
+    /// <summary>
+    /// Set Data with Value of Key
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="keyName"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    Task<T> SetData<T>(string keyName, T value);
 
     /// <summary>
     /// Remove Data
@@ -31,6 +39,6 @@ public interface ICacheService
 
     Task<List<T>> Gets<T>(string keyName);
 
-     
+
 
 }

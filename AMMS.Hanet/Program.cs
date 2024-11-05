@@ -12,10 +12,10 @@ using System.Reflection;
 using System.Text;
 using Hangfire;
 using Hangfire.MySql;
-using Server.API.Helps.Authorizations;
-using System.Transactions;
 using Shared.Core.Loggers;
 using AMMS.Hanet.Applications.CronJobs;
+using AMMS.Hanet.Applications.V1.Service;
+using AMMS.Hanet.Helps.Authorizations;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
@@ -63,7 +63,7 @@ services.AddHangfire(configuration => configuration
                 PrepareSchemaIfNecessary = true,
                 DashboardJobListLimit = 5000,
                 TransactionTimeout = TimeSpan.FromMinutes(1),
-                TablesPrefix = "Hangfire",
+                TablesPrefix = "Hanet_Hangfire",
             }
         )
     ));
@@ -147,6 +147,8 @@ services.AddAddAutoMapperServices();
 
 services.AddEventBusService(configuration);
 services.AddCaheService(configuration);
+//SignalR
+services.AddSignalRService(configuration);
 
 //ScopedServices
 services.AddScopedServices();
@@ -292,9 +294,16 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
+
+        var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
+        signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
+        signalRClient.Start();
+
+        var startUpService = scope.ServiceProvider.GetRequiredService<HANET_StartUp_Service>();
+        startUpService.LoadConfigData();
         var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        RecurringJob.AddOrUpdate("Test" ,() => conJobService.Write(), "*/1 * * * *", TimeZoneInfo.Local);
-        //RecurringJob.AddOrUpdate("CheckDeviceOnline" ,() => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);
+        //RecurringJob.AddOrUpdate("Test", () => conJobService.Write(), "*/1 * * * *", TimeZoneInfo.Local);
+        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/1 * * * *", TimeZoneInfo.Local);
     }
     catch (Exception e)
     {

@@ -29,7 +29,9 @@ public static class EventBusConstants
     public static string SMAS_Auto_Push_Server { get; private set; } = @"_SMAS_auto_push_server";
     #endregion
 
-    #region Zkteco
+    #region Zkteco   
+    public static string ZKTECO { get; private set; } = @"ZKTECO";
+
     /// <summary>
     /// Lệnh web đẩy xuống service thiết bị zkteco
     /// </summary>
@@ -46,6 +48,8 @@ public static class EventBusConstants
     #endregion
 
     #region Hanet
+    public static string HANET { get; private set; } = @"HANET";
+
     /// <summary>
     /// Lệnh web đẩy xuống service thiết bị zkteco
     /// </summary>

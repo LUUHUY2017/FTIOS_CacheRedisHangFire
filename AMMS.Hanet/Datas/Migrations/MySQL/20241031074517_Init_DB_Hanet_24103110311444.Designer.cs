@@ -3,6 +3,7 @@ using System;
 using AMMS.Hanet.Datas.Databases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMMS.Hanet.Datas.Migrations.MySql
 {
     [DbContext(typeof(DeviceAutoPushDbContext))]
-    partial class DeviceAutoPushDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241031074517_Init_DB_Hanet_24103110311444")]
+    partial class Init_DB_Hanet_24103110311444
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,6 +117,7 @@ namespace AMMS.Hanet.Datas.Migrations.MySql
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("area_id")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("change_time")
@@ -136,20 +139,15 @@ namespace AMMS.Hanet.Datas.Migrations.MySql
                         .HasColumnType("int");
 
                     b.Property<string>("ip_address")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("last_activity")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime?>("last_checkconnection")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<bool?>("online_status")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("port")
                         .HasColumnType("int");
@@ -160,12 +158,6 @@ namespace AMMS.Hanet.Datas.Migrations.MySql
                     b.Property<string>("sn")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<DateTime?>("time_offline")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime?>("time_online")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("upload_time")
                         .HasColumnType("datetime(6)");

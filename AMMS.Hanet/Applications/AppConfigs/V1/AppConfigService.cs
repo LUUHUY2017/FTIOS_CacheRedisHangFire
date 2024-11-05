@@ -21,15 +21,18 @@ public class AppConfigService
     public async Task<Result<app_config>> GetFirstOrDefault()
     {
         var data = await _dbContext.app_config.FirstOrDefaultAsync();
-        HanetParam.Token = new AccessToken()
+        if (data != null)
         {
-            access_token = data.AccessToken,
-            refresh_token = data.RefreshToken,
-            email = data.Email,
-            userID = data.UserId,
-            expire = data.Expire ?? 0,
-            token_type = data.TokenType,
-        };
+            HanetParam.Token = new AccessToken()
+            {
+                access_token = data.AccessToken,
+                refresh_token = data.RefreshToken,
+                email = data.Email,
+                userID = data.UserId,
+                expire = data.Expire ?? 0,
+                token_type = data.TokenType,
+            };
+        }
         return new Result<app_config>(data, "Thành công!", true);
     }
 

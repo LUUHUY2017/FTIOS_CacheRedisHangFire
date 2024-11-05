@@ -10,6 +10,10 @@ namespace AMMS.DeviceData.RabbitMq
     {
         public string Id { get; set; }
         /// <summary>
+        /// Tên của máy muốn đẩy xuống
+        /// </summary>
+        public string DeviceName { get; set; }
+        /// <summary>
         /// SerialNumber của máy muốn đẩy xuống
         /// </summary>
         public string SerialNumber { get; set; }

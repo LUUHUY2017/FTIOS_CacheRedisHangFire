@@ -58,6 +58,25 @@ public class CacheService : ICacheService
         }
         return default;
     }
+    public async Task<T> SetData<T>(string keyName, T value)
+    {
+        string json = "";
+        try
+        {
+             json = JsonConvert.SerializeObject(value);
+            //Logger.Info(keyName);
+            //Logger.Info(json);
+            await _redis.StringSetAsync(keyName, json);
+            return value;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Error on keyName: {keyName}; Json: {json}");
+            Logger.Error(ex);
+        }
+        return default;
+    }
+
     public async Task<bool> RemoveData(string keyName)
     {
         try

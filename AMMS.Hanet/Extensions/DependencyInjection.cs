@@ -1,4 +1,5 @@
 ﻿using AMMS.DeviceData.RabbitMq;
+using AMMS.Hanet.Applications;
 using AMMS.Hanet.Applications.AppConfigs.V1;
 using AMMS.Hanet.Applications.CronJobs;
 using AMMS.Hanet.Applications.MonitorDevices.V1;
@@ -13,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Shared.Core.Caches.Redis;
 using Shared.Core.Repositories;
+using Shared.Core.SignalRs;
 using System.Reflection;
 
 namespace AMMS.Hanet.Extensions;
@@ -49,9 +51,14 @@ public static class DependencyInjection
         service.AddScoped<AppConfigService>();
         service.AddScoped<HANET_Server_Push_Service>();
         service.AddScoped<HANET_Device_Reponse_Service>();
+        service.AddScoped<HANET_StartUp_Service>();
 
         // Monitor Device
         service.AddScoped<MonitorDeviceService>();
+        service.AddScoped<CacheService>();
+        service.AddScoped<DeviceCacheService>();
+        service.AddSingleton<SignalRClientService>();
+        //service.AddScoped<CronJobService>();
 
     }
 
@@ -170,5 +177,15 @@ public static class DependencyInjection
     {
         services.AddSingleton<ICacheService, CacheService>();
     }
- 
+    public static void AddSignalRService(this IServiceCollection service, IConfiguration configuration)
+    {
+        service.AddSignalR(o =>
+        {
+            o.EnableDetailedErrors = true;
+            o.MaximumReceiveMessageSize = 4 * 1024 * 1024; // 4MB
+        });
+        service.AddSingleton<ISignalRAdapter, SignalRAdapter>();
+        service.AddScoped<ISignalRService, SignalRService>();
+        service.AddSingleton<ISignalRClientService, SignalRClientService>();
+    }
 }

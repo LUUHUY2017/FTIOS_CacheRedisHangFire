@@ -2,10 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Shared.Core.Loggers;
-using System.Net;
-using System.Net.NetworkInformation;
 
-namespace AMMS.Hanet.Applications.CronJobs;
+namespace AMMS.ZkAutoPush.Applications.CronJobs;
 
 public partial class CronJobService : ICronJobService
 {
@@ -15,7 +13,6 @@ public partial class CronJobService : ICronJobService
     /// </summary>
 
     static bool Is_CheckDeviceOnline { get; set; } = false;
-    static string HanetServer { get; set; } = "https://partner.hanet.ai";
     public async Task CheckDeviceOnline()
     {
         if (Is_CheckDeviceOnline)
@@ -25,59 +22,64 @@ public partial class CronJobService : ICronJobService
         try
         {
             Console.WriteLine(DateTime.Now.ToString("HH:mm:ss dd/MM/yyy") + ": Check device online");
-            var connection_status = await CheckServerOnline(HanetServer);
 
-            //Danh sách từ CSDL
-            var terminals = await _dbContext.hanet_terminal.ToListAsync();
-            //Danh sách từ caches
+
+            var terminals = await _dbContext.zk_terminal.ToListAsync();
+
+
             var terminals_cache = await _deviceCacheService.Gets();
-            //Danh sách trạng thái
+
+
             var terminal_status = new List<terminal_status>();
-            //Xử lý trạng thái
             if (terminals_cache != null && terminals_cache.Count() > 0)
             {
                 foreach (var d in terminals_cache)
                 {
                     var td = new terminal_status();
                     var datetimeNow = DateTime.Now;
-                    d.last_activity = datetimeNow;
-                    d.last_checkconnection = datetimeNow;
-                    if (d.online_status == false && connection_status == true)
-                    {
-                        d.time_online = datetimeNow;
-                    }
-                    else if (d.online_status == true && connection_status == false)
-                    {
-                        d.time_offline = datetimeNow;
-                    }
 
-                    d.online_status = connection_status;
+                    d.last_checkconnection = datetimeNow;
+
+                    //Xử lý kiểm tra offline
+                    if (d.online_status == true)
+                    {
+                        if (d.last_activity == null)
+                        {
+                            d.time_offline = datetimeNow;
+                            d.online_status = false;
+                        }
+                        else if ((datetimeNow - d.last_activity.Value).TotalMinutes > 2)
+                        {
+                            d.time_offline = datetimeNow;
+                            d.online_status = false;
+                        }
+                    }
 
                     td.connectUpdateTime = datetimeNow;
                     td.serialNumber = d.sn;
-                    td.connectionStatus = connection_status;
-                    td.time_online = d.time_online;
+                    td.connectionStatus = d.online_status ?? false;
                     td.time_offline = d.time_offline;
-
+                    td.time_online = d.time_online;
                     terminal_status.Add(td);
 
                     //Lưu vào csdl
                     var terminal = terminals.FirstOrDefault(o => o.sn == d.sn);
                     if (terminal != null)
                     {
+                        terminal.last_activity = d.last_activity;
                         terminal.last_checkconnection = d.last_checkconnection;
                         terminal.time_offline = d.time_offline;
                         terminal.time_offline = d.time_online;
                         terminal.online_status = d.online_status;
                         terminal.change_time = d.change_time;
-                        _dbContext.hanet_terminal.Update(terminal);
+                        _dbContext.zk_terminal.Update(terminal);
                     }
                     // Lưu vào caches
                     await _deviceCacheService.Save(d);
                 }
                 await _dbContext.SaveChangesAsync();
             }
-            //Gửi thông tin qua signalr
+            //Đẩy trạng thái qua signal r
             try
             {
                 if (terminal_status != null && terminal_status.Count() > 0)
@@ -94,6 +96,7 @@ public partial class CronJobService : ICronJobService
 
             }
 
+
         }
         catch (Exception e)
         {
@@ -104,33 +107,6 @@ public partial class CronJobService : ICronJobService
             Is_CheckDeviceOnline = false;
         }
     }
-    //Kiem tra có mạng
-    public async Task<bool> CheckServerOnline(string server)
-    {
-        try
-        {
-            if (string.IsNullOrEmpty(server))
-                return false;
-
-            return true;
-            WebRequest request = WebRequest.Create(server);
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            {
-                if (response == null || response.StatusCode != HttpStatusCode.OK)
-                    return false;
-                else
-                    return true;
-            }
-
-
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-            return false;
-        }
-    }
-
     /// <summary>
     /// Trạng thái thiết bị
     /// </summary>
@@ -156,6 +132,7 @@ public partial class CronJobService : ICronJobService
         /// Thời gian mất kết nôi
         /// </summary>
         public DateTime? time_offline { get; set; }
+
     }
 
     #endregion

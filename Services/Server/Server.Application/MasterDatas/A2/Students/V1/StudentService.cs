@@ -163,7 +163,7 @@ public class StudentService
 
         try
         {
-            var _devis = _dbContext.A2_Device.Where(o => o.Actived == true && o.DeviceModel == DeviceBrandConst.ZKTeco).ToList();
+            var _devis = _dbContext.A2_Device.Where(o => o.Actived == true).ToList();
             if (_devis.Any())
             {
                 foreach (var device in _devis)

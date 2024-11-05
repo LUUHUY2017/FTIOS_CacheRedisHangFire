@@ -103,6 +103,7 @@ public static class DependencyInjection
         services.AddScoped<TimeAttendenceEventService>();
         services.AddScoped<TimeAttendenceEventConsumer>();
         services.AddScoped<TimeAttendenceSyncSmasConsumer>();
+        services.AddScoped<Server_RequestConsummer>();
 
 
 

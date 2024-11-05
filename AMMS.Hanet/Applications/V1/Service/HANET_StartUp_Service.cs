@@ -1,30 +1,30 @@
 ﻿using AMMS.DeviceData.RabbitMq;
-using AMMS.ZkAutoPush.Datas.Databases;
-using AMMS.ZkAutoPush.Datas.Entities;
+using AMMS.Hanet.Datas.Databases;
+using AMMS.Hanet.Datas.Entities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RestSharp;
+using Shared.Core.Entities;
 using Shared.Core.Loggers;
 using System.ComponentModel.DataAnnotations;
 
-namespace AMMS.ZkAutoPush.Applications.V1
+namespace AMMS.Hanet.Applications.V1.Service
 {
-    public class StartupDataService
+
+    public class HANET_StartUp_Service
     {
+        public static AccessTokenServer accessToken { get; set; }
         private readonly IConfiguration _configuration;
         private readonly DeviceCacheService _deviceCacheService;
 
-        private readonly DeviceAutoPushDbContext _deviceAutoPushDbContext;
-        public StartupDataService(DeviceAutoPushDbContext deviceAutoPushDbContext, IConfiguration configuration, DeviceCacheService deviceCacheService)
+        DeviceAutoPushDbContext _deviceAutoPushDbContext;
+        public HANET_StartUp_Service(DeviceAutoPushDbContext deviceAutoPushDbContext, IConfiguration configuration, DeviceCacheService deviceCacheService )
         {
             _deviceAutoPushDbContext = deviceAutoPushDbContext;
             _configuration = configuration;
             _deviceCacheService = deviceCacheService;
 
         }
-        public static AccessTokenServer accessToken { get; set; }
-
-       
         public async void LoadConfigData()
         {
 
@@ -43,14 +43,14 @@ namespace AMMS.ZkAutoPush.Applications.V1
             {
                 client_secret = clientsecret;
             }
+            //Lấy danh sách thiết bị
             await GetListDevice();
 
-            var terminals = await _deviceAutoPushDbContext.zk_terminal.ToListAsync();
+            var terminals = await _deviceAutoPushDbContext.hanet_terminal.ToListAsync();
 
             foreach (var terminal in terminals)
             {
                 terminal.online_status = false;
-                terminal.last_activity = DateTime.Now;
                 await _deviceCacheService.Save(terminal); 
             }
         }
@@ -239,10 +239,10 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     return;
                 }
 
-                List<A2_Device> devices = returnData.data.Where(x => x.DeviceModel != null && x.DeviceModel.ToUpper() == EventBusConstants.ZKTECO).ToList();
+                List<A2_Device> devices = returnData.data.Where(x => x.DeviceModel != null && x.DeviceModel.ToUpper() == EventBusConstants.HANET).ToList();
                 foreach (var device in devices)
                 {
-                    var terminal = new zk_terminal
+                    var terminal = new hanet_terminal
                     {
                         Id = device.Id,
                         sn = device.SerialNumber,
@@ -265,15 +265,15 @@ namespace AMMS.ZkAutoPush.Applications.V1
         /// </summary>
         /// <param name="a2_Devices"></param>
         /// <returns></returns>
-        public async Task SaveDevice(zk_terminal a2_Devices)
+        public async Task SaveDevice(hanet_terminal a2_Devices)
         {
             try
             {
-                var obj = _deviceAutoPushDbContext.zk_terminal.FirstOrDefault(x => x.Id == a2_Devices.Id);
+                var obj = _deviceAutoPushDbContext.hanet_terminal.FirstOrDefault(x => x.Id == a2_Devices.Id);
                 if (obj == null)
                 {
                     a2_Devices.create_time = DateTime.Now;
-                    await _deviceAutoPushDbContext.zk_terminal.AddAsync(a2_Devices);
+                    await _deviceAutoPushDbContext.hanet_terminal.AddAsync(a2_Devices);
                     await _deviceAutoPushDbContext.SaveChangesAsync();
 
                 }
@@ -290,10 +290,10 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 Logger.Error(ex.Message);
             }
         }
-
-    } /// <summary>
-      /// Dữ liệu SV trả về
-      /// </summary>
+    }
+    /// <summary>
+    /// Dữ liệu SV trả về
+    /// </summary>
     public class ServerResponse
     {
         public int code { get; set; }
@@ -320,7 +320,6 @@ namespace AMMS.ZkAutoPush.Applications.V1
         public DateTime expires_time { get; private set; }
 
     }
-
     public class A2_Device
     {
         public string Id { get; set; }
@@ -377,4 +376,6 @@ namespace AMMS.ZkAutoPush.Applications.V1
         public string? DeviceModel { get; set; }
 
     }
+
+
 }

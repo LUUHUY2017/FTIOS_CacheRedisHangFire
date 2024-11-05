@@ -1,6 +1,7 @@
 ﻿using AMMS.DeviceData.Data;
 using AMMS.DeviceData.RabbitMq;
 using AMMS.ZkAutoPush.Applications;
+using AMMS.ZkAutoPush.Applications.CronJobs;
 using AMMS.ZkAutoPush.Applications.V1;
 using AMMS.ZkAutoPush.Applications.V1.Consummer;
 using AMMS.ZkAutoPush.Datas.Databases;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Shared.Core.Caches.Redis;
 using Shared.Core.Repositories;
+using Shared.Core.SignalRs;
 using System.Reflection;
 
 namespace AMMS.ZkAutoPush.Extensions;
@@ -36,17 +38,11 @@ public static class DependencyInjection
 
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        //services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         services.AddMediatR(Assembly.GetExecutingAssembly());
-        //services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+        //ConJob chạy các dịch vụ tự động
+        services.AddScoped<ICronJobService, CronJobService>();
 
-        //services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
-
-      
-        
         return services;
     }
 
@@ -104,7 +100,6 @@ public static class DependencyInjection
         services.AddScoped<ZK_DEVICE_RPConsummer>();
         services.AddScoped<ZK_SV_PUSHConsummer>();
         services.AddScoped<ZK_TA_DataConsummer>();
-        services.AddScoped<Server_RequestConsummer>();
 
 
         services.AddMassTransit(config =>
@@ -117,11 +112,7 @@ public static class DependencyInjection
 
             config.UsingRabbitMq((ct, cfg) =>
             {
-                //cfg.Host(configuration["EventBusSettings:HostAddress"], h =>
-                //{
-                //    h.Username("guest");
-                //    h.Password("guest");
-                //});
+
 
                 cfg.Host(configuration["EventBusSettings:HostAddress"]);
 
@@ -143,15 +134,7 @@ public static class DependencyInjection
                 });
 
 
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.BrickstreamData}", c =>
-                //{
-                //    c.ConfigureConsumer<PeopleCounttingConsumer>(ct);
-                //});
 
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.DeviceOnlineOffline_Queue}", c =>
-                //{
-                //    c.ConfigureConsumer<DeviceConsumer>(ct);
-                //});
 
 
                 cfg.ConfigureEndpoints(ct);
@@ -175,5 +158,20 @@ public static class DependencyInjection
         service.AddSingleton<ICacheService, CacheService>();
         service.AddScoped<DeviceCacheService>();
         service.AddScoped<DeviceCommandCacheService>();
+        service.AddSingleton<SignalRClientService>();
+
+
     }
+    public static void AddSignalRService(this IServiceCollection service, IConfiguration configuration)
+    {
+        service.AddSignalR(o =>
+        {
+            o.EnableDetailedErrors = true;
+            o.MaximumReceiveMessageSize = 4 * 1024 * 1024; // 4MB
+        });
+        service.AddSingleton<ISignalRAdapter, SignalRAdapter>();
+        service.AddScoped<ISignalRService, SignalRService>();
+        service.AddSingleton<ISignalRClientService, SignalRClientService>();
+    }
+
 }

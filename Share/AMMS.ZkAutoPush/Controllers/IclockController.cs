@@ -25,7 +25,6 @@ public class IclockController : ControllerBase
     private readonly IEventBusAdapter _eventBusAdapter;
     private readonly IConfiguration _configuration;
     private readonly ICacheService _cacheService;
-    private readonly StartupDataService _startupDataService;
     private readonly DeviceCacheService _deviceCacheService;
     private readonly DeviceCommandCacheService _deviceCommandCacheService;
 
@@ -34,8 +33,7 @@ public class IclockController : ControllerBase
         , IOptions<EventBusSettings> eventBusSettings
         , IEventBusAdapter eventBusAdapter
         , ICacheService cacheService
-        , StartupDataService startupDataService
-        , DeviceCacheService deviceCacheService
+         , DeviceCacheService deviceCacheService
         , DeviceCommandCacheService deviceCommandCacheService
         )
     {
@@ -44,7 +42,6 @@ public class IclockController : ControllerBase
         _eventBusSettings = eventBusSettings.Value;
         _eventBusAdapter = eventBusAdapter;
         _cacheService = cacheService;
-        _startupDataService = startupDataService;
         _deviceCacheService = deviceCacheService;
         _deviceCommandCacheService = deviceCommandCacheService;
     }
@@ -96,47 +93,6 @@ public class IclockController : ControllerBase
 
 
 
-            //string retValue = Retval_404;
-
-            //if (Db.devMap.ContainsKey(sn))
-            //{
-            //    string registrycode = (string)Db.devMap[sn]["registrycode"];
-            //    retValue = "RegistryCode=" + registrycode;
-
-            //    string mes = $"\t has been registered, register code: {registrycode}";
-            //    LogWarning(mes);
-            //}
-            //else
-            //{
-            //    string randomString = Util.GetRandomString(10);
-            //    string datas = Util.GetStreamData(HttpContext.Request);
-            //    Dictionary<string, string> dataMap = Util.ParseStringToMap(datas);
-
-            //    dataMap["ServerVersion"] = "10.2";
-            //    dataMap["ServerName"] = "myServerName";
-            //    dataMap["PushVersion"] = "5.6";
-            //    dataMap["ErrorDelay"] = "30";
-            //    dataMap["RequestDelay"] = "3";
-            //    dataMap["TransTimes"] = "00:00\t23:59";
-            //    dataMap["TransInterval"] = "1";
-            //    dataMap["TransTables"] = "User\tTransaction";
-            //    dataMap["Realtime"] = "1";
-            //    dataMap["SessionID"] = HttpContext.Session.Id;
-
-            //    Dictionary<string, object> optionsMap = new Dictionary<string, object>
-            //    {
-            //        { "options", dataMap },
-            //        { "registrycode", randomString }
-            //    };
-
-            //    Db.devMap[sn] = optionsMap;
-            //    retValue = "RegistryCode=" + randomString;
-
-            //    string mes = $"\t not registered, go to register, return register code: {randomString}";
-            //    LogWarning(mes);
-            //}
-
-            //return retValue;
 
         }
         catch (Exception e)
@@ -198,24 +154,7 @@ public class IclockController : ControllerBase
     public async Task<string> ping(string sn)
     {
         Logger.Warning($"ping: method: {Request.Method}, sn: {sn}");
-
-        var thietBiUpdate = ZK_SV_PUSHService.ListTerminal.FirstOrDefault(o => o.sn == sn);
-        //var thietBiUpdate = await _deviceCacheService.Get(sn);
-        if (thietBiUpdate != null)
-        {
-            thietBiUpdate.last_activity = DateTime.Now;
-            thietBiUpdate.isconnect = true;
-            ////Cập nhật vào csdl
-            //try
-            //{
-            //    await SaveDevice(thietBiUpdate);
-            //}
-            //catch (Exception e)
-            //{
-
-            //}
-        }
-
+        //Xử lý thiết bị khi trả ping về
         return Retval_OK;
     }
 
@@ -231,17 +170,34 @@ public class IclockController : ControllerBase
 
         try
         {
+            var thietBiUpdate = await _deviceCacheService.Get(sn);
+            if (thietBiUpdate != null)
+            {
+                thietBiUpdate.last_activity = DateTime.Now;
+                if (thietBiUpdate.online_status == false)
+                {
+                    thietBiUpdate.time_online = DateTime.Now;
+                    thietBiUpdate.online_status = true;
+                    await _deviceCacheService.Save(thietBiUpdate);
+                }
+            }
 
-            if (!ZK_SV_PUSHService.ListIclockCommand.Any())
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+
+        try
+        {
+            //Tìm danh sách lệnh của thiết bị
+            List<IclockCommand> listAll = await _deviceCommandCacheService.Gets(sn);
+            if (listAll == null || listAll.Count < 0)
                 return Retval_OK;
+            //Các lệnh chưa thực hiện
+            var listUsing = listAll.Where(o => o != null && o.SerialNumber == sn && !o.IsRequest).ToList();
 
-            List<IclockCommand> xx = new List<IclockCommand>();
-            if (ZK_SV_PUSHService.ListIclockCommand.Count > 0)
-                xx = ZK_SV_PUSHService.ListIclockCommand.Where(o => o != null && o.SerialNumber == sn && !o.IsRequest).ToList();
-
-            //var xx = await _deviceCommandCacheService.Gets(sn);
-
-            if (xx == null || xx.Count() < 1)
+            if (listUsing == null || listUsing.Count() < 1)
             {
                 return Retval_OK;
             }
@@ -252,39 +208,42 @@ public class IclockController : ControllerBase
             int contentkb = 0;
             while (i < 200 || contentkb < totalkb)
             {
-                IclockCommand x = null;
+                IclockCommand currentCommand = null;
                 try
                 {
-                    if (xx != null && xx.Count > 0)
+                    if (listUsing != null && listUsing.Count > 0)
                     {
-                        x = xx.Where(o => o != null).FirstOrDefault(o => o.SerialNumber == sn && !o.IsRequest);
+                        currentCommand = listUsing.Where(o => o != null).OrderBy(m => m.Id).FirstOrDefault(o => o.SerialNumber == sn && !o.IsRequest);
                     }
                 }
                 catch (Exception e)
                 {
                     Logger.Warning(e.Message);
                 }
-                if (x != null)
+                if (currentCommand != null)
                 {
-                    int emlkb = Encoding.Unicode.GetByteCount(x.Command);
+                    int emlkb = Encoding.Unicode.GetByteCount(currentCommand.Command);
+                    //Kiểm tra nếu số kb của lệnh lớn hơn quy định
                     if (emlkb > totalkb)
                     {
-                        if (x.DataTable == IclockDataTable.A2NguoiIclockUserPicSyn)
+                        if (currentCommand.DataTable == IclockDataTable.A2NguoiIclockUserPicSyn)
                         {
-                            ZK_SV_PUSHService.ListIclockCommand.Remove(x);
-                            //await _deviceCommandCacheService.Clear(x.DataId);
+                            await _deviceCommandCacheService.Remove(sn, currentCommand.Id.ToString());
                         }
                         continue;
                     }
                     if (contentkb + emlkb < totalkb)
                     {
-                        x.IsRequest = true;
-                        x.CommitTime = DateTime.Now;
+                        currentCommand.IsRequest = true;
+                        currentCommand.CommitTime = DateTime.Now;
+                        //Lưu lại thông tin vào caches
+                        await _deviceCommandCacheService.Save(currentCommand);
 
+                        //Thêm lệnh vào chuỗi lệnh trả về
                         if (commanText == "")
-                            commanText = x.Command;
+                            commanText = currentCommand.Command;
                         else
-                            commanText = commanText + "\n" + x.Command;
+                            commanText = commanText + "\n" + currentCommand.Command;
 
                         contentkb = Encoding.Unicode.GetByteCount(commanText);
                     }
@@ -297,7 +256,7 @@ public class IclockController : ControllerBase
             }
             if (string.IsNullOrEmpty(commanText))
             {
-                return "OK";
+                return Retval_OK;
             }
 
             return commanText;
@@ -354,7 +313,7 @@ public class IclockController : ControllerBase
                         if (contentArr.Length == 3)
                         {
                             var ID = contentArr[0].Split('=')[1];
-                            var x = ZK_SV_PUSHService.ListIclockCommand.FirstOrDefault(o => o.SerialNumber == sn && o.Id.ToString() == ID);
+                            var x = await _deviceCommandCacheService.GetByCode(sn, ID);
                             if (x != null)
                             {
                                 x.RevicedTime = DateTime.Now;

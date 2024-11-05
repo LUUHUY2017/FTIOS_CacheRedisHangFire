@@ -9,6 +9,7 @@ namespace AMMS.ZkAutoPush.Datas.Entities
     {
         [Key]
         public string Id { get; set; }
+        public string? device_id { get; set; }
         public string? area_id { get; set; }
         public DateTime? create_time { get; set; }
         public DateTime? change_time { get; set; }
@@ -21,10 +22,13 @@ namespace AMMS.ZkAutoPush.Datas.Entities
         public int? user_count { get; set; }
         public int? face_count { get; set; }
         public int? fv_count { get; set; }
-        public bool? isconnect { get; set; }
         public DateTime? last_activity { get; set; }
         public DateTime? upload_time { get; set; }
         public DateTime? push_time { get; set; }
+        public DateTime? last_checkconnection { get; set; }
+        public DateTime? time_offline { get; set; }
+        public DateTime? time_online { get; set; }
+        public bool? online_status { get; set; }
 
     }
 }

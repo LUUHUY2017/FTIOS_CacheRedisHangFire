@@ -74,7 +74,7 @@ public class MonitorDeviceController : AuthBaseAPIController
         //await _hubContext.Clients.All.SendAsync("RefreshDevice", "RefreshDevice", "", "Check kết nối");
         if (_signalRService != null && _signalRService.Connection != null && _signalRService.Connection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connected)
         {
-            await _signalRService.Connection.InvokeAsync("RefreshDevice", JsonConvert.SerializeObject(device));
+            await _signalRService.Connection.InvokeAsync("RefreshDevice", JsonConvert.SerializeObject(new List<object> { device }));
         }
         return Ok(device);
     }

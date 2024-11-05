@@ -1,9 +1,9 @@
-﻿using AMMS.Hanet.Datas.Databases;
+﻿using AMMS.ZkAutoPush.Datas.Databases;
 using Hangfire;
 using Share.WebApp.Controllers;
 using Shared.Core.SignalRs;
 
-namespace AMMS.Hanet.Applications.CronJobs;
+namespace AMMS.ZkAutoPush.Applications.CronJobs;
 
 public partial class CronJobService : ICronJobService
 {

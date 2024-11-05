@@ -12,6 +12,13 @@ using Share.WebApp.Settings;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using Hangfire;
+using Hangfire.MySql;
+using AMMS.ZkAutoPush.Applications.CronJobs;
+using AMMS.ZkAutoPush.Applications.V1;
+using AMMS.ZkAutoPush.Helps.Authorizations;
+using Shared.Core.Loggers;
+using Hangfire.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
@@ -105,7 +112,25 @@ services.AddAuthorization(options =>
     options.DefaultPolicy = multiSchemePolicy;
     options.AddPolicy("Bearer", policy => policy.RequireClaim("scope", "amms.zkteco"));
 });
-
+//Hangfire MySQL Server
+services.AddHangfire(configuration => configuration
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseStorage(
+        new MySqlStorage(
+            builder.Configuration["ConnectionStrings:HangfireDBConnection"],
+            new MySqlStorageOptions
+            {
+                QueuePollInterval = TimeSpan.FromSeconds(10),
+                JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                PrepareSchemaIfNecessary = true,
+                DashboardJobListLimit = 5000,
+                TransactionTimeout = TimeSpan.FromMinutes(1),
+                TablesPrefix = "Zkteco_Hangfire",
+            }
+        )
+    ));
 
 services.AddApplicationServices();
 
@@ -222,7 +247,9 @@ services.AddSwaggerGen(c =>
 
 });
 
-services.AddControllers(); 
+services.AddControllers();
+//SignalR
+services.AddSignalRService(configuration);
 
 
 services.AddHttpClient();
@@ -274,6 +301,38 @@ app.UseEndpoints(endpoints =>
     ;
 
 });
+//Tạo các job chạy tự động, theo dõi trạng thái của các job     
+//app.UseHangfireDashboard("/hangfire_dashboard");
+app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
+{
+    IgnoreAntiforgeryToken = true,
+    Authorization = new[] { new DashboardNoAuthorizationFilter() }
+});
+//app.UseHangfireDashboard();
+app.UseHangfireServer();
+
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+
+        var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
+        signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
+        signalRClient.Start();
+
+        var startUpService = scope.ServiceProvider.GetRequiredService<StartupDataService>();
+        startUpService.LoadConfigData();
+
+        
+        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
+        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/1 * * * *", TimeZoneInfo.Local);
+    }
+    catch (Exception e)
+    {
+        Logger.Error(e);
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

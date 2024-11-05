@@ -49,6 +49,9 @@ namespace AMMS.Hanet.Applications.V1.Service
 
                 await AddTransactionLog(data, reponse);
 
+                if (string.IsNullOrEmpty(data.aliasID))
+                    return;
+
                 await AddATTLOG(data);
 
             }

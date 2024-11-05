@@ -3,6 +3,7 @@ using System;
 using AMMS.ZkAutoPush.Datas.Databases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AMMS.ZkAutoPush.Datas.Migrations.MySql
 {
     [DbContext(typeof(DeviceAutoPushDbContext))]
-    partial class DeviceAutoPushDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241105020111_Init_DB2411050900")]
+    partial class Init_DB2411050900
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
