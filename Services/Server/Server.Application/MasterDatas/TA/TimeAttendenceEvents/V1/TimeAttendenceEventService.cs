@@ -141,7 +141,8 @@ public partial class TimeAttendenceEventService
                         A2_Student student = null;
                         A2_Organization organization = null;
                         bool isset = CheckStudents(info, ref student, ref organization);
-
+                        if (!isset)
+                            continue;
 
                         TimeSpan timeOfDay = info.TimeEvent.Value.TimeOfDay;
                         DateTime date = info.TimeEvent.Value.Date;

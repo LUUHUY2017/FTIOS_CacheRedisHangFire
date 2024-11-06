@@ -34,6 +34,9 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
 
             _personRepository = personRepository;
             _studentRepository = studentRepository;
+
+
+
         }
 
         /// <summary>
@@ -44,6 +47,7 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
         [HttpPut("Edit")]
         public async Task<IActionResult> Edit(DtoStudentRequest request)
         {
+            request.OrganizationId = GetOrganizationId();
             var data = await _studentService.Save(request);
             return Ok(data);
         }
