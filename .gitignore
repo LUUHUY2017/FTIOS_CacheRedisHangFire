@@ -131,3 +131,5 @@
 /AMMS.Hanet/obj
 /Share/AMMS.ZkAutoPush/Properties/launchSettings.json
 /Services/Server/Server.API/wwwroot/images/students
+/AMMS.VIETTEL.SMAS/bin/Debug/net6.0
+/AMMS.VIETTEL.SMAS/obj

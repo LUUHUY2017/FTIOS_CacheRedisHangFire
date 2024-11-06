@@ -1,0 +1,450 @@
+﻿@using System.Security.Claims
+
+<div class="content-wrapper" id="webui_attendenceConfig">
+    <div class="content-inner">
+
+        <!-- Content area -->
+
+        <div class="content">
+
+            <div class="card">
+                <div class="card-body">
+                    <form v-on:submit.prevent="loadData">
+                        <div class="row mb-3">
+                            <div class="col-lg-3">
+                                <label class="form-label">Trường học</label>
+                                <select id="FilterOrgainization" class="form-control select" data-dropdown-parent="#webui_attendenceConfig" data-placeholder="Vui lòng chọn trường" v-model:value="filter.organizationId">
+                                    <option v-for="option in combobox.schools" v-bind:value="option.id">
+                                        {{ option.organizationName }}
+                                    </option>
+                                </select>
+                            </div>
+                            @*  <div class="col-lg-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            </div>  *@
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="pull-left">
+                        <a v-on:click="onPopupModelEdit(null, false)" class="btn btn-primary " style="margin-right: 5px;"> Thêm mới</a>
+                    </div>
+                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}} cấu hình tích hợp VTSmart</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate id="FormAddEdit">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td class="p-2 fw-bold">Kết nối SSO</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <!--Endpoint-identity-->
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Endpoint-identity <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.endpointIdentity">
+                                                    <div class="invalid-feedback">Vui lòng nhập Endpoint-identity</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                            <!--Tài khoản-->
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Tài khoản <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.accountName">
+                                                    <div class="invalid-feedback">Vui lòng nhập tên tài khoản</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                            <!--Mật khẩu-->
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Mật khẩu <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.password">
+                                                    <div class="invalid-feedback">Vui lòng nhập mật khẩu</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                            <!--Grant_type-->
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Grant type <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.grantType">
+                                                    <div class="invalid-feedback">Vui lòng nhập Grant type</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                            <!--Scope-->
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Scope <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.scope">
+                                                    <div class="invalid-feedback">Vui lòng nhập Scope</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                            <!--Client_id-->
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Client_id <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.clientId">
+                                                    <div class="invalid-feedback">Vui lòng nhập Client Id</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                            <!--client_secret-->
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">client_secret <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.clientSecret">
+                                                    <div class="invalid-feedback">Vui lòng nhập client_secret</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 fw-bold ">Kết nối Gateway</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <!--Endpoint-gateway-->
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Endpoint-gateway <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.endpointGateway">
+                                                    <div class="invalid-feedback">Vui lòng nhập Endpoint-gateway</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2">
+                                            <div class="row mb-3">
+                                                <div class="text-start">
+                                                    <button type="button" class="btn btn-primary" v-on:click="onSaveData()">Lưu dữ liệu</button>
+                                                    <button type="button" class="btn btn-primary" v-on:click="onAsyncData()" :disabled="!checkAsyncButton">Đồng bộ</button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#FilterOrgainization').on("change", function () {
+            _config.filter.organizationId = $(this).val();
+            _config.loadData();
+        });
+    });
+    var _config = new Vue({
+        el: '#webui_attendenceConfig',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [
+                {
+                    field: 'Action',
+                    title: 'Action',
+                    align: 'center',
+                    formatter: (value, row, index) => {
+                        var ele = `<div style="white-space: nowrap;">`;
+                        //ele += `<a href = "javascript:" class= "btn btn-sm btn-info reAsync" title = "Đồng bộ " > <i class="fa fa-repeat" > </i> </a > &nbsp;`;
+                        ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit"  title = "Update " > <i class="fa fa-pencil" > </i><span class="sr-only">Update</span > </a > &nbsp;`;
+                        ele += `<a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i> <span class="sr-only">Inactive</span></a>&nbsp;`;
+                        ele += ` </div>`;
+                        return ele;
+                    },
+                    events: {
+                        'click .edit': function (e, value, row) {
+                            _config.onPopupModelEdit(row, true);
+                        },
+                        'click .delete': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn xóa dòng này khỏi cơ sở dữ liệu không? sau khi xóa không khôi phục lại được!";
+                            var content = "Nhập nội dung xóa (không quá 250 kí tự)";
+                            alertify.prompt(question, content, ''
+                                , function (evt, value) {
+                                    axios.post('/api/v1/AppConfiguration/Delete', { id: row.id + '', reason: value }, _config.object.bearerAuthorization).then(response => {
+                                        if (response.data.succeeded) {
+                                            alertify.success(response.data.message);
+                                            _config.loadData();
+                                        }
+                                        else {
+                                            alertify.warning(response.data.message);
+                                        }
+                                    }).catch(error => {
+                                        alert("Lỗi: " + error.response.data.message);
+                                    });
+                                }, function () {
+                                    //alertify.error('Cancel')
+                                });
+                        },
+                        // 'click .reAsync': function (e, value, row) {
+                        //     $('.loader').show();
+                        //     axios.post('/api/v1/AppConfiguration/SchoolAsync', row, _config.object.bearerAuthorization).then(response => {
+                        //         if (response.request.responseURL.includes('~/Account/Login')) {
+                        //             window.location = window.location.href;
+                        //         }
+
+                        //         if (response.data.succeeded) {
+                        //             alertify.success("Thành công");
+                        //             _config.loadData();
+                        //         }
+                        //         else {
+                        //             alertify.notify(response.data.message, 'error', 6, function () { });
+                        //         }
+
+                        //         $('.loader').delay(100).hide(0);
+                        //     }).catch(error => {
+                        //         console.log(error);
+                        //         $('.loader').delay(100).hide(0);
+                        //     });
+                        // },
+                    }
+                },
+                {
+                    title: "SchoolName",
+                    field: 'organizationName',
+                    sortable: true,
+                },
+                {
+                    title: 'TimeAsync',
+                    field: 'timeAsync',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
+                {
+                    title: "EndpointIdentity",
+                    field: 'endpointIdentity',
+                    sortable: true,
+                },
+                {
+                    title: 'AccountName',
+                    field: 'accountName',
+                    sortable: true,
+                },
+                {
+                    title: "Password",
+                    field: "password",
+                    sortable: true,
+                },
+                {
+                    title: "GrantType",
+                    field: "grantType",
+                    sortable: true,
+                },
+                {
+                    title: "Scope",
+                    field: "scope",
+                    sortable: true,
+                },
+                {
+                    title: "ClientId",
+                    field: "clientId",
+                    sortable: true,
+                },
+                {
+                    title: "ClientSecret",
+                    field: "clientSecret",
+                    sortable: true,
+                },
+                
+            ],
+            data: [],
+            item: {},
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                showExport: false,
+                sortable: true,
+                groupBy: true,
+                paginationHAlign: 'right',
+                paginationDetailHAlign: 'right',
+                pageSize: 10,
+                pageList: [10, 25, 50, 100, 200],
+            },
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                editAction: false,
+                infoAction: false,
+                bearerAuthorization: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+            filter: {
+                organizationId: "0",
+            },
+            checkAsyncButton: false,
+            combobox: { schools: [], },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.post('/api/v1/AppConfiguration/GetsFilter', this.filter, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        this.data = response.data.data;
+                        // this.item = response.data.data || {
+                        //     endpointIdentity: 'https://sso.vtsmas.vn/connect/token',
+                        //     endpointGateway: 'https://gateway.vtsmas.vn',
+                        // };
+
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+            onSaveData() {
+                if (!validateForm("#FormAddEdit"))
+                    return true;
+                $('.loader').show();
+                //this.item.organizationId = this.filter.organizationId;
+                axios.post('/api/v1/AppConfiguration/AddOrEdit', this.item, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        this.checkAsyncButton = true;
+                        this.item = response.data.data;
+                        alertify.success("Thành công");
+                        this.loadData();
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    console.log(error);
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+            onResetForm() {
+                this.item = {};
+            },
+            onPopupModelEdit(row, editAction) {
+                if (editAction) {
+                    this.checkAsyncButton = true;
+                    this.item = row;
+                }
+                else {
+                    this.checkAsyncButton = false;
+                    this.onResetForm();
+                }
+
+                this.object.form_tile = editAction ? 'Chỉnh sửa' : "Thêm mới";
+                this.object.editAction = editAction;
+
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+            },
+            onAsyncData() {
+                $('.loader').show();
+                axios.post('/api/v1/AppConfiguration/SchoolAsync', this.item, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        alertify.success("Thành công");
+                        this.loadData();
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    console.log(error);
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+            getCookie(name) {
+                const value = "; " + document.cookie;
+                const parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            },
+            loadCombox() {
+                var userId = '@Context.User.FindFirstValue("sub")';
+                axios.get('/api/v1/Organization/GetForUser', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    this.combobox.schools = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
+                    if (this.getCookie("organizationId")) {
+                        this.filter.organizationId = this.getCookie("organizationId");
+                        $('#FilterOrganization').val(this.filter.organizationId).trigger('change');
+                    }
+                    else {
+                        this.filter.organizationId = this.combobox.schools[0].id;
+                        $('#FilterOrganization').val(this.filter.organizationId).trigger('change');
+                    }
+
+                    this.loadData();
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+        },
+        mounted() {
+            this.loadCombox();
+            //this.loadData();
+        },
+    })
+</script>
+

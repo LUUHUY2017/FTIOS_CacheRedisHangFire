@@ -23,6 +23,8 @@ public class SystemConfig
         new ApiScope("masterapi", "Master API"),
         new ApiScope("amms.hanet", "Hanet Device API"),
         new ApiScope("amms.zkteco", "Zkteco Device API"),
+        new ApiScope("amms.viettel", "AMMS Viettel API"),
+
     };
 
     // danh sách các Api ở đây ta chỉ có mỗi thằng knowledgespace
@@ -40,7 +42,7 @@ public class SystemConfig
                 //Device
                 new ApiResource("Device", "Device.API - API nhận dữ liệu từ thiết bị")
                 {
-                    Scopes = { "masterapi", "amms.hanet", "amms.zkteco" }
+                    Scopes = { "masterapi", "amms.hanet", "amms.zkteco", "amms.viettel" }
                 },
         };
 

@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using AMMS.DeviceData.RabbitMq;
+using AutoMapper;
 using DocumentFormat.OpenXml.Office2019.Drawing.Model3D;
+using EventBus.Messages;
 using Server.Application.MasterDatas.A2.Devices.Models;
 using Server.Application.MasterDatas.A2.Devices.Models.Commons;
 using Server.Core.Entities.A2;
@@ -8,17 +10,24 @@ using Server.Core.Interfaces.A2.Devices.RequeResponsessts;
 using Server.Core.Interfaces.A2.Devices.Requests;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
+using static MassTransit.ValidationResultExtensions;
 
 namespace Server.Application.MasterDatas.A2.Devices
 {
     public class DeviceService
     {
         private readonly IMapper _mapper;
+        private readonly IEventBusAdapter _eventBusAdapter;
         private readonly IDeviceRepository _deviceRepository;
         protected readonly IMasterDataDbContext _dbContext;
-        public DeviceService(IMapper mapper, IDeviceRepository deviceRepository, IMasterDataDbContext dbContext)
+        public DeviceService(
+            IMapper mapper,
+            IEventBusAdapter eventBusAdapter,
+            IDeviceRepository deviceRepository, 
+            IMasterDataDbContext dbContext)
         {
             _mapper = mapper;
+            _eventBusAdapter = eventBusAdapter;
             _deviceRepository = deviceRepository;
             _dbContext = dbContext;
         }
@@ -102,7 +111,23 @@ namespace Server.Application.MasterDatas.A2.Devices
                         return new Result<A2_Device>(null, "SerialNumber đã có vui lòng tạo mới!", false);
                     }
                     var modelAdd = _mapper.Map<A2_Device>(request);
-                    return await _deviceRepository.AddAsync(modelAdd);
+                    var result = await _deviceRepository.AddAsync(modelAdd);
+                    if (result.Succeeded)
+                    {
+                        RB_ServerRequest item = new RB_ServerRequest()
+                        {
+                            Id = result.Data.Id,
+                            Action = ServerRequestAction.ActionAdd,
+                            RequestType = ServerRequestType.Device,
+                            DeviceId = result.Data.Id,
+                            SerialNumber = result.Data.SerialNumber,
+                            DeviceModel = result.Data.DeviceModel,
+                            SchoolId = result.Data.OrganizationId,
+                        };
+                        var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Server_Auto_Push_S2D);
+                        await aa.Send(item);
+                    }
+                    return result;
                 }
                 else
                 {
@@ -137,7 +162,21 @@ namespace Server.Application.MasterDatas.A2.Devices
                     return new Result<int>(0, "Không tìm thấy dữ liệu!", false);
 
                 var response = await _deviceRepository.DeleteAsync(request);
-
+                if (response.Succeeded)
+                {
+                    RB_ServerRequest item = new RB_ServerRequest()
+                    {
+                        Id = modelDel.Data.Id,
+                        Action = ServerRequestAction.ActionDelete,
+                        RequestType = ServerRequestType.Device,
+                        DeviceId = modelDel.Data.Id,
+                        SerialNumber = modelDel.Data.SerialNumber,
+                        DeviceModel = modelDel.Data.DeviceModel,
+                        SchoolId = modelDel.Data.OrganizationId,
+                    };
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Server_Auto_Push_S2D);
+                    await aa.Send(item);
+                }
                 return response;
             }
             catch (Exception ex)

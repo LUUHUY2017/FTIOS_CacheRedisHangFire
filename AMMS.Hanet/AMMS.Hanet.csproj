@@ -7,8 +7,6 @@
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 
-	<PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
-	<PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
 	<ItemGroup>
 	  <Compile Remove="Data\Consume\**" />
 	  <Content Remove="Data\Consume\**" />

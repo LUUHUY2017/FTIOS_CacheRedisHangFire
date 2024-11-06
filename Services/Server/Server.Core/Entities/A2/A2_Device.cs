@@ -27,9 +27,9 @@ public class A2_Device : EntityBase
     public int? PortConnect { get; set; }
     public string? LaneId { get; set; }
     public string? GateId { get; set; }
+    public DateTime? CheckConnectTime { get; set; }
     public DateTime? ConnectUpdateTime { get; set; }
     public DateTime? DisConnectUpdateTime { get; set; }
-    public DateTime? CheckConnectTime { get; set; }
 
     [MaxLength(50)]
     public string? ActiveKey { get; set; }

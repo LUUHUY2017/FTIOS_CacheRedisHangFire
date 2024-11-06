@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Cấu hình hệ thống";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+<div class="content-wrapper" id="webui">
+    <!-- Inner content -->
+    <div class="content-inner">
+        <div class="content">
+            <div class="card">
+                <div class="card-body">
+                    @{
+                        string tab = Context.Request.Query["tab"].ToString().ToLower();
+                        if (string.IsNullOrEmpty(tab))
+                            tab = "cauhinhvtsmart";
+
+                        string tab_cauhinhvtsmart = "";
+                        if (tab == "cauhinhvtsmart")
+                            tab_cauhinhvtsmart = "active";
+
+                    }
+                    <ul class="nav nav-tabs nav-tabs-highlight">
+                        <li class="nav-item">
+                            <a href="@Url.Action("index", new { tab="cauhinhvtsmart" })" class="nav-link @tab_cauhinhvtsmart">
+                                <i class="ph-house m-2"></i>
+                                Cấu hình VTSmart
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade mt-1 show @tab_cauhinhvtsmart" role="tabpanel">
+                            @if (tab == "cauhinhvtsmart")
+                            {
+                                <div class="accordion" id="tab_cauhinhvtsmart">
+                                    @await Html.PartialAsync("/Areas/Managers/AppConfigurations/V1/Views/AttendanceConfig.cshtml")
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

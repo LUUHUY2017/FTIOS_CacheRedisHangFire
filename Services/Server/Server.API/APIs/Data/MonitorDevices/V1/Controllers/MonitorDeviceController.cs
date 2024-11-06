@@ -51,6 +51,16 @@ public class MonitorDeviceController : AuthBaseAPIController
         var data = await _monitorDeviceService.Gets();
         return Ok(data);
     }
+    /// <summary>
+    /// Cập nhật trạng thái thiết bị
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("UpdateStatusConnect")]
+    public async Task<IActionResult> UpdateStatusConnect(List<MDeviceStatusRequest> requests)
+    {
+        var data = await _monitorDeviceService.UpdateStatusConnect(requests);
+        return Ok(data);
+    }
 
     [HttpGet("Test")]
     public async Task<IActionResult> Test()
@@ -70,7 +80,7 @@ public class MonitorDeviceController : AuthBaseAPIController
                 device = new { serialNumber = "test1", connectionStatus = true, connectUpdateTime = DateTime.Now };
                 break;
         }
-        
+
         //await _hubContext.Clients.All.SendAsync("RefreshDevice", "RefreshDevice", "", "Check kết nối");
         if (_signalRService != null && _signalRService.Connection != null && _signalRService.Connection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connected)
         {

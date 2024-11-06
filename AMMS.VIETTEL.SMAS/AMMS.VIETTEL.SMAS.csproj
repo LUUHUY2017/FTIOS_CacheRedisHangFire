@@ -1,0 +1,147 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="Applications\Extensions\" />
+		<Folder Include="Helps\" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="Hangfire" Version="1.8.14" />
+		<PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+
+		<PackageReference Include="Serilog" Version="4.0.2" />
+
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
+
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.4" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+
+
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.33" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.33">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.33" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.33" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.33">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.29" />
+		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.3" />
+
+		<PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
+		<PackageReference Include="MassTransit" Version="8.2.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.4" />
+
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Services\Share\EventBus.Messages\EventBus.Messages.csproj" />
+		<ProjectReference Include="..\Services\Share\Share.WebApp\Share.WebApp.csproj" />
+		<ProjectReference Include="..\Services\Share\Shared.Core\Shared.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="Cores\" />
+		<None Remove="Applications\" />
+		<None Remove="Infratructures\" />
+		<None Remove="Applications\Extensions\" />
+		<None Remove="Infratructures\Databases\" />
+		<None Remove="Cores\Entities\" />
+		<None Remove="Helps\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Areas\Accounts\V1\Views\ConfirmEmail.cshtml" />
+	  <None Include="Areas\Accounts\V1\Views\ForgotPassword.cshtml" />
+	  <None Include="Areas\Accounts\V1\Views\ForgotPasswordConfirmation.cshtml" />
+	  <None Include="Areas\Accounts\V1\Views\Login.cshtml" />
+	  <None Include="Areas\Accounts\V1\Views\ResendEmailConfirmation.cshtml" />
+	  <None Include="Areas\Accounts\V1\Views\ResetPassword.cshtml" />
+	  <None Include="Areas\Accounts\V1\Views\ResetPasswordConfirmation.cshtml" />
+	  <None Include="Areas\Managers\AppConfigurations\V1\Views\AttendanceConfig.cshtml" />
+	  <None Include="Areas\Managers\AppConfigurations\V1\Views\Index.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="Views\Home\Index.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\Components\_Demo-ConfigPartial.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\Components\_FooterPartial.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\Components\_Header-ThumbnailPartial.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\Components\_Navbar-HeaderPartial.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\Components\_Sidebar-ContentPartial.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\Error.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\_Layout.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\_LayoutBlank.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\_LayoutManage.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\_LoginPartial.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\Shared\_ValidationScriptsPartial.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\_ViewImports.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Views\_ViewStart.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>
+</Project>

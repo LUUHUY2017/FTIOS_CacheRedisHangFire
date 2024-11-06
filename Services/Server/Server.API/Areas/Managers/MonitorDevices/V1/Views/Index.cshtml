@@ -261,17 +261,27 @@
 
     connection.on("RefreshDevice", function (data) {
         var data1s = JSON.parse(data);
-        //console.log(data1s);
+        //console.log(data1);
+        var listUpdate = [];
         for (var i = 0; i < data1s.length; i++) {
             var data1 = data1s[i];
             console.log(data1);
-
+            //Lấy ra các thiết bị thay đổi trạng thái
             let deviceToUpdate = _mDevice.data.find(device => device.serialNumber === data1.serialNumber);
             let deviceAllToUpdate = _mDevice.devicesAll.find(device => device.serialNumber === data1.serialNumber);
 
+            //Update giao diện
             if (deviceToUpdate && deviceToUpdate.connectionStatus !== data1.connectionStatus) {
                 deviceToUpdate.connectionStatus = data1.connectionStatus;
-                deviceToUpdate.connectUpdateTime = data1.connectUpdateTime;
+                deviceToUpdate.checkConnectTime = data1.connectUpdateTime;
+                if (data1.connectionStatus) {
+                    deviceToUpdate.connectUpdateTime = data1.connectUpdateTime;
+                }
+                else
+                {
+                    deviceToUpdate.disConnectUpdateTime = data1.connectUpdateTime;
+                }
+                listUpdate.push(data1);
             }
             if (deviceAllToUpdate && deviceAllToUpdate.connectionStatus !== data1.connectionStatus) {
                 deviceAllToUpdate.connectionStatus = data1.connectionStatus;
@@ -281,13 +291,9 @@
 
         drawChart(_mDevice.devicesAll, 'devices-online');
         drawChart(_mDevice.data, 'devices-online-filter');
-
-        //console.log("data: " + _mDevice.data);
-        //console.log("devicesAll: " + _mDevice.devicesAll);
-        // _mDevice.devicesAll = JSON.parse(data);
-        // _mDevice.data = _mDevice.devicesAll;
-        // drawChart();
-        //_mDevice.loadData();
+        //Update db
+        //console.log(listUpdate);
+        _mDevice.updateStatus(listUpdate);
     });
 </script>
 
@@ -327,6 +333,14 @@
 
         chart.draw(data, options);
     }
+
+    // function runEveryThreeMinutes() {
+    //     console.log("Chạy tác vụ mỗi 3 phút");
+    //     // Thực hiện các công việc mong muốn ở đây
+    // }
+
+    // setInterval(runEveryThreeMinutes, 300000); // 5 phút chạy 1 lần
+
     var _mDevice = new Vue({
         el: '#webui',
         components: {
@@ -363,6 +377,46 @@
                 },
                 {
                     title: 'Thời gian kiểm tra kết nối',
+                    field: 'checkConnectTime',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
+                {
+                    title: 'Thời gian mất kết nối',
+                    field: 'disConnectUpdateTime',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
+                {
+                    title: 'Thời gian kết nối lần cuối',
                     field: 'connectUpdateTime',
                     sortable: true,
                     formatter: function (value, row, index) {
@@ -474,6 +528,15 @@
                     $('.loader').delay(100).hide(0);
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+            updateStatus(listUpdate) {
+                axios.post('/api/v1/MonitorDevice/UpdateStatusConnect', listUpdate, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+                }).catch(error => {
                     console.log(error);
                 });
             },

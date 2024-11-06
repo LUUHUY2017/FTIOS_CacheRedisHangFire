@@ -1,0 +1,111 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutBlank.cshtml";
+}
+<!-- Page content -->
+<div class="page-content">
+
+    <!-- Main content -->
+    <div class="content-wrapper">
+
+        <!-- Inner content -->
+        <div class="content-inner">
+
+            <!-- Content area -->
+            <div class="content d-flex justify-content-center align-items-center">
+
+                <!-- Login card -->
+                <form class="login-form  needs-validation" novalidate v-on:submit.prevent="onSubmit" id="_login001">
+
+                    <div class="card mb-0">
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <div class="d-inline-flex align-items-center justify-content-center mb-4 mt-2">
+                                    <img src="~/assets/images/logo_icon.png" class="h-48px" alt="">
+                                </div>
+                                <h3 class="mb-0"><b>Gửi lại email xác thực tài khoản</b></h3>
+                                <span class="d-block text-muted">Vui lòng nhập email của bạn bên dưới </span>
+                            </div>
+                            <span class="text-danger  ">{{ errorMessage }}</span>
+                            <p>@Html.ValidationSummary()  </p>
+                            <p>@ViewData["Message"]</p>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <div class="form-control-feedback form-control-feedback-start">
+                                    <input type="text" v-model:value="row.email" class="form-control" placeholder="nhập địa chỉ email" required>
+                                    <div class="invalid-feedback" v-if="errors.email">{{ errors.email }}</div>
+                                    <div class="form-control-feedback-icon">
+                                        <i class="ph-user-circle text-muted"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary w-100">Nhận mật khẩu</button>
+                            </div>
+
+                            <div class="mb-3">
+                                <a href="~/Login" class="ms-auto">Đăng nhập</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- /login card -->
+
+            </div>
+            <!-- /content area -->
+
+        </div>
+        <!-- /inner content -->
+
+    </div>
+    <!-- /main content -->
+
+</div>
+<!-- /page content -->
+<script>
+
+
+
+
+    new Vue({
+        el: "#_login001",
+        data: {
+            errorMessage: '',
+            errors: { email: '' },
+            row: { userName: '' },
+        },
+        mounted() {
+            this.row.email = '@Context.Request.Cookies["UserName"]';
+            this.row = { ... this.row };
+        },
+        methods: {
+            validateForm() {
+                this.errors = {}; // Reset errors
+                if (!this.row.email)
+                    this.errors.email = 'Tên đăng nhập yêu cầu nhập.';
+            },
+            onSubmit() {
+                this.errorMessage = '';
+                this.validateForm();
+                if (Object.keys(this.errors).length > 0)
+                    return;
+
+                this.row = { ... this.row };
+
+                axios.post('/ResendEmailConfirmation', this.row).then(response => {
+                    console.log("response", response);
+                    if (response.status == 200) {
+                        alert(response.data);
+                        window.location.href = '/login';
+                    } else {
+                    }
+
+                }).catch(error => {
+                    this.errorMessage = error.response.data.message;
+                });
+            }
+        }
+    })
+</script>
