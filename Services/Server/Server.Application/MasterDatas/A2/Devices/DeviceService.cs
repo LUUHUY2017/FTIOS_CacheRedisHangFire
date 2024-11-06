@@ -2,6 +2,7 @@
 using AutoMapper;
 using DocumentFormat.OpenXml.Office2019.Drawing.Model3D;
 using EventBus.Messages;
+using Newtonsoft.Json;
 using Server.Application.MasterDatas.A2.Devices.Models;
 using Server.Application.MasterDatas.A2.Devices.Models.Commons;
 using Server.Core.Entities.A2;
@@ -23,7 +24,7 @@ namespace Server.Application.MasterDatas.A2.Devices
         public DeviceService(
             IMapper mapper,
             IEventBusAdapter eventBusAdapter,
-            IDeviceRepository deviceRepository, 
+            IDeviceRepository deviceRepository,
             IMasterDataDbContext dbContext)
         {
             _mapper = mapper;
@@ -49,7 +50,7 @@ namespace Server.Application.MasterDatas.A2.Devices
             {
                 return new Result<List<A2_Device>>(null, $"Có lỗi: {ex.Message}", false);
             }
-           
+
         }
 
         public async Task<Result<A2_Device>> GetById(string id)
@@ -102,7 +103,7 @@ namespace Server.Application.MasterDatas.A2.Devices
                     return new Result<A2_Device>(null, "Bạn phải nhập đầy đủ các trường yêu cầu!", false);
                 }
                 var checkSeri = await _deviceRepository.GetByFirstAsync(x => x.SerialNumber == request.SerialNumber);
-                
+
                 if (string.IsNullOrEmpty(request.Id))
                 {
                     //thêm thiết bị 
@@ -114,6 +115,15 @@ namespace Server.Application.MasterDatas.A2.Devices
                     var result = await _deviceRepository.AddAsync(modelAdd);
                     if (result.Succeeded)
                     {
+                        TA_Device devive = new TA_Device
+                        {
+                            DeviceModel = modelAdd.DeviceModel,
+                            Id = modelAdd.Id,
+                            DeviceName = modelAdd.DeviceName,
+                            SerialNumber = modelAdd.SerialNumber,
+
+                        };
+                        var param = JsonConvert.SerializeObject(devive);
                         RB_ServerRequest item = new RB_ServerRequest()
                         {
                             Id = result.Data.Id,
@@ -123,6 +133,7 @@ namespace Server.Application.MasterDatas.A2.Devices
                             SerialNumber = result.Data.SerialNumber,
                             DeviceModel = result.Data.DeviceModel,
                             SchoolId = result.Data.OrganizationId,
+                            RequestParam = param
                         };
                         var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Server_Auto_Push_S2D);
                         await aa.Send(item);
@@ -164,6 +175,15 @@ namespace Server.Application.MasterDatas.A2.Devices
                 var response = await _deviceRepository.DeleteAsync(request);
                 if (response.Succeeded)
                 {
+                    TA_Device devive = new TA_Device
+                    {
+                        DeviceModel = modelDel.Data.DeviceModel,
+                        Id = modelDel.Data.Id,
+                        DeviceName = modelDel.Data.DeviceName,
+                        SerialNumber = modelDel.Data.SerialNumber,
+                        
+                    };
+                    var param = JsonConvert.SerializeObject(devive);
                     RB_ServerRequest item = new RB_ServerRequest()
                     {
                         Id = modelDel.Data.Id,
@@ -173,6 +193,7 @@ namespace Server.Application.MasterDatas.A2.Devices
                         SerialNumber = modelDel.Data.SerialNumber,
                         DeviceModel = modelDel.Data.DeviceModel,
                         SchoolId = modelDel.Data.OrganizationId,
+                        RequestParam = param,
                     };
                     var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Server_Auto_Push_S2D);
                     await aa.Send(item);
