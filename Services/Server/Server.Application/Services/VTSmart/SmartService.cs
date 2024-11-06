@@ -33,7 +33,7 @@ public sealed class SmartService
 
     public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
-    public static string secretKey = "Smas!@#2023";
+    public static string secretKey = "SMas$#3/*/lsn_diem_danh";
 
     public async Task<AccessToken> GetToken(string orgId)
     {
@@ -76,7 +76,6 @@ public sealed class SmartService
         }
         return accessToken;
     }
-
     public async Task<AccessToken> RefreshToken(A0_AttendanceConfig conf)
     {
         AccessToken retval = null;
@@ -107,6 +106,7 @@ public sealed class SmartService
         }
         return retval;
     }
+
 
     #region GET
     public async Task<CurrentUserInfo> PostCurrentUser(string orgId)
@@ -280,8 +280,53 @@ public sealed class SmartService
         return result;
     }
 
+    public async Task<List<StudenSmasApiResponse>> PostListStudents(string provinceCode, string schoolCode, string schoolYearCode)
+    {
+        List<StudenSmasApiResponse> retval = new List<StudenSmasApiResponse>();
+        try
+        {
+            //var accessToken = await GetToken(orgId);
 
+            //if (accessToken != null)
+            {
+                string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, "20186511");
+                var req = new StudentSmasApiRequest()
+                {
+                    secretKey = secretKey,
+                    provinceCode = provinceCode,
+                    schoolCode = schoolCode,
+                    schoolYearCode = schoolYearCode,
+                };
+
+                var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/lay-danh-sach-hoc-sinh-diem-danh-thiet-bi", urlServerName);
+                var parameter = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    //client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _accessToken.access_token);
+
+                    var result = await client.PostAsync(api, parameter);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var data = await result.Content.ReadAsStringAsync();
+                        var res = JsonConvert.DeserializeObject<StudentDataApiResponse>(data);
+                        if (res.IsSuccess)
+                        {
+                            retval = res.Responses;
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+        return retval;
+    }
     #endregion
+
+
 
     #region POST
     public async Task<SyncDataResponse> PostSyncAttendence2Smas(SyncDataRequest req)
@@ -292,7 +337,7 @@ public sealed class SmartService
             //var _accessToken = await GetToken(orgId);
             //if (_accessToken != null)
             {
-                string _secretKey = GetSecretKeyVMSAS(secretKey, key, keyIV, "20186511");
+                string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, "20186511");
                 req.SecretKey = _secretKey;
                 var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/diem-danh-tich-hop-thiet-bi", urlServerName);
                 var parameter = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
@@ -306,6 +351,7 @@ public sealed class SmartService
                     {
                         var data = await result.Content.ReadAsStringAsync();
                         retval = JsonConvert.DeserializeObject<SyncDataResponse>(data);
+
                     }
                 }
             }
@@ -316,8 +362,7 @@ public sealed class SmartService
         }
         return retval;
     }
-
-    public string EncryptStringVSMAS(string plaintext, byte[] key, byte[] iv)
+    public string EncryptStringSMAS(string plaintext, byte[] key, byte[] iv)
     {
         using (Aes aes = Aes.Create())
         {
@@ -334,7 +379,7 @@ public sealed class SmartService
             }
         }
     }
-    public string GetSecretKeyVMSAS(string secretKey, string keyHas, string keyIV, string schoolCode)
+    public string GetSecretKeySMAS(string secretKey, string keyHas, string keyIV, string schoolCode)
     {
         TimeZoneInfo timezone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); // UTC+7 (Indochina Time)
         DateTime currentDateTime = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
@@ -349,7 +394,7 @@ public sealed class SmartService
 
         byte[] key = Convert.FromBase64String(keyHas);
         byte[] iv = Convert.FromBase64String(keyIV);
-        string encryptedString = EncryptStringVSMAS(plaintext, key, iv);
+        string encryptedString = EncryptStringSMAS(plaintext, key, iv);
 
         return encryptedString;
     }
