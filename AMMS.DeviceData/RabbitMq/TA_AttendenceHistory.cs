@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMMS.DeviceData.RabbitMq
+﻿namespace AMMS.DeviceData.RabbitMq
 {
     public class TA_AttendenceHistory
     {
@@ -29,11 +23,12 @@ namespace AMMS.DeviceData.RabbitMq
         /// </summary>
         public int? Type { get; set; }
 
-
     }
+
     public class TA_AttendenceImage
     {
         public string Id { get; set; }
+        public string AttendenceHistoryId { get; set; }
 
         public string PersonId { get; set; }
         /// <summary>

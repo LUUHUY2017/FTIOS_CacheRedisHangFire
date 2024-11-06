@@ -250,7 +250,7 @@ public class StudentService
                 _devis.SynStatus = request.IsSuccessed;
                 _devis.SynFaceStatus = request.IsSuccessed;
                 _devis.SynMessage = request.Message;
-                _devis.SynFaceMessage = request.Message;
+                _devis.SynFaceMessage = request.Content;
                 _devis.LastModifiedDate = DateTime.Now;
             }
             await _dbContext.SaveChangesAsync();

@@ -86,7 +86,7 @@ public partial class TimeAttendenceEventService
     {
         try
         {
-            Logger.Information($"list: {JsonConvert.SerializeObject(data)} ");
+            //Logger.Information($"list: {JsonConvert.SerializeObject(data)} ");
 
             if (data.Any())
             {
@@ -304,6 +304,23 @@ public partial class TimeAttendenceEventService
             Logger.Error(ex);
         }
         return statusSync;
+    }
+
+    public async Task<string> ProcessAtendenceData(List<TA_AttendenceImage> data)
+    {
+        try
+        {
+            Logger.Information($"list: {JsonConvert.SerializeObject(data)} ");
+
+            if (data.Any())
+            {
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+        return "";
     }
 
 }
