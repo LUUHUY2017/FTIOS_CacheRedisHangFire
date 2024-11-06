@@ -117,6 +117,8 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     await RemoveDevice(data);
                     //Xoá thông tin caches
                     await _deviceCacheService.Remove(data.SerialNumber);
+                    //Xoá lệnh của thiết bị
+                    await _deviceCommandCacheService.RemoveAll(data.SerialNumber);
 
                     return;
                 }
