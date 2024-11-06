@@ -10,6 +10,7 @@ public abstract class AuthBaseAPIController : ControllerBase
 
     }
 
+    [ApiExplorerSettings(IgnoreApi = true)]
     public AccountInfo GetAccountInfo()
     {
         var account = new AccountInfo();
@@ -29,6 +30,7 @@ public abstract class AuthBaseAPIController : ControllerBase
         return account;
     }
 
+    [ApiExplorerSettings(IgnoreApi = true)]
     public string GetUserId()
     {
         if (User == null)
@@ -43,18 +45,20 @@ public abstract class AuthBaseAPIController : ControllerBase
         return userId;
     }
 
+
     public string UserId
     {
         get => User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
     }
 
-
+    [ApiExplorerSettings(IgnoreApi = true)]
     public string GetAccessToken()
     {
         var acccesToken = Request.Cookies["amms.master.webapp.access_token"];
         return acccesToken;
     }
 
+    [ApiExplorerSettings(IgnoreApi = true)]
     public string GetOrganizationId()
     {
         var cookieValue = Request.Cookies["organizationId"];
