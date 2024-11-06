@@ -1,6 +1,4 @@
-﻿@{
-    var regexEmail = @"^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$";
-}
+﻿
 <div class="tab-content" id="tab_users">
     <div class="accordion">
         <div class="content-wrapper" id="tab_role_groups">
@@ -53,7 +51,7 @@
                         <div class="row mb-3">
                             <label class="col-form-label text-end col-lg-2">Tên đăng nhập<span class="text-danger">*</span></label>
                             <div class="col-lg-8">
-                                <input type="text" class="form-control" required placeholder="Tài khoản đăng nhập(Email)" v-model="item.userName"/>
+                                <input type="text" class="form-control" required placeholder="Tài khoản đăng nhập" v-model="item.userName"/>
                                 <div class="invalid-feedback">Vui lòng nhập tên đăng nhập</div>
                                 <div class="valid-feedback"> </div>
                             </div>
@@ -62,8 +60,8 @@
                         <div class="row mb-3">
                             <label class="col-form-label text-end col-lg-2">Email<span class="text-danger">*</span></label>
                             <div class="col-lg-8">
-                                <input type="text" class="form-control" required placeholder="Email" v-model="item.email">
-                                <div class="invalid-feedback">Vui lòng nhập tên đăng nhập</div>
+                                <input type="email" class="form-control" required placeholder="Email" v-model="item.email">
+                                <div class="invalid-feedback">Vui lòng nhập email</div>
                                 <div class="valid-feedback"> </div>
                             </div>
                         </div>
