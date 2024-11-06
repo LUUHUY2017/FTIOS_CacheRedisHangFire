@@ -1,6 +1,7 @@
 ﻿using AMMS.Notification.Datas;
 using Hangfire;
 using Hangfire.MySql;
+using Hangfire.States;
 using IdentityModel.Client;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
@@ -33,18 +34,6 @@ IServiceCollection services = builder.Services;
 IConfiguration configuration = builder.Configuration;
 IConfigurationRoot configRoot = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
 
-//Log.Logger = new LoggerConfiguration()
-//                .MinimumLevel.Warning()
-//                .WriteTo.Console()
-//                .WriteTo.File("log_quyet_.txt")
-//                .CreateLogger();
-//services.AddSerilog();
-//Log.Debug("Log.Debug");
-//Log.Information("Log.Information");
-//Log.Warning("Log.Warning");
-//Log.Fatal("Log.Fatal");
-//Log.Error("Log.Error");
-
 
 services.AddOptions(); // Kích hoạt Options
 services.AddVersion();// Versioning
@@ -75,29 +64,43 @@ var eventBusSettings = configuration.GetSection("EventBusSettings");
 
 //SignalR
 services.AddSignalRService(configuration);
+if (builder.Configuration["Hangfire:Enable"] == "True")
+{
+    if (builder.Configuration["Hangfire:DBType"] == "MySQL")
+    {
+        //Hangfire MySQL Server
+        services.AddHangfire(configuration => configuration
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseStorage(
+                new MySqlStorage(
+                    builder.Configuration["Hangfire:DBConnection"],
+                    new MySqlStorageOptions
+                    {
+                        QueuePollInterval = TimeSpan.FromSeconds(10),
+                        JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                        CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                        PrepareSchemaIfNecessary = true,
+                        DashboardJobListLimit = 5000,
+                        TransactionTimeout = TimeSpan.FromMinutes(1),
+                        TablesPrefix = builder.Configuration["Hangfire:TablesPrefix"],
+                    }
+                )
+            ));
+    }
+    else
+    {
+        services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration["Hangfire:DBConnection"]
+         , new Hangfire.SqlServer.SqlServerStorageOptions()
+             {
+                 SchemaName = builder.Configuration["Hangfire:TablesPrefix"]
+             })
+         );
+    }
 
-//Hangfire MySQL Server
-services.AddHangfire(configuration => configuration
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UseStorage(
-        new MySqlStorage(
-            builder.Configuration["ConnectionStrings:HangfireDBConnection"],
-            new MySqlStorageOptions
-            {
-                QueuePollInterval = TimeSpan.FromSeconds(10),
-                JobExpirationCheckInterval = TimeSpan.FromHours(1),
-                CountersAggregateInterval = TimeSpan.FromMinutes(5),
-                PrepareSchemaIfNecessary = true,
-                DashboardJobListLimit = 5000,
-                TransactionTimeout = TimeSpan.FromMinutes(1),
-                TablesPrefix = "Hangfire",
-            }
-        )
-    ));
+    services.AddHangfireServer();
+}
 
-
-services.AddHangfireServer();
 
 
 
@@ -409,7 +412,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-       // RecurringJob.AddOrUpdate("Test", () => conJobService.Write(), "*/1 * * * *", TimeZoneInfo.Local);
+        // RecurringJob.AddOrUpdate("Test", () => conJobService.Write(), "*/1 * * * *", TimeZoneInfo.Local);
         //RecurringJob.AddOrUpdate("CheckDeviceOnline" ,() => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);
     }
     catch (Exception e)
