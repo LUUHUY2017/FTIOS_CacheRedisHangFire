@@ -262,7 +262,7 @@
         $('#schoolYearId').on("change", function () {
             _stu.dtoStudent.schoolYearId = $(this).val() ?? null;
             _stu.dtoClass.schoolYearId = $(this).val() ?? null;
-            _stu.dtoClass.Schoolyear = $(this).find(":selected").text()?.trim() ?? null;
+            _stu.dtoClass.schoolyear = $(this).find(":selected").text()?.trim() ?? null;
 
             _stu.combobox.classes = [];
             _stu.combobox.data = [];
@@ -385,7 +385,7 @@
             dtoClass: {
                 schoolLevelCode: null,
                 schoolYearId: null,
-                Schoolyear: null,
+                schoolyear: null,
             },
             object: {
                 dateNow: formatDateTime(new Date()),
@@ -521,17 +521,26 @@
                 const _schoolLevelCode = localStorage.getItem('schoolLevelCode');
                 if (_schoolLevelCode) {
                     this.dtoClass.schoolLevelCode = _schoolLevelCode;
+                } else {
+                    this.dtoClass.schoolLevelCode = "";
                 }
+
 
                 const _schoolYearId = localStorage.getItem('schoolYearId');
                 if (_schoolYearId) {
                     this.dtoClass.schoolYearId = _schoolYearId;
                     this.dtoStudent.schoolYearId = _schoolYearId;
+                } else {
+                    this.dtoClass.schoolYearId = "";
+                    this.dtoStudent.schoolYearId = "";;
                 }
+
 
                 const _schoolyear = localStorage.getItem('schoolyear');
                 if (_schoolyear) {
                     this.dtoClass.schoolyear = _schoolyear;
+                } else {
+                    this.dtoClass.schoolyear = "";
                 }
             },
         },
