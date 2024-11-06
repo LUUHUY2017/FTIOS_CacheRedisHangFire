@@ -1,4 +1,5 @@
-﻿using AMMS.ZkAutoPush.Applications.V1;
+﻿using AMMS.DeviceData.RabbitMq;
+using AMMS.ZkAutoPush.Applications.V1;
 using AMMS.ZkAutoPush.Datas.Databases;
 using AMMS.ZkAutoPush.Datas.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -79,11 +80,11 @@ public class DeviceCacheService
 
     private string GetKey(string serialNumber)
     {
-        return $"{_configuration.GetValue<string>("DataArea")}:{key}:{serialNumber}";
+        return $"{_configuration.GetValue<string>("DataArea")}_{EventBusConstants.ZKTECO}:{key}:{serialNumber}";
     }
     private string GetKey()
     {
-        return $"{_configuration.GetValue<string>("DataArea")}:{key}:*";
+        return $"{_configuration.GetValue<string>("DataArea")}_{EventBusConstants.ZKTECO}:{key}:*";
     }
 
     //Cập nhật thông tin vào caches
@@ -193,7 +194,7 @@ public class DeviceCommandCacheService
     //}
     private string GetKey(string serialNumber, string id)
     {
-        return $"{_configuration.GetValue<string>("DataArea")}:{key}:{serialNumber}:{id} ";
+        return $"{_configuration.GetValue<string>("DataArea")}_{EventBusConstants.ZKTECO}:{key}:{serialNumber}:{id} ";
     }
 
     public async Task<List<IclockCommand>> Gets(string sn)
@@ -205,7 +206,7 @@ public class DeviceCommandCacheService
     }
     private string GetKey(string serialNumber)
     {
-        return $"{_configuration.GetValue<string>("DataArea")}:{key}:{serialNumber}:*";
+        return $"{_configuration.GetValue<string>("DataArea")}_{EventBusConstants.ZKTECO}:{key}:{serialNumber}:*";
     }
 
     //private List<IclockCommand> Convert(List<zk_terminalcommandlog> cmds)
