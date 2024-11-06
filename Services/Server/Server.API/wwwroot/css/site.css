@@ -310,3 +310,33 @@ video, img {
     width: 100%;
     max-width: 400px;
 }
+
+.list-color {
+    margin-bottom: 4px;
+    margin-right: 11px;
+    float: left;
+}
+.block-color {
+    height: 20px;
+    width: 20px;
+    display: inline-block;
+    margin-bottom: -5px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.ROW_WHITE {
+    background-color: #e8e6e65e;
+}
+
+.ROW_SUCCESS {
+    background-color: #81f314;
+}
+
+
+  .ROW_DANGER {
+    background-color: #ff632a;
+}
+.ROW_WARN {
+    background-color: #ffcf76;
+}
