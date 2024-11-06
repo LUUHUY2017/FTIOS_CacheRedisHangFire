@@ -1,7 +1,7 @@
 [
   {
     "Enabled": true,
-    "ClientId": "bi.master.api.swagger.dev",
+    "ClientId": "master.api.swagger.dev",
     "ProtocolType": "oidc",
     "ClientSecrets": [],
     "RequireClientSecret": true,
@@ -51,7 +51,7 @@
   },
   {
     "Enabled": true,
-    "ClientId": "bi.master.api.swagger.prod",
+    "ClientId": "master.api.swagger.prod",
     "ProtocolType": "oidc",
     "ClientSecrets": [],
     "RequireClientSecret": true,
@@ -66,8 +66,8 @@
     "AllowPlainTextPkce": false,
     "RequireRequestObject": false,
     "AllowAccessTokensViaBrowser": true,
-    "RedirectUris": [ "https://vivocity.acs.vn:8001/swagger/oauth2-redirect.html" ],
-    "PostLogoutRedirectUris": [ "https://vivocity.acs.vn:8001/swagger/oauth2-redirect.html" ],
+    "RedirectUris": [ "https://diemdanhviettellangson.acs.vn/swagger/oauth2-redirect.html" ],
+    "PostLogoutRedirectUris": [ "https://diemdanhviettellangson.acs.vn/swagger/oauth2-redirect.html" ],
     "FrontChannelLogoutUri": null,
     "FrontChannelLogoutSessionRequired": true,
     "BackChannelLogoutUri": null,
@@ -96,12 +96,12 @@
     "UserSsoLifetime": null,
     "UserCodeType": null,
     "DeviceCodeLifetime": 300,
-    "AllowedCorsOrigins": [ "https://vivocity.acs.vn:8001" ],
+    "AllowedCorsOrigins": [ "https://diemdanhviettellangson.acs.vn" ],
     "Properties": {}
   },
   {
     "Enabled": true,
-    "ClientId": "bi.master.webserver.dev",
+    "ClientId": "master.webserver.dev",
     "ProtocolType": "oidc",
     "ClientSecrets": [
       {
@@ -158,7 +158,7 @@
   },
   {
     "Enabled": true,
-    "ClientId": "bi.master.webserver.prod",
+    "ClientId": "master.webserver.prod",
     "ProtocolType": "oidc",
     "ClientSecrets": [
       {
@@ -180,8 +180,8 @@
     "AllowPlainTextPkce": false,
     "RequireRequestObject": false,
     "AllowAccessTokensViaBrowser": true,
-    "RedirectUris": [ "https://vivocity.acs.vn:8001/signin-oidc" ],
-    "PostLogoutRedirectUris": [ "https://vivocity.acs.vn:8001/signout-callback-oidc" ],
+    "RedirectUris": [ "https://diemdanhviettellangson.acs.vn/signin-oidc" ],
+    "PostLogoutRedirectUris": [ "https://diemdanhviettellangson.acs.vn/signout-callback-oidc" ],
     "FrontChannelLogoutUri": null,
     "FrontChannelLogoutSessionRequired": true,
     "BackChannelLogoutUri": null,
