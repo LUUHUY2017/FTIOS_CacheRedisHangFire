@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\Projects\Viettel\AMMS_DiemDanhHocSinh\Share\AMMS.ZkAutoPush\bin\Release\net6.0\publish\</_PublishTargetUrl>
-    <History>True|2024-11-06T08:55:52.4947187Z||;True|2024-11-06T15:42:38.6528915+07:00||;True|2024-11-06T15:10:20.0064098+07:00||;</History>
+    <History>True|2024-11-06T09:34:00.1327632Z||;True|2024-11-06T15:55:52.4947187+07:00||;True|2024-11-06T15:42:38.6528915+07:00||;True|2024-11-06T15:10:20.0064098+07:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

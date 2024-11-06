@@ -1,20 +1,19 @@
 ﻿using AMMS.DeviceData.RabbitMq;
 using EventBus.Messages;
 using MassTransit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace AMMS.DeviceData.Data
 {
     public class Server_RequestConsummer : IConsumer<RB_ServerRequest>
     {
         private readonly IEventBusAdapter _eventBusAdapter;
-        public Server_RequestConsummer(IEventBusAdapter eventBusAdapter)
+        private readonly IConfiguration _configuration;
+
+        public Server_RequestConsummer(IEventBusAdapter eventBusAdapter, IConfiguration configuration)
         {
             _eventBusAdapter = eventBusAdapter;
+            _configuration = configuration;
         }
 
         public async Task Consume(ConsumeContext<RB_ServerRequest> context)
@@ -29,7 +28,7 @@ namespace AMMS.DeviceData.Data
                 #region Zkteco
                 if (data.DeviceModel.ToUpper() == EventBusConstants.ZKTECO)
                 {
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync(("ViettelZkteco") + EventBusConstants.ZK_Server_Push_S2D);
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync(_configuration.GetValue<string>("DataArea") + EventBusConstants.ZK_Server_Push_S2D);
                     await aa.Send(data);
                 }
 
@@ -38,7 +37,7 @@ namespace AMMS.DeviceData.Data
                 #region Hanet
                 if (data.DeviceModel.ToUpper() == EventBusConstants.HANET)
                 {
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync(("ViettelHanet") + EventBusConstants.Hanet_Server_Push_S2D);
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync(_configuration.GetValue<string>("DataArea") + EventBusConstants.Hanet_Server_Push_S2D);
                     await aa.Send(data);
                 }
 
