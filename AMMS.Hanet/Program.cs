@@ -14,16 +14,8 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Share.WebApp.Controllers;
 using Share.WebApp.Settings;
-using AMMS.Hanet.Extensions;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
-using System.Text;
-using Hangfire;
-using Hangfire.MySql;
 using Shared.Core.Loggers;
-using AMMS.Hanet.Applications.CronJobs;
 using AMMS.Hanet.Applications.V1.Service;
-using AMMS.Hanet.Helps.Authorizations;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
@@ -56,29 +48,42 @@ AppSettings appSettings = new AppSettings();
 configuration.Bind(appSettings);
 AuthBaseController.AMMS_Master_HostAddress = builder.Configuration["Authentication:Authority"];
 
-//Hangfire MySQL Server
-services.AddHangfire(configuration => configuration
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UseStorage(
-        new MySqlStorage(
-            builder.Configuration["ConnectionStrings:HangfireDBConnection"],
-            new MySqlStorageOptions
-            {
-                QueuePollInterval = TimeSpan.FromSeconds(10),
-                JobExpirationCheckInterval = TimeSpan.FromHours(1),
-                CountersAggregateInterval = TimeSpan.FromMinutes(5),
-                PrepareSchemaIfNecessary = true,
-                DashboardJobListLimit = 5000,
-                TransactionTimeout = TimeSpan.FromMinutes(1),
-                TablesPrefix = "Hanet_Hangfire",
-            }
-        )
-    ));
+if (builder.Configuration["Hangfire:Enable"] == "True")
+{
+    if (builder.Configuration["Hangfire:DBType"] == "MySQL")
+    {
+        //Hangfire MySQL Server
+        services.AddHangfire(configuration => configuration
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseStorage(
+                new MySqlStorage(
+                    builder.Configuration["Hangfire:DBConnection"],
+                    new MySqlStorageOptions
+                    {
+                        QueuePollInterval = TimeSpan.FromSeconds(10),
+                        JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                        CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                        PrepareSchemaIfNecessary = true,
+                        DashboardJobListLimit = 5000,
+                        TransactionTimeout = TimeSpan.FromMinutes(1),
+                        TablesPrefix = builder.Configuration["Hangfire:TablesPrefix"],
+                    }
+                )
+            ));
+    }
+    else
+    {
+        services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration["Hangfire:DBConnection"]
+         , new Hangfire.SqlServer.SqlServerStorageOptions()
+         {
+             SchemaName = builder.Configuration["Hangfire:TablesPrefix"]
+         })
+         );
+    }
 
-
-services.AddHangfireServer();
-
+    services.AddHangfireServer();
+}
 
 // Add Auth
 services.Configure<Authentication>(configuration.GetSection("Authentication"));
@@ -288,15 +293,20 @@ app.UseEndpoints(endpoints =>
 
 });
 
-//Tạo các job chạy tự động, theo dõi trạng thái của các job     
-//app.UseHangfireDashboard("/hangfire_dashboard");
-app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
+
+if (builder.Configuration["Hangfire:Enable"] == "True")
 {
-    IgnoreAntiforgeryToken = true,
-    Authorization = new[] { new DashboardNoAuthorizationFilter() }
-});
-//app.UseHangfireDashboard();
-app.UseHangfireServer();
+    //Tạo các job chạy tự động, theo dõi trạng thái của các job     
+    //app.UseHangfireDashboard("/hangfire_dashboard");
+    app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
+    {
+        IgnoreAntiforgeryToken = true,
+        Authorization = new[] { new DashboardNoAuthorizationFilter() }
+    });
+    //app.UseHangfireDashboard();
+    app.UseHangfireServer();
+}
+
 
 using (var scope = app.Services.CreateScope())
 {

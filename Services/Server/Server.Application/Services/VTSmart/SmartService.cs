@@ -253,7 +253,8 @@ public sealed class SmartService
                     if (result.IsSuccessStatusCode)
                     {
                         var data = await result.Content.ReadAsStringAsync();
-                        retval = await ConvertDicToGradeClasseReponse(JsonConvert.DeserializeObject<Dictionary<string, List<ClassResponse>>>(data));
+                        if (!string.IsNullOrWhiteSpace(data))
+                            retval = await ConvertDicToGradeClasseReponse(JsonConvert.DeserializeObject<Dictionary<string, List<ClassResponse>>>(data));
                     }
                 }
             }
@@ -279,6 +280,8 @@ public sealed class SmartService
         }
         return result;
     }
+
+
 
     public async Task<List<StudenSmasApiResponse>> PostListStudents(string provinceCode, string schoolCode, string schoolYearCode)
     {

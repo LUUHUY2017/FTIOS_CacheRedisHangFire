@@ -207,9 +207,35 @@
                     field: 'organizationName'
                 },
                 {
+                    title: 'Địa chỉ',
+                    sortable: true,
+                    field: 'organizationAddress'
+                },
+                {
+                    title: 'Mã tỉnh',
+                    sortable: true,
+                    field: 'provinceCode'
+                },
+                {
+                    title: 'Tỉnh',
+                    sortable: true,
+                    field: 'provinceName'
+                },
+                {
                     title: 'Mô tả ',
                     sortable: true,
                     field: 'organizationDescription'
+                },
+                {
+                    title: "Thời gian cập nhật",
+                    field: 'lastModifiedDate',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.lastModifiedDate) {
+                            var lastModifiedDate = moment(row.lastModifiedDate).format('DD/MM/YYYY HH:mm:ss');
+                            return "<span class ='black'> " + lastModifiedDate + "  </span>";
+                        }
+                    },
                 },
             ],
             data: [],

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Session;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Share.WebApp.Controllers;
@@ -17,8 +16,7 @@ using Hangfire.MySql;
 using AMMS.ZkAutoPush.Applications.CronJobs;
 using AMMS.ZkAutoPush.Applications.V1;
 using AMMS.ZkAutoPush.Helps.Authorizations;
-using Shared.Core.Loggers;
-using Hangfire.Storage;
+using Shared.Core.Loggers; 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
@@ -112,25 +110,46 @@ services.AddAuthorization(options =>
     options.DefaultPolicy = multiSchemePolicy;
     options.AddPolicy("Bearer", policy => policy.RequireClaim("scope", "amms.zkteco"));
 });
-//Hangfire MySQL Server
-services.AddHangfire(configuration => configuration
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UseStorage(
-        new MySqlStorage(
-            builder.Configuration["ConnectionStrings:HangfireDBConnection"],
-            new MySqlStorageOptions
-            {
-                QueuePollInterval = TimeSpan.FromSeconds(10),
-                JobExpirationCheckInterval = TimeSpan.FromHours(1),
-                CountersAggregateInterval = TimeSpan.FromMinutes(5),
-                PrepareSchemaIfNecessary = true,
-                DashboardJobListLimit = 5000,
-                TransactionTimeout = TimeSpan.FromMinutes(1),
-                TablesPrefix = "Zkteco_Hangfire",
-            }
-        )
-    ));
+ 
+
+if (builder.Configuration["Hangfire:Enable"] == "True")
+{
+    if (builder.Configuration["Hangfire:DBType"] == "MySQL")
+    {
+        //Hangfire MySQL Server
+        services.AddHangfire(configuration => configuration
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseStorage(
+                new MySqlStorage(
+                    builder.Configuration["Hangfire:DBConnection"],
+                    new MySqlStorageOptions
+                    {
+                        QueuePollInterval = TimeSpan.FromSeconds(10),
+                        JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                        CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                        PrepareSchemaIfNecessary = true,
+                        DashboardJobListLimit = 5000,
+                        TransactionTimeout = TimeSpan.FromMinutes(1),
+                        TablesPrefix = builder.Configuration["Hangfire:TablesPrefix"],
+                    }
+                )
+            ));
+    }
+    else
+    {
+        services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration["Hangfire:DBConnection"]
+         , new Hangfire.SqlServer.SqlServerStorageOptions()
+         {
+             SchemaName = builder.Configuration["Hangfire:TablesPrefix"]
+         })
+         );
+    }
+
+    services.AddHangfireServer();
+}
+
+
 
 services.AddApplicationServices();
 
@@ -301,15 +320,20 @@ app.UseEndpoints(endpoints =>
     ;
 
 });
-//Tạo các job chạy tự động, theo dõi trạng thái của các job     
-//app.UseHangfireDashboard("/hangfire_dashboard");
-app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
+
+if (builder.Configuration["Hangfire:Enable"] == "True")
 {
-    IgnoreAntiforgeryToken = true,
-    Authorization = new[] { new DashboardNoAuthorizationFilter() }
-});
-//app.UseHangfireDashboard();
-app.UseHangfireServer();
+    //Tạo các job chạy tự động, theo dõi trạng thái của các job     
+    //app.UseHangfireDashboard("/hangfire_dashboard");
+    app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
+    {
+        IgnoreAntiforgeryToken = true,
+        Authorization = new[] { new DashboardNoAuthorizationFilter() }
+    });
+    //app.UseHangfireDashboard();
+    app.UseHangfireServer();
+}
+
 
 using (var scope = app.Services.CreateScope())
 {

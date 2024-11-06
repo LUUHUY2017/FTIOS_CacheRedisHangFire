@@ -1,7 +1,5 @@
-﻿using AMMS.Notification.Datas;
-using Hangfire;
+﻿using Hangfire;
 using Hangfire.MySql;
-using Hangfire.States;
 using IdentityModel.Client;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
@@ -17,7 +15,6 @@ using Server.API.SignalRs;
 using Server.Application.CronJobs;
 using Server.Application.Extensions;
 using Server.Core.Identity.Entities;
-using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Share.WebApp.Controllers;
 using Share.WebApp.Settings;
@@ -64,6 +61,7 @@ var eventBusSettings = configuration.GetSection("EventBusSettings");
 
 //SignalR
 services.AddSignalRService(configuration);
+
 if (builder.Configuration["Hangfire:Enable"] == "True")
 {
     if (builder.Configuration["Hangfire:DBType"] == "MySQL")
@@ -92,16 +90,14 @@ if (builder.Configuration["Hangfire:Enable"] == "True")
     {
         services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration["Hangfire:DBConnection"]
          , new Hangfire.SqlServer.SqlServerStorageOptions()
-             {
-                 SchemaName = builder.Configuration["Hangfire:TablesPrefix"]
-             })
+         {
+             SchemaName = builder.Configuration["Hangfire:TablesPrefix"]
+         })
          );
     }
 
     services.AddHangfireServer();
 }
-
-
 
 
 //Add Database Service
@@ -354,7 +350,7 @@ services.AddSwaggerGen(c =>
             Implicit = new OpenApiOAuthFlow
             {
                 AuthorizationUrl = new Uri(builder.Configuration["Authentication:Authority"] + "/connect/authorize"),
-                Scopes = new Dictionary<string, string> { { "deliveryapi", "Devices API" } }
+                Scopes = new Dictionary<string, string> { { "masterapi", "Master API" } }
             },
         },
     });
@@ -365,7 +361,7 @@ services.AddSwaggerGen(c =>
             {
                 Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
             },
-            new List<string>{ "deliveryapi" }
+            new List<string>{ "masterapi" }
         }
     });
 
@@ -397,15 +393,18 @@ var app = builder.Build();
 //Seriglog
 //app.UseSerilogRequestLogging();
 
-//Tạo các job chạy tự động, theo dõi trạng thái của các job     
-//app.UseHangfireDashboard("/hangfire_dashboard");
-app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
+if (builder.Configuration["Hangfire:Enable"] == "True")
 {
-    IgnoreAntiforgeryToken = true,
-    Authorization = new[] { new DashboardNoAuthorizationFilter() }
-});
-//app.UseHangfireDashboard();
-app.UseHangfireServer();
+    //Tạo các job chạy tự động, theo dõi trạng thái của các job     
+    //app.UseHangfireDashboard("/hangfire_dashboard");
+    app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
+    {
+        IgnoreAntiforgeryToken = true,
+        Authorization = new[] { new DashboardNoAuthorizationFilter() }
+    });
+    //app.UseHangfireDashboard();
+    app.UseHangfireServer();
+}
 
 using (var scope = app.Services.CreateScope())
 {
