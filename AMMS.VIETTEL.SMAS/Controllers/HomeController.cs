@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Share.WebApp.Controllers;
-using Share.WebApp.Helps;
 
 namespace AMMS.VIETTEL.SMAS.Controllers;
 
@@ -12,5 +11,4 @@ public class HomeController : AuthBaseController
     {
         return View();
     }
-}
 }
