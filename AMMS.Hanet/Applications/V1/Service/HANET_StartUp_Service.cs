@@ -25,7 +25,7 @@ namespace AMMS.Hanet.Applications.V1.Service
             _deviceCacheService = deviceCacheService;
 
         }
-        public async void LoadConfigData()
+        public async Task LoadConfigData()
         {
 
             var serveraddress = _configuration.GetValue<string>("AuthenticationApi:Authority");

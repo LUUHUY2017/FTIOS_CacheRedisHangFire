@@ -60,6 +60,13 @@ public class ConfigurationController : AuthBaseController
         try
         {
             var config = (await _appConfigService.GetFirstOrDefault()).Data;
+
+            if (config == null)
+            {
+                ViewData["Message"] = "Thông tin lấy token chưa chính xác. Vui lòng kiểm tra lại!";
+                return View(pathUrl + "Index.cshtml", access_token);
+            }
+
             var client = new HttpClient();
             //var request = new HttpRequestMessage(HttpMethod.Post, $"https://oauth.hanet.com/token?grant_type=authorization_code&client_id=152aa3ef5c9c7cef56900c952cabca70&client_secret=a813fc288e01d6eab009ab540cfc9485&code={code}");
             var request = new HttpRequestMessage(HttpMethod.Post, $"https://oauth.hanet.com/token?grant_type={config.GrantType}&client_id={config.ClientId}&client_secret={config.ClientScret}&code={code}");
@@ -88,6 +95,7 @@ public class ConfigurationController : AuthBaseController
 
             AccessToken accessToken = JsonConvert.DeserializeObject<AccessToken>(content);
             HanetParam.Token = accessToken;
+            HanetParam.PlateId = config.PlateId;
             //await _appConfigService.AddOrEdit(new AppConfigRequest(accessToken));
             await _appConfigService.AddOrEdit(new AppConfigRequest(accessToken) { GrantType = config.GrantType, ClientScret = config.ClientScret, ClientId = config.ClientId });
 
@@ -96,12 +104,12 @@ public class ConfigurationController : AuthBaseController
             ViewData["Message"] = "ok";
             return View(pathUrl + "Index.cshtml", access_token);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             ViewData["Message"] = "Thông tin lấy token chưa chính xác. Vui lòng kiểm tra lại!";
             return View(pathUrl + "Index.cshtml", access_token);
         }
-       
+
     }
 
 

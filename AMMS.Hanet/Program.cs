@@ -302,16 +302,40 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
+        //Khởi tạo siganlr
+        try
+        {
+            var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
+            signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
+            signalRClient.Start();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        //Lấy dữ liệu danh sách thiết bị
+        try
+        {
+            var startUpService = scope.ServiceProvider.GetRequiredService<HANET_StartUp_Service>();
+          await  startUpService.LoadConfigData();
 
-        var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
-        signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
-        signalRClient.Start();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        //KHởi tạo job kiểm tra dữ liệu
+        try
+        {
+            var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
+            RecurringJob.AddOrUpdate($"{configuration["DataArea"]}CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/1 * * * *", TimeZoneInfo.Local);
 
-        var startUpService = scope.ServiceProvider.GetRequiredService<HANET_StartUp_Service>();
-        startUpService.LoadConfigData();
-        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        //RecurringJob.AddOrUpdate("Test", () => conJobService.Write(), "*/1 * * * *", TimeZoneInfo.Local);
-        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/1 * * * *", TimeZoneInfo.Local);
+        }
+        catch (Exception ex)
+        {
+
+            Logger.Error(ex);
+        }
     }
     catch (Exception e)
     {

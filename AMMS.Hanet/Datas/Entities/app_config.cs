@@ -10,7 +10,8 @@ public class app_config
     [Key]
     public string Id { get; set; }
     public string? ClientScret {  get; set; }
-    public string? ClientId{  get; set; }
+    public string? ClientId { get; set; }
+    public string? PlateId { get; set; }
     public string? UserId {  get; set; }
     public string? Email {  get; set; }
     public long? Expire {  get; set; }

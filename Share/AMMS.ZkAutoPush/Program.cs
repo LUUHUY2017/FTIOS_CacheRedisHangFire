@@ -321,9 +321,9 @@ using (var scope = app.Services.CreateScope())
         signalRClient.Start();
 
         var startUpService = scope.ServiceProvider.GetRequiredService<StartupDataService>();
-        startUpService.LoadConfigData();
+        await startUpService.LoadConfigData();
 
-        
+
         var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
         RecurringJob.AddOrUpdate($"{configuration["DataArea"]}CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/1 * * * *", TimeZoneInfo.Local);
     }

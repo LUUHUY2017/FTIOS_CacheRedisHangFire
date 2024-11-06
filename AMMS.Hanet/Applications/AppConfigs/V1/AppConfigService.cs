@@ -67,6 +67,7 @@ public class AppConfigService
                 dataUpdate.ClientScret = request.ClientScret;
                 dataUpdate.GrantType = request.GrantType;
                 dataUpdate.ClientId = request.ClientId;
+                dataUpdate.PlateId = request.PlateId?.Trim();
 
                 var result = _dbContext.app_config.Update(dataUpdate);
                 var check = await _dbContext.SaveChangesAsync();

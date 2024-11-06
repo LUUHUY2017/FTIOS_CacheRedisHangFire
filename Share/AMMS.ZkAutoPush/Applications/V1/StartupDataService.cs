@@ -24,8 +24,8 @@ namespace AMMS.ZkAutoPush.Applications.V1
         }
         public static AccessTokenServer accessToken { get; set; }
 
-       
-        public async void LoadConfigData()
+
+        public async Task LoadConfigData()
         {
 
             var serveraddress = _configuration.GetValue<string>("AuthenticationApi:Authority");
@@ -51,7 +51,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
             {
                 terminal.online_status = false;
                 terminal.last_activity = DateTime.Now;
-                await _deviceCacheService.Save(terminal); 
+                await _deviceCacheService.Save(terminal);
             }
         }
 

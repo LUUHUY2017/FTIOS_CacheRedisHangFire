@@ -57,7 +57,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                         name = data.FullName,
                         aliasID = data.PersonCode,
                         //placeID = rB_ServerRequest.SchoolId,
-                        placeID = data.SerialNumber,
+                        placeID = HanetParam.PlateId,
                     };
 
                     if (await CheckUser(user))
@@ -68,7 +68,11 @@ namespace AMMS.Hanet.Applications.V1.Service
                             conmandlog.return_time = DateTime.Now;
                             conmandlog.return_content = result.returnMessage;
                             conmandlog.return_value = result.returnCode;
-                            conmandlog.successed = true;
+                            if (result.returnCode == Hanet_Response_Static.SUCCESSCode)
+                                conmandlog.successed = true;
+                            else
+                                conmandlog.successed = false;
+
 
                         }
                         else
@@ -115,7 +119,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                         name = data.FullName,
                         aliasID = data.PersonCode,
                         //placeID = rB_ServerRequest.SchoolId,
-                        placeID = data.SerialNumber,
+                        placeID = HanetParam.PlateId,
                     };
                     if (await RemoveUser(user))
                     {
@@ -228,7 +232,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                 var client = new RestClient(options);
                 var request = new RestRequest("/person/getUserInfoByAliasID", Method.Post);
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-                request.AddParameter("token", HanetParamTest.Token.access_token);
+                request.AddParameter("token", HanetParam.Token.access_token);
                 request.AddParameter("aliasID", user.aliasID);
                 RestResponse response = await client.ExecuteAsync(request);
 
@@ -279,9 +283,9 @@ namespace AMMS.Hanet.Applications.V1.Service
                 };
                 var client = new RestClient(options);
                 var request = new RestRequest("/person/register", Method.Post);
-                request.AddHeader("Authorization", "Bearer " + HanetParamTest.Token.access_token);
+                request.AddHeader("Authorization", "Bearer " + HanetParam.Token.access_token);
                 request.AlwaysMultipartFormData = true;
-                request.AddParameter("token", HanetParamTest.Token.access_token);
+                request.AddParameter("token", HanetParam.Token.access_token);
                 request.AddParameter("name", user.name);
                 request.AddParameter("aliasID", user.aliasID);
                 request.AddParameter("placeID", user.placeID);
@@ -382,7 +386,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                 var client = new RestClient(options);
                 var request = new RestRequest("/person/updateByFaceImage", Method.Post);
                 request.AlwaysMultipartFormData = true;
-                request.AddParameter("token", HanetParamTest.Token.access_token);
+                request.AddParameter("token", HanetParam.Token.access_token);
                 request.AddParameter("aliasID", user.aliasID);
                 request.AddParameter("placeID", user.placeID);
 
@@ -433,7 +437,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                 var client = new RestClient(options);
                 var request = new RestRequest("/person/remove", Method.Post);
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-                request.AddParameter("token", HanetParamTest.Token.access_token);
+                request.AddParameter("token", HanetParam.Token.access_token);
                 request.AddParameter("aliasID", user.aliasID);
                 RestResponse response = await client.ExecuteAsync(request);
 
@@ -636,16 +640,5 @@ namespace AMMS.Hanet.Applications.V1.Service
         public string? Url { get; set; }
 
     }
-    public class HanetParamTest
-    {
-        public static string Host { get; set; } = "https://oauth.hanet.com/";
-        public static AccessToken Token { get; set; } = new AccessToken()
-        {
-            refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxMjYyMTM0MDE3Mjc3NDY2NDEiLCJlbWFpbCI6Im5hbW5kQGFjcy52biIsImNsaWVudF9pZCI6ImUwZjM0NWRhNWYxODdkMjZiMDE4ZTFkMzYwM2FkOGE4IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJpYXQiOjE3MzAyNTU3MjEsImV4cCI6MTc5MzMyNzcyMX0.FIB2oRdQugm5rhLj_c8YskVPlgu7wTSkPmR7Xs6Zb-Y",
-            access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxMjYyMTM0MDE3Mjc3NDY2NDEiLCJlbWFpbCI6Im5hbW5kQGFjcy52biIsImNsaWVudF9pZCI6ImUwZjM0NWRhNWYxODdkMjZiMDE4ZTFkMzYwM2FkOGE4IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJpYXQiOjE3MzAyNTMzNTAsImV4cCI6MTc5MzMyNTM1MH0.KnzcNIQKBR8WcX9OwtVFCiRXzPnTvUPuJiSP4YGCZvg",
-            expire = 1761791721,
-            token_type = "bearer"
-        };
-
-    }
+   
 }
