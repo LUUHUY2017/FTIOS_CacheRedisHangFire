@@ -252,6 +252,7 @@
 
     $(document).ready(function () {
         $('#schoolLevelCode').on("change", function () {
+
             _Student.dtoClass.schoolLevelCode = $(this).val() ?? null;
 
             _Student.combobox.classes = [];
@@ -267,7 +268,7 @@
         $('#schoolYearId').on("change", function () {
             _Student.dtoStudent.schoolYearId = $(this).val() ?? null;
             _Student.dtoClass.schoolYearId = $(this).val() ?? null;
-            _Student.dtoClass.Schoolyear = $(this).find(":selected").text()?.trim() ?? null;
+            _Student.dtoClass.schoolyear = $(this).find(":selected").text()?.trim() ?? null;
 
             _Student.combobox.classes = [];
             _Student.combobox.data = [];
@@ -390,7 +391,7 @@
             dtoClass: {
                 schoolLevelCode: null,
                 schoolYearId: null,
-                Schoolyear: null,
+                schoolyear: null,
             },
             object: {
                 dateNow: formatDateTime(new Date()),
@@ -525,17 +526,27 @@
                 const _schoolLevelCode = localStorage.getItem('schoolLevelCode');
                 if (_schoolLevelCode) {
                     this.dtoClass.schoolLevelCode = _schoolLevelCode;
+                } else {
+                    this.dtoClass.schoolLevelCode = "";
                 }
+
 
                 const _schoolYearId = localStorage.getItem('schoolYearId');
                 if (_schoolYearId) {
                     this.dtoClass.schoolYearId = _schoolYearId;
                     this.dtoStudent.schoolYearId = _schoolYearId;
+                } else {
+                    this.dtoClass.schoolYearId = "";
+                    this.dtoStudent.schoolYearId = "";;
                 }
+
 
                 const _schoolyear = localStorage.getItem('schoolyear');
                 if (_schoolyear) {
                     this.dtoClass.schoolyear = _schoolyear;
+                }else
+                {
+                    this.dtoClass.schoolyear = "";
                 }
             },
         },

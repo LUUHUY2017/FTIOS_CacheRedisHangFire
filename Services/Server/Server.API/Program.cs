@@ -354,7 +354,7 @@ services.AddSwaggerGen(c =>
             Implicit = new OpenApiOAuthFlow
             {
                 AuthorizationUrl = new Uri(builder.Configuration["Authentication:Authority"] + "/connect/authorize"),
-                Scopes = new Dictionary<string, string> { { "deliveryapi", "Devices API" } }
+                Scopes = new Dictionary<string, string> { { "masterapi", "Master API" } }
             },
         },
     });
@@ -365,7 +365,7 @@ services.AddSwaggerGen(c =>
             {
                 Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
             },
-            new List<string>{ "deliveryapi" }
+            new List<string>{ "masterapi" }
         }
     });
 

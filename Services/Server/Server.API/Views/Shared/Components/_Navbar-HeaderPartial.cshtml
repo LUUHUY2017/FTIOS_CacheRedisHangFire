@@ -80,7 +80,7 @@
             </li>
 
 
-            </ul> 
+            </ul>
             -->
             <div class="col-2">
                 @* <label class="form-label">Trường học</label> *@
@@ -315,7 +315,9 @@
     $(document).ready(function () {
         $('#FilterOrgainizationNav').on("change", function () {
             _navbarHeader.setCookie("organizationId", $(this).val(), 7);
-              location.reload();
+            _navbarHeader.removeLocalStorage();
+
+            location.reload();
         });
     });
     var _navbarHeader = new Vue({
@@ -377,7 +379,7 @@
                 var storedUserName = localStorage.getItem('userName');
 
                 if (!storedUserName || storedUserName !== userName) {
-                    localStorage.setItem('userName', userName); 
+                    localStorage.setItem('userName', userName);
                     localStorage.removeItem('schools');
                 }
                 if (localStorage.getItem('schools')) {
@@ -390,8 +392,7 @@
                         this.setCookie("organizationId", this.selectedSchoolNav, 7);
                     }
                 }
-                else
-                {
+                else {
                     axios.get('/api/v1/Organization/GetForUser').then(response => {
                         if (response.request.responseURL.includes('Auth/Login')) {
                             window.location = window.location.href;
@@ -415,13 +416,20 @@
                 const date = new Date();
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
                 const expires = "expires=" + date.toUTCString();
-                document.cookie = `${name}=${value}; ${expires}; path=/`; 
+                document.cookie = `${name}=${value}; ${expires}; path=/`;
             },
             getCookie(name) {
                 const value = "; " + document.cookie;
                 const parts = value.split("; " + name + "=");
                 if (parts.length === 2) return parts.pop().split(";").shift();
             },
+            removeLocalStorage() {
+                localStorage.removeItem('schoolYearId');
+                localStorage.removeItem('schoolLevelCode');
+                localStorage.removeItem('schoolyear');
+
+                // localStorage.clear();
+            }
         },
         created() {
             //this.onGetNotifications();
