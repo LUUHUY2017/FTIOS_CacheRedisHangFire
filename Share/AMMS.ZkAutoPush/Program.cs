@@ -167,8 +167,9 @@ services.AddSingleton<ISessionStore, DistributedSessionStore>();
 
 // Add services to the container.
 
-services.AddSwaggerGen();
-services.AddSwaggerGen(c =>
+if (configuration["Authentication:Swagger:Active"] == "True")
+{
+    services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(
               "",
@@ -265,7 +266,7 @@ services.AddSwaggerGen(c =>
     c.IncludeXmlComments(fileName);
 
 });
-
+}
 services.AddControllers();
 //SignalR
 services.AddSignalRService(configuration);
@@ -286,16 +287,14 @@ app.UseCors("CorsPolicy");
 
 app.UseSession();
 
-if (app.Environment.IsDevelopment())
+if (configuration["Authentication:Swagger:Active"] == "True")
 {
-    app.UseSwagger();
-    //app.UseSwaggerUI();
+    app.UseSwagger(); 
     app.UseSwaggerUI(c =>
     {
         c.OAuthClientId(configuration["Authentication:Swagger:ClientId"]);
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zkteco AutoPush Api v1");
     });
-
 }
 // Configure the HTTP request pipeline.
 

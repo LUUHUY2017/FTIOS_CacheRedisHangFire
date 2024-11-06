@@ -167,8 +167,9 @@ services.AddSignalRService(configuration);
 services.AddScopedServices();
 
 //Swagger
-//services.AddSwaggerGen();
-services.AddSwaggerGen(c =>
+if (configuration["Authentication:Swagger:Active"] == "True")
+{ 
+    services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(
                "v1",
@@ -246,6 +247,7 @@ services.AddSwaggerGen(c =>
     c.IncludeXmlComments(fileName);
 
 });
+}
 
 services.AddHttpClient();
 services.AddControllersWithViews();
@@ -254,17 +256,14 @@ var app = builder.Build();
 
 app.UseCors("CorsPolicy");
 
-if (app.Environment.IsDevelopment())
+if (configuration["Authentication:Swagger:Active"] == "True")
 {
     app.UseSwagger();
-    //app.UseSwaggerUI();
     app.UseSwaggerUI(c =>
     {
         c.OAuthClientId(configuration["Authentication:Swagger:ClientId"]);
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hanet Api v1");
     });
-
-    app.UseDeveloperExceptionPage();
 }
 
 // Configure the HTTP request pipeline.
@@ -327,7 +326,7 @@ using (var scope = app.Services.CreateScope())
         try
         {
             var startUpService = scope.ServiceProvider.GetRequiredService<HANET_StartUp_Service>();
-          await  startUpService.LoadConfigData();
+            await startUpService.LoadConfigData();
 
         }
         catch (Exception ex)

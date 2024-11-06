@@ -300,7 +300,9 @@ services.AddHttpClient();
 builder.Services.AddControllersWithViews();
 
 //Swagger
-services.AddSwaggerGen(c =>
+if (configuration["Authentication:Swagger:Active"] == "True")
+{
+    services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(
                "v1",
@@ -378,7 +380,7 @@ services.AddSwaggerGen(c =>
     c.IncludeXmlComments(fileName);
 
 });
-
+}
 //Redis
 //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
 //services.AddSingleton<IRedisNotificationService, RedisNotificationService>();
