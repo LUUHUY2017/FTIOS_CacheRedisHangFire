@@ -42,17 +42,17 @@ public class TimeAttendenceSyncSmasConsumer : IConsumer<SyncDataRequest>
                 Id = datas.Id,
             };
 
-            if (res != null && res.isSuccess)
+            if (res != null && res.IsSuccess)
             {
                 string response = JsonConvert.SerializeObject(res);
-                item.SyncStatus = res.responses[0].status;
-                item.Message = res.responses[0].message;
+                item.SyncStatus = res.Responses[0].status;
+                item.Message = res.Responses[0].message;
                 item.ParamResponses = response;
             }
             else
             {
-                item.SyncStatus = res.isSuccess;
-                item.Message = res.message;
+                item.SyncStatus = res.IsSuccess;
+                item.Message = res.Message;
             }
             var retval = await _timeAttendenceEventService.SaveStatuSyncSmas(item);
         }
