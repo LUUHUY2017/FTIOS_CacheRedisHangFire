@@ -32,7 +32,7 @@ public class ZK_TA_DataService
     {
         try
         {
-            Logger.Warning(data.Content);
+            Logger.Warning(data.Table);
             if (data.Table == ATTLOG)
                 await AddATTLOG(data);
             else if (data.Table == ATTPHOTO)

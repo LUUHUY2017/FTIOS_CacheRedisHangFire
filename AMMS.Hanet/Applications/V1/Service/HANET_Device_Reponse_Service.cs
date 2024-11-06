@@ -40,6 +40,7 @@ namespace AMMS.Hanet.Applications.V1.Service
             //Chỉ sử lý dạng log
             if (datatype == "log")
             {
+                Logger.Warning(reponse.data);
                 var data = JsonConvert.DeserializeObject<Hanet_Checkin_Data>(reponse.data);
 
                 if (data == null)
@@ -123,7 +124,8 @@ namespace AMMS.Hanet.Applications.V1.Service
                     ImageBase64 = image,
                     PersonCode = data.aliasID,
                     SerialNumber = data.deviceID,
-                    TimeEvent = DateTime.Now,
+                    TimeEvent = data.date,
+                    AttendenceHistoryId =data.id,
                 };
 
                 RB_DataResponse rB_DataResponse = new RB_DataResponse()
