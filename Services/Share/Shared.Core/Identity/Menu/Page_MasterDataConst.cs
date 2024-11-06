@@ -139,15 +139,15 @@ public partial class PagesConst
         CategoryMenu = Category.ThietLap.Id,
     };
 
-    public static readonly PageObject URL_V1_SystemConfiguration = new PageObject
-    {
-        Id = "7a7ad298-7ed2-44ba-a931-fa15b53b9867",
-        Name = "Tích hợp VTSMAS",
-        Url = "V1/SystemConfiguration",
-        Module = Module.Master,
-        RolePermission = RoleConst.SuperAdmin_Role,
-        CategoryMenu = Category.ThietLap.Id,
-    };
+    //public static readonly PageObject URL_V1_SystemConfiguration = new PageObject
+    //{
+    //    Id = "7a7ad298-7ed2-44ba-a931-fa15b53b9867",
+    //    Name = "Tích hợp VTSMAS",
+    //    Url = "V1/SystemConfiguration",
+    //    Module = Module.Master,
+    //    RolePermission = RoleConst.SuperAdmin_Role,
+    //    CategoryMenu = Category.ThietLap.Id,
+    //};
 
     #endregion
 
@@ -172,7 +172,7 @@ public partial class PagesConst
             _ListMenu.Add(URL_V1_MonitorDevice);
 
             _ListMenu.Add(URL_V1_Configuration);
-            _ListMenu.Add(URL_V1_SystemConfiguration);
+            //_ListMenu.Add(URL_V1_SystemConfiguration);
 
 
 
