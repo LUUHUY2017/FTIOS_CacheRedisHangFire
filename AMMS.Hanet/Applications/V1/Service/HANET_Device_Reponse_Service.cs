@@ -125,7 +125,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                     PersonCode = data.aliasID,
                     SerialNumber = data.deviceID,
                     TimeEvent = data.date,
-                    AttendenceHistoryId =data.id,
+                    AttendenceHistoryId = data.id,
                 };
 
                 RB_DataResponse rB_DataResponse = new RB_DataResponse()

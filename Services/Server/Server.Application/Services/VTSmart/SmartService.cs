@@ -332,7 +332,7 @@ public sealed class SmartService
 
 
     #region POST
-    public async Task<SyncDataResponse> PostSyncAttendence2Smas(SyncDataRequest req)
+    public async Task<SyncDataResponse> PostSyncAttendence2Smas(SyncDataRequest req, string schoolCode)
     {
         SyncDataResponse retval = null;
         try
@@ -340,7 +340,7 @@ public sealed class SmartService
             //var _accessToken = await GetToken(orgId);
             //if (_accessToken != null)
             {
-                string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, "20186511");
+                string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, schoolCode); //"20186511"
                 req.SecretKey = _secretKey;
                 var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/diem-danh-tich-hop-thiet-bi", urlServerName);
                 var parameter = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");

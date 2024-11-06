@@ -117,40 +117,6 @@ public class DeviceCommandCacheService
         _cacheService = cacheService;
         _configuration = configuration;
     }
-
-    ///// <summary>
-    ///// Lấy tất cả các lệnh của thiết bị
-    ///// </summary>
-    ///// <param name="dataId"></param>
-    ///// <returns></returns>
-    //public async Task<List<IclockCommand>> Gets(string sn)
-    //{
-    //    var entities = await _cacheService.Gets<IclockCommand>(GetKey(sn,));
-    //    return entities;
-    //}
-
-    //public async Task<IclockCommand> GetAvaible(string dataId)
-    //{
-    //    var entity = await _cacheService.GetData<IclockCommand>(GetKey(dataId));
-    //    if (entity == null)
-    //    {
-    //        try
-    //        {
-    //            var obj = await _dbContext.zk_terminalcommandlog.FirstOrDefaultAsync(o => o.terminal_sn == dataId && o.successed == null);
-
-    //            if (obj != null)
-    //            {
-    //                //entity = obj;
-    //                //await Set(obj);
-    //            }
-    //        }
-    //        catch (Exception e)
-    //        {
-    //            Logger.Error(e);
-    //        }
-    //    }
-    //    return entity;
-    //}
     public async Task<IclockCommand> GetByCode(string sn, string id)
     {
         var entity = await _cacheService.GetData<IclockCommand>(GetKey(sn, id));
@@ -161,12 +127,19 @@ public class DeviceCommandCacheService
     public async Task<bool> Remove(string sn, string id)
     {
         var sub_key = GetKey(sn, id);
-        var cache = await _cacheService.GetData<IclockCommand>(sub_key);
-        if (cache != null)
+        await _cacheService.RemoveData(sub_key);
+        return true;
+    }
+    public async Task<bool> RemoveAll(string sn)
+    {
+        var listterminal = await _cacheService.Gets<IclockCommand>(GetKey(sn));
+        foreach (var terminal in listterminal)
+        {
+            var sub_key = GetKey(sn, terminal.Id.ToString());
             await _cacheService.RemoveData(sub_key);
-        var retVal = await _cacheService.RemoveData(sub_key);
+        }
 
-        return retVal;
+        return true;
     }
 
     /// <summary>
@@ -234,7 +207,7 @@ public class DeviceCommandCacheService
     {
         return $"{_configuration.GetValue<string>("DataArea")}:{key}:{serialNumber}:*";
     }
- 
+
     //private List<IclockCommand> Convert(List<zk_terminalcommandlog> cmds)
     //{
 
