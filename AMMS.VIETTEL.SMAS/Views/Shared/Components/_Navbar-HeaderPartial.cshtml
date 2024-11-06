@@ -319,8 +319,8 @@
         },
         methods: {
             logout: function () {
-                fetch('Account/Logout', {
-                    method: 'POST',
+                fetch('/Account/Logout', {
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': 'your-csrf-token',
