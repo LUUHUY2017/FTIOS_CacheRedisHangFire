@@ -1,4 +1,5 @@
-﻿using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1.Models;
+﻿using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1;
+using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1.Models;
 using AMMS.VIETTEL.SMAS.Cores.Entities;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Organizations;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Organizations.Requests;
@@ -6,7 +7,6 @@ using AutoMapper;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Application.MasterDatas.A2.Organizations.V1;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
@@ -49,7 +49,7 @@ public class OrganizationController : AuthBaseAPIController
     [HttpGet("GetForUser")]
     public async Task<IActionResult> GetForUser()
     {
-        _organizationService.UserId = User.GetSubjectId();
+        //_organizationService.UserId = User.GetSubjectId();
         //_organizationService.UserId = userId;
         var data = await _organizationService.GetForUser();
         return Ok(data);

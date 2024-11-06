@@ -1,26 +1,23 @@
-using System.Reflection;
-using System.Text;
 using AMMS.VIETTEL.SMAS.Applications.Extensions;
+using AMMS.VIETTEL.SMAS.Cores.Identity.Entities;
 using AMMS.VIETTEL.SMAS.Helps.Authorizations;
+using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using Hangfire;
 using Hangfire.MySql;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Share.WebApp.Controllers;
 using Share.WebApp.Settings;
-using Microsoft.OpenApi.Models;
+using Shared.Core.Loggers;
 using System.Reflection;
 using System.Text;
-using Hangfire;
-using Hangfire.MySql;
-using Shared.Core.Loggers;
-using AMMS.VIETTEL.SMAS.Helps.Authorizations;
-using AMMS.VIETTEL.SMAS.Applications.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
@@ -76,6 +73,11 @@ services.AddHangfire(configuration => configuration
 
 services.AddHangfireServer();
 
+services.AddIdentityCore<ApplicationUser>(options => {
+    // Cấu hình các tùy chọn Identity, nếu cần
+})
+.AddRoles<IdentityRole>() // Nếu có sử dụng role
+.AddEntityFrameworkStores<ViettelDbContext>();
 
 // Add Auth
 services.Configure<Authentication>(configuration.GetSection("Authentication"));
@@ -154,7 +156,7 @@ services.AddAutoMapper(typeof(Program));
 //services.AddCaheService(configuration);
 
 //ScopedServices
-//services.AddScopedServices();
+services.AddScopedServices();
 
 //Swagger
 //services.AddSwaggerGen();
