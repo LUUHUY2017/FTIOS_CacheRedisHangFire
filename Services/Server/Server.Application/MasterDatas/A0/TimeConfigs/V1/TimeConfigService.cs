@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using MoreLinq;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1.Models;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1.Models;
+using Server.Application.MasterDatas.A2.Organizations.V1;
 using Server.Core.Entities.A0;
 using Server.Core.Interfaces.A0;
+using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
 using Shared.Core.Identity.Object;
 
@@ -10,12 +14,22 @@ namespace Server.Application.MasterDatas.A0.TimeConfigs.V1;
 
 public class TimeConfigService
 {
+    public string? UserId { get; set; } 
     private readonly ITimeConfigRepository _timeConfigRepository;
     private readonly IMapper _mapper;
-    public TimeConfigService(ITimeConfigRepository timeConfigRepository, IMapper mapper)
+    private readonly IMasterDataDbContext _dBContext;
+    private readonly OrganizationService _organizationService;
+    public TimeConfigService(
+        ITimeConfigRepository timeConfigRepository, 
+        IMapper mapper,
+        IMasterDataDbContext dBContext,
+        OrganizationService organizationService
+        )
     {
         _timeConfigRepository = timeConfigRepository;
         _mapper = mapper;
+        _dBContext = dBContext;
+        _organizationService = organizationService;
     }
 
     public async Task<Result<A0_TimeConfig>> SaveAsync(TimeConfigRequest request)
@@ -80,6 +94,34 @@ public class TimeConfigService
 
             var listMap = _mapper.Map<List<TimeConfigResponse>>(retVal);
             return new Result<List<TimeConfigResponse>>(listMap, "Thành công", true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<List<TimeConfigResponse>>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
+    public async Task<Result<List<TimeConfigResponse>>> GetsFilter(TimeConfigFilter filter)
+    {
+        try
+        {
+            _organizationService.UserId = UserId;
+            var userOrgIds = (await _organizationService.GetForUser()).Data.Select(x => x.Id).ToList();
+            var retVal = await (from tc in _dBContext.A0_TimeConfig
+                                join o in _dBContext.A2_Organization on tc.OrganizationId equals o.Id into orgGroup
+                                from o in orgGroup.DefaultIfEmpty() // LEFT JOIN
+                                where (tc.Actived == true
+                                  && (!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? tc.OrganizationId == filter.OrganizationId : true
+                                  //&& ((filter.SiteId != 0) ? siteIds.Contains(device.SiteId) : true)
+                                  //&& ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "serial_number") ? device.SerialNumber.ToLower().Contains(filter.Key.ToLower()) : true)
+                                  //&& ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "device_name") ? device.DeviceName.ToLower().Contains(filter.Key.ToLower()) : true)
+                                  )
+                                select new TimeConfigResponse(tc, o)
+                    )
+                    .ToListAsync();
+
+            retVal = retVal.Where(x => userOrgIds.Contains(x.OrganizationId)).ToList();
+            return new Result<List<TimeConfigResponse>>(retVal, "Thành công", true);
         }
         catch (Exception ex)
         {

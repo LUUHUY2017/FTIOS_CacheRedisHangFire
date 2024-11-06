@@ -7,9 +7,9 @@
     if (ViewBag.Tab == "system")
         tab_system_user = "active";
 
-    // string tab_employee_user = "";
-    // if (ViewBag.Tab == "employee")
-    //     tab_employee_user = "active";
+    string tab_school_user = "";
+    if (ViewBag.Tab == "school")
+        tab_school_user = "active";
 
 
 }
@@ -54,10 +54,15 @@
                 <li class="nav-item">
                     <a href="@Url.Action("index", new { tab =  "system"})" class="nav-link @tab_system_user">
                         <i class="ph-user-circle-gear m-2"></i>
-                        Hệ thống
+                        Quản trị
                     </a>
                 </li>
-                
+                <li class="nav-item">
+                    <a href="@Url.Action("index", new { tab =  "school"})" class="nav-link @tab_school_user">
+                        <i class="ph-user-gear m-2"></i>
+                        Trường học
+                    </a>
+                </li>
             </ul>
             @await Html.PartialAsync("/Areas/Managers/Users/V1/Views/_tabSystemAccount.cshtml")
 

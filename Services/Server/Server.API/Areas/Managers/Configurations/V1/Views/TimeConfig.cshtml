@@ -1,161 +1,193 @@
 ﻿
 <div class="content-wrapper" id="webui_timeConfig">
-    <div class="content">
-        <div class="card-body">
-            <form class="needs-validation" novalidate id="FormAddEdit">
-                <table class="table table-bordered">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="col-lg-3 my-1">
-                                    <label class="form-label fw-bold">Trường học</label>
-                                    <select id="FilterOrgainization" class="form-control select" data-dropdown-parent="#webui_timeConfig" data-placeholder="Vui lòng chọn trường">
-                                        <option v-for="option in combobox.schools" v-bind:value="option.id">
-                                            {{ option.organizationName }}
-                                        </option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="p-2 fw-bold ">Cấu hình thời gian</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <!--Sáng-->
-                                <div class="fw-bold">
-                                    Sáng
-                                </div>
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu điểm danh buổi sáng <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required  v-model="item.morningStartTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu điểm danh buổi sáng</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
+    <div class="content-inner">
+        <!-- Content area -->
 
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian kết thúc điểm danh buổi sáng <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required  v-model="item.morningEndTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian kết thúc điểm danh buổi sáng</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
+        <div class="content">
 
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính đi muộn buổi sáng <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required  v-model="item.morningLateTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính đi muộn buổi sáng</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
+            <div class="card">
+               <div class="card-body">
+                    <form v-on:submit.prevent="loadData">
+                        <div class="row mb-3">
+                            <div class="col-lg-3">
+                                <label class="form-label">Trường học</label>
+                                <select id="FilterOrgainization" class="form-control select" data-dropdown-parent="#webui_timeConfig" data-placeholder="Vui lòng chọn trường" v-model:value="filter.organizationId">
+                                    <option v-for="option in combobox.schools" v-bind:value="option.id">
+                                        {{ option.organizationName }}
+                                    </option>
+                                </select>
+                            </div>
+                            @*  <div class="col-lg-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            </div>  *@
 
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính nghỉ buổi sáng <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required  v-model="item.morningBreakTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính nghỉ buổi sáng</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
-                                <!--Chiều-->
-                                <div class="fw-bold">
-                                    Chiều
-                                </div>
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu điểm danh buổi chiều <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required  v-model="item.afternoonStartTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu điểm danh buổi tối</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian kết thúc điểm danh buổi chiều <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required  v-model="item.afternoonEndTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian kết thúc điểm danh buổi chiều</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
+            <div class="card">
+                <div class="card-body">
+                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                </div>
+            </div>
 
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính đi muộn buổi chiều <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required  v-model="item.afternoonLateTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính đi muộn buổi chiều</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính nghỉ buổi chiều <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required  v-model="item.afternoonBreakTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính nghỉ buổi chiều</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
-                                <!--Tối-->
-                                <div class="fw-bold">
-                                    Tối
-                                </div>
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu điểm danh buổi tối <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required v-model="item.eveningStartTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu điểm danh buổi tối</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian kết thúc điểm danh buổi tối <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required v-model="item.eveningEndTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian kết thúc điểm danh buổi tối</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính đi muộn buổi tối <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required v-model="item.eveningLateTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính đi muộn buổi tối</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính nghỉ buổi tối <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input type="time" class="form-control" required v-model="item.eveningBreakTime" step="1">
-                                        <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính nghỉ buổi tối</div>
-                                        <div class="valid-feedback">Valid feedback</div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="p-2">
-                                <div class="row mb-3">
-                                    <div class="text-start">
-                                        <button type="button" class="btn btn-primary" v-on:click="onSaveData()">Lưu dữ liệu</button>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </form>
         </div>
     </div>
 
+    <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">Chỉnh sửa cấu hình thời gian</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate id="FormAddEdit">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td class="p-2 fw-bold ">Trường: {{item.organizationName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <!--Sáng-->
+                                            <div class="fw-bold">
+                                                Sáng
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu điểm danh buổi sáng <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.morningStartTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu điểm danh buổi sáng</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian kết thúc điểm danh buổi sáng <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.morningEndTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian kết thúc điểm danh buổi sáng</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính đi muộn buổi sáng <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.morningLateTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính đi muộn buổi sáng</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính nghỉ buổi sáng <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.morningBreakTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính nghỉ buổi sáng</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+                                            <!--Chiều-->
+                                            <div class="fw-bold">
+                                                Chiều
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu điểm danh buổi chiều <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.afternoonStartTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu điểm danh buổi tối</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian kết thúc điểm danh buổi chiều <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.afternoonEndTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian kết thúc điểm danh buổi chiều</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính đi muộn buổi chiều <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.afternoonLateTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính đi muộn buổi chiều</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính nghỉ buổi chiều <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.afternoonBreakTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính nghỉ buổi chiều</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+                                            <!--Tối-->
+                                            <div class="fw-bold">
+                                                Tối
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu điểm danh buổi tối <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.eveningStartTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu điểm danh buổi tối</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian kết thúc điểm danh buổi tối <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.eveningEndTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian kết thúc điểm danh buổi tối</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính đi muộn buổi tối <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.eveningLateTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính đi muộn buổi tối</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính nghỉ buổi tối <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="time" class="form-control" required v-model="item.eveningBreakTime" step="1">
+                                                    <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính nghỉ buổi tối</div>
+                                                    <div class="valid-feedback">Valid feedback</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2">
+                                            <div class="row mb-3">
+                                                <div class="text-start">
+                                                    <button type="button" class="btn btn-primary" v-on:click="onSaveData()">Lưu dữ liệu</button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -172,9 +204,155 @@
             'BootstrapTable': BootstrapTable
         },
         data: {
-            data: {},
+            columns: [
+                {
+                    field: 'Action',
+                    title: 'Action',
+                    align: 'center',
+                    formatter: (value, row, index) => {
+                        var ele = `<div style="white-space: nowrap;">`;
+                        //ele += `<a href = "javascript:" class= "btn btn-sm btn-info reAsync" title = "Đồng bộ " > <i class="fa fa-repeat" > </i> </a > &nbsp;`;
+                        ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit"  title = "Update " > <i class="fa fa-pencil" > </i><span class="sr-only">Update</span > </a > &nbsp;`;
+                        //ele += `<a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i> <span class="sr-only">Inactive</span></a>&nbsp;`;
+                        ele += ` </div>`;
+                        return ele;
+                    },
+                    events: {
+                        'click .edit': function (e, value, row) {
+                            _timeConfig.onPopupModelEdit(row, true);
+                        },
+                        // 'click .delete': function (e, value, row) {
+                        //     var question = "Bạn có chắc chắn muốn xóa dòng này khỏi cơ sở dữ liệu không? sau khi xóa không khôi phục lại được!";
+                        //     var content = "Nhập nội dung xóa (không quá 250 kí tự)";
+                        //     alertify.prompt(question, content, ''
+                        //         , function (evt, value) {
+                        //             axios.post('/api/v1/AttendanceConfig/Delete', { id: row.id + '', reason: value }, _timeConfig.object.bearerAuthorization).then(response => {
+                        //                 if (response.data.succeeded) {
+                        //                     alertify.success(response.data.message);
+                        //                     _timeConfig.loadData();
+                        //                 }
+                        //                 else {
+                        //                     alertify.warning(response.data.message);
+                        //                 }
+                        //             }).catch(error => {
+                        //                 alert("Lỗi: " + error.response.data.message);
+                        //             });
+                        //         }, function () {
+                        //             //alertify.error('Cancel')
+                        //         });
+                        // },
+                        // 'click .reAsync': function (e, value, row) {
+                        //     $('.loader').show();
+                        //     axios.post('/api/v1/AttendanceConfig/SchoolAsync', row, _timeConfig.object.bearerAuthorization).then(response => {
+                        //         if (response.request.responseURL.includes('~/Account/Login')) {
+                        //             window.location = window.location.href;
+                        //         }
+
+                        //         if (response.data.succeeded) {
+                        //             alertify.success("Thành công");
+                        //             _timeConfig.loadData();
+                        //         }
+                        //         else {
+                        //             alertify.notify(response.data.message, 'error', 6, function () { });
+                        //         }
+
+                        //         $('.loader').delay(100).hide(0);
+                        //     }).catch(error => {
+                        //         console.log(error);
+                        //         $('.loader').delay(100).hide(0);
+                        //     });
+                        // },
+                    }
+                },
+                {
+                    title: `<span title="Tên trường">SchoolName</span>`,
+                    field: 'organizationName',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian bắt đầu điểm danh buổi sáng">MorningStartTime</span>`,
+                    field: 'morningStartTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian kết thúc điểm danh buổi sáng">MorningEndTime</span>`,
+                    field: 'morningEndTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian bắt đầu tính đi muộn buổi sáng">MorningLateTime</span>`,
+                    field: 'morningLateTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian bắt đầu tính nghỉ buổi sáng">MorningBreakTime</span>`,
+                    field: 'morningBreakTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian bắt đầu điểm danh buổi chiều">AfternoonStartTime</span>`,
+                    field: 'afternoonStartTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian kết thúc điểm danh buổi chiều">AfternoonEndTime</span>`,
+                    field: 'afternoonEndTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian bắt đầu tính đi muộn buổi chiều">AfternoonLateTime</span>`,
+                    field: 'afternoonLateTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian bắt đầu tính nghỉ buổi chiều">AfternoonBreakTime</span>`,
+                    field: 'afternoonBreakTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian bắt đầu điểm danh buổi tối">EveningStartTime</span>`,
+                    field: 'eveningStartTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian kết thúc điểm danh buổi tối">EveningEndTime</span>`,
+                    field: 'eveningEndTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian bắt đầu tính đi muộn buổi tối">EveningLateTime</span>`,
+                    field: 'eveningLateTime',
+                    sortable: true,
+                },
+                {
+                    title: `<span title="Thời gian bắt đầu tính nghỉ buổi tối">EveningBreakTime</span>`,
+                    field: 'eveningBreakTime',
+                    sortable: true,
+                },
+                // {
+                //     title: 'TimeAsync',
+                //     field: 'timeAsync',
+                //     sortable: true,
+                //     formatter: function (value, row, index) {
+                //         if (value) {
+                //             const d = new Date(value);
+                //             return d.toLocaleDateString('vi-VN', {
+                //                 year: 'numeric',
+                //                 month: '2-digit',
+                //                 day: '2-digit',
+                //                 hour: '2-digit',
+                //                 minute: '2-digit',
+                //                 second: '2-digit'
+                //             });
+                //         } else {
+                //             return ""; // Trả về chuỗi rỗng
+                //         }
+                //     },
+                // },
+
+            ],
+            data: [],
             item: {},
-            column: [],
             options: {
                 search: true,
                 pagination: true,
@@ -197,21 +375,25 @@
                 }
             },
             filter: {
-                organizationId: null,
+                organizationId: "0",
             },
+            checkAsyncButton: false,
             combobox: { schools: [], },
         },
         methods: {
             loadData() {
                 $('.loader').show();
-                axios.get('/api/v1/TimeConfig/GetFirstOrDefault?orgId=' + this.filter.organizationId, this.object.bearerAuthorization).then(response => {
+                axios.post('/api/v1/TimeConfig/GetsFilter', this.filter, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
 
                     if (response.data.succeeded) {
-                        //this.data = response.data.data;
-                        this.item = response.data.data || {};
+                        this.data = response.data.data;
+                        // this.item = response.data.data || {
+                        //     endpointIdentity: 'https://sso.vtsmas.vn/connect/token',
+                        //     endpointGateway: 'https://gateway.vtsmas.vn',
+                        // };
 
                     }
                     else {
@@ -236,6 +418,7 @@
 
                     if (response.data.succeeded) {
                         alertify.success("Thành công");
+                        this.loadData();
                     }
                     else {
                         alertify.notify(response.data.message, 'error', 6, function () { });
@@ -247,14 +430,69 @@
                     $('.loader').delay(100).hide(0);
                 });
             },
+            onResetForm() {
+                this.item = {};
+            },
+            onPopupModelEdit(row, editAction) {
+                if (editAction) {
+                    this.checkAsyncButton = true;
+                    this.item = row;
+                }
+                else {
+                    this.checkAsyncButton = false;
+                    this.onResetForm();
+                }
+
+                this.object.form_tile = editAction ? 'Chỉnh sửa' : "Thêm mới";
+                this.object.editAction = editAction;
+
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+            },
+            onAsyncData() {
+                $('.loader').show();
+                axios.post('/api/v1/AttendanceConfig/SchoolAsync', this.item, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        alertify.success("Thành công");
+                        this.loadData();
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    console.log(error);
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+            getCookie(name) {
+                const value = "; " + document.cookie;
+                const parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            },
             loadCombox() {
                 axios.get('/api/v1/Organization/GetForUser', this.object.config).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }
+
                     this.combobox.schools = response.data.data;
-                    $('#FilterOrganization').val(this.combobox.schools.length > 0 ? this.combobox.schools[0].id : null).trigger('change');
-                    this.filter.organizationId = this.combobox.schools[0].id;
+                    
+                    if (this.combobox.schools.length > 1) {
+                        this.combobox.schools = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
+                    }
+                    if (this.getCookie("organizationId")) {
+                        this.filter.organizationId = this.getCookie("organizationId");
+                        $('#FilterOrganization').val(this.filter.organizationId).trigger('change');
+                    }
+                    else {
+                        this.filter.organizationId = this.combobox.schools[0].id;
+                        $('#FilterOrganization').val(this.filter.organizationId).trigger('change');
+                    }
                     this.loadData();
                 }).catch(error => {
                     console.warn(error);

@@ -29,6 +29,20 @@ namespace Server.Application.MasterDatas.A2.Devices
             return data;
         }
 
+        public async Task<Result<List<A2_Device>>> GetsForDeviceModel(string deviceModel)
+        {
+            try
+            {
+                var data = await _deviceRepository.GetAllAsync(x => x.DeviceModel == deviceModel);
+                return new Result<List<A2_Device>>(data, $"Thành công!", true);
+            }
+            catch (Exception ex)
+            {
+                return new Result<List<A2_Device>>(null, $"Có lỗi: {ex.Message}", false);
+            }
+           
+        }
+
         public async Task<Result<A2_Device>> GetById(string id)
         {
             var data = await _deviceRepository.GetByIdAsync(id);

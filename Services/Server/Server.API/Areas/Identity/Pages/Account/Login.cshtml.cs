@@ -74,6 +74,7 @@ public class LoginModel : PageModel
             ModelState.AddModelError(string.Empty, ErrorMessage);
         }
 
+
         returnUrl ??= Url.Content("~/");
 
         // Clear the existing external cookie to ensure a clean login process
@@ -93,7 +94,8 @@ public class LoginModel : PageModel
         {
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+            var user = await _userManager.FindByNameAsync(Input.Email) ?? await _userManager.FindByEmailAsync(Input.Email);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
                 if (!returnUrl.Contains("/connect/authorize/callback?client_id"))
@@ -172,7 +174,8 @@ public class LoginModel : PageModel
                                 RoleGroupId = roleManager?.Id,
                             });
                             _masterDataDbContext.SaveChanges();
-                            var result2 = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                            var user2 = await _userManager.FindByNameAsync(Input.Email) ?? await _userManager.FindByEmailAsync(Input.Email);
+                            var result2 = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                             if (result2.Succeeded)
                             {
                                 if (!returnUrl.Contains("/connect/authorize/callback?client_id"))

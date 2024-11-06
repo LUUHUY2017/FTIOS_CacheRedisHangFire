@@ -47,8 +47,8 @@ public class DeviceAdminService
             var _data = await (from o in _dbContext.A2_Device
                                where o.Actived == activedVal
                                     && o.DeviceParam == DeviceConst.Admin
-                                    && (!string.IsNullOrEmpty(req.OrganizationId) ? req.OrganizationId == o.OrganizationId : true)
-                                    && (!string.IsNullOrEmpty(req.DeviceModel) ? req.DeviceModel == o.DeviceModel : true)
+                                    && ((!string.IsNullOrEmpty(req.OrganizationId) && req.OrganizationId != "0") ? req.OrganizationId == o.OrganizationId : true)
+                                    && ((!string.IsNullOrEmpty(req.DeviceModel) && req.DeviceModel != "0") ? req.DeviceModel == o.DeviceModel : true)
                                     && (!string.IsNullOrWhiteSpace(req.Key) && req.ColumnTable == "DeviceName" ? o.DeviceName.Contains(req.Key) : true)
                                     //&& (!string.IsNullOrWhiteSpace(req.Key) && req.ColumnTable == "DeviceCode" ? o.DeviceCode.Contains(req.Key) : true)
                                     //&& (!string.IsNullOrWhiteSpace(req.Key) && req.ColumnTable == "DeviceDescription" ? o.DeviceDescription.Contains(req.Key) : true)

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Server.API.APIs.Data.Users.V1.Commons;
 using Server.API.Areas.Managers.Users.V1.Models;
 using Server.Core.Entities.A0;
@@ -51,12 +53,18 @@ public class UserController : Controller
     [HttpGet("Gets")]
     public async Task<IActionResult> Gets(string tab = "system")
     {
+        _accountService.UserId = User.GetSubjectId();
         var all_accounts = _userManager.Users.ToList();
 
         var accounts = new List<UserAccountRes>();
         if (tab == "system")
         {
             accounts = await _accountService.GetAccountSystems();
+        }
+
+        if (tab == "school")
+        {
+            accounts = await _accountService.GetAccountSchools();
         }
 
         return Ok(new Result<List<UserAccountRes>>
@@ -145,12 +153,23 @@ public class UserController : Controller
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 Type = model.Type,
-            };
+            };  
 
             var xx = await _userManager.CreateAsync(user, model.Password);
             if (xx.Succeeded)
             {
                 user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (!string.IsNullOrEmpty(model.GroupRole))
+                {
+                    var groupRoleId = (await _context.A0_RoleGroup.FirstOrDefaultAsync(x => x.Name == model.GroupRole)).Id;
+                    await _context.A0_RoleGroupUser.AddAsync(new A0_RoleGroupUser()
+                    {
+                        UserId = user.Id,
+                        RoleGroupId = groupRoleId,
+                    });
+                    _context.SaveChanges();
+                }
                 return Ok(new Result<ApplicationUser>
                 {
                     Code = 0,
@@ -247,6 +266,11 @@ public class UserController : Controller
         var roleGroups = _context.A0_RoleGroup.ToList();
         var roleGroups_selected = (from rg in _context.A0_RoleGroup join rgu in _context.A0_RoleGroupUser on rg.Id equals rgu.RoleGroupId where rgu.UserId == userId select rg).ToList();
         var roleGroups_unselected = roleGroups.Where(o => roleGroups_selected.All(x => x.Id != o.Id)).ToList();
+        var userSuperAdmin = await _userManager.FindByIdAsync(User.GetSubjectId());
+        if (userSuperAdmin != null && !string.IsNullOrEmpty(userSuperAdmin?.Type))
+        {
+            roleGroups_unselected = roleGroups_unselected.Where(x => x.Name != "SupperAdmin").ToList();
+        }
 
         var user = await _userManager.FindByIdAsync(userId);
         //Lấy danh sách roles

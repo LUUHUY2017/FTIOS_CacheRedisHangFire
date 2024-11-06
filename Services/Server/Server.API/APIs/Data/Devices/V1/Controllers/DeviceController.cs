@@ -51,6 +51,17 @@ public class DeviceController : AuthBaseAPIController
     }
 
     /// <summary>
+    /// Lấy danh sách đang hoạt động theo DeviceModel
+    /// </summary>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpGet("GetsForDeviceModel")]
+    public async Task<IActionResult> GetsForDeviceModel(string deviceModel)
+    {
+        return Ok(await _deviceService.GetsForDeviceModel(deviceModel));
+    }
+
+    /// <summary>
     /// Lấy danh sách đang hoạt động
     /// </summary>
     /// <returns></returns>

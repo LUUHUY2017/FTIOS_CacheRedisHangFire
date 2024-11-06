@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1.Models;
@@ -28,6 +29,18 @@ public class TimeConfigController : AuthBaseAPIController
     public async Task<IActionResult> Gets()
     {
         var data = await _timeConfigService.Gets();
+        return Ok(data);
+    }
+
+    /// <summary>
+    /// Lấy danh sách có filter
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("GetsFilter")]
+    public async Task<IActionResult> GetsFilter(TimeConfigFilter filter)
+    {
+        _timeConfigService.UserId = User.GetSubjectId();
+        var data = await _timeConfigService.GetsFilter(filter);
         return Ok(data);
     }
 

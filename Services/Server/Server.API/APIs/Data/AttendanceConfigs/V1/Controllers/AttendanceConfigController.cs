@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1.Models;
+using Server.Core.Entities.A0;
 using Share.WebApp.Controllers;
+using Shared.Core.Commons;
 
 namespace Server.API.APIs.Data.AttendanceConfigs.V1.Controllers;
 
@@ -29,6 +31,13 @@ public class AttendanceConfigController : AuthBaseAPIController
         return Ok(data);
     }
 
+    [HttpPost("SchoolAsync")]
+    public async Task<IActionResult> SchoolAsync(A0_AttendanceConfig model)
+    {
+        var data = await _attendanceConfigService.SchoolAsync(model);
+        return Ok(data);
+    }
+
     /// <summary>
     /// Lấy danh sách
     /// </summary>
@@ -38,6 +47,18 @@ public class AttendanceConfigController : AuthBaseAPIController
     public async Task<IActionResult> Gets()
     {
         var data = await _attendanceConfigService.Gets();
+        return Ok(data);
+    }
+
+    /// <summary>
+    /// Lấy danh sách theo filter
+    /// </summary>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpPost("GetsFilter")]
+    public async Task<IActionResult> GetsFilter(AttendanceFilter filter)
+    {
+        var data = await _attendanceConfigService.GetsFilter(filter);
         return Ok(data);
     }
 
@@ -62,5 +83,15 @@ public class AttendanceConfigController : AuthBaseAPIController
     public async Task<IActionResult> AddOrEdit(AttendanceConfigRequest model)
     {
         return Ok(await _attendanceConfigService.SaveAsync(model));
+    }
+
+    /// <summary>
+    /// Xóa cấu hình
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("Delete")]
+    public async Task<IActionResult> Delete(DeleteRequest model)
+    {
+        return Ok(await _attendanceConfigService.DeleteAsync(model));
     }
 }

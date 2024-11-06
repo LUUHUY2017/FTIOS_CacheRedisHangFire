@@ -4,6 +4,7 @@ namespace Server.Core.Identity.Interfaces.Accounts.Services
 {
     public interface IAccountService
     {
+        public string? UserId { get; set; } 
         ///// <summary>
         ///// Đăng ký tài khoản với email
         ///// </summary>
@@ -75,7 +76,7 @@ namespace Server.Core.Identity.Interfaces.Accounts.Services
 
 
         Task<List<UserAccountRes>> GetAccountSystems();
-        ////Task<List<UserAccountRes>> GetAccountTruckDrivers();
+        Task<List<UserAccountRes>> GetAccountSchools();
         ////Task<List<UserAccountRes>> GetAccountEmployees();
         ////Task<List<UserAccountRes>> GetAccountVendors();
         ////Task<List<UserAccountRes>> GetAccountCustomers();

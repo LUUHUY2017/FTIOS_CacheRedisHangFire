@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A2.Organizations.V1;
@@ -37,6 +38,19 @@ public class OrganizationController : AuthBaseAPIController
     public async Task<IActionResult> Gets()
     {
         var data = await _organizationService.Gets();
+        return Ok(data);
+    }
+
+    /// <summary>
+    /// Lấy danh sách theo user
+    /// </summary>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpGet("GetForUser")]
+    public async Task<IActionResult> GetForUser()
+    {
+        _organizationService.UserId = User.GetSubjectId();
+        var data = await _organizationService.GetForUser();
         return Ok(data);
     }
 

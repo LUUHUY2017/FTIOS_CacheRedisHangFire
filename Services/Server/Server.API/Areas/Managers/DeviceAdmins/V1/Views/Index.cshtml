@@ -4,7 +4,7 @@
 }
 
 <!-- Main content -->
-<div class="content-wrapper" id="webui">
+<div class="content-wrapper" id="webui_deviceAd">
 
     <!-- Inner content -->
     <div class="content-inner">
@@ -49,16 +49,14 @@
                             <div class="col-lg-2 my-1">
                                 <label class="form-label">Nhãn hiệu</label>
                                 <select class="form-select" data-placeholder="Vui lòng chọn nhãn hiệu" v-model="filter.deviceModel">
-                                    <option value="">Tất cả</option>
                                     <option v-for="option in combobox.deviceBrands" v-bind:value="option.id">
                                         {{ option.name}}
                                     </option>
                                 </select>
-                            </div>
+                            </div>   
                             <div class="col-lg-2 my-1">
                                 <label class="form-label">Trường học</label>
-                                <select id="FilterOrgainization" class="form-control select" data-dropdown-parent="#webui" data-placeholder="Vui lòng chọn trường">
-                                    <option value="">Tất cả</option>
+                                <select id="FilterOrganization" class="form-control select" data-dropdown-parent="#webui_deviceAd" v-model="filter.organizationId">
                                     <option v-for="option in combobox.schools" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>
@@ -232,7 +230,7 @@
         $('#FOrganization').on("change", function () {
             _deviceAdmin.item.organizationId = $(this).val();
         });
-        $('#FilterOrgainization').on("change", function () {
+        $('#FilterOrganization').on("change", function () {
             _deviceAdmin.filter.organizationId = $(this).val();
         });
     });
@@ -242,7 +240,7 @@
 
 <script>
     var _deviceAdmin = new Vue({
-        el: '#webui',
+        el: '#webui_deviceAd',
         components: {
             'BootstrapTable': BootstrapTable
         },
@@ -455,8 +453,8 @@
             filter: {
                 columnTable: "SerialNumber",
                 actived: "1",
-                deviceModel: "",
-                organizationId: "",
+                deviceModel: "0",
+                organizationId: "0",
                 key: "",
                 export: "0",
             },
@@ -567,12 +565,28 @@
                     alert("Lỗi: " + error.response.data.message);
                 });
             },
+            getCookie(name) {
+                const value = "; " + document.cookie;
+                const parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            },
             loadCombox() {
                 axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }
-                    this.combobox.schools = response.data.data;
+                    this.combobox.schools = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
+                    if (this.getCookie("organizationId")) {
+
+                        this.filter.organizationId = this.getCookie("organizationId");
+                        $('#FilterOrganization').val(this.filter.organizationId);
+                    }
+                    else {
+                        this.filter.organizationId = this.combobox.schools[0].id;
+                        $('#FilterOrganization').val(this.filter.organizationId);
+                    }
+
+                    this.loadData();
                 }).catch(error => {
                     console.warn(error);
                 });
@@ -581,14 +595,14 @@
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }
-                    this.combobox.deviceBrands = response.data.data;
+                    this.combobox.deviceBrands = [{ id: "0", name: "Tất cả" }, ...response.data.data];
                 }).catch(error => {
                     console.warn(error);
                 });
             },
         },
         mounted() {
-            this.loadData();
+            //this.loadData();
             this.loadCombox();
         },
     })

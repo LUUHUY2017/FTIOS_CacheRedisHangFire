@@ -4,7 +4,7 @@
 }
 
 <!-- Main content -->
-<div class="content-wrapper" id="webui">
+<div class="content-wrapper" id="webui_device">
 
     <!-- Inner content -->
     <div class="content-inner">
@@ -49,7 +49,6 @@
                             <div class="col-lg-2 my-1">
                                 <label class="form-label">Nhãn hiệu</label>
                                 <select class="form-select" data-placeholder="Vui lòng chọn nhãn hiệu" v-model="filter.deviceModel">
-                                    <option value="">Tất cả</option>
                                     <option v-for="option in combobox.deviceBrands" v-bind:value="option.id">
                                         {{ option.name}}
                                     </option>
@@ -57,8 +56,7 @@
                             </div>
                             <div class="col-lg-2 my-1">
                                 <label class="form-label">Trường học</label>
-                                <select id="FilterOrgainization" class="form-control select" data-dropdown-parent="#webui" data-placeholder="Vui lòng chọn trường">
-                                    <option value="">Tất cả</option>
+                                <select id="FilterOrganization" class="form-control select" data-dropdown-parent="#webui_device" v-model="filter.organizationId">
                                     <option v-for="option in combobox.schools" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>
@@ -170,7 +168,7 @@
     // });
 
     $(document).ready(function () {
-        $('#FilterOrgainization').on("change", function () {
+        $('#FilterOrganization').on("change", function () {
             _device.filter.organizationId = $(this).val();
         });
     });
@@ -180,7 +178,7 @@
 
 <script>
     var _device = new Vue({
-        el: '#webui',
+        el: '#webui_device',
         components: {
             'BootstrapTable': BootstrapTable
         },
@@ -288,6 +286,26 @@
                     },
                 },
                 {
+                    title: 'Ngày tạo',
+                    sortable: true,
+                    field: 'createdDate',
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
+                {
                     title: 'Trường',
                     sortable: true,
                     field: 'organizationId',
@@ -344,8 +362,8 @@
             filter: {
                 columnTable: "SerialNumber",
                 actived: "1",
-                deviceModel: "",
-                organizationId: "",
+                deviceModel: "0",
+                organizationId: "0",
                 key: "",
                 export: "0",
             },
@@ -427,13 +445,28 @@
 
                 });
             },
-
+            getCookie(name) {
+                const value = "; " + document.cookie;
+                const parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            },
             loadCombox() {
                 axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }
-                    this.combobox.schools = response.data.data;
+                    this.combobox.schools = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
+                    if (this.getCookie("organizationId")) {
+
+                        this.filter.organizationId = this.getCookie("organizationId");
+                        $('#FilterOrganization').val(this.filter.organizationId);
+                    }
+                    else {
+                        this.filter.organizationId = this.combobox.schools[0].id;
+                        $('#FilterOrganization').val(this.filter.organizationId);
+                    }
+
+                    this.loadData();
                 }).catch(error => {
                     console.warn(error);
                 });
@@ -442,14 +475,14 @@
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }
-                    this.combobox.deviceBrands = response.data.data;
+                    this.combobox.deviceBrands = [{ id: "0", name: "Tất cả" }, ...response.data.data];
                 }).catch(error => {
                     console.warn(error);
                 });
             },
         },
         mounted() {
-            this.loadData();
+            //this.loadData();
             this.loadCombox();
         },
     })

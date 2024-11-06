@@ -1,4 +1,6 @@
-﻿
+﻿@{
+    var regexEmail = @"^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$";
+}
 <div class="tab-content" id="tab_users">
     <div class="accordion">
         <div class="content-wrapper" id="tab_role_groups">
@@ -27,7 +29,7 @@
                     <form class="needs-validation" id="FormAddEdit" novalidate>
 
                         <div class="row mb-3">
-                            <label class="col-form-label text-end col-lg-2">Tên<span class="text-danger">*</span></label>
+                            <label class="col-form-label text-end col-lg-2">Tên tài khoản<span class="text-danger">*</span></label>
                             <div class="col-lg-8">
                                 <input type="text" class="form-control" required placeholder="Tên tài khoản" v-model="item.firstName">
                                 <div class="invalid-feedback">Vui lòng nhập tên tài khoản</div>
@@ -49,13 +51,23 @@
                         </div> *@
 
                         <div class="row mb-3">
-                            <label class="col-form-label text-end col-lg-2">Tài khoản<span class="text-danger">*</span></label>
+                            <label class="col-form-label text-end col-lg-2">Tên đăng nhập<span class="text-danger">*</span></label>
                             <div class="col-lg-8">
-                                <input type="text" class="form-control"  required placeholder="Tài khoản đăng nhập(Email)" v-model="item.userName">
-                                <div class="invalid-feedback">Vui lòng nhập tên đăng nhập là email</div>
+                                <input type="text" class="form-control" required placeholder="Tài khoản đăng nhập(Email)" v-model="item.userName"/>
+                                <div class="invalid-feedback">Vui lòng nhập tên đăng nhập</div>
                                 <div class="valid-feedback"> </div>
                             </div>
                         </div>
+
+                        <div class="row mb-3">
+                            <label class="col-form-label text-end col-lg-2">Email<span class="text-danger">*</span></label>
+                            <div class="col-lg-8">
+                                <input type="text" class="form-control" required placeholder="Email" v-model="item.email">
+                                <div class="invalid-feedback">Vui lòng nhập tên đăng nhập</div>
+                                <div class="valid-feedback"> </div>
+                            </div>
+                        </div>
+
                         <div class="row mb-3" v-if="!showRole">
                             <label class="col-form-label text-end col-lg-2">Mật khẩu <span class="text-danger">*</span></label>
                             <div class="col-lg-8">
@@ -75,14 +87,6 @@
                             </div>
                         </div>
 
-                        <div class="row mb-3">
-                            <label class="col-form-label text-end col-lg-2">Email</label>
-                            <div class="col-lg-8">
-                                <input type="text" class="form-control" placeholder="Email" v-model="item.email">
-                                <div class="invalid-feedback">Vui lòng nhập đúng định dạng email</div>
-                                <div class="valid-feedback"> </div>
-                            </div>
-                        </div>
                         <div class="row mb-3">
                             <label class="col-form-label text-end col-lg-2">Số điện thoại</label>
                             <div class="col-lg-8">
@@ -114,29 +118,30 @@
                             </div>
                         </div>
                     </form>
-
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li v-if="showRole" class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#tab_user_details">Nhóm quyền</a>
+                    <!--
+                    <ul class="nav nav-tabs" role="tablist" hidden>
+                        <li  class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#tab_user_details">Nhóm quyền </a>
                         </li>
 
-                        <li v-if="showRole" class="nav-item">
+                        @* <li  class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" href="#tab_role_details">Quyền </a>
-                        </li>
+                        </li> *@
                     </ul>
-                    <div v-if="showRole" class="tab-content" style="padding: inherit">
+                    <div  class="tab-content" style="padding: inherit;" :class="{ 'disabled': !showRole }" hidden>
                         <div id="tab_user_details" class="  tab-pane active">
                             <p><b>Nhóm chưa đăng ký </b></p>
                             <bootstrap-table :columns="columns_roleGroups_unselect" :data="data_roleGroups_unselect" :options="options"></bootstrap-table>
                             <p><b>Nhóm đăng ký </b></p>
                             <bootstrap-table :columns="columns_roleGroups_select" :data="data_roleGroups_select" :options="options"></bootstrap-table>
                         </div>
-                        <div id="tab_role_details" class=" tab-pane fade">
+                        @* <div id="tab_role_details" class=" tab-pane fade">
                             <p><b>Quyền đăng ký </b></p>
-                            @* <bootstrap-table :columns="columns_role_unselect" :data="data_role_unselect" :options="options"></bootstrap-table> *@
+                            <bootstrap-table :columns="columns_role_unselect" :data="data_role_unselect" :options="options"></bootstrap-table> 
                             <bootstrap-table :columns="columns_role_select" :data="data_role_select" :options="options"></bootstrap-table>
-                        </div>
+                        </div> *@
                     </div>
+                     -->
                 </div>
             </div>
         </div>
@@ -200,15 +205,15 @@
                     sortable: true,
                     field: 'firstName'
                 },
-                {
-                    title: 'Loại tài khoản',
-                    sortable: true,
-                    field: 'type',
-                    formatter: (value, row, index) => {
-                        const _type = _tab_users.combobox.types.find(b => b.id === value);
-                        return _type ? _type.name : '';
-                    },
-                },
+                // {
+                //     title: 'Loại tài khoản',
+                //     sortable: true,
+                //     field: 'type',
+                //     formatter: (value, row, index) => {
+                //         const _type = _tab_users.combobox.types.find(b => b.id === value);
+                //         return _type ? _type.name : '';
+                //     },
+                // },
                 {
                     title: 'Tài khoản',
                     sortable: true,
@@ -553,6 +558,14 @@
                 }
                 if (this.formAction == 'Add') {
                     this.item.type = "System";
+                    let tab = '@ViewBag.Tab';
+                    console.log(tab);
+                    if (tab == 'system') {
+                        this.item.groupRole = "Admin";
+                    }
+                    if (tab == 'school') {
+                        this.item.groupRole = "Manager";
+                    }
                 }
                 $('.loader').show();
                 axios.post('/v1/User/Update', this.item).then(response => {
@@ -680,3 +693,10 @@
 
 </script>
 
+
+<style>
+    .disabled {
+        opacity: 0.5; /* Làm mờ phần tử */
+        pointer-events: none; /* Ngăn không cho tương tác */
+    }
+</style>

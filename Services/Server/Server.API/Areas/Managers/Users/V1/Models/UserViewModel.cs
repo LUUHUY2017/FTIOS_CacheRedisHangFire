@@ -12,4 +12,5 @@ public class UserViewModel
     public bool? Actived { get; set; }
     public string? CompanyId { get; set; }
     public string? Type {  get; set; }
+    public string? GroupRole {  get; set; } = string.Empty;
 }

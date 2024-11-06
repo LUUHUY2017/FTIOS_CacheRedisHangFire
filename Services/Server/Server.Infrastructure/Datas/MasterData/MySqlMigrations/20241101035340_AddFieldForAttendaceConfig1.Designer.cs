@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Infrastructure.Datas.MasterData;
 
@@ -10,9 +11,10 @@ using Server.Infrastructure.Datas.MasterData;
 namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 {
     [DbContext(typeof(MasterDataDbContext))]
-    partial class MasterDataDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241101035340_AddFieldForAttendaceConfig1")]
+    partial class AddFieldForAttendaceConfig1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -691,9 +693,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.Property<string>("BrandName")
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime?>("CheckConnectTime")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<DateTime?>("ConnectUpdateTime")
                         .HasColumnType("datetime(6)");
 
@@ -744,9 +743,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.Property<string>("DeviceType")
                         .HasColumnType("longtext");
-
-                    b.Property<DateTime?>("DisConnectUpdateTime")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("GateId")
                         .HasColumnType("longtext");
