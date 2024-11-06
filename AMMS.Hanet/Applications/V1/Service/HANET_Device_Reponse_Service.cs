@@ -18,12 +18,14 @@ namespace AMMS.Hanet.Applications.V1.Service
     public class HANET_Device_Reponse_Service
     {
         private readonly IEventBusAdapter _eventBusAdapter;
+        private readonly IConfiguration _configuration;
 
         DeviceAutoPushDbContext _deviceAutoPushDbContext;
-        public HANET_Device_Reponse_Service(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter)
+        public HANET_Device_Reponse_Service(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter,IConfiguration configuration1)
         {
             _deviceAutoPushDbContext = deviceAutoPushDbContext;
             _eventBusAdapter = eventBusAdapter;
+            _configuration = configuration1;
         }
         /// <summary>
         /// Xử lý thông tin thiết bị trả về
@@ -84,7 +86,8 @@ namespace AMMS.Hanet.Applications.V1.Service
                         ReponseType = RB_DataResponseType.AttendenceHistory,
                     };
 
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Data_Auto_Push_D2S);
+                     var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
+
                     await aa.Send(rB_Response);
 
 
@@ -135,7 +138,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                     ReponseType = RB_DataResponseType.AttendenceImage,
                 };
 
-                var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Data_Auto_Push_D2S);
+                var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
                 await aa.Send(rB_DataResponse);
             }
             catch (Exception ex)

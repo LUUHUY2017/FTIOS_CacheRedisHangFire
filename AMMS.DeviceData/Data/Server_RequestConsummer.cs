@@ -28,7 +28,7 @@ namespace AMMS.DeviceData.Data
                 #region Zkteco
                 if (data.DeviceModel.ToUpper() == EventBusConstants.ZKTECO)
                 {
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync(_configuration.GetValue<string>("DataArea") + EventBusConstants.ZK_Server_Push_S2D);
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration.GetValue<string>("DataArea")}_{EventBusConstants.ZKTECO}{EventBusConstants.ZK_Server_Push_S2D}");
                     await aa.Send(data);
                 }
 
@@ -37,7 +37,7 @@ namespace AMMS.DeviceData.Data
                 #region Hanet
                 if (data.DeviceModel.ToUpper() == EventBusConstants.HANET)
                 {
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync(_configuration.GetValue<string>("DataArea") + EventBusConstants.Hanet_Server_Push_S2D);
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration.GetValue<string>("DataArea")}_{EventBusConstants.HANET}{EventBusConstants.Hanet_Server_Push_S2D}");
                     await aa.Send(data);
                 }
 

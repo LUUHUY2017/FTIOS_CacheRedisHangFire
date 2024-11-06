@@ -63,7 +63,7 @@ public partial class TimeAttendenceEventService
     {
         try
         {
-            var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Server_Auto_Push_SMAS);
+            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}");
             await aa.Send(data);
 
             return new Result<SyncDataRequest>($"Gửi thành công", true);

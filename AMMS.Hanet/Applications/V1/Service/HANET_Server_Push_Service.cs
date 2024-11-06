@@ -16,13 +16,15 @@ namespace AMMS.Hanet.Applications.V1.Service
         private readonly IEventBusAdapter _eventBusAdapter;
         private readonly DeviceCacheService _deviceCacheService;
         public static string ServerHanet = "https://partner.hanet.ai";
+        private readonly IConfiguration _configuration;
 
         DeviceAutoPushDbContext _deviceAutoPushDbContext;
-        public HANET_Server_Push_Service(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter, DeviceCacheService deviceCacheService)
+        public HANET_Server_Push_Service(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter, DeviceCacheService deviceCacheService, IConfiguration configuration1)
         {
             _deviceAutoPushDbContext = deviceAutoPushDbContext;
             _eventBusAdapter = eventBusAdapter;
             _deviceCacheService = deviceCacheService;
+            _configuration = configuration1;
         }
 
         #region Pust data user
@@ -206,7 +208,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                     Message = conmandlog.successed == true ? RB_ServerResponseMessage.Complete : RB_ServerResponseMessage.InComplete,
                 };
 
-                var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Device_Auto_Push_D2S);
+                var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}");
                 await aa.Send(response);
 
             }
@@ -532,7 +534,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                 {
                     add = true;
                     data = new hanet_terminal();
-                    data.create_time  = DateTime.Now;
+                    data.create_time = DateTime.Now;
                     data.Id = tA_Device.Id;
                 }
                 data.Id = tA_Device.Id;
@@ -641,5 +643,5 @@ namespace AMMS.Hanet.Applications.V1.Service
         public string? Url { get; set; }
 
     }
-   
+
 }

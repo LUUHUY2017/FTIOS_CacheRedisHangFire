@@ -70,7 +70,7 @@ public class StudentService
             {
                 foreach (var item in retval)
                 {
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Server_Auto_Push_S2D);
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}");
                     await aa.Send(item);
                 }
             }
