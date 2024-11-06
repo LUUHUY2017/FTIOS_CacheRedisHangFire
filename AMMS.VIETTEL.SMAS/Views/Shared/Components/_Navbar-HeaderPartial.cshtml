@@ -97,13 +97,13 @@
                             @if (Context.User.Identity.IsAuthenticated)
                             {
                                 @*@User?.Identity?.Name*@
-                                @Context.User.FindFirstValue("FullName")
+                                @Context.User.FindFirstValue("name")
                             }
                         </span>
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a href="https://localhost:5001/v1/userprofile" target="_blank" class="dropdown-item">
+                       @*  <a href="https://localhost:5001/v1/userprofile" target="_blank" class="dropdown-item">
                             <i class="ph-user-circle me-2"></i>
                             Thông tin của tôi
                         </a>
@@ -112,7 +112,7 @@
                         <a href="https://localhost:5001/v1/userprofile" target="_blank" class="dropdown-item">
                             <i class="ph-gear me-2"></i>
                             Cài đặt tài khoản
-                        </a>
+                        </a> *@
                        <a href="javascript:void(0)" v-on:click="logout" class="dropdown-item">
                             <i class="ph-sign-out me-2"></i>
                             Đăng xuất

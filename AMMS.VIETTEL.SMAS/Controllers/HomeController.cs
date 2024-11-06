@@ -4,7 +4,7 @@ using Share.WebApp.Helps;
 
 namespace AMMS.VIETTEL.SMAS.Controllers;
 
-[Route("[controller]")]
+[Route("/")]
 [AuthorizeClient]
 public class HomeController : AuthBaseController
 {
