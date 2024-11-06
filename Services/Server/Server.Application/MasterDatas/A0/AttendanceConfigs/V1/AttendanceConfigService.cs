@@ -151,10 +151,23 @@ public class AttendanceConfigService
                     await _timeConfigRepository.AddAsync(new A0_TimeConfig() { OrganizationId = checkSchoolAdd.Data.Id });
                 }
             }
+            else
+            {
+
+                A2_Organization checkSchool = checkSchoolAdd.Data;
+
+                checkSchool.ProvinceCode = postSchool.ProvinceCode;
+                checkSchool.ProvinceName = postSchool.ProvinceName;
+                await _organizationRepository.UpdateAsync(checkSchool);
+            }
+
+
             if (checkSchoolAdd.Data == null)
             {
                 return new Result<A0_AttendanceConfig>(null, "Đồng bộ thất bại!", false);
             }
+
+
             //Gắn trường với attendance config
             var configAsync = await _attendanceConfigRepository.GetByIdAsync(configModel.Id);
             configAsync.Data.OrganizationId = checkSchoolAdd.Data.Id;
