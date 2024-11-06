@@ -28,7 +28,7 @@ public class ZK_TA_DataService
     private const string ATTPHOTO = "ATTPHOTO";
     private const string OPERLOG = "OPERLOG";
 
-     public async Task AddTA_Data(ZK_TA_DATA data)
+    public async Task AddTA_Data(ZK_TA_DATA data)
     {
         try
         {
@@ -83,7 +83,7 @@ public class ZK_TA_DataService
                         taData.PersonId = nguoi?.Id;
                         taData.DeviceId = thietbi?.Id;
                         taData.TimeEvent = timeAtt;
-
+                        taData.CreatedTime = DateTime.Now;
                         //Lưu vào CSDL
                         await _deviceAutoPushDbContext.zk_transaction.AddAsync(taData);
                         var save = await _deviceAutoPushDbContext.SaveChangesAsync();
@@ -158,16 +158,16 @@ public class ZK_TA_DataService
             #region Gửi lên RBMQ
             try
             {
-                var nguoi = _deviceAutoPushDbContext.zk_user.FirstOrDefault(x => x.user_code == userId);
+                var lastAtt = _deviceAutoPushDbContext.zk_transaction.OrderByDescending(x => x.CreatedTime).FirstOrDefault(x => x.PersonCode == userId);
 
                 TA_AttendenceImage tA_AttendenceImage = new TA_AttendenceImage()
                 {
                     Id = Guid.NewGuid().ToString(),
                     ImageBase64 = "",
-                    PersonId = nguoi?.Id,
                     PersonCode = userId,
                     SerialNumber = SN,
                     TimeEvent = DateTime.Now,
+                    AttendenceHistoryId = lastAtt?.Id,
                 };
 
                 RB_DataResponse rB_DataResponse = new RB_DataResponse()

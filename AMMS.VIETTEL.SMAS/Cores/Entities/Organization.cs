@@ -38,4 +38,13 @@ public class Organization : EntityBase
 
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
+
+    /// <summary>
+    /// Mã tỉnh
+    /// </summary>
+    public string? ProvinceCode { get; set; }
+    /// <summary>
+    /// Tỉnh
+    /// </summary>
+    public string? ProvinceName { get; set; }
 }

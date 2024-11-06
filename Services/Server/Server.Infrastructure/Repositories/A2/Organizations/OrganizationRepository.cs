@@ -97,7 +97,10 @@ public class OrganizationRepository : RepositoryBaseMasterData<A2_Organization>,
             var _order = _db.A2_Organization.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
-                data.CopyPropertiesTo(_order);
+                // data.CopyPropertiesTo(_order);
+                _order.OrganizationCode = data.OrganizationCode;
+                _order.OrganizationName = data.OrganizationName;
+                _order.OrganizationDescription = data.OrganizationDescription;
                 _db.A2_Organization.Update(_order);
                 message = "Cập nhật thành công";
             }
