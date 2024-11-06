@@ -327,7 +327,7 @@ public class StudentService
         try
         {
             var stu = _map.Map<A2_Student>(request);
-            await _studentRepository.SaveAsync(stu);
+            await _studentRepository.SaveDataAsync(stu);
 
             var per = new A2_Person()
             {

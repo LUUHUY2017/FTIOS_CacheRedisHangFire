@@ -2,6 +2,7 @@
 
 public interface ICronJobService
 {
-    Task SyncStudentFromSmas();
-    void Write();
+    Task UpdateScheduleSyncSmasCronJob(string jobId, string sheduleId, string newCronExpression);
+    Task SyncStudentFromSmas(string sheduleId);
+  
 }

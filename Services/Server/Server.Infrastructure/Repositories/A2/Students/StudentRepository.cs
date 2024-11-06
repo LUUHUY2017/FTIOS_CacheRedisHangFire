@@ -55,5 +55,43 @@ public class StudentRepository : RepositoryBaseMasterData<A2_Student>, IStudentR
         }
     }
 
+    public async Task<Result<A2_Student>> SaveDataAsync(A2_Student data)
+    {
+        string message = "";
+        try
+        {
+            var _order = await _dbContext.A2_Student.FirstOrDefaultAsync(o => o.StudentCode == data.StudentCode);
+            if (_order != null)
+            {
+                data.CopyPropertiesTo(_order);
+                _order.ImageSrc = null;
+                _dbContext.A2_Student.Update(_order);
+                message = "Cập nhật thành công";
+            }
+            else
+            {
+                _order = new A2_Student();
+                data.CopyPropertiesTo(_order);
 
+                await _dbContext.A2_Student.AddAsync(_order);
+                message = "Thêm mới thành công";
+            }
+
+            try
+            {
+                var retVal = await _dbContext.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                message = $"Error occurred: {ex.Message}";
+            }
+
+            return new Result<A2_Student>(_order, message, true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<A2_Student>(data, "Lỗi: " + ex.ToString(), false);
+        }
+    }
 }

@@ -34,6 +34,7 @@ public sealed class SmartService
     public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
     public static string secretKey = "SMas$#3/*/lsn_diem_danh";
+   
 
     public async Task<AccessToken> GetToken(string orgId)
     {
@@ -295,7 +296,7 @@ public sealed class SmartService
                 string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, "20186511");
                 var req = new StudentSmasApiRequest()
                 {
-                    secretKey = secretKey,
+                    secretKey = _secretKey,
                     provinceCode = provinceCode,
                     schoolCode = schoolCode,
                     schoolYearCode = schoolYearCode,
