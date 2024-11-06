@@ -117,7 +117,7 @@ public class ZK_TA_DataService
                     ReponseType = RB_DataResponseType.AttendenceHistory,
                 };
 
-                var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Data_Auto_Push_D2S);
+                var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
                 await aa.Send(rB_Response);
 
             }
@@ -177,7 +177,7 @@ public class ZK_TA_DataService
                     ReponseType = RB_DataResponseType.AttendenceImage,
                 };
 
-                var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Data_Auto_Push_D2S);
+                var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
                 await aa.Send(rB_DataResponse);
 
             }

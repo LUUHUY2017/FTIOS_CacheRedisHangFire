@@ -70,7 +70,7 @@ public class StudentService
             {
                 foreach (var item in retval)
                 {
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Server_Auto_Push_S2D);
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}");
                     await aa.Send(item);
                 }
             }
@@ -88,7 +88,7 @@ public class StudentService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<Result<DtoStudentRequest>> Save(DtoStudentRequest request)
+    public async Task<Result<DtoStudentRequest>> SaveFromWeb(DtoStudentRequest request)
     {
         try
         {
@@ -322,7 +322,32 @@ public class StudentService
         }
     }
 
+    public async Task<Result<DtoStudentRequest>> SaveFromService(DtoStudentRequest request)
+    {
+        try
+        {
+            var stu = _map.Map<A2_Student>(request);
+            await _studentRepository.SaveAsync(stu);
 
+            var per = new A2_Person()
+            {
+                Id = request.Id,
+                Actived = true,
+                PersonCode = request.StudentCode,
+                FirstName = request.Name,
+                LastName = request.FullName,
+                CitizenId = request.IdentifyNumber,
+            };
+            var data = await _personRepository.SaveAsync(per);
+            return new Result<DtoStudentRequest>($"Cập nhật thành công", true);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+            return new Result<DtoStudentRequest>($"Gửi email lỗi: {e.Message}", false);
+        }
+
+    }
 }
 
 

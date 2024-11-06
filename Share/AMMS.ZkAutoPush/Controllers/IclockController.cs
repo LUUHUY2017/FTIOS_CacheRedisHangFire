@@ -131,7 +131,7 @@ public class IclockController : ControllerBase
             data.SN = sn;
             data.ReceivedTime = DateTime.Now;
 
-            var aa = await _eventBusAdapter.GetSendEndpointAsync(_configuration.GetValue<string>("DataArea") + EventBusConstants.ZK_Auto_Push_D2S);
+            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}_{EventBusConstants.ZKTECO}{EventBusConstants.ZK_Auto_Push_D2S}");
             await aa.Send(data);
             //var a = await _cacheService.GetData<string>($"{sn}");
 
@@ -298,7 +298,7 @@ public class IclockController : ControllerBase
             data.SN = sn;
             data.ReceivedTime = DateTime.Now;
 
-            var aa = await _eventBusAdapter.GetSendEndpointAsync(_configuration.GetValue<string>("DataArea") + EventBusConstants.ZK_Response_Push_D2S);
+            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}_{EventBusConstants.ZKTECO}{EventBusConstants.ZK_Response_Push_D2S}");
             await aa.Send(data);
 
             var contentArr1 = content.Split('\n');

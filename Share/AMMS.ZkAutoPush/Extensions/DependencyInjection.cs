@@ -119,24 +119,21 @@ public static class DependencyInjection
 
                 //provide the queue name with consumer settings
                 //Data to SV
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.ZK_Auto_Push_D2S}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}_{EventBusConstants.ZKTECO}{EventBusConstants.ZK_Auto_Push_D2S}", c =>
                 {
                     c.ConfigureConsumer<ZK_TA_DataConsummer>(ct);
                 });
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.ZK_Response_Push_D2S}", c =>
+                //Device RP
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}_{EventBusConstants.ZKTECO}{EventBusConstants.ZK_Response_Push_D2S}", c =>
                 {
                     c.ConfigureConsumer<ZK_DEVICE_RPConsummer>(ct);
                 });
                 //Request from SV
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.ZK_Server_Push_S2D}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}_{EventBusConstants.ZKTECO}{EventBusConstants.ZK_Server_Push_S2D}", c =>
                 {
                     c.ConfigureConsumer<ZK_SV_PUSHConsummer>(ct);
                 });
-
-
-
-
-
+ 
                 cfg.ConfigureEndpoints(ct);
             });
         });

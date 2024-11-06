@@ -87,7 +87,8 @@ if (builder.Configuration["Hangfire:Enable"] == "True")
 }
 
 
-services.AddIdentityCore<ApplicationUser>(options => {
+services.AddIdentityCore<ApplicationUser>(options =>
+{
     // Cấu hình các tùy chọn Identity, nếu cần
 })
 .AddRoles<IdentityRole>() // Nếu có sử dụng role
@@ -173,8 +174,9 @@ services.AddAutoMapper(typeof(Program));
 services.AddScopedServices();
 
 //Swagger
-//services.AddSwaggerGen();
-services.AddSwaggerGen(c =>
+if (configuration["Authentication:Swagger:Active"] == "True")
+{
+    services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(
                "v1",
@@ -252,7 +254,7 @@ services.AddSwaggerGen(c =>
     c.IncludeXmlComments(fileName);
 
 });
-
+}
 services.AddHttpClient();
 services.AddControllersWithViews();
 
@@ -260,19 +262,26 @@ var app = builder.Build();
 
 app.UseCors("CorsPolicy");
 
-if (app.Environment.IsDevelopment())
+if (configuration["Authentication:Swagger:Active"] == "True")
 {
-    app.UseSwagger();
-    //app.UseSwaggerUI();
+    app.UseSwagger(); 
     app.UseSwaggerUI(c =>
     {
         c.OAuthClientId(configuration["Authentication:Swagger:ClientId"]);
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "AMMS Viettel SMAS Api v1");
     });
 
+}
+if (app.Environment.IsDevelopment())
+{
     app.UseDeveloperExceptionPage();
 }
-
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
@@ -328,16 +337,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
 
 
 app.Run();

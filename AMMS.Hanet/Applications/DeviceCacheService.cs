@@ -1,4 +1,5 @@
-﻿using AMMS.Hanet.Datas.Databases;
+﻿using AMMS.DeviceData.RabbitMq;
+using AMMS.Hanet.Datas.Databases;
 using AMMS.Hanet.Datas.Entities;
 using Microsoft.EntityFrameworkCore;
 using Shared.Core.Caches.Redis;
@@ -92,11 +93,11 @@ namespace AMMS.Hanet.Applications
         }
         private string GetKey(string serialNumber)
         {
-            return $"{_configuration.GetValue<string>("DataArea")}:{key}:{serialNumber}";
+            return $"{_configuration.GetValue<string>("DataArea")}_{EventBusConstants.HANET}:{key}:{serialNumber}";
         }
         private string GetKey()
         {
-            return $"{_configuration.GetValue<string>("DataArea")}:{key}:*";
+            return $"{_configuration.GetValue<string>("DataArea")}_{EventBusConstants.HANET}:{key}:*";
         }
     }
 

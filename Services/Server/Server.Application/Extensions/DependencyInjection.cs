@@ -137,7 +137,7 @@ public static class DependencyInjection
 
                 #region  Device
                 //// Nhận Response từ Sự kiện đồng bộ thiết bị trả về
-                cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Device_Auto_Push_D2S}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}", c =>
                 //cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Server_Auto_Push_S2D}", c =>
                 {
                     c.ConfigureConsumer<StudentConsumer>(ct);
@@ -146,12 +146,12 @@ public static class DependencyInjection
 
                 #region  Report
                 //// Nhận Response từ Sự kiện đồng bộ thiết bị trả về
-                cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Data_Auto_Push_D2S}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}", c =>
                 {
                     c.ConfigureConsumer<TimeAttendenceEventConsumer>(ct);
                 });
 
-                cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Server_Auto_Push_SMAS}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}", c =>
                 {
                     c.ConfigureConsumer<TimeAttendenceSyncSmasConsumer>(ct);
                 });
@@ -159,7 +159,7 @@ public static class DependencyInjection
 
                 #region Gửi request xuống máy trạm
                 //Request from SV
-                cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Server_Auto_Push_S2D}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}", c =>
                 {
                     c.ConfigureConsumer<Server_RequestConsummer>(ct);
                 });

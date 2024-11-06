@@ -146,7 +146,7 @@ public class ZK_DEVICE_RPService
                                     Message = x.IsSuccessed ? RB_ServerResponseMessage.Complete : RB_ServerResponseMessage.InComplete,
                                 };
 
-                                var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Device_Auto_Push_D2S);
+                                var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}");
                                 await aa.Send(response);
 
                             }

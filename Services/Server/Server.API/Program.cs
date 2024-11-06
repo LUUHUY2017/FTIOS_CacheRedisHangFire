@@ -300,7 +300,9 @@ services.AddHttpClient();
 builder.Services.AddControllersWithViews();
 
 //Swagger
-services.AddSwaggerGen(c =>
+if (configuration["Authentication:Swagger:Active"] == "True")
+{
+    services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(
                "v1",
@@ -378,7 +380,7 @@ services.AddSwaggerGen(c =>
     c.IncludeXmlComments(fileName);
 
 });
-
+}
 //Redis
 //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
 //services.AddSingleton<IRedisNotificationService, RedisNotificationService>();
@@ -408,16 +410,30 @@ if (builder.Configuration["Hangfire:Enable"] == "True")
 
 using (var scope = app.Services.CreateScope())
 {
+    //Khởi tạo siganlr
+    try
+    {
+        var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
+        signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
+        signalRClient.Start();
+    }
+    catch (Exception ex)
+    {
+        Logger.Error(ex);
+    }
+
+    //KHởi tạo job kiểm tra dữ liệu
     try
     {
         var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        // RecurringJob.AddOrUpdate("Test", () => conJobService.Write(), "*/1 * * * *", TimeZoneInfo.Local);
-        //RecurringJob.AddOrUpdate("CheckDeviceOnline" ,() => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);
+        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}SyncSmas", () => conJobService.SyncStudentFromSmas(), "*/1 * * * *", TimeZoneInfo.Local);
     }
-    catch (Exception e)
+    catch (Exception ex)
     {
-        Logger.Error(e);
+
+        Logger.Error(ex);
     }
+
 }
 
 
@@ -645,7 +661,7 @@ if (app.Environment.IsDevelopment())
 
         }
     }
- 
+
     app.UseDeveloperExceptionPage();
 }
 else

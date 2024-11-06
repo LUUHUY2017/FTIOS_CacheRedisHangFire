@@ -153,15 +153,15 @@ public static class DependencyInjection
 
 
                 //provide the queue name with consumer settings
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Hanet_Auto_Push_D2S}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}_{EventBusConstants.HANET}{EventBusConstants.Hanet_Auto_Push_D2S}", c =>
                 {
                     c.ConfigureConsumer<HANET_Checkin_DataConsummer>(ct);
                 });
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Hanet_Device_Push_D2S}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}_{EventBusConstants.HANET}{EventBusConstants.Hanet_Device_Push_D2S}", c =>
                 {
                     c.ConfigureConsumer<HANET_DEVICE_PUSHConsummer>(ct);
                 });
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Hanet_Server_Push_S2D}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}_{EventBusConstants.HANET}{EventBusConstants.Hanet_Server_Push_S2D}", c =>
                 {
                     c.ConfigureConsumer<HANET_SERVER_PUSHConsummer>(ct);
                 });

@@ -2,8 +2,7 @@
 
 public static class EventBusConstants
 {
-    public static string DataArea { get; private set; } = @"MQDevice";
-
+ 
     #region Web
     /// <summary>
     /// Phản hồi dữ liệu chấm công, ảnh chụp lên web

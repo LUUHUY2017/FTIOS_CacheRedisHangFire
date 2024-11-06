@@ -2,6 +2,7 @@
 using AutoMapper;
 using DocumentFormat.OpenXml.Office2019.Drawing.Model3D;
 using EventBus.Messages;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Server.Application.MasterDatas.A2.Devices.Models;
 using Server.Application.MasterDatas.A2.Devices.Models.Commons;
@@ -21,16 +22,21 @@ namespace Server.Application.MasterDatas.A2.Devices
         private readonly IEventBusAdapter _eventBusAdapter;
         private readonly IDeviceRepository _deviceRepository;
         protected readonly IMasterDataDbContext _dbContext;
+        private readonly IConfiguration _configuration;
+
         public DeviceService(
             IMapper mapper,
             IEventBusAdapter eventBusAdapter,
             IDeviceRepository deviceRepository,
-            IMasterDataDbContext dbContext)
+            IMasterDataDbContext dbContext,
+            IConfiguration configuration
+            )
         {
             _mapper = mapper;
             _eventBusAdapter = eventBusAdapter;
             _deviceRepository = deviceRepository;
             _dbContext = dbContext;
+            _configuration = configuration;
         }
 
         public async Task<List<A2_Device>> GetAll()
@@ -135,7 +141,7 @@ namespace Server.Application.MasterDatas.A2.Devices
                             SchoolId = result.Data.OrganizationId,
                             RequestParam = param
                         };
-                        var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Server_Auto_Push_S2D);
+                        var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}");
                         await aa.Send(item);
                     }
                     return result;
@@ -181,7 +187,7 @@ namespace Server.Application.MasterDatas.A2.Devices
                         Id = modelDel.Data.Id,
                         DeviceName = modelDel.Data.DeviceName,
                         SerialNumber = modelDel.Data.SerialNumber,
-                        
+
                     };
                     var param = JsonConvert.SerializeObject(devive);
                     RB_ServerRequest item = new RB_ServerRequest()
@@ -195,7 +201,7 @@ namespace Server.Application.MasterDatas.A2.Devices
                         SchoolId = modelDel.Data.OrganizationId,
                         RequestParam = param,
                     };
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Server_Auto_Push_S2D);
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}");
                     await aa.Send(item);
                 }
                 return response;

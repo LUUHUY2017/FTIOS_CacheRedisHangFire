@@ -48,7 +48,7 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
         public async Task<IActionResult> Edit(DtoStudentRequest request)
         {
             request.OrganizationId = GetOrganizationId();
-            var data = await _studentService.Save(request);
+            var data = await _studentService.SaveFromWeb(request);
             return Ok(data);
         }
 

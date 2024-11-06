@@ -9,10 +9,13 @@
 
 	<ItemGroup>
 		<PackageReference Include="MassTransit" Version="8.2.4" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+
 	</ItemGroup>
 
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Services\Share\EventBus.Messages\EventBus.Messages.csproj" />
+	  <ProjectReference Include="..\Services\Share\Shared.Core\Shared.Core.csproj" />
 	</ItemGroup>
 </Project>
