@@ -160,10 +160,10 @@
 
 <script>
     $(document).ready(function () {
-        // $('#FilterOrgainization').on("change", function () {
-        //     _config.filter.organizationId = $(this).val();
-        //     _config.loadData();
-        // });
+        $('#FilterOrgainization').on("change", function () {
+            _config.filter.organizationId = $(this).val();
+            _config.loadData();
+        });
     });
     var _config = new Vue({
         el: '#webui_attendenceConfig',
@@ -291,7 +291,7 @@
                     field: "clientSecret",
                     sortable: true,
                 },
-                
+
             ],
             data: [],
             item: {},
@@ -440,8 +440,8 @@
             },
         },
         mounted() {
-            //this.loadCombox();
-            this.loadData();
+            this.loadCombox();
+            //this.loadData();
         },
     })
 </script>
