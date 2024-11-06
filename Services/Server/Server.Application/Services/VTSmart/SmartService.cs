@@ -76,7 +76,6 @@ public sealed class SmartService
         }
         return accessToken;
     }
-
     public async Task<AccessToken> RefreshToken(A0_AttendanceConfig conf)
     {
         AccessToken retval = null;
@@ -107,6 +106,7 @@ public sealed class SmartService
         }
         return retval;
     }
+
 
     #region GET
     public async Task<CurrentUserInfo> PostCurrentUser(string orgId)
@@ -280,7 +280,6 @@ public sealed class SmartService
         return result;
     }
 
-
     public async Task<List<StudenSmasApiResponse>> PostListStudents(string provinceCode, string schoolCode, string schoolYearCode)
     {
         List<StudenSmasApiResponse> retval = new List<StudenSmasApiResponse>();
@@ -325,10 +324,10 @@ public sealed class SmartService
         }
         return retval;
     }
-
-
-
     #endregion
+
+
+
     #region POST
     public async Task<SyncDataResponse> PostSyncAttendence2Smas(SyncDataRequest req)
     {
@@ -363,7 +362,6 @@ public sealed class SmartService
         }
         return retval;
     }
-
     public string EncryptStringSMAS(string plaintext, byte[] key, byte[] iv)
     {
         using (Aes aes = Aes.Create())

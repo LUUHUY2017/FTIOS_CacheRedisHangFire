@@ -140,6 +140,9 @@ public class AttendanceConfigService
                         OrganizationEmail = postSchool.Email,
                         OrganizationDescription = postSchool.Description,
                         OrganizationTypeId = postSchool.TypeCode,
+
+                        ProvinceCode = postSchool.ProvinceCode,
+                        ProvinceName = postSchool.ProvinceName,
                     }
                 );
                 //thêm vào time config
