@@ -134,3 +134,7 @@
 /AMMS.VIETTEL.SMAS/bin/Debug/net6.0
 /AMMS.VIETTEL.SMAS/obj
 /AMMS.DeviceData/bin/Release/net6.0
+/AMMS.Hanet/bin/Release/net6.0
+/AMMS.Hanet/Properties/PublishProfiles/FolderProfile.pubxml
+/AMMS.VIETTEL.SMAS/bin/Release/net6.0
+/Share/AMMS.ZkAutoPush/bin/Release/net6.0
