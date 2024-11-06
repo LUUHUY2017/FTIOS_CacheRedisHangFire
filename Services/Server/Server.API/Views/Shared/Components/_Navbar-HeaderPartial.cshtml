@@ -315,6 +315,7 @@
     $(document).ready(function () {
         $('#FilterOrgainizationNav').on("change", function () {
             _navbarHeader.setCookie("organizationId", $(this).val(), 7);
+              location.reload();
         });
     });
     var _navbarHeader = new Vue({
