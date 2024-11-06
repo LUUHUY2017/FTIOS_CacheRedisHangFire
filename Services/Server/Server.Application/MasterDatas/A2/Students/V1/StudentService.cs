@@ -186,7 +186,7 @@ public class StudentService
                             DeviceId = device.Id,
                             PersonId = stu.Id,
                             SynAction = ServerRequestAction.ActionAdd,
-                            LastModifiedDate = DateTime.UtcNow
+                            LastModifiedDate = DateTime.Now
                         };
                         await _dbContext.A2_PersonSynToDevice.AddAsync(item);
                     }
@@ -251,7 +251,7 @@ public class StudentService
                 _devis.SynFaceStatus = request.IsSuccessed;
                 _devis.SynMessage = request.Message;
                 _devis.SynFaceMessage = request.Message;
-                _devis.LastModifiedDate = DateTime.UtcNow;
+                _devis.LastModifiedDate = DateTime.Now;
             }
             await _dbContext.SaveChangesAsync();
             statusSync = true;
