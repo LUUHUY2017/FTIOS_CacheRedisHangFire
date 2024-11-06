@@ -28,10 +28,9 @@
     public class TA_AttendenceImage
     {
         public string Id { get; set; }
-        public string AttendenceHistoryId { get; set; }
+        public string? AttendenceHistoryId { get; set; }
 
-        public string PersonId { get; set; }
-        /// <summary>
+         /// <summary>
         /// Mã học sinh
         /// </summary>
         public string? PersonCode { get; set; }
