@@ -35,7 +35,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-3  ">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="form-label">Từ ngày</label>
                             <datetime type="date"
                                       v-model="filter.startDate"
@@ -43,7 +43,7 @@
                                       placeholder="Vui lòng chọn thời gian...">
                             </datetime>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="form-label">Đến ngày</label>
                             <datetime type="date"
                                       v-model="filter.endDate"
@@ -51,15 +51,33 @@
                                       placeholder="Vui lòng chọn thời gian...">
                             </datetime>
                         </div>
-                       @*  <div class="col-md-2">
+                        <div class="col-md-2">
+                            <label class="form-label">Trường học</label>
+                            <select id="schoolLevelCode" class="form-control select" v-model:value="dtoClass.schoolLevelCode">
+                                <option selected value="">Vui lòng chọn trường học </option>
+                                <option v-for="option in combobox.schools" v-bind:value="option.schoolLevelCode">
+                                    {{ option.schoolLevelName }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Năm học</label>
+                            <select id="schoolYearId" class="form-control select" v-model:value="dtoClass.schoolYearId">
+                                <option selected value="">Vui lòng chọn năm học </option>
+                                <option v-for="option in combobox.schoolYears" v-bind:value="option.schoolYearId">
+                                    {{ option.code }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
                             <label class="form-label">Lớp</label>
                             <select id="classId" class="form-control select">
-                                <option selected value=null>Vui lòng chọn lớp </option>
+                                <option selected value="">Vui lòng chọn lớp </option>
                                 <option v-for="option in combobox.classes" v-bind:value="option.id">
                                     {{ option.className }}
                                 </option>
                             </select>
-                        </div> *@
+                        </div>
                     </div>
                     <div class="row ">
                         <div class="text-start">
@@ -213,7 +231,7 @@
 
     $(document).ready(function () {
         $('#schoolLevelCode').on("change", function () {
-            _syncD.dtoClass.schoolLevelCode = $(this).val();
+            _syncD.dtoClass.schoolLevelCode = $(this).val() ?? null;
 
             _syncD.combobox.classes = [];
             _syncD.combobox.data = [];
@@ -226,9 +244,9 @@
         });
 
         $('#schoolYearId').on("change", function () {
-            _syncD.filter.schoolYearId = $(this).val();
-            _syncD.dtoClass.schoolYearId = $(this).val();
-            _syncD.dtoClass.Schoolyear = $(this).find(":selected").text()?.trim();
+            _syncD.filter.schoolYearId = $(this).val() ?? null;
+            _syncD.dtoClass.schoolYearId = $(this).val() ?? null;
+            _syncD.dtoClass.Schoolyear = $(this).find(":selected").text()?.trim() ?? null;
 
             _syncD.combobox.classes = [];
             _syncD.combobox.data = [];
@@ -237,13 +255,13 @@
             _syncD.onLoadData();
 
 
-            localStorage.setItem('schoolYearId', $(this).val());
+            localStorage.setItem('schoolYearId', $(this).val()) ?? null;
             localStorage.setItem('schoolyear', $(this).find(":selected").text()?.trim());
 
         });
 
         $('#classId').on("change", function () {
-            _syncD.filter.classId = $(this).val();
+            _syncD.filter.classId = $(this).val() ?? null;
             _syncD.combobox.data = [];
             _syncD.onLoadData();
         });
@@ -265,7 +283,7 @@
                     align: 'center',
                     formatter: (value, row, index) => {
                         var ele = `<div style="white-space: nowrap; ">`;
-                        ele += ` <a href="javascript: " class="btn btn-warning btn-sm delete-asset sync_again " title="Inactive "> <i class="fa fa-refresh" ></i> </a> &nbsp; `;
+                        ele += ` <a href="javascript: " class="btn btn-info btn-sm sync_again " title="Sync "> <i class="fa fa-refresh" ></i> </a> &nbsp; `;
                         ele += ` </div>`;
                         return ele;
                     },
@@ -273,15 +291,23 @@
                         'click .sync_again': function (e, value, row) {
                             var question = "Bạn có chắc chắn muốn sync dòng này không?";
                             alertify.confirm('Thông báo!', question, function () {
-                                axios.get('v1/SyncDeviceServer/SyncUserAgain/' + row.id).then(response => {
-                                    alertify.success("Thao tác thành công!");
-                                    _syncD.onLoadUserSyncLog();
+                                axios.post('/api/v1/SyncDeviceServer/PostSyncItem', row).then(response => {
+
+                                    if (response.request.responseURL.includes('~/Account/Login')) {
+                                        window.location = window.location.href;
+                                    }
+
+                                    if (response.data.succeeded) {
+                                        _syncD.onLoadUserSyncLog();
+                                    }
+                                    else {
+                                        alertify.notify(response.data.message, 'error', 6, function () { });
+                                    }
                                 }).catch(error => {
                                     console.log(error);
                                 });
                             }, function () { });
                         },
-
                         'click .config': function (e, value, row) {
                             _syncD.onPopupModelConfig(row);
                         }
@@ -298,16 +324,6 @@
                     },
                 },
                 {
-                    title: "Thiết bị",
-                    sortable: true,
-                    field: 'deviceName'
-                },
-                {
-                    title: 'IP',
-                    sortable: true,
-                    field: 'ipAddress'
-                },
-                {
                     title: 'Mã học sinh',
                     sortable: true,
                     field: 'studentCode'
@@ -318,12 +334,22 @@
                     field: 'studentName'
                 },
                 {
-                    title: 'SynAction',
+                    title: "Thiết bị",
+                    sortable: true,
+                    field: 'deviceName'
+                },
+                {
+                    title: 'Địa chỉ IP',
+                    sortable: true,
+                    field: 'ipAddress'
+                },
+                {
+                    title: 'Thao tác',
                     sortable: true,
                     field: 'synAction'
                 },
                 {
-                    title: 'Status',
+                    title: 'Trạng thái',
                     sortable: true,
                     field: 'synStatus',
                     formatter: (value, row, index) => {
@@ -331,14 +357,24 @@
                         if (rel == null)
                             return "";
                         if (rel)
-                            return "<span class='label label-success'> " + rel + "</span>";
+                            return "<span class='badge bg-primary bg-opacity-10 text-primary'> Thành công</span>";
                         else
-                            return "<span class='label label-warning'> " + rel + "</span>";
+                            return "<span class='badge bg-warning bg-opacity-10 text-warning'> Không thành công</span>";
                     },
                 },
-
                 {
-                    title: 'FaceStatus',
+                    title: 'Thời gian cập nhật',
+                    sortable: true,
+                    field: 'lastModifiedDate',
+                    formatter: (value, row, index) => {
+                        if (row.lastModifiedDate) {
+                            var lastModifiedDate = moment(row.lastModifiedDate).format('DD/MM/YYYY HH:mm');
+                            return "<span class =black'> " + lastModifiedDate + "  </span>";
+                        }
+                    },
+                },
+                {
+                    title: 'Trạng thái khuôn mặt',
                     sortable: true,
                     field: 'synFaceStatus',
                     formatter: (value, row, index) => {
@@ -351,14 +387,13 @@
                             return "<input type='checkbox'  class='checked' />";
                     },
                 },
-
                 {
-                    title: 'Message',
+                    title: 'Thông báo',
                     sortable: true,
                     field: 'synMessage'
                 },
                 {
-                    title: 'FaceMessage',
+                    title: 'Nội dung',
                     sortable: true,
                     field: 'synFaceMessage'
                 },
@@ -378,8 +413,8 @@
             filter: {
                 export: 0,
                 classId: null,
-                classId: null,
                 schoolYearId: null,
+
                 startDate: formatDateTime(new Date()),
                 endDate: formatDateTime(new Date()),
             },
@@ -459,7 +494,7 @@
             },
 
             onLoadCombobox() {
-                axios.post('/api/v1/SyncDeviceServer/PostSchool', null, this.object.config).then(response => {
+                axios.post('/api/v1/StudentSmas/PostSchool', null, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
@@ -476,7 +511,7 @@
                     $('.loader').delay(100).hide(0);
                 })
 
-                axios.post('/api/v1/SyncDeviceServer/PostSchoolYears', null, this.object.config).then(response => {
+                axios.post('/api/v1/StudentSmas/PostSchoolYears', null, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
@@ -498,7 +533,7 @@
 
             },
             onPostClass() {
-                axios.post('/api/v1/SyncDeviceServer/PostClass', this.dtoClass, this.object.config).then(response => {
+                axios.post('/api/v1/StudentSmas/PostClass', this.dtoClass, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
@@ -516,7 +551,6 @@
                     $('.loader').delay(100).hide(0);
                 })
             },
-
             onLoadLocalStorage() {
                 const _schoolLevelCode = localStorage.getItem('schoolLevelCode');
                 if (_schoolLevelCode) {
@@ -532,7 +566,6 @@
                 if (_schoolyear) {
                     this.dtoClass.schoolyear = _schoolyear;
                 }
-
             },
         },
         mounted() {

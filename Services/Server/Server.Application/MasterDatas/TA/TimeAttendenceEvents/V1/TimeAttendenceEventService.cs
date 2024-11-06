@@ -3,16 +3,17 @@ using AMMS.Shared.Commons;
 using EventBus.Messages;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A2;
 using Server.Core.Entities.TA;
 using Server.Core.Interfaces.A2.Persons;
 using Server.Core.Interfaces.A2.Students;
+using Server.Core.Interfaces.TA.TimeAttendenceSyncs;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
 using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
-using System.Text.Json;
 
 namespace Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 public partial class TimeAttendenceEventService
@@ -23,6 +24,7 @@ public partial class TimeAttendenceEventService
 
     private readonly IPersonRepository _personRepository;
     private readonly IStudentRepository _studentRepository;
+    private readonly ITATimeAttendenceSyncRepository _timeAttendenceSyncRepository;
 
     private readonly IMasterDataDbContext _dbContext;
 
@@ -34,6 +36,7 @@ public partial class TimeAttendenceEventService
         ISignalRClientService signalRClientService,
         IPersonRepository personRepository,
         IStudentRepository studentRepository,
+        ITATimeAttendenceSyncRepository timeAttendenceSyncRepository,
         IMasterDataDbContext dbContext
         )
     {
@@ -43,14 +46,18 @@ public partial class TimeAttendenceEventService
 
         _personRepository = personRepository;
         _studentRepository = studentRepository;
+        _timeAttendenceSyncRepository = timeAttendenceSyncRepository;
+
         _dbContext = dbContext;
 
     }
 
-    private bool CheckEmployee(TA_AttendenceHistory data, ref A2_Person person, ref A2_Student employee)
+    private bool CheckStudents(TA_AttendenceHistory data, ref A2_Person person, ref A2_Student employee)
     {
         try
         {
+
+
         }
         catch (Exception e)
         {
@@ -58,7 +65,6 @@ public partial class TimeAttendenceEventService
         }
         return true;
     }
-
 
     public async Task<Result<SyncDataRequest>> PushAttendence2SMAS(SyncDataRequest data)
     {
@@ -76,23 +82,29 @@ public partial class TimeAttendenceEventService
         }
     }
 
-
-
     public async Task<string> ProcessAtendenceData(List<TA_AttendenceHistory> data)
     {
         try
         {
-            Logger.Information($"list: {JsonSerializer.Serialize(data)} ");
+            Logger.Information($"list: {JsonConvert.SerializeObject(data)} ");
 
             if (data.Any())
             {
+
+
                 var config = _dbContext.A0_TimeConfig.Where(o => o.Actived == true).FirstOrDefault();
+
                 if (config != null)
                 {
                     bool addEvent = false;
                     bool add = false;
                     foreach (var info in data)
                     {
+                        A2_Student student = null;
+                        A2_Person person = null;
+                        bool isset = CheckStudents(info, ref person, ref student);
+
+
                         TimeSpan timeOfDay = info.TimeEvent.Value.TimeOfDay;
                         DateTime date = info.TimeEvent.Value.Date;
                         DateTime dateTime = info.TimeEvent.Value;
@@ -157,9 +169,10 @@ public partial class TimeAttendenceEventService
                         }
 
                         // Buổi tối
+
+
                         var time = _dbContext.TA_TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode
-                        && o.EventTime.Value.Date == info.TimeEvent.Value.Date
-                        && o.AttendenceSection == sectionTime
+                        && o.EventTime.Value.Date == info.TimeEvent.Value.Date && o.AttendenceSection == sectionTime
                         ).FirstOrDefault();
 
                         if (time == null)
@@ -181,6 +194,7 @@ public partial class TimeAttendenceEventService
                         time.AbsenceDate = date;
                         time.ValueAbSent = valueAttendence;
                         time.AttendenceSection = sectionTime;
+
 
                         if (addEvent)
                             _dbContext.TA_TimeAttendenceEvent.Add(time);
@@ -226,7 +240,8 @@ public partial class TimeAttendenceEventService
                         {
                             new StudentAbsenceByDevice
                             {
-                                    StudentCode = info.PersonCode,
+                                    //StudentCode = student.SyncCode,
+                                    StudentCode = "HS1011087015",
                                     Value= valueAttendence,
                                     ExtraProperties= extra
                             }
@@ -234,18 +249,34 @@ public partial class TimeAttendenceEventService
 
                         var paramData = new SyncDataRequest()
                         {
+                            Id = time.Id,
                             //SecretKey = _secretKey,
-                            SchoolCode = time.SchoolCode,
-                            SchoolYearCode = time.SchoolYearCode,
-                            ClassCode = time.ClassCode,
-                            AbsenceDate = date,
+
+                            //SchoolCode = time.SchoolCode,
+                            //SchoolYearCode = time.SchoolYearCode,
+                            //ClassCode = student.SyncCodeClass,
+
+                            SchoolCode = "20186511",
+                            SchoolYearCode = "2024-2025",
+                            ClassCode = "LH_20186511_2024_1001592298",
+
+                            AbsenceDate = dateTime,
                             Section = sectionTime,
                             FormSendSMS = 1,
                             StudentAbsenceByDevices = studentAbsenceByDevices,
                         };
+
+                        string paras = JsonConvert.SerializeObject(paramData);
+                        var timeSync = new TA_TimeAttendenceSync()
+                        {
+                            Id = time.Id,
+                            TimeAttendenceEventId = time.Id,
+                            Actived = true,
+                            ParamRequests = paras
+                        };
+                        bool status = await SaveStatuSyncSmas(timeSync);
                         await PushAttendence2SMAS(paramData);
                     }
-
                     await _dbContext.SaveChangesAsync();
                 }
             }
@@ -255,6 +286,24 @@ public partial class TimeAttendenceEventService
             Logger.Error(e);
         }
         return "";
+    }
+
+    public async Task<bool> SaveStatuSyncSmas(TA_TimeAttendenceSync request)
+    {
+        bool statusSync = false;
+        try
+        {
+            var data = await _timeAttendenceSyncRepository.UpdateStatusAsync(request);
+            if (data.Succeeded)
+            {
+                statusSync = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return statusSync;
     }
 
 }

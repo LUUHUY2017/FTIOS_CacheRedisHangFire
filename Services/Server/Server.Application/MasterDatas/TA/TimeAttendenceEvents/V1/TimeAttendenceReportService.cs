@@ -17,8 +17,7 @@ public partial class TimeAttendenceEventService
                                where
                                 (request.StartDate != null ? _do.CreatedDate.Date >= request.StartDate.Value.Date : true)
                                 && (request.EndDate != null ? _do.CreatedDate.Date <= request.EndDate.Value.Date : true)
-                                && (!string.IsNullOrWhiteSpace(request.OrganizationId) ? _do.OrganizationId == request.OrganizationId : true)
-                               //&& (!string.IsNullOrWhiteSpace(request.LaneId) ? _do.LaneInId == request.LaneId : true)
+                                && (!string.IsNullOrWhiteSpace(request.ClassId) ? la.ClassId == request.ClassId : true)
                                orderby _do.CreatedDate descending
                                select new AttendenceEventReportRes()
                                {
@@ -29,6 +28,7 @@ public partial class TimeAttendenceEventService
 
                                    StudentCode = _do.StudentCode,
                                    StudentName = la != null ? la.FullName : "",
+                                   ClassName = la != null ? la.ClassName : "",
 
 
                                    CreatedBy = _do.CreatedBy,

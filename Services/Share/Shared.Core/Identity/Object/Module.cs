@@ -58,7 +58,7 @@ public partial class Category
     {
         Id = "A9C52B55-A3BE-496F-80E4-5CDAD0BAAA19",
         Level = 1,
-        CategoryName = "Quản lý",
+        CategoryName = "Quản lý tài khoản",
         Parent = "",
         Icon = "ph-circles-three",
         No = 21,

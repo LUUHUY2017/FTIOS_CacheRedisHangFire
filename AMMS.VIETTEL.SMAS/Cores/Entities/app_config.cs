@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AMMS.VIETTEL.SMAS.Cores.Entities;
 
+[Table("app_config", Schema = "Hanet")]
 
 [Table("A0_Attendanceconfig")]
 public class app_config : EntityBase

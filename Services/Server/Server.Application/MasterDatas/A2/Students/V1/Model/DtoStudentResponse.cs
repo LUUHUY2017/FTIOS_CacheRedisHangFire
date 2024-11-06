@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Server.Core.Entities.A2;
 
 namespace Server.Application.MasterDatas.A2.Students.V1.Model
 {
-    internal class DtoStudentResponse
+    public class DtoStudentResponse : A2_Student
     {
+        public string ImageBase64 { get; set; }
     }
 }

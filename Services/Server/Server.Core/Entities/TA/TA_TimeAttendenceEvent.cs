@@ -42,8 +42,5 @@ namespace Server.Core.Entities.TA
         /// X: Trường hợp đặc biệt(Đi muộn, bỏ tiết, về sớm)
         /// </summary>
         public string? ValueAbSent { get; set; }
-
-
     }
-
 }

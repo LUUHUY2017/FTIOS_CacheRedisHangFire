@@ -85,6 +85,21 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.Property<DateTime?>("TimeAsync")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("access_token")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("expires_in")
+                        .HasColumnType("int");
+
+                    b.Property<string>("refresh_token")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("time_expires_in")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("token_type")
+                        .HasColumnType("longtext");
+
                     b.HasKey("Id");
 
                     b.ToTable("A0_AttendanceConfig");
@@ -1523,6 +1538,9 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.Property<string>("ReferenceId")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("SchoolCode")
+                        .HasColumnType("longtext");
+
                     b.Property<int?>("SortOrder")
                         .HasColumnType("int");
 
@@ -1903,6 +1921,62 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.HasKey("Id");
 
                     b.ToTable("TA_TimeAttendenceEvent");
+                });
+
+            modelBuilder.Entity("Server.Core.Entities.TA.TA_TimeAttendenceSync", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<bool?>("Actived")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Logs")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OrganizationId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ParamRequests")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ParamResponses")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("ReferenceId")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool?>("SyncStatus")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("TimeAttendenceEventId")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TA_TimeAttendenceSync");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A0_RoleGroupDetail", b =>

@@ -10,6 +10,7 @@ namespace Server.Core.Interfaces.A2.Persons
     {
         Task<Result<A2_Person>> SaveAsync(A2_Person data);
         Task<Result<A2_PersonFace>> SaveImageAsync(string personId, string data);
+        Task<Result<A2_PersonFace>> GetFacePersonById(string id);
     }
 
 }

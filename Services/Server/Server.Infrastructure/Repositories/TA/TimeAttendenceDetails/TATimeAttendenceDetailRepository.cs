@@ -1,7 +1,7 @@
 ﻿using Server.Core.Interfaces.TA.TimeAttendenceDetails;
 using Server.Infrastructure.Datas.MasterData;
 
-namespace Server.Infrastructure.Repositories.GIO.TimeAttendenceDetails;
+namespace Server.Infrastructure.Repositories.TA.TimeAttendenceDetails;
 
 public class TATimeAttendenceDetailRepository : ITATimeAttendenceDetailRepository
 {

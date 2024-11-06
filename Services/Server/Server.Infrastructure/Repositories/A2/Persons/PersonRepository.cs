@@ -42,7 +42,6 @@ public class PersonRepository : RepositoryBaseMasterData<A2_Person>, IPersonRepo
             return new Result<A2_Person>("Lỗi: " + ex.ToString(), false);
         }
     }
-
     public async Task<Result<A2_PersonFace>> SaveImageAsync(string personId, string base64String)
     {
         string message = "";
@@ -74,4 +73,19 @@ public class PersonRepository : RepositoryBaseMasterData<A2_Person>, IPersonRepo
         }
     }
 
+    public async Task<Result<A2_PersonFace>> GetFacePersonById(string id)
+    {
+        try
+        {
+            var _order = await _dbContext.A2_PersonFace.FirstOrDefaultAsync(o => o.PersonId == id);
+            if (_order == null)
+                return new Result<A2_PersonFace>("Không có khuôn mặt", true);
+
+            return new Result<A2_PersonFace>(_order, "Thành công", true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<A2_PersonFace>("Lỗi: " + ex.ToString(), false);
+        }
+    }
 }

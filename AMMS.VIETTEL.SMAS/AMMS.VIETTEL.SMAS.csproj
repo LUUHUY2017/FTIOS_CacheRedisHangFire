@@ -7,7 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Folder Include="Cores\" />
+		<Folder Include="Applications\" />
+		<Folder Include="Infratructures\" />
 		<Folder Include="Applications\Extensions\" />
+		<Folder Include="Infratructures\Databases\" />
+		<Folder Include="Cores\Entities\" />
 		<Folder Include="Helps\" />
 	</ItemGroup>
 	<ItemGroup>

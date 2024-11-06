@@ -1,7 +1,8 @@
 ﻿@{
-    ViewData["Title"] = "Quản lý học sinh";
+    ViewData["Title"] = "Học sinh đồng bộ";
     Layout = "~/Views/Shared/_LayoutManage.cshtml";
 }
+
 
 <!-- Main content -->
 <div class="content-wrapper" id="webui">
@@ -39,7 +40,7 @@
                             <div class="col-md-2">
                                 <label class="form-label">Trường học</label>
                                 <select id="schoolLevelCode" class="form-control select" v-model:value="dtoClass.schoolLevelCode">
-                                    <option selected value=null>Vui lòng chọn trường học </option>
+                                    <option selected value="">Vui lòng chọn trường học </option>
                                     <option v-for="option in combobox.schools" v-bind:value="option.schoolLevelCode">
                                         {{ option.schoolLevelName }}
                                     </option>
@@ -48,7 +49,7 @@
                             <div class="col-md-2">
                                 <label class="form-label">Năm học</label>
                                 <select id="schoolYearId" class="form-control select" v-model:value="dtoClass.schoolYearId">
-                                    <option selected value=null>Vui lòng chọn năm học </option>
+                                    <option selected value="">Vui lòng chọn năm học </option>
                                     <option v-for="option in combobox.schoolYears" v-bind:value="option.schoolYearId">
                                         {{ option.code }}
                                     </option>
@@ -57,7 +58,7 @@
                             <div class="col-md-2">
                                 <label class="form-label">Lớp</label>
                                 <select id="classId" class="form-control select">
-                                    <option selected value=null>Vui lòng chọn lớp </option>
+                                    <option selected value="">Vui lòng chọn lớp </option>
                                     <option v-for="option in combobox.classes" v-bind:value="option.id">
                                         {{ option.className }}
                                     </option>
@@ -96,7 +97,7 @@
                     <div class="modal-body">
                         <div class="box">
                             <div class="row">
-                                <div class="row mb-4">
+                                <div class="row ">
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     <div class="col-md-2">
                                         <div class="form-group mb-3">
@@ -110,7 +111,8 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="col-md-12 col-sm-12  ">
-                                                <input type="file" id="imageInput" class="form-control">
+                                                <input type="file" id="imageInput" class="form-control mb-2" accept="image/*">
+                                                <button type="button" id="openModalCapture" class="btn  btn-primary d-none d-md-block"> <i class="ph-camera ph me-3"></i>  Chụp ảnh </button>
                                             </div>
                                         </div>
                                     </div>
@@ -161,7 +163,7 @@
                                         <div class="form-group">
                                             <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Năm sinh</label>
                                             <div class="col-md-10 col-sm-12  ">
-                                                <input type="text" id="syncCode" name="syncCode" readonly required class="form-control  mb-1" v-model:value="item.dateOfBirth">
+                                                <input type="text" id="syncCode" name="syncCode" readonly required class="form-control  mb-1" v-model:value="item.dateOfBirth1">
                                             </div>
                                         </div>
                                     </div>
@@ -194,8 +196,41 @@
                 </div>
                 <div class="modal-footer">
                     <div class="text-end">
+                        <button id="cropBtn" type="button" class="btn btn-primary "> <i class="ph-crop me-2"></i> Cắt ảnh </button>
                         <button type="button" class="btn mr-5" data-bs-dismiss="modal"> Bỏ qua </button>
-                        <button id="cropBtn" type="button" class="btn btn-info noradius "> </i> Cắt ảnh </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModelCapture" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">Chụp ảnh</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close closeC"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                            <video id="video" autoplay></video>
+                            <button type="button" id="capturePhoto" class="btn  btn-primary"><i class="ph-camera ph me-2"></i>  Chụp ảnh </button>
+                            <button style="display:none" type="button" id="switchCamera" class="btn  btn-primary"><i class="ph-arrows-ph me-2"></i> Switch </button>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <canvas id="canvas" style="display: none;"></canvas>
+                            <div class="div-image-capture ">
+                                <img id="capturedImage" alt="Captured Photo" style="display: none;" />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="text-end">
+                        <button id="cropPhoto" type="button" class="btn btn-primary "> <i class="ph-crop me-2"></i> Cắt ảnh </button>
+                        <button type="button" class="btn mr-5 closeC" data-bs-dismiss="modal"> Đóng </button>
                     </div>
                 </div>
             </div>
@@ -207,45 +242,45 @@
 <script>
     connection.on("RefreshStudent", function (data) {
         var data1 = JSON.parse(data);
-        _Student.onLoadData();
+        _stu.onLoadData();
     });
 
     $(document).ready(function () {
         $('#schoolLevelCode').on("change", function () {
-            _Student.dtoClass.schoolLevelCode = $(this).val();
+            _stu.dtoClass.schoolLevelCode = $(this).val() ?? null;
 
-            _Student.combobox.classes = [];
-            _Student.combobox.data = [];
+            _stu.combobox.classes = [];
+            _stu.combobox.data = [];
 
-            _Student.onPostClass();
-            _Student.onLoadData();
+            _stu.onPostClass();
+            _stu.onLoadData();
 
             localStorage.setItem('schoolLevelCode', $(this).val());
 
         });
 
         $('#schoolYearId').on("change", function () {
-            _Student.dtoStudent.schoolYearId = $(this).val();
-            _Student.dtoClass.schoolYearId = $(this).val();
-            _Student.dtoClass.Schoolyear = $(this).find(":selected").text()?.trim();
+            _stu.dtoStudent.schoolYearId = $(this).val() ?? null;
+            _stu.dtoClass.schoolYearId = $(this).val() ?? null;
+            _stu.dtoClass.Schoolyear = $(this).find(":selected").text()?.trim() ?? null;
 
-            _Student.combobox.classes = [];
-            _Student.combobox.data = [];
+            _stu.combobox.classes = [];
+            _stu.combobox.data = [];
 
-            _Student.onPostClass();
-            _Student.onLoadData();
+            _stu.onPostClass();
+            _stu.onLoadData();
 
 
-            localStorage.setItem('schoolYearId', $(this).val());
-            localStorage.setItem('schoolyear', $(this).find(":selected").text()?.trim());
+            localStorage.setItem('schoolYearId', $(this).val()) ?? null;
+            localStorage.setItem('schoolyear', $(this).find(":selected").text()?.trim()) ?? null;
 
         });
 
         $('#classId').on("change", function () {
-            _Student.dtoStudent.classId = $(this).val();
+            _stu.dtoStudent.classId = $(this).val() ?? null;
 
-            _Student.combobox.data = [];
-            _Student.onLoadData();
+            _stu.combobox.data = [];
+            _stu.onLoadData();
         });
     });
 
@@ -253,7 +288,7 @@
 
 
 <script>
-    var _Student = new Vue({
+    var _stu = new Vue({
         el: '#webui',
         components: {
             'BootstrapTable': BootstrapTable
@@ -271,7 +306,7 @@
                     },
                     events: {
                         'click .edit': function (e, value, row) {
-                            _Student.onPopupModelEdit(row);
+                            _stu.onPopupModelEdit(row);
                         },
                     }
                 },
@@ -371,9 +406,8 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
-
                     if (response.data.succeeded) {
-                        this.data = response.data.data.students;
+                        this.data = response.data.data;
                     }
                     else {
                         alertify.notify(response.data.message, 'error', 6, function () { });
@@ -388,10 +422,12 @@
                 this.item = {};
             },
             onPopupModelEdit(row) {
-                this.item = row;
-                this.item.dateOfBirth = moment(row.dateOfBirth).format('DD/MM/YYYY');
-                this.item = { ...this.item };
+                const el = { ...row };
 
+                this.item = el;
+                try { this.item.dateOfBirth1 = ConvertDinhDangNgay(el.dateOfBirth); } catch (Ex) { }
+                try { this.item.imageSrc1 = el.imageBase64 != null ? "data:image/png;base64," + el.imageBase64 : null } catch (Ex) { }
+                this.item = { ...this.item };
 
                 this.object.form_tile = "Thông tin học sinh";
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
@@ -408,7 +444,7 @@
 
                     $('.loader').hide(0);
                     if (response.data.succeeded) {
-                        _Student.onLoadData();
+                        _stu.onLoadData();
 
                         bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
                         alertify.success(response.data.message);
@@ -423,7 +459,7 @@
             },
 
             onLoadCombobox() {
-                axios.post('/api/v1/Student/PostSchool', null, this.object.config).then(response => {
+                axios.post('/api/v1/StudentSmas/PostSchool', null, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
@@ -440,7 +476,7 @@
                     $('.loader').delay(100).hide(0);
                 })
 
-                axios.post('/api/v1/Student/PostSchoolYears', null, this.object.config).then(response => {
+                axios.post('/api/v1/StudentSmas/PostSchoolYears', null, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
@@ -462,7 +498,7 @@
 
             },
             onPostClass() {
-                axios.post('/api/v1/Student/PostClass', this.dtoClass, this.object.config).then(response => {
+                axios.post('/api/v1/StudentSmas/PostClass', this.dtoClass, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
@@ -497,7 +533,6 @@
                 if (_schoolyear) {
                     this.dtoClass.schoolyear = _schoolyear;
                 }
-
             },
         },
         mounted() {
@@ -510,7 +545,6 @@
         },
     })
 </script>
-
 
 
 <script>
@@ -565,10 +599,134 @@
             .replace('data:image/jpg;base64,', '');
 
 
-        _Student.item.imageSrc = _img;
-        _Student.item.imageBase64 = imgBase64;
+        _stu.item.imageSrc = _img;
+        _stu.item.imageBase64 = imgBase64;
 
         aoutput.style.display = 'block';
         bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelImage')).hide();
     });
+</script>
+
+<script>
+    const modal = document.getElementById("cameraModal");
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const capturedImage = document.getElementById("capturedImage");
+    const capturePhoto = document.getElementById("capturePhoto");
+    const cropPhoto = document.getElementById("cropPhoto");
+    const openModalCapture = document.getElementById("openModalCapture");
+    const closeModals = document.querySelectorAll(".closeC");
+    const switchCameraButton = document.getElementById('switchCamera');
+
+    let currentStream;
+    let isFrontCamera = true;
+    const constraints = {
+        video: {
+            facingMode: 'user'
+        }
+    };
+
+
+
+    openModalCapture.addEventListener('click', function () {
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelCapture')).show();
+        startCamera();
+    });
+
+    function startCamera() {
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(stream => {
+                currentStream = stream;
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error('Error accessing the camera: ', error);
+            });
+    }
+    function closeModal() {
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelCapture')).hide();
+
+        capturedImage.src = null;
+        let stream = video.srcObject;
+        let tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+        video.srcObject = null;
+
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+    }
+    function switchCamera() {
+        // Stop the current stream
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+        }
+        // Toggle the camera
+        isFrontCamera = !isFrontCamera;
+        constraints.video.facingMode = isFrontCamera ? 'user' : 'environment';
+        // Restart the camera with the new constraints
+        startCamera();
+    }
+
+    capturePhoto.addEventListener('click', function () {
+        capturedImage.src = null;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const dataURL = canvas.toDataURL("image/png");
+        capturedImage.src = dataURL;
+        capturedImage.style.display = "block";
+        document.getElementById("cropBtn").style.display = "block";
+
+
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+
+
+        cropper = new Cropper(capturedImage, {
+            preview: '.preview',
+            aspectRatio: 1, // Tỉ lệ hình vuông
+            viewMode: 1,
+            autoCropArea: 1, // Vùng crop bao phủ toàn bộ ảnh
+            movable: true,
+            zoomable: true,
+        });
+
+
+
+    });
+
+    cropPhoto.addEventListener('click', function () {
+        const croppedCanvas = cropper ? cropper.getCroppedCanvas() : null;
+        const croppedDataURL = croppedCanvas.toDataURL("image/png");
+        // Display the cropped image result
+        capturedImage.src = croppedDataURL;
+
+        let imgBase64 = croppedDataURL.replace(/^data:image\/(png|jpeg|gif|heic|webp|jpg);base64,/, '');
+
+        _stu.item.imageSrc = croppedDataURL;
+        _stu.item.imageBase64 = imgBase64;
+
+    });
+
+    closeModals.forEach(item => {
+        item.addEventListener("click", function () {
+            closeModal();
+        });
+    });
+
+    switchCameraButton.addEventListener('click', switchCamera);
+
+    window.onclick = function (event) {
+        if (event.target == modal)
+            closeModal();
+    }
+
+
 </script>

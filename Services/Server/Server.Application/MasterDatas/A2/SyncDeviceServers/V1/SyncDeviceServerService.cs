@@ -52,21 +52,32 @@ public partial class SyncDeviceServerService
                                join _la in _dbContext.A2_Student on _do.PersonId equals _la.Id into K
                                from la in K.DefaultIfEmpty()
 
+                               join _de in _dbContext.A2_Device on _do.DeviceId equals _de.Id into KG
+                               from de in KG.DefaultIfEmpty()
+
+
                                where
                                 (request.StartDate != null ? _do.LastModifiedDate.Date >= request.StartDate.Value.Date : true)
                                 && (request.EndDate != null ? _do.LastModifiedDate.Date <= request.EndDate.Value.Date : true)
-                                && (!string.IsNullOrWhiteSpace(request.OrganizationId) ? _do.OrganizationId == request.OrganizationId : true)
+
+                                && (!string.IsNullOrWhiteSpace(request.ClassId) ? la.ClassId == request.ClassId : true)
+
                                orderby _do.LastModifiedDate descending
                                select new SyncDeviceServerReportRes()
                                {
                                    Id = _do.Id,
                                    Actived = _do.Actived,
                                    CreatedDate = _do.CreatedDate,
-                                   LastModifiedDate = _do.LastModifiedDate,
+                                   LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
 
+                                   PersonId = _do.PersonId,
                                    StudentCode = la != null ? la.StudentCode : "",
                                    StudentName = la != null ? la.FullName : "",
                                    ClassName = la != null ? la.ClassName : "",
+
+                                   DeviceId = _do.DeviceId,
+                                   DeviceName = de != null ? de.DeviceName : "",
+                                   IPAddress = de != null ? de.IPAddress : "",
 
                                    SynAction = _do.SynAction,
                                    SynCardMessage = _do.SynCardMessage,

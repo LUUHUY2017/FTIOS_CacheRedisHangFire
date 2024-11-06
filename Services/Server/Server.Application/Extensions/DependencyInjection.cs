@@ -23,6 +23,7 @@ using Server.Application.MasterDatas.A2.MonitorDevices.V1;
 using Server.Application.MasterDatas.A2.Organizations.V1;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
+using Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
 using Server.Application.Services.VTSmart;
 using Server.Core.Identity.Interfaces.Accounts.Services;
 using Server.Core.Interfaces.A0;
@@ -35,6 +36,7 @@ using Server.Core.Interfaces.A2.Students;
 using Server.Core.Interfaces.GIO.VehicleInOuts;
 using Server.Core.Interfaces.TA.TimeAttendenceDetails;
 using Server.Core.Interfaces.TA.TimeAttendenceEvents;
+using Server.Core.Interfaces.TA.TimeAttendenceSyncs;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Server.Infrastructure.Repositories.A0.AttendanceConfigs;
@@ -45,8 +47,10 @@ using Server.Infrastructure.Repositories.A2.Persons;
 using Server.Infrastructure.Repositories.A2.ScheduleSendEmails;
 using Server.Infrastructure.Repositories.A2.SendEmails;
 using Server.Infrastructure.Repositories.A2.Students;
-using Server.Infrastructure.Repositories.GIO.TimeAttendenceDetails;
 using Server.Infrastructure.Repositories.GIO.VehicleInOuts;
+using Server.Infrastructure.Repositories.TA.TimeAttendenceDetails;
+using Server.Infrastructure.Repositories.TA.TimeAttendenceEvents;
+using Server.Infrastructure.Repositories.TA.TimeAttendenceSyncs;
 using Share.Core.Pagination;
 using Shared.Core.Caches.Redis;
 using Shared.Core.Emails.V1.Adapters;
@@ -189,6 +193,7 @@ public static class DependencyInjection
     {
         service.AddMediatR(Assembly.GetExecutingAssembly());
 
+
         //MasterData
         service.AddScoped(typeof(IAsyncRepository<>), typeof(RepositoryBaseMasterData<>));
         service.AddScoped<IMasterDataDbContext, MasterDataDbContext>();
@@ -239,6 +244,8 @@ public static class DependencyInjection
         //  TimeAttendenceEvents
         service.AddScoped<ITATimeAttendenceEventRepository, TATimeAttendenceEventRepository>();
         service.AddScoped<ITATimeAttendenceDetailRepository, TATimeAttendenceDetailRepository>();
+        service.AddScoped<ITATimeAttendenceSyncRepository, TATimeAttendenceSyncRepository>();
+        service.AddScoped<TimeAttendenceSyncService>();
 
 
         // AMMS. Notification -  SendEmail

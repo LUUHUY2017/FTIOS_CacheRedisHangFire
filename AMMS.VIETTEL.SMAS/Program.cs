@@ -13,7 +13,14 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Share.WebApp.Controllers;
 using Share.WebApp.Settings;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.Text;
+using Hangfire;
+using Hangfire.MySql;
 using Shared.Core.Loggers;
+using AMMS.VIETTEL.SMAS.Helps.Authorizations;
+using AMMS.VIETTEL.SMAS.Applications.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));

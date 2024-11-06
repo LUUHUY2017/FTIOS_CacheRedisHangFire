@@ -3,6 +3,7 @@
     #region Req
     public class SyncDataRequest
     {
+        public string? Id { get; set; }
         public string? SecretKey { get; set; }
         public string? SchoolCode { get; set; }
         public string? SchoolYearCode { get; set; }
@@ -55,8 +56,6 @@
         public bool status { get; set; }
         public string message { get; set; }
     }
-
-
     #endregion
 
 

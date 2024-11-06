@@ -24,6 +24,22 @@ function ConvertDinhDangChuanNgay(value) {
         return null;
 }
 
+function ConvertDinhDangNgay(value) {
+    if (value != null) {
+        var dt = new Date(value);
+        var mth = dt.getMonth() + 1;
+        var day = dt.getDate();
+        if (mth < 10)
+            mth = "0" + mth;
+        if (day < 10)
+            day = "0" + day;
+
+        return day + '/' + mth + '/' + dt.getFullYear();
+    } else
+        return null;
+}
+
+
 function ConvertDinhDangChuanNgayFormat(value) {
     if (value != null) {
         var dt = new Date(value);

@@ -2,9 +2,9 @@
 using AutoMapper;
 using EventBus.Messages;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Server.Application.MasterDatas.A2.Devices.Models.Commons;
 using Server.Application.MasterDatas.A2.Students.V1.Model;
 using Server.Core.Entities.A0;
 using Server.Core.Entities.A2;
@@ -56,7 +56,7 @@ public class StudentService
     }
 
     /// <summary>
-    /// Gửi thông tin đồng bộ học sinh sang RabbitMQ
+    /// RabbitMQ: Gửi thông tin đồng bộ học sinh  qua RabbitMQ
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -83,8 +83,11 @@ public class StudentService
         }
     }
 
-
-
+    /// <summary>
+    /// Lưu thông tin học sinh vào AMMS
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     public async Task<Result<DtoStudentRequest>> Save(DtoStudentRequest request)
     {
         try
@@ -130,12 +133,14 @@ public class StudentService
                     //img.Save(fileName);
                     Common.SaveJpeg1(fileName, img, 100);
                 }
-                else if (!string.IsNullOrWhiteSpace(request.ImageSrc))
+                else
                 {
-                    await Common.DownloadAndSaveImage(request.ImageSrc, fileName);
-                    request.ImageBase64 = Common.ConvertFileImageToBase64(fileName);
+                    if (!string.IsNullOrWhiteSpace(request.ImageSrc))
+                    {
+                        await Common.DownloadAndSaveImage(request.ImageSrc, fileName);
+                        request.ImageBase64 = Common.ConvertFileImageToBase64(fileName);
+                    }
                 }
-
                 await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64);
             }
             catch (Exception ex)
@@ -155,14 +160,19 @@ public class StudentService
 
     }
 
+    /// <summary>
+    /// Lấy thông tin thiết bị đồng bộ
+    /// </summary>
+    /// <param name="stu"></param>
+    /// <returns></returns>
     public async Task<List<RB_ServerRequest>> SyncToDevice(A2_Student stu)
     {
-
         List<A2_PersonSynToDevice> list = new List<A2_PersonSynToDevice>();
         List<RB_ServerRequest> list_Sync = new List<RB_ServerRequest>();
 
         try
         {
+            // orrgniaztionId
             var _devis = _dbContext.A2_Device.Where(o => o.Actived == true).ToList();
             if (_devis.Any())
             {
@@ -185,7 +195,6 @@ public class StudentService
                         item.SynAction = ServerRequestAction.ActionAdd;
                         item.SynStatus = null;
                     }
-
                     await _dbContext.SaveChangesAsync();
                     list.Add(item);
 
@@ -216,7 +225,6 @@ public class StudentService
                     };
                     list_Sync.Add(list_SyncItem);
                 }
-
             }
         }
         catch (Exception ex)
@@ -226,8 +234,11 @@ public class StudentService
         return list_Sync;
     }
 
-
-
+    /// <summary>
+    /// Cập nhật trạng thái đồng bộ từ RabbitMQ
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     public async Task<bool> SaveStatuSyncDevice(RB_ServerResponse request)
     {
         bool statusSync = false;
@@ -251,6 +262,67 @@ public class StudentService
         }
         return statusSync;
     }
+
+    /// <summary>
+    /// Lấy danh sách học sinh AMMS
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<Result<List<DtoStudentResponse>>> GetAlls(StudentSearchRequest request)
+    {
+        try
+        {
+            var _data = await (from _do in _dbContext.A2_Student
+
+                               join _la in _dbContext.A2_PersonFace on _do.Id equals _la.PersonId into K
+                               from la in K.DefaultIfEmpty()
+
+
+                               where (!string.IsNullOrWhiteSpace(request.ClassId) ? _do.ClassId == request.ClassId : true)
+                               orderby _do.CreatedDate descending
+                               select new DtoStudentResponse()
+                               {
+                                   Id = _do.Id,
+                                   Actived = _do.Actived,
+                                   CreatedDate = _do.CreatedDate,
+                                   LastModifiedDate = _do.LastModifiedDate,
+                                   StudentCode = _do.StudentCode,
+                                   ReferenceId = _do.ReferenceId,
+
+                                   FullName = _do.FullName,
+                                   DateOfBirth = _do.DateOfBirth,
+                                   GenderCode = _do.GenderCode,
+                                   ImageSrc = _do.ImageSrc,
+                                   ClassId = _do.ClassId,
+                                   ClassName = _do.ClassName,
+                                   IsExemptedFull = _do.IsExemptedFull,
+                                   StatusCode = _do.StatusCode,
+                                   Status = _do.Status,
+                                   FullNameOther = _do.FullNameOther,
+                                   EthnicCode = _do.EthnicCode,
+                                   PolicyTargetCode = _do.PolicyTargetCode,
+                                   PriorityEncourageCode = _do.PriorityEncourageCode,
+                                   SyncCode = _do.SyncCode,
+                                   SyncCodeClass = _do.SyncCodeClass,
+                                   IdentifyNumber = _do.IdentifyNumber,
+                                   StudentClassId = _do.StudentClassId,
+                                   SortOrder = _do.SortOrder,
+                                   Name = _do.Name,
+                                   SortOrderByClass = _do.SortOrderByClass,
+                                   GradeCode = _do.GradeCode,
+                                   ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null
+
+                               }).ToListAsync();
+
+            return new Result<List<DtoStudentResponse>>(_data, "Thành công!", true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<List<DtoStudentResponse>>("Lỗi: " + ex.ToString(), false);
+        }
+    }
+
+
 }
 
 

@@ -24,8 +24,8 @@ public class AttendanceConfigService
     private readonly ITimeConfigRepository _timeConfigRepository;
     private readonly IMasterDataDbContext _dBContext;
     public AttendanceConfigService(
-        IAttendanceConfigRepository attendanceConfigRepository, 
-        IMapper mapper, 
+        IAttendanceConfigRepository attendanceConfigRepository,
+        IMapper mapper,
         SmartService smartService,
         IOrganizationRepository organizationRepository,
         ITimeConfigRepository timeConfigRepository,
@@ -42,14 +42,14 @@ public class AttendanceConfigService
 
     public static string urlServerName = "https://gateway.vtsmas.vn";
     public static string urlSSO = "https://sso.vtsmas.vn/connect/token";
-    public static AccessToken _accessToken;
+    public static AccessTokenLocal _AccessTokenLocal;
 
     public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
     public static string secretKey = "Smas!@#2023";
-    public async Task<AccessToken> GetToken(A0_AttendanceConfig configModel)
+    public async Task<AccessTokenLocal> GetToken(A0_AttendanceConfig configModel)
     {
-        AccessToken retval = null;
+        AccessTokenLocal retval = null;
         try
         {
             var client = new HttpClient();
@@ -68,8 +68,8 @@ public class AttendanceConfigService
             if (result.IsSuccessStatusCode)
             {
                 var data = await result.Content.ReadAsStringAsync();
-                retval = JsonConvert.DeserializeObject<AccessToken>(data);
-                _accessToken = new AccessToken(retval.access_token, retval.expires_in, retval.token_type, retval.scope);
+                retval = JsonConvert.DeserializeObject<AccessTokenLocal>(data);
+                _AccessTokenLocal = new AccessTokenLocal(retval.access_token, retval.expires_in, retval.token_type, retval.scope);
             }
         }
         catch (Exception e)
@@ -85,16 +85,16 @@ public class AttendanceConfigService
         SchoolResponse retval = null;
         try
         {
-            if (_accessToken == null || !_accessToken.IsTokenValid())
+            if (_AccessTokenLocal == null || !_AccessTokenLocal.IsTokenValid())
                 await GetToken(configModel);
-            if (_accessToken != null)
+            if (_AccessTokenLocal != null)
             {
                 var api = string.Format("{0}/api/truong-hoc/public/current", urlServerName);
                 var parameter = new StringContent(JsonConvert.SerializeObject(null), Encoding.UTF8, "application/json");
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _accessToken.access_token);
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _AccessTokenLocal.access_token);
 
                     var result = await client.GetAsync(api);
                     if (result.IsSuccessStatusCode)
@@ -110,7 +110,7 @@ public class AttendanceConfigService
             Logger.Error(e);
         }
         return retval;
-    
+
     }
 
     public async Task<Result<A0_AttendanceConfig>> SchoolAsync(A0_AttendanceConfig configModel)
@@ -118,7 +118,7 @@ public class AttendanceConfigService
         try
         {
             // lấy trường theo config
-            var postSchool = await PostSchool(configModel); 
+            var postSchool = await PostSchool(configModel);
             if (postSchool == null)
             {
                 return new Result<A0_AttendanceConfig>(null, "Đồng bộ thất bại!", false);
@@ -145,7 +145,7 @@ public class AttendanceConfigService
                 //thêm vào time config
                 if (checkSchoolAdd.Data != null)
                 {
-                    await _timeConfigRepository.AddAsync(new A0_TimeConfig() {OrganizationId = checkSchoolAdd.Data.Id });
+                    await _timeConfigRepository.AddAsync(new A0_TimeConfig() { OrganizationId = checkSchoolAdd.Data.Id });
                 }
             }
             if (checkSchoolAdd.Data == null)
@@ -173,13 +173,13 @@ public class AttendanceConfigService
         {
             if (string.IsNullOrEmpty(request.Id))
             {
-                var check = await _attendanceConfigRepository.GetByFirstAsync(x  => x.AccountName.Trim() == request.AccountName.Trim());
+                var check = await _attendanceConfigRepository.GetByFirstAsync(x => x.AccountName.Trim() == request.AccountName.Trim());
                 if (check.Data != null)
                 {
                     return new Result<A0_AttendanceConfig>(null, $"Tài khoản đã có vui lòng sử dụng tài khoản khác!", false);
-                }    
+                }
 
-                var dataAdd = _mapper.Map<A0_AttendanceConfig>(request); 
+                var dataAdd = _mapper.Map<A0_AttendanceConfig>(request);
                 var retVal = await _attendanceConfigRepository.AddAsync(dataAdd);
                 return retVal;
             }

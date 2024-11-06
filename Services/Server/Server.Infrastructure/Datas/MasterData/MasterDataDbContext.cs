@@ -62,6 +62,7 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
     #region TA
     public DbSet<TA_TimeAttendenceEvent> TA_TimeAttendenceEvent { get; set; }
     public DbSet<TA_TimeAttendenceDetail> TA_TimeAttendenceDetail { get; set; }
+    public DbSet<TA_TimeAttendenceSync> TA_TimeAttendenceSync { get; set; }
     #endregion
 
 

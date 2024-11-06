@@ -15,20 +15,40 @@ public partial class PagesConst
         CategoryMenu = Category.Dashboard.Id,
     };
 
-    public static readonly PageObject URL_V1_CheckInByDay = new PageObject
+    public static readonly PageObject URL_V1_TimeAttenceEvent = new PageObject
     {
         Id = "f95d61e5-128d-4a90-aa60-a13124b32466",
         Name = "Lịch sử điểm danh",
-        Url = "V1/CheckInByDay",
+        Url = "V1/TimeAttenceEvent",
         Module = Module.Master,
         RolePermission = RoleConst.SuperAdmin_Role,
         CategoryMenu = Category.BaoCao.Id,
     };
 
-    public static readonly PageObject URL_V1_Student = new PageObject
+    public static readonly PageObject URL_V1_TimeAttendenceSync = new PageObject
+    {
+        Id = "5ed5219f-8331-4199-b5b0-c2f7681fcea5",
+        Name = "Lịch sử đồng bộ điểm danh",
+        Url = "V1/TimeAttendenceSync",
+        Module = Module.Master,
+        RolePermission = RoleConst.SuperAdmin_Role,
+        CategoryMenu = Category.BaoCao.Id,
+    };
+
+    public static readonly PageObject URL_V1_StudentSmas = new PageObject
     {
         Id = "19fbe615-372c-4deb-b18d-7c7d12ed129b",
         Name = "Danh sách học sinh SMAS",
+        Url = "V1/StudentSmas",
+        Module = Module.Master,
+        RolePermission = RoleConst.SuperAdmin_Role,
+        CategoryMenu = Category.KhaiBaoDuLieu.Id,
+    };
+
+    public static readonly PageObject URL_V1_Student = new PageObject
+    {
+        Id = "fc531bfa-1863-4328-8688-3104ee6cd52d",
+        Name = "Học sinh đồng bộ",
         Url = "V1/Student",
         Module = Module.Master,
         RolePermission = RoleConst.SuperAdmin_Role,
@@ -67,6 +87,7 @@ public partial class PagesConst
         RolePermission = RoleConst.SuperAdmin_Role,
         CategoryMenu = Category.KhaiBaoDuLieu.Id,
     };
+
     public static readonly PageObject URL_V1_Organization = new PageObject
     {
         Id = "19fbe615-372c-4deb-b18d-7c7d12ed129b",
@@ -74,7 +95,7 @@ public partial class PagesConst
         Url = "V1/Organization",
         Module = Module.Master,
         RolePermission = RoleConst.SuperAdmin_Role,
-        CategoryMenu = Category.KhaiBaoDuLieu.Id,
+        CategoryMenu = Category.ThietLap.Id,
     };
 
     public static readonly PageObject URL_V1_MonitorDevice = new PageObject
@@ -138,8 +159,10 @@ public partial class PagesConst
             var _ListMenu = new List<PageObject>();
 
             _ListMenu.Add(URL_Dashboard);
-            _ListMenu.Add(URL_V1_CheckInByDay);
+            _ListMenu.Add(URL_V1_TimeAttenceEvent);
+            _ListMenu.Add(URL_V1_TimeAttendenceSync);
 
+            _ListMenu.Add(URL_V1_StudentSmas);
             _ListMenu.Add(URL_V1_Student);
             _ListMenu.Add(URL_V1_SyncDeviceServer);
 
@@ -150,7 +173,7 @@ public partial class PagesConst
 
             _ListMenu.Add(URL_V1_Configuration);
             _ListMenu.Add(URL_V1_SystemConfiguration);
-        
+
 
 
             _ListMenu.Add(URL_V1_User);

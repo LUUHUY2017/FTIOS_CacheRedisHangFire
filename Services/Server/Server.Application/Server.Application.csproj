@@ -19,6 +19,7 @@
     <Compile Remove="MasterDatas\Organizations\**" />
     <Compile Remove="MasterDatas\Sites\**" />
     <Compile Remove="PeopleCountDataServices\**" />
+    <Compile Remove="Reports\**" />
     <Compile Remove="Test\**" />
     <EmbeddedResource Remove="Brickstreams\**" />
     <EmbeddedResource Remove="Datas\**" />
@@ -32,6 +33,7 @@
     <EmbeddedResource Remove="MasterDatas\Organizations\**" />
     <EmbeddedResource Remove="MasterDatas\Sites\**" />
     <EmbeddedResource Remove="PeopleCountDataServices\**" />
+    <EmbeddedResource Remove="Reports\**" />
     <EmbeddedResource Remove="Test\**" />
     <None Remove="Brickstreams\**" />
     <None Remove="Datas\**" />
@@ -45,6 +47,7 @@
     <None Remove="MasterDatas\Organizations\**" />
     <None Remove="MasterDatas\Sites\**" />
     <None Remove="PeopleCountDataServices\**" />
+    <None Remove="Reports\**" />
     <None Remove="Test\**" />
   </ItemGroup>
 
@@ -78,7 +81,6 @@
   <ItemGroup>
     <Folder Include="MasterDatas\A0\Person\" />
     <Folder Include="MasterDatas\A2\SyncDeviceServers\V1\Model\" />
-    <Folder Include="Reports\" />
   </ItemGroup>
 
 </Project>

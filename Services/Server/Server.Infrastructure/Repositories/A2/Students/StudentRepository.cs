@@ -23,6 +23,7 @@ public class StudentRepository : RepositoryBaseMasterData<A2_Student>, IStudentR
             if (_order != null)
             {
                 data.CopyPropertiesTo(_order);
+                _order.ImageSrc = null;
                 _dbContext.A2_Student.Update(_order);
                 message = "Cập nhật thành công";
             }
@@ -30,6 +31,7 @@ public class StudentRepository : RepositoryBaseMasterData<A2_Student>, IStudentR
             {
                 _order = new A2_Student();
                 data.CopyPropertiesTo(_order);
+
                 await _dbContext.A2_Student.AddAsync(_order);
                 message = "Thêm mới thành công";
             }
@@ -52,4 +54,6 @@ public class StudentRepository : RepositoryBaseMasterData<A2_Student>, IStudentR
             return new Result<A2_Student>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
+
+
 }

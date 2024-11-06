@@ -31,7 +31,7 @@ public sealed class AccountVTSmartService
 
     public static string urlServerName = "https://gateway.vtsmas.vn";
     public static string urlSSO = "https://sso.vtsmas.vn/connect/token";
-    public static AccessToken _accessToken;
+    public static AccessTokenLocal _accessToken;
 
     public async Task<A0_AttendanceConfig> GetConfig()
     {
@@ -61,9 +61,9 @@ public sealed class AccountVTSmartService
         return retval;
     }
 
-    public async Task<AccessToken> GetToken(string accountName, string password)
+    public async Task<AccessTokenLocal> GetToken(string accountName, string password)
     {
-        AccessToken retval = null;
+        AccessTokenLocal retval = null;
         try
         {
             var client = new HttpClient();
@@ -82,8 +82,8 @@ public sealed class AccountVTSmartService
             if (result.IsSuccessStatusCode)
             {
                 var data = await result.Content.ReadAsStringAsync();
-                retval = JsonConvert.DeserializeObject<AccessToken>(data);
-                _accessToken = new AccessToken(retval.access_token, retval.expires_in, retval.token_type, retval.scope);
+                retval = JsonConvert.DeserializeObject<AccessTokenLocal>(data);
+                _accessToken = new AccessTokenLocal(retval.access_token, retval.expires_in, retval.token_type, retval.scope);
             }
         }
         catch (Exception e)

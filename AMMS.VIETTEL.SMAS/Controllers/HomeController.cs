@@ -13,3 +13,4 @@ public class HomeController : AuthBaseController
         return View();
     }
 }
+}

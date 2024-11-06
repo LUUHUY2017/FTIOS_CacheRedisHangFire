@@ -2,34 +2,32 @@
 using ClosedXML.Report;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
+using Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
 using Server.Core.Interfaces.GIO.VehicleInOuts;
 using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
-namespace Server.API.APIs.Reports.TimeAttenceEvents.V1.Controllers;
+namespace Server.API.APIs.Reports.TimeAttenceSyncs.V1.Controllers;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-public class CheckInByDayController : AuthBaseAPIController
+public class TimeAttendenceSyncController : AuthBaseAPIController
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
     private readonly IGIOVehicleInOutRepository _vehicleInOut;
-    private readonly TimeAttendenceEventService _timeService;
+    private readonly TimeAttendenceSyncService _timeService;
 
-    public CheckInByDayController(
+    public TimeAttendenceSyncController(
         IMediator mediator,
         IMapper mapper,
-        IGIOVehicleInOutRepository vehicleInOut,
-        TimeAttendenceEventService timeService
+        TimeAttendenceSyncService timeService
         )
     {
         _mediator = mediator;
         _mapper = mapper;
-        _vehicleInOut = vehicleInOut;
         _timeService = timeService;
 
     }
@@ -40,7 +38,7 @@ public class CheckInByDayController : AuthBaseAPIController
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("Post")]
-    public async Task<ActionResult> Post(AttendenceReportFilterReq request)
+    public async Task<ActionResult> Post(AttendenceSyncReportFilterReq request)
     {
         try
         {
@@ -59,7 +57,7 @@ public class CheckInByDayController : AuthBaseAPIController
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("Export")]
-    public async Task<ActionResult> Export(AttendenceReportFilterReq request)
+    public async Task<ActionResult> Export(AttendenceSyncReportFilterReq request)
     {
         try
         {
@@ -71,8 +69,8 @@ public class CheckInByDayController : AuthBaseAPIController
             string companyName = "";
             string diachi = "";
 
-            string inputFileName = "LICHSUDIEMDANH.xlsx";
-            string outputFileName = "LICHSUDIEMDANH_" + DateTime.Now.ToString("ddMMyyyy_hhmmstt") + ".xlsx";
+            string inputFileName = "LICHSUDONGBODIEMDANH.xlsx";
+            string outputFileName = "LICHSUDONGBODIEMDANH_" + DateTime.Now.ToString("ddMMyyyy_hhmmstt") + ".xlsx";
 
             var rootParth = Common.GetExcelFolder();
             var rootParth_Output = Common.GetExcelDateFullFolder(DateTime.Now.Date);

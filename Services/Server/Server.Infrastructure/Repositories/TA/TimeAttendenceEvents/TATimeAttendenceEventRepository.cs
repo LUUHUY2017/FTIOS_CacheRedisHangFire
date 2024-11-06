@@ -4,7 +4,7 @@ using Server.Core.Interfaces.TA.TimeAttendenceEvents;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
 
-namespace Server.Infrastructure.Repositories.GIO.VehicleInOuts;
+namespace Server.Infrastructure.Repositories.TA.TimeAttendenceEvents;
 
 public class TATimeAttendenceEventRepository : ITATimeAttendenceEventRepository
 {
