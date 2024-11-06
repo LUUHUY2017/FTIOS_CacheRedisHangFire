@@ -48,7 +48,7 @@ public class TimeAttendenceEventConsumer : IConsumer<RB_DataResponse>
                 if (dataAte != null)
                 {
                     listImage.Add(dataAte);
-                    await _timeAttendenceEventService.ProcessAtendenceData(listImage);
+                    await _timeAttendenceEventService.ProcessAttendenceImage(listImage);
                 }
             }
 

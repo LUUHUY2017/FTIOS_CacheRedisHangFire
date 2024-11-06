@@ -36,7 +36,7 @@ public class TimeAttendenceSyncSmasConsumer : IConsumer<SyncDataRequest>
             var datas = context.Message;
             Logger.Information("Consumer:" + datas);
 
-            var res = await _smartService.PostSyncAttendence2Smas(datas);
+            var res = await _smartService.PostSyncAttendence2Smas(datas, datas.SchoolCode);
 
             if (res != null)
             {

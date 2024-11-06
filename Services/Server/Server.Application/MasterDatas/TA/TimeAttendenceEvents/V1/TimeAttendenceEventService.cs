@@ -52,20 +52,13 @@ public partial class TimeAttendenceEventService
 
     }
 
-    private bool CheckStudents(TA_AttendenceHistory data, ref A2_Person person, ref A2_Student employee)
-    {
-        try
-        {
 
 
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e);
-        }
-        return true;
-    }
-
+    /// <summary>
+    /// Gửi qua RabbitMQ đồng bộ diểm danh
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
     public async Task<Result<SyncDataRequest>> PushAttendence2SMAS(SyncDataRequest data)
     {
         try
@@ -82,6 +75,52 @@ public partial class TimeAttendenceEventService
         }
     }
 
+
+
+    /// <summary>
+    /// Check có tồn tại học sinh
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="person"></param>
+    /// <param name="employee"></param>
+    /// <returns></returns>
+    private bool CheckStudents(TA_AttendenceHistory data, ref A2_Student employee, ref A2_Organization organization)
+    {
+        try
+        {
+            var employee1 = _dbContext.A2_Student.FirstOrDefault(o => o.StudentCode == data.PersonCode);
+            if (employee1 == null)
+            {
+                Logger.Information(data.PersonCode + "không tìm thấy thông tin học sinh");
+                return false;
+            }
+
+            var organization1 = _dbContext.A2_Organization.FirstOrDefault(o => o.Id == employee1.OrganizationId);
+            if (organization1 == null)
+            {
+                Logger.Information(data.PersonCode + "chưa gán trường");
+                return false;
+            }
+
+            employee = employee1;
+            organization = organization1;
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+            Logger.Error(e);
+        }
+
+    }
+
+
+    /// <summary>
+    /// Xử lý điểm danh
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
     public async Task<string> ProcessAtendenceData(List<TA_AttendenceHistory> data)
     {
         try
@@ -90,19 +129,18 @@ public partial class TimeAttendenceEventService
 
             if (data.Any())
             {
-
-
                 var config = _dbContext.A0_TimeConfig.Where(o => o.Actived == true).FirstOrDefault();
 
                 if (config != null)
                 {
                     bool addEvent = false;
                     bool add = false;
+
                     foreach (var info in data)
                     {
                         A2_Student student = null;
-                        A2_Person person = null;
-                        bool isset = CheckStudents(info, ref person, ref student);
+                        A2_Organization organization = null;
+                        bool isset = CheckStudents(info, ref student, ref organization);
 
 
                         TimeSpan timeOfDay = info.TimeEvent.Value.TimeOfDay;
@@ -240,8 +278,7 @@ public partial class TimeAttendenceEventService
                         {
                             new StudentAbsenceByDevice
                             {
-                                    //StudentCode = student.SyncCode,
-                                    StudentCode = "HS1011087015",
+                                    StudentCode = student.StudentCode,
                                     Value= valueAttendence,
                                     ExtraProperties= extra
                             }
@@ -250,15 +287,11 @@ public partial class TimeAttendenceEventService
                         var paramData = new SyncDataRequest()
                         {
                             Id = time.Id,
-                            //SecretKey = _secretKey,
-
-                            //SchoolCode = time.SchoolCode,
-                            //SchoolYearCode = time.SchoolYearCode,
-                            //ClassCode = student.SyncCodeClass,
-
-                            SchoolCode = "20186511",
+                            SchoolCode = organization.OrganizationCode,
                             SchoolYearCode = "2024-2025",
-                            ClassCode = "LH_20186511_2024_1001592298",
+                            ClassId = student.ClassId,
+                            ProvinceCode = organization.ProvinceCode,
+
 
                             AbsenceDate = dateTime,
                             Section = sectionTime,
@@ -267,6 +300,7 @@ public partial class TimeAttendenceEventService
                         };
 
                         string paras = JsonConvert.SerializeObject(paramData);
+
                         var timeSync = new TA_TimeAttendenceSync()
                         {
                             Id = time.Id,
@@ -275,6 +309,8 @@ public partial class TimeAttendenceEventService
                             ParamRequests = paras
                         };
                         bool status = await SaveStatuSyncSmas(timeSync);
+
+
                         await PushAttendence2SMAS(paramData);
                     }
                     await _dbContext.SaveChangesAsync();
@@ -288,6 +324,11 @@ public partial class TimeAttendenceEventService
         return "";
     }
 
+    /// <summary>
+    /// Cập nhật trạng thái đồng bộ api điểm danh
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     public async Task<bool> SaveStatuSyncSmas(TA_TimeAttendenceSync request)
     {
         bool statusSync = false;
@@ -306,7 +347,12 @@ public partial class TimeAttendenceEventService
         return statusSync;
     }
 
-    public async Task<string> ProcessAtendenceData(List<TA_AttendenceImage> data)
+    /// <summary>
+    /// Xử lý hình ảnh điểm danh
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public async Task<string> ProcessAttendenceImage(List<TA_AttendenceImage> data)
     {
         try
         {
