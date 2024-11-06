@@ -5,12 +5,11 @@ using Share.WebApp.Helps;
 namespace AMMS.VIETTEL.SMAS.Controllers;
 
 [Route("[controller]")]
-//[AuthorizeClient]
+[AuthorizeClient]
 public class HomeController : AuthBaseController
 {
     public IActionResult Index()
     {
         return View();
     }
-}
 }

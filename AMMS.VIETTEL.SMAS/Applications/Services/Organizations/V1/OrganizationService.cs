@@ -1,5 +1,4 @@
-﻿using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1;
-using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1.Models;
+﻿using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1.Models;
 using AMMS.VIETTEL.SMAS.Cores.Entities;
 using AMMS.VIETTEL.SMAS.Cores.Identity.Entities;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Organizations;
@@ -7,7 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Shared.Core.Commons;
 
-namespace Server.Application.MasterDatas.A2.Organizations.V1;
+namespace AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1;
 
 public class OrganizationService
 {
