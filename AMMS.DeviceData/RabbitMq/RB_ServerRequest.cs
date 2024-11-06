@@ -30,7 +30,7 @@
         /// <summary>
         /// 
         /// </summary>
-        public string SchoolId { get; set; }
+        public string? SchoolId { get; set; }
 
     }
     public class ServerRequestAction

@@ -226,6 +226,17 @@
                     sortable: true,
                     field: 'organizationDescription'
                 },
+                {
+                    title: "Thời gian cập nhật",
+                    field: 'lastModifiedDate',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.lastModifiedDate) {
+                            var lastModifiedDate = moment(row.lastModifiedDate).format('DD/MM/YYYY HH:mm:ss');
+                            return "<span class ='black'> " + lastModifiedDate + "  </span>";
+                        }
+                    },
+                },
             ],
             data: [],
             options: {

@@ -48,7 +48,7 @@ public partial class CronJobService : ICronJobService
                             d.time_offline = datetimeNow;
                             d.online_status = false;
                         }
-                        else if ((datetimeNow - d.last_activity.Value).TotalMinutes > 2)
+                        else if ((datetimeNow - d.last_activity.Value).TotalMinutes > 5)
                         {
                             d.time_offline = datetimeNow;
                             d.online_status = false;

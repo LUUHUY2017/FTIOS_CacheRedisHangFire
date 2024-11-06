@@ -532,6 +532,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                 {
                     add = true;
                     data = new hanet_terminal();
+                    data.create_time  = DateTime.Now;
                     data.Id = tA_Device.Id;
                 }
                 data.Id = tA_Device.Id;
