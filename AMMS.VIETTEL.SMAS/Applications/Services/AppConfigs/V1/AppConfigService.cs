@@ -118,7 +118,9 @@ public class AppConfigService
         try
         {
             // lấy trường theo config
-            var postSchool = await PostSchool(configModel); 
+            var postSchool = await PostSchool(configModel);
+            DateTime nowSync = DateTime.Now;
+
             if (postSchool == null)
             {
                 return new Result<app_config>(null, "Đồng bộ thất bại!", false);
@@ -140,23 +142,43 @@ public class AppConfigService
                         OrganizationEmail = postSchool.Email,
                         OrganizationDescription = postSchool.Description,
                         OrganizationTypeId = postSchool.TypeCode,
+
+                        ProvinceCode = postSchool.ProvinceCode,
+                        ProvinceName = postSchool.ProvinceName,
                     }
                 );
+
                 //thêm vào time config
                 if (checkSchoolAdd.Data != null)
                 {
-                    await _timeConfigRepository.AddAsync(new TimeConfig() {OrganizationId = checkSchoolAdd.Data.Id });
+                    await _timeConfigRepository.AddAsync(new TimeConfig() { OrganizationId = checkSchoolAdd.Data.Id });
                 }
+
             }
+            else
+            {
+
+                Organization checkSchool = checkSchoolAdd.Data;
+
+                checkSchool.ProvinceCode = postSchool.ProvinceCode;
+                checkSchool.ProvinceName = postSchool.ProvinceName;
+                checkSchool.LastModifiedDate = nowSync;
+                await _organizationRepository.UpdateAsync(checkSchool);
+            }
+
             if (checkSchoolAdd.Data == null)
             {
                 return new Result<app_config>(null, "Đồng bộ thất bại!", false);
             }
+
+
             //Gắn trường với attendance config
             var configAsync = await _appConfigRepository.GetByIdAsync(configModel.Id);
             configAsync.Data.OrganizationId = checkSchoolAdd.Data.Id;
             configAsync.Data.ReferenceId = checkSchoolAdd.Data.ReferenceId;
-            configAsync.Data.TimeAsync = DateTime.Now;
+            configAsync.Data.TimeAsync = nowSync;
+
+
             var result = await _appConfigRepository.UpdateAsync(configAsync.Data);
 
             return result;
@@ -166,7 +188,6 @@ public class AppConfigService
             return new Result<app_config>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
-
     public async Task<Result<app_config>> SaveAsync(AppConfigRequest request)
     {
         try
