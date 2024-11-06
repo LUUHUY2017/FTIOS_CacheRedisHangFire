@@ -1,10 +1,10 @@
-﻿using AMMS.VIETTEL.SMAS.Applications.Services.TimeConfigs.V1.Models;
+﻿using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1;
+using AMMS.VIETTEL.SMAS.Applications.Services.TimeConfigs.V1.Models;
 using AMMS.VIETTEL.SMAS.Cores.Entities;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.TimeConfigs;
 using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Server.Application.MasterDatas.A2.Organizations.V1;
 using Shared.Core.Commons;
 
 namespace AMMS.VIETTEL.SMAS.Applications.Services.TimeConfigs.V1;

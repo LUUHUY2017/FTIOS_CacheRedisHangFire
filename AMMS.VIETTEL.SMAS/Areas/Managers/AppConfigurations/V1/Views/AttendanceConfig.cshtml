@@ -419,8 +419,7 @@
                 if (parts.length === 2) return parts.pop().split(";").shift();
             },
             loadCombox() {
-                var userId = '@Context.User.FindFirstValue("sub")';
-                axios.get('/api/v1/Organization/GetForUser', this.object.config).then(response => {
+                axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }
