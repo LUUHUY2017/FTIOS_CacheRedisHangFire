@@ -24,7 +24,7 @@ using Shared.Core.Loggers;
 using System.Reflection;
 using System.Text;
 
-bool UserIdentityServer4Memory = false;
+//bool UserIdentityServer4Memory = false;
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
 IServiceCollection services = builder.Services;
@@ -511,7 +511,7 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    if (!UserIdentityServer4Memory)
+    if (false)
     {
         using (var scope = app.Services.CreateScope())
         {
@@ -645,11 +645,7 @@ if (app.Environment.IsDevelopment())
 
         }
     }
-
-}
-
-if (app.Environment.IsDevelopment())
-{
+ 
     app.UseDeveloperExceptionPage();
 }
 else
