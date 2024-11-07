@@ -48,14 +48,14 @@
                             </div>
                         </div> *@
 
-                        <div class="row mb-3">
+                        @* <div class="row mb-3">
                             <label class="col-form-label text-end col-lg-2">Tên đăng nhập<span class="text-danger">*</span></label>
                             <div class="col-lg-8">
                                 <input type="text" class="form-control" required placeholder="Tài khoản đăng nhập" v-model="item.userName"/>
                                 <div class="invalid-feedback">Vui lòng nhập tên đăng nhập</div>
                                 <div class="valid-feedback"> </div>
                             </div>
-                        </div>
+                        </div> *@
 
                         <div class="row mb-3">
                             <label class="col-form-label text-end col-lg-2">Email<span class="text-danger">*</span></label>
@@ -156,17 +156,17 @@
                         <li class="nav-item">
                             <a class="nav-link active" data-bs-toggle="tab" href="#tab_user_roleGroup_info">Nhóm quyền</a>
                         </li>
-                        <li class="nav-item">
+                        @* <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" href="#tab_user_roles_info">Quyền </a>
-                        </li>
+                        </li> *@
                     </ul>
                     <div class="tab-content" style="padding: inherit">
                         <div id="tab_user_roleGroup_info" class="  tab-pane active">
                             <bootstrap-table :columns="columns_user_roleGroup_info" :data="data_user_roleGroup_info" :options="options"></bootstrap-table>
                         </div>
-                        <div id="tab_user_roles_info" class="  tab-pane fade">
+                        @* <div id="tab_user_roles_info" class="  tab-pane fade">
                             <bootstrap-table :columns="columns_user_role_info" :data="data_user_role_info" :options="options"></bootstrap-table>
-                        </div>
+                        </div> *@
                     </div>
                 </div>
             </div>
@@ -557,17 +557,21 @@
                 if (this.formAction == 'Add') {
                     this.item.type = "System";
                     let tab = '@ViewBag.Tab';
-                    console.log(tab);
+                    //console.log(tab);
                     if (tab == 'system') {
                         this.item.groupRole = "Admin";
                     }
-                    if (tab == 'school') {
-                        this.item.groupRole = "Manager";
-                    }
+                    // if (tab == 'school') {
+                    //     this.item.groupRole = "Manager";
+                    // }
                 }
                 $('.loader').show();
                 axios.post('/v1/User/Update', this.item).then(response => {
                     $('.loader').hide(0);
+                    if (!response.data.succeeded) {
+                        alertify.error(response.data.message);
+                        return;
+                    }
                     if (_tab_users.formAction == 'Add') {
 
                         _tab_users.item.Id = response.data.data.id;
@@ -586,7 +590,7 @@
                     alertify.success("Thành công!");
                 }).catch(error => {
                     $('.loader').hide(0);
-                    console.log(error)
+                    console.log(error);
                     //alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
                 });
             },

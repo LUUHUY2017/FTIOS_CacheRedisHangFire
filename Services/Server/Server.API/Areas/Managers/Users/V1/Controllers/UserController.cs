@@ -1,4 +1,6 @@
-﻿using IdentityServer4.Extensions;
+﻿using AMMS.Share.WebApp.Helps;
+using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +14,13 @@ using Server.Core.Interfaces.A2.Persons;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Shared.Core.Commons;
+using Shared.Core.Identity;
 
 namespace Server.API.Areas.Managers.Users.V1.Controllers;
 
 [Route("v1/[controller]")]
-//[Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[Authorize("Bearer")]
+[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 public class UserController : Controller
 {
     const string pathUrl = "~/Areas/Managers/Users/V1/Views/";
@@ -149,7 +152,7 @@ public class UserController : Controller
             {
                 Id = Guid.NewGuid().ToString(),
                 FirstName = model.FirstName,
-                UserName = model.UserName,
+                UserName = model.Email,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 Type = model.Type,
@@ -227,7 +230,7 @@ public class UserController : Controller
             }
 
             curent_user.FirstName = model.FirstName;
-            curent_user.UserName = model.UserName;
+            curent_user.UserName = model.Email;
             curent_user.Email = model.Email;
             curent_user.PhoneNumber = model.PhoneNumber;
             curent_user.Type = model.Type;

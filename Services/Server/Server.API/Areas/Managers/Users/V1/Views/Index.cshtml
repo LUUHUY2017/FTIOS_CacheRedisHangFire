@@ -7,9 +7,9 @@
     if (ViewBag.Tab == "system")
         tab_system_user = "active";
 
-    string tab_school_user = "";
-    if (ViewBag.Tab == "school")
-        tab_school_user = "active";
+    // string tab_school_user = "";
+    // if (ViewBag.Tab == "school")
+    //     tab_school_user = "active";
 
 
 }
@@ -55,12 +55,6 @@
                     <a href="@Url.Action("index", new { tab =  "system"})" class="nav-link @tab_system_user">
                         <i class="ph-user-circle-gear m-2"></i>
                         Quản trị
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="@Url.Action("index", new { tab =  "school"})" class="nav-link @tab_school_user">
-                        <i class="ph-user-gear m-2"></i>
-                        Trường học
                     </a>
                 </li>
             </ul>
