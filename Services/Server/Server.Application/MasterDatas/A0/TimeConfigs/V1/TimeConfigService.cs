@@ -14,13 +14,13 @@ namespace Server.Application.MasterDatas.A0.TimeConfigs.V1;
 
 public class TimeConfigService
 {
-    public string? UserId { get; set; } 
+    public string? UserId { get; set; }
     private readonly ITimeConfigRepository _timeConfigRepository;
     private readonly IMapper _mapper;
     private readonly IMasterDataDbContext _dBContext;
     private readonly OrganizationService _organizationService;
     public TimeConfigService(
-        ITimeConfigRepository timeConfigRepository, 
+        ITimeConfigRepository timeConfigRepository,
         IMapper mapper,
         IMasterDataDbContext dBContext,
         OrganizationService organizationService
@@ -106,7 +106,7 @@ public class TimeConfigService
         try
         {
             _organizationService.UserId = UserId;
-            var userOrgIds = (await _organizationService.GetForUser()).Data.Select(x => x.Id).ToList();
+            //var userOrgIds = (await _organizationService.GetForUser()).Data.Select(x => x.Id).ToList();
             var retVal = await (from o in _dBContext.Organization
                                 join tc in _dBContext.TimeConfig on o.Id equals tc.OrganizationId into orgGroup
                                 from tc in orgGroup.DefaultIfEmpty() // LEFT JOIN
