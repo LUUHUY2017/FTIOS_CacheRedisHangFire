@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AMMS.Share.WebApp.Helps;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
@@ -6,14 +7,15 @@ using Server.Application.MasterDatas.A0.AttendanceConfigs.V1.Models;
 using Server.Core.Entities.A0;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
+using Shared.Core.Identity;
 
 namespace Server.API.APIs.Data.AttendanceConfigs.V1.Controllers;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[Authorize("Bearer")]
+[AuthorizeMaster]
 public class AttendanceConfigController : AuthBaseAPIController
 {
     private readonly AttendanceConfigService _attendanceConfigService;

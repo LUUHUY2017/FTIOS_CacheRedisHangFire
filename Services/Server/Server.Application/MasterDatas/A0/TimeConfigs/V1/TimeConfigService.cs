@@ -107,9 +107,9 @@ public class TimeConfigService
         {
             _organizationService.UserId = UserId;
             var userOrgIds = (await _organizationService.GetForUser()).Data.Select(x => x.Id).ToList();
-            var retVal = await (from tc in _dBContext.A0_TimeConfig
-                                join o in _dBContext.A2_Organization on tc.OrganizationId equals o.Id into orgGroup
-                                from o in orgGroup.DefaultIfEmpty() // LEFT JOIN
+            var retVal = await (from o in _dBContext.A2_Organization
+                                join tc in _dBContext.A0_TimeConfig on o.Id equals tc.OrganizationId into orgGroup
+                                from tc in orgGroup.DefaultIfEmpty() // LEFT JOIN
                                 where (tc.Actived == true
                                   && (!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? tc.OrganizationId == filter.OrganizationId : true
                                   //&& ((filter.SiteId != 0) ? siteIds.Contains(device.SiteId) : true)

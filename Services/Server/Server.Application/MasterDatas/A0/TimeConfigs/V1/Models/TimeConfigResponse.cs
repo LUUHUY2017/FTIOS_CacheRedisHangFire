@@ -28,23 +28,23 @@ public class TimeConfigResponse
 
     public TimeConfigResponse(A0_TimeConfig tc, A2_Organization o)
     {
-         Id = tc.Id;
-         OrganizationId = tc.OrganizationId;
+         Id = tc?.Id;
+         OrganizationId = tc?.OrganizationId;
          OrganizationName = o?.OrganizationName ?? string.Empty;
 
-         MorningStartTime = tc.MorningStartTime;
-         MorningEndTime = tc.MorningEndTime;
-         MorningLateTime = tc.MorningLateTime;
-         MorningBreakTime = tc.MorningBreakTime;
+         MorningStartTime = tc?.MorningStartTime;
+         MorningEndTime = tc?.MorningEndTime;
+         MorningLateTime = tc?.MorningLateTime;
+         MorningBreakTime = tc?.MorningBreakTime;
 
-         AfternoonStartTime = tc.AfternoonStartTime;
-         AfternoonEndTime = tc.AfternoonEndTime;
-         AfternoonLateTime = tc.AfternoonLateTime;
-         AfternoonBreakTime = tc.AfternoonBreakTime;
+         AfternoonStartTime = tc?.AfternoonStartTime;
+         AfternoonEndTime = tc?.AfternoonEndTime;
+         AfternoonLateTime = tc?.AfternoonLateTime;
+         AfternoonBreakTime = tc?.AfternoonBreakTime;
 
-         EveningStartTime = tc.EveningStartTime;
-         EveningEndTime = tc.EveningEndTime;
-         EveningLateTime = tc.EveningLateTime;
-         EveningBreakTime = tc.EveningBreakTime;
+         EveningStartTime = tc?.EveningStartTime;
+         EveningEndTime = tc?.EveningEndTime;
+         EveningLateTime = tc?.EveningLateTime;
+         EveningBreakTime = tc?.EveningBreakTime;
 }
 }

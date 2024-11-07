@@ -74,7 +74,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="row mb-3">
+                                           @*  <div class="row mb-3">
                                                 <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính đi muộn buổi sáng <span class="text-danger">*</span></label>
                                                 <div class="col-lg-9">
                                                     <input type="time" class="form-control" required v-model="item.morningLateTime" step="1">
@@ -90,7 +90,7 @@
                                                     <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính nghỉ buổi sáng</div>
                                                     <div class="valid-feedback">Valid feedback</div>
                                                 </div>
-                                            </div>
+                                            </div> *@
                                             <!--Chiều-->
                                             <div class="fw-bold">
                                                 Chiều
@@ -113,7 +113,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="row mb-3">
+                                           @*  <div class="row mb-3">
                                                 <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu tính đi muộn buổi chiều <span class="text-danger">*</span></label>
                                                 <div class="col-lg-9">
                                                     <input type="time" class="form-control" required v-model="item.afternoonLateTime" step="1">
@@ -129,9 +129,9 @@
                                                     <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính nghỉ buổi chiều</div>
                                                     <div class="valid-feedback">Valid feedback</div>
                                                 </div>
-                                            </div>
+                                            </div> *@
                                             <!--Tối-->
-                                            <div class="fw-bold">
+                                           @*  <div class="fw-bold">
                                                 Tối
                                             </div>
                                             <div class="row mb-3">
@@ -168,7 +168,7 @@
                                                     <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính nghỉ buổi tối</div>
                                                     <div class="valid-feedback">Valid feedback</div>
                                                 </div>
-                                            </div>
+                                            </div> *@
                                         </td>
                                     </tr>
                                     <tr>
@@ -279,16 +279,16 @@
                     field: 'morningEndTime',
                     sortable: true,
                 },
-                {
-                    title: `<span title="Thời gian bắt đầu tính đi muộn buổi sáng">MorningLateTime</span>`,
-                    field: 'morningLateTime',
-                    sortable: true,
-                },
-                {
-                    title: `<span title="Thời gian bắt đầu tính nghỉ buổi sáng">MorningBreakTime</span>`,
-                    field: 'morningBreakTime',
-                    sortable: true,
-                },
+                // {
+                //     title: `<span title="Thời gian bắt đầu tính đi muộn buổi sáng">MorningLateTime</span>`,
+                //     field: 'morningLateTime',
+                //     sortable: true,
+                // },
+                // {
+                //     title: `<span title="Thời gian bắt đầu tính nghỉ buổi sáng">MorningBreakTime</span>`,
+                //     field: 'morningBreakTime',
+                //     sortable: true,
+                // },
                 {
                     title: `<span title="Thời gian bắt đầu điểm danh buổi chiều">AfternoonStartTime</span>`,
                     field: 'afternoonStartTime',
@@ -299,36 +299,36 @@
                     field: 'afternoonEndTime',
                     sortable: true,
                 },
-                {
-                    title: `<span title="Thời gian bắt đầu tính đi muộn buổi chiều">AfternoonLateTime</span>`,
-                    field: 'afternoonLateTime',
-                    sortable: true,
-                },
-                {
-                    title: `<span title="Thời gian bắt đầu tính nghỉ buổi chiều">AfternoonBreakTime</span>`,
-                    field: 'afternoonBreakTime',
-                    sortable: true,
-                },
-                {
-                    title: `<span title="Thời gian bắt đầu điểm danh buổi tối">EveningStartTime</span>`,
-                    field: 'eveningStartTime',
-                    sortable: true,
-                },
-                {
-                    title: `<span title="Thời gian kết thúc điểm danh buổi tối">EveningEndTime</span>`,
-                    field: 'eveningEndTime',
-                    sortable: true,
-                },
-                {
-                    title: `<span title="Thời gian bắt đầu tính đi muộn buổi tối">EveningLateTime</span>`,
-                    field: 'eveningLateTime',
-                    sortable: true,
-                },
-                {
-                    title: `<span title="Thời gian bắt đầu tính nghỉ buổi tối">EveningBreakTime</span>`,
-                    field: 'eveningBreakTime',
-                    sortable: true,
-                },
+                // {
+                //     title: `<span title="Thời gian bắt đầu tính đi muộn buổi chiều">AfternoonLateTime</span>`,
+                //     field: 'afternoonLateTime',
+                //     sortable: true,
+                // },
+                // {
+                //     title: `<span title="Thời gian bắt đầu tính nghỉ buổi chiều">AfternoonBreakTime</span>`,
+                //     field: 'afternoonBreakTime',
+                //     sortable: true,
+                // },
+                // {
+                //     title: `<span title="Thời gian bắt đầu điểm danh buổi tối">EveningStartTime</span>`,
+                //     field: 'eveningStartTime',
+                //     sortable: true,
+                // },
+                // {
+                //     title: `<span title="Thời gian kết thúc điểm danh buổi tối">EveningEndTime</span>`,
+                //     field: 'eveningEndTime',
+                //     sortable: true,
+                // },
+                // {
+                //     title: `<span title="Thời gian bắt đầu tính đi muộn buổi tối">EveningLateTime</span>`,
+                //     field: 'eveningLateTime',
+                //     sortable: true,
+                // },
+                // {
+                //     title: `<span title="Thời gian bắt đầu tính nghỉ buổi tối">EveningBreakTime</span>`,
+                //     field: 'eveningBreakTime',
+                //     sortable: true,
+                // },
                 // {
                 //     title: 'TimeAsync',
                 //     field: 'timeAsync',
