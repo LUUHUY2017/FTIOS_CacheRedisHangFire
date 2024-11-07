@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ClosedXML.Report;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 using Server.Core.Interfaces.GIO.VehicleInOuts;
@@ -13,6 +14,9 @@ namespace Server.API.APIs.Reports.TimeAttenceEvents.V1.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
+
+[Authorize("Bearer")]
+//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 public class TimeAttenceEventController : AuthBaseAPIController
 {
     private readonly IMediator _mediator;

@@ -48,8 +48,8 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
     public DbSet<A2_Student> A2_Student { get; set; }
     public DbSet<A2_PersonFace> A2_PersonFace { get; set; }
     public DbSet<A2_PersonSynToDevice> A2_PersonSynToDevice { get; set; }
-    public DbSet<A2_ScheduleJob> A2_ScheduleJob { get; set; }
-    public DbSet<A2_ScheduleJobLog> A2_ScheduleJobLog { get; set; }
+    public DbSet<ScheduleJob> A2_ScheduleJob { get; set; }
+    public DbSet<ScheduleJobLog> A2_ScheduleJobLog { get; set; }
 
     #endregion
 

@@ -17,7 +17,7 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
 
-    //[Authorize("Bearer")]
+    [Authorize("Bearer")]
     //[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
     public class SyncDeviceServerController : AuthBaseAPIController
     {

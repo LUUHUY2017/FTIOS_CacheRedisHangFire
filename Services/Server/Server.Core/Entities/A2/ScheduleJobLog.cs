@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A2;
 
-[Table("A2_ScheduleJobLog")]
-public class A2_ScheduleJobLog : EntityBase
+[Table("ScheduleJobLog")]
+public class ScheduleJobLog : EntityBase
 {
     [MaxLength(500)]
     public string? ScheduleJobId { get; set; }
