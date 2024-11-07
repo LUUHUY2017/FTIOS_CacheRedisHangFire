@@ -210,16 +210,19 @@ public class AppConfigService
             {
                 var data = await _appConfigRepository.GetByIdAsync(request.Id);
                 var dataUpdate = data.Data;
-                dataUpdate.EndpointIdentity = request.EndpointIdentity;
                 dataUpdate.EndpointGateway = request.EndpointGateway;
-                dataUpdate.AccountName = request.AccountName;
-                dataUpdate.Password = request.Password;
-                dataUpdate.GrantType = request.GrantType;
-                dataUpdate.Scope = request.Scope;
-                dataUpdate.ClientId = request.ClientId;
-                dataUpdate.ClientSecret = request.ClientSecret;
+                dataUpdate.KeyIV = request.KeyIV;
+                dataUpdate.Key = request.Key;
+                dataUpdate.SecretKey = request.SecretKey;
+                //dataUpdate.EndpointIdentity = request.EndpointIdentity;
+                //dataUpdate.AccountName = request.AccountName;
+                //dataUpdate.Password = request.Password;
+                //dataUpdate.GrantType = request.GrantType;
+                //dataUpdate.Scope = request.Scope;
+                //dataUpdate.ClientId = request.ClientId;
+                //dataUpdate.ClientSecret = request.ClientSecret;
 
-                var retVal = await _appConfigRepository.UpdateAsync(dataUpdate);
+    var retVal = await _appConfigRepository.UpdateAsync(dataUpdate);
                 return retVal;
             }
         }
