@@ -48,7 +48,7 @@ public class CronJobService : ICronJobService
         {
             var timeSentHour = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
             var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
-            if (item.ScheduleType == "LAPLICHDONGBO")
+            if (item.ScheduleNote == "LAPLICHDONGBO")
             {
                 var newCronExpression = item.ScheduleSequential switch
                 {
@@ -62,9 +62,9 @@ public class CronJobService : ICronJobService
                 };
 
                 if (item.ScheduleType == "DONGBOHOCSINH")
-                    await UpdateScheduleSyncStudentCronJob("CronJobSyncFromSmas[*]" + item.ScheduleNote, item.Id, newCronExpression);
+                    await UpdateScheduleSyncStudentCronJob("CronJobSyncSmas[*]" + item.ScheduleType, item.Id, newCronExpression);
                 if (item.ScheduleType == "DONGBODIEMDANH")
-                    await UpdateScheduleSyncAttendenceCronJob("CronJobSyncFromSmas[*]" + item.ScheduleNote, item.Id, newCronExpression);
+                    await UpdateScheduleSyncAttendenceCronJob("CronJobSyncSmas[*]" + item.ScheduleType, item.Id, newCronExpression);
             }
         }
     }

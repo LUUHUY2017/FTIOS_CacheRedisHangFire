@@ -109,7 +109,12 @@ public class ScheduleJobController : AuthBaseAPIController
     {
         var retVal = await _scheduleJobRepository.GetById(id);
         if (retVal.Succeeded)
-            await _cronJobService.SyncStudentFromSmas(retVal.Data.Id);
+        {
+            if (retVal.Data.ScheduleType == "DONGBOHOCSINH")
+                await _cronJobService.SyncStudentFromSmas(retVal.Data.Id);
+            if (retVal.Data.ScheduleType == "DONGBODIEMDANH")
+                await _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
+        }
         return Ok();
     }
 
@@ -144,7 +149,7 @@ public class ScheduleJobController : AuthBaseAPIController
 
         if (retVal.Succeeded)
         {
-            string JobId = $"CronJobSyncFromSmas[*]" + retVal.Data.ScheduleNote;
+            string JobId = $"CronJobSyncSmas[*]" + retVal.Data.ScheduleType;
             await _cronJobService.RemoveScheduleCronJob(JobId, retVal.Data.Id);
         }
         return Ok(result);
