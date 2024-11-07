@@ -106,12 +106,12 @@ public class TimeConfigService
         try
         {
             _organizationService.UserId = UserId;
-            var userOrgIds = (await _organizationService.GetForUser()).Data.Select(x => x.Id).ToList();
+            //var userOrgIds = (await _organizationService.GetForUser()).Data.Select(x => x.Id).ToList();
             var retVal = await (from o in _dBContext.A2_Organization
                                 join tc in _dBContext.A0_TimeConfig on o.Id equals tc.OrganizationId into orgGroup
                                 from tc in orgGroup.DefaultIfEmpty() // LEFT JOIN
-                                where (tc.Actived == true
-                                  && (!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? tc.OrganizationId == filter.OrganizationId : true
+                                where (o.Actived == true
+                                  && (!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? o.Id == filter.OrganizationId : true
                                   //&& ((filter.SiteId != 0) ? siteIds.Contains(device.SiteId) : true)
                                   //&& ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "serial_number") ? device.SerialNumber.ToLower().Contains(filter.Key.ToLower()) : true)
                                   //&& ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "device_name") ? device.DeviceName.ToLower().Contains(filter.Key.ToLower()) : true)
@@ -120,7 +120,8 @@ public class TimeConfigService
                     )
                     .ToListAsync();
 
-            retVal = retVal.Where(x => userOrgIds.Contains(x.OrganizationId)).ToList();
+
+            //retVal = retVal.Where(x => userOrgIds.Contains(x.Id)).ToList();
             return new Result<List<TimeConfigResponse>>(retVal, "Thành công", true);
         }
         catch (Exception ex)

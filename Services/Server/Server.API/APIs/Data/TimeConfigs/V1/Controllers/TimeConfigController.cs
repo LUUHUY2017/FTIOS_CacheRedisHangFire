@@ -64,6 +64,6 @@ public class TimeConfigController : AuthBaseAPIController
     [HttpPost("AddOrEdit")]
     public async Task<IActionResult> AddOrEdit(TimeConfigRequest model)
     {
-        return Ok(await _timeConfigService.SaveAsync(model));
+         return Ok(await _timeConfigService.SaveAsync(model));
     }
 }

@@ -29,7 +29,7 @@ public class TimeConfigResponse
     public TimeConfigResponse(A0_TimeConfig tc, A2_Organization o)
     {
          Id = tc?.Id;
-         OrganizationId = tc?.OrganizationId;
+         OrganizationId = o?.Id;
          OrganizationName = o?.OrganizationName ?? string.Empty;
 
          MorningStartTime = tc?.MorningStartTime;

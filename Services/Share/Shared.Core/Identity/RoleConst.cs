@@ -8,10 +8,10 @@ public static class RoleConst
 
     #region Quản trị
     public const string SuperAdmin_Role = "SuperAdmin";
-    public static readonly RoleObject SuperAdmin = new RoleObject { Module = Module.Master, Id = "cfe0acd3-ccf3-4986-9b48-508355193039", Name = SuperAdmin_Role, Description = "Khởi tạo hệ thống" };
+    public static readonly RoleObject SuperAdmin = new RoleObject { Module = Module.Master, Id = "cfe0acd3-ccf3-4986-9b48-508355193039", Name = SuperAdmin_Role, Description = "Quản trị hệ thống" };
 
     public const string Admin_Role = "Admin";
-    public static readonly RoleObject Admin = new RoleObject { Module = Module.Master, Id = "ea7da92e-f11c-45a7-aa4f-24761f0c4f93", Name = Admin_Role, Description = "Quản trị hệ thống - có toàn quyền trên tất cả các chức năng" };
+    public static readonly RoleObject Admin = new RoleObject { Module = Module.Master, Id = "ea7da92e-f11c-45a7-aa4f-24761f0c4f93", Name = Admin_Role, Description = "Quản lý hệ thống" };
 
     public const string Manager_Role = "Manager";
     public static readonly RoleObject Manager = new RoleObject { Module = Module.Master, Id = "ebed26a4-a972-46fe-8dfa-30b71502dd0b", Name = Manager_Role, Description = "Quản lý trường" };

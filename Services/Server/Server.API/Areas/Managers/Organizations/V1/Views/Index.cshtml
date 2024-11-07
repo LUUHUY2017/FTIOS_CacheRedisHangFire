@@ -197,6 +197,13 @@
                     }
                 },
                 {
+                    title: "STT",
+                    field: "index",
+                    formatter: (value, row, index) => {
+                        return ++index;
+                    }
+                },
+                {
                     title: 'Mã trường',
                     sortable: true,
                     field: 'organizationCode'

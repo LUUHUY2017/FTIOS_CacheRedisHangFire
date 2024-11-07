@@ -57,7 +57,7 @@
                                                 Sáng
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu điểm danh buổi sáng <span class="text-danger">*</span></label>
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu điểm danh buổi sáng </label>
                                                 <div class="col-lg-9">
                                                     <input type="time" class="form-control" required v-model="item.morningStartTime" step="1">
                                                     <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu điểm danh buổi sáng</div>
@@ -66,7 +66,7 @@
                                             </div>
 
                                             <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">Thời gian kết thúc điểm danh buổi sáng <span class="text-danger">*</span></label>
+                                                <label class="col-form-label text-start col-lg-3">Thời gian kết thúc điểm danh buổi sáng </label>
                                                 <div class="col-lg-9">
                                                     <input type="time" class="form-control" required v-model="item.morningEndTime" step="1">
                                                     <div class="invalid-feedback">Vui lòng nhập thời gian kết thúc điểm danh buổi sáng</div>
@@ -96,7 +96,7 @@
                                                 Chiều
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu điểm danh buổi chiều <span class="text-danger">*</span></label>
+                                                <label class="col-form-label text-start col-lg-3">Thời gian bắt đầu điểm danh buổi chiều </label>
                                                 <div class="col-lg-9">
                                                     <input type="time" class="form-control" required v-model="item.afternoonStartTime" step="1">
                                                     <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu điểm danh buổi tối</div>
@@ -105,7 +105,7 @@
                                             </div>
 
                                             <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">Thời gian kết thúc điểm danh buổi chiều <span class="text-danger">*</span></label>
+                                                <label class="col-form-label text-start col-lg-3">Thời gian kết thúc điểm danh buổi chiều </label>
                                                 <div class="col-lg-9">
                                                     <input type="time" class="form-control" required v-model="item.afternoonEndTime" step="1">
                                                     <div class="invalid-feedback">Vui lòng nhập thời gian kết thúc điểm danh buổi chiều</div>
@@ -407,9 +407,13 @@
             },
             onSaveData() {
                 //console.log(this.item);
-                if (!validateForm("#FormAddEdit"))
-                    return true;
-                this.item.organizationId = this.filter.organizationId;
+                // if (!validateForm("#FormAddEdit"))
+                //     return true;
+                //this.item.organizationId = this.filter.organizationId;
+                this.item.morningStartTime = this.item.morningStartTime === "" ? null : this.item.morningStartTime;
+                this.item.morningEndTime = this.item.morningEndTime === "" ? null : this.item.morningEndTime;
+                this.item.afternoonStartTime = this.item.afternoonStartTime === "" ? null : this.item.afternoonStartTime;
+                this.item.afternoonEndTime = this.item.afternoonEndTime === "" ? null : this.item.afternoonEndTime;
                 $('.loader').show();
                 axios.post('/api/v1/TimeConfig/AddOrEdit', this.item, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
