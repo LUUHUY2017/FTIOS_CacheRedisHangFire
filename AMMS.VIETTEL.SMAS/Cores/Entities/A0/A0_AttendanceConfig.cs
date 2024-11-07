@@ -14,13 +14,18 @@ public class A0_AttendanceConfig : EntityBase
     public string? ClientId { get; set; }
     public string? ClientSecret { get; set; }
 
-    public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
-    public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
-    public static string secretKey = "SMas$#3/*/lsn_diem_danh";
-
     public string? EndpointGateway { get; set; }
     public DateTime? TimeAsync { get; set; }
-
     public string? Note { get; set; }
+
+    public string? Key { get; set; }
+    public string? KeyIV { get; set; }
+    public string? SecretKey { get; set; }
+
+    public string? access_token { get; set; }
+    public string? refresh_token { get; set; }
+    public int? expires_in { get; set; }
+    public string? token_type { get; set; }
+    public DateTime? time_expires_in { get; set; }
 
 }
