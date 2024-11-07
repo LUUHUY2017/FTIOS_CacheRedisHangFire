@@ -5,10 +5,14 @@ using Hangfire;
 using Hangfire.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.MasterDatas.A2.Students.V1.Model;
+using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 using Server.Application.Services.VTSmart;
+using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A2;
+using Server.Core.Entities.TA;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Emails.V1.Commons;
 using Shared.Core.Loggers;
@@ -35,17 +39,18 @@ public class CronJobService : ICronJobService
         _studentService = studentService;
         _configuration = configuration;
         _signalRService = signalRClientService;
+        //var recurringJobs = JobStorage.Current.GetConnection().GetRecurringJobs();
     }
-    public async Task CreateScheduleSendMailCronJob(List<ScheduleJob> scheduleLists)
+
+    public async Task CreateScheduleCronJob(List<ScheduleJob> scheduleLists)
     {
         foreach (var item in scheduleLists)
         {
             var timeSentHour = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
             var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
-            var newCronExpression = "0 * * * *";
-            if (item.ScheduleNote == "LAPLICHDONGBO")
+            if (item.ScheduleType == "LAPLICHDONGBO")
             {
-                newCronExpression = item.ScheduleSequential switch
+                var newCronExpression = item.ScheduleSequential switch
                 {
                     "Minutely" => "* * * * *",
                     "Hourly" => "0 * * * *",
@@ -55,23 +60,30 @@ public class CronJobService : ICronJobService
                     "Yearly" => $"{timeSentMinute} {timeSentHour} 1 1 *",
                     _ => throw new ArgumentException("Invalid ScheduleSequential value")
                 };
-                await UpdateSchedulCronJob("ScheduleJob" + item.ScheduleSequential, item.Id, newCronExpression);
+
+                if (item.ScheduleType == "DONGBOHOCSINH")
+                    await UpdateScheduleSyncStudentCronJob("CronJobSyncFromSmas[*]" + item.ScheduleNote, item.Id, newCronExpression);
+                if (item.ScheduleType == "DONGBODIEMDANH")
+                    await UpdateScheduleSyncAttendenceCronJob("CronJobSyncFromSmas[*]" + item.ScheduleNote, item.Id, newCronExpression);
             }
         }
     }
-
-    public async Task UpdateSchedulCronJob(string jobId, string sheduleId, string newCronExpression)
+    public async Task UpdateScheduleSyncStudentCronJob(string jobId, string sheduleId, string newCronExpression)
     {
-        //var recurringJobs = JobStorage.Current.GetConnection().GetRecurringJobs();
         string JobName = jobId + "_" + sheduleId;
         RecurringJob.AddOrUpdate(JobName, () => SyncStudentFromSmas(sheduleId), newCronExpression, TimeZoneInfo.Local);
     }
-
+    public async Task UpdateScheduleSyncAttendenceCronJob(string jobId, string sheduleId, string newCronExpression)
+    {
+        string JobName = jobId + "_" + sheduleId;
+        RecurringJob.AddOrUpdate(JobName, () => SyncAttendenceToSmas(sheduleId), newCronExpression, TimeZoneInfo.Local);
+    }
     public async Task RemoveScheduleCronJob(string jobId, string sheduleId)
     {
         string JobName = jobId + "_" + sheduleId;
         RecurringJob.RemoveIfExists(JobName);
     }
+
 
 
     static bool Is_Run_SyncStudentSmasDaily = false;
@@ -115,4 +127,71 @@ public class CronJobService : ICronJobService
         Is_Run_SyncStudentSmasDaily = false;
 
     }
+    public async Task SyncAttendenceToSmas(string sheduleId)
+    {
+        DateTime now = DateTime.Now;
+        try
+        {
+            var jobRes = await _dbContext.ScheduleJob.FirstOrDefaultAsync(o => o.Actived == true && o.Id == sheduleId);
+            if (jobRes == null)
+                return;
+
+            var orgRes = await _dbContext.Organization.FirstOrDefaultAsync(o => o.Id == jobRes.OrganizationId && o.Actived == true);
+            if (orgRes == null)
+                return;
+
+
+            // Lấy dữ liệu theo block gửi qua api
+            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.SchoolCode == orgRes.OrganizationCode && o.EventType != true).OrderBy(o => o.EventTime).Take(20).ToListAsync();
+            var studentAbs = new List<StudentAbsence>();
+            foreach (var item in datas)
+            {
+                var el = new StudentAbsence()
+                {
+                    StudentCode = item.StudentCode,
+                    Value = item.ValueAbSent
+                };
+                studentAbs.Add(el);
+            }
+            var req = new SyncDataRequest()
+            {
+                Id = Guid.NewGuid().ToString(),
+                SchoolCode = orgRes.OrganizationCode,
+                AbsenceDate = DateTime.Now,
+                Section = 0,
+                FormSendSMS = 1,
+                StudentAbsences = studentAbs,
+            };
+            var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
+            if (res != null)
+            {
+                if (res.IsSuccess)
+                {
+                    datas.ForEach(o => { o.EventType = true; });
+                    await _dbContext.SaveChangesAsync();
+                }
+                //var item = new TimeAttendenceSync() { Id = datas.Id, };
+                //if (res.IsSuccess)
+                //{
+                //    string response = JsonConvert.SerializeObject(res);
+                //    item.SyncStatus = res.Responses[0].status;
+                //    item.Message = res.Responses[0].message;
+                //    item.ParamResponses = response;
+                //}
+                //else
+                //{
+                //    item.SyncStatus = res.IsSuccess;
+                //    item.Message = res.Message;
+                //}
+                //await _timeAttendenceEventService.SaveStatuSyncSmas(item);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        Is_Run_SyncStudentSmasDaily = false;
+
+    }
+
 }

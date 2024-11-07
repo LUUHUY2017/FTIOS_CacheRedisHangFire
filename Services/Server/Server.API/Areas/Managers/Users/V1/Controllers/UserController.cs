@@ -20,7 +20,7 @@ namespace Server.API.Areas.Managers.Users.V1.Controllers;
 
 [Route("v1/[controller]")]
 [Authorize("Bearer")]
-[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 public class UserController : Controller
 {
     const string pathUrl = "~/Areas/Managers/Users/V1/Views/";

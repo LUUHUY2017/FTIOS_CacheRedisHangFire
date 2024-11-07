@@ -275,9 +275,9 @@ public partial class TimeAttendenceEventService
                             CopyProperties.CopyPropertiesTo(history, extra);
                         }
 
-                        var studentAbsenceByDevices = new List<StudentAbsenceByDevice>()
+                        var studentAbs = new List<StudentAbsence>()
                         {
-                            new StudentAbsenceByDevice
+                            new StudentAbsence
                             {
                                     StudentCode = student.StudentCode,
                                     Value= valueAttendence,
@@ -297,7 +297,7 @@ public partial class TimeAttendenceEventService
                             AbsenceDate = dateTime,
                             Section = sectionTime,
                             FormSendSMS = 1,
-                            StudentAbsenceByDevices = studentAbsenceByDevices,
+                            StudentAbsences = studentAbs,
                         };
 
                         string paras = JsonConvert.SerializeObject(paramData);

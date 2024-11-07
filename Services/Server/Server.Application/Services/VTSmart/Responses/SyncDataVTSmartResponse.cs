@@ -22,7 +22,7 @@
         public DateTime? AbsenceDate { get; set; }
         public int? Section { get; set; }
         public int? FormSendSMS { get; set; }
-        public List<StudentAbsenceByDevice>? StudentAbsenceByDevices { get; set; }
+        public List<StudentAbsence>? StudentAbsences { get; set; }
     }
     public class ExtraProperties
     {
@@ -41,7 +41,7 @@
 
     }
 
-    public class StudentAbsenceByDevice
+    public class StudentAbsence
     {
         public string? StudentCode { get; set; }
         public string? Value { get; set; }

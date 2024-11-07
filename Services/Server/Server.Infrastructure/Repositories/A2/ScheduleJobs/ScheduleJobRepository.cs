@@ -92,6 +92,18 @@ public class ScheduleJobRepository : IScheduleJobRepository
             throw new Exception(e.Message);
         }
     }
+    public async Task<List<ScheduleJob>> Gets(bool actived = true)
+    {
+        try
+        {
+            var _data = await (from _do in _db.ScheduleJob where _do.Actived == actived select _do).ToListAsync();
+            return _data;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
     public async Task<Result<ScheduleJob>> GetById(string id)
     {
         string message = "";

@@ -84,7 +84,7 @@ public class ScheduleJobController : AuthBaseAPIController
                 if (retVal.Succeeded)
                 {
                     var scheduleJobs = new List<ScheduleJob> { retVal.Data };
-                    await _cronJobService.CreateScheduleSendMailCronJob(scheduleJobs);
+                    await _cronJobService.CreateScheduleCronJob(scheduleJobs);
                 }
             }
             catch (Exception ex) { }
@@ -126,7 +126,7 @@ public class ScheduleJobController : AuthBaseAPIController
         if (retVal.Succeeded)
         {
             var scheduleJobs = new List<ScheduleJob> { retVal.Data };
-            await _cronJobService.CreateScheduleSendMailCronJob(scheduleJobs);
+            await _cronJobService.CreateScheduleCronJob(scheduleJobs);
         }
         return Ok(result);
     }
@@ -144,7 +144,7 @@ public class ScheduleJobController : AuthBaseAPIController
 
         if (retVal.Succeeded)
         {
-            string JobId = $"ScheduleJob" + retVal.Data.ScheduleSequential;
+            string JobId = $"CronJobSyncFromSmas[*]" + retVal.Data.ScheduleNote;
             await _cronJobService.RemoveScheduleCronJob(JobId, retVal.Data.Id);
         }
         return Ok(result);

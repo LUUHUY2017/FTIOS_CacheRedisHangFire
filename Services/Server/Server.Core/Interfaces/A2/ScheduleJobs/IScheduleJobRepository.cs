@@ -9,6 +9,7 @@ public interface IScheduleJobRepository
 {
     Task<Result<ScheduleJob>> GetById(string id);
     Task<List<ScheduleJobReportResponse>> GetAlls(ScheduleJobFilterRequest request);
+    Task<List<ScheduleJob>> Gets(bool actived = true);
     Task<Result<ScheduleJob>> UpdateAsync(ScheduleJob data);
     Task<Result<ScheduleJob>> ActiveAsync(ActiveRequest data);
     Task<Result<ScheduleJob>> InActiveAsync(InactiveRequest data);
