@@ -15,6 +15,59 @@ namespace AMMS.Hanet.Applications.V1.Service
         }
 
         /// <summary>
+        /// Lấy thông tin user
+        /// </summary>
+        /// <param name="user_aliasID"></param>
+        /// <returns></returns>
+        public async Task<Hanet_User> GetUser(string user_aliasID)
+        {
+            Hanet_Response_Array result = null;
+            try
+            {
+                var options = new RestClientOptions(ServerHanet)
+                {
+                    MaxTimeout = -1,
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("/person/getUserInfoByAliasID", Method.Post);
+                request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+                request.AddParameter("token", HanetParam.Token.access_token);
+                request.AddParameter("aliasID", user_aliasID);
+                RestResponse response = await client.ExecuteAsync(request);
+
+                var strResult = response.Content;
+                Console.WriteLine(strResult);
+
+                if (string.IsNullOrEmpty(strResult))
+                    return null;
+
+                result = JsonConvert.DeserializeObject<Hanet_Response_Array>(strResult);
+
+                if (result == null) return null;
+
+                if (result.returnCode != Hanet_Response_Static.SUCCESSCode)
+                    return null;
+
+                if (result.data.Any())
+                {
+                    Hanet_User user_return = (Hanet_User)result.data.FirstOrDefault();
+
+                    return user_return;
+                }
+
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+
+                Logger.Error(ex);
+                return null;
+            }
+
+        }
+
+        /// <summary>
         /// Kiểm tra user có trong dữ liệu chưa
         /// </summary>
         /// <param name="user"></param>
@@ -219,6 +272,7 @@ namespace AMMS.Hanet.Applications.V1.Service
             }
 
         }
+
         /// <summary>
         /// Xoá user có trong dữ liệu chưa
         /// </summary>
@@ -260,6 +314,54 @@ namespace AMMS.Hanet.Applications.V1.Service
 
                 Logger.Error(ex);
                 return false;
+            }
+
+        }
+
+        /// <summary>
+        /// Lấy tổng số user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task<int> GetCountUserByPlate(string plateId)
+        {
+            Hanet_Response result = null;
+            try
+            {
+                var options = new RestClientOptions(ServerHanet)
+                {
+                    MaxTimeout = -1,
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("/person/remove", Method.Post);
+                request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+                request.AddParameter("token", HanetParam.Token.access_token);
+                request.AddParameter("placeID", plateId);
+                RestResponse response = await client.ExecuteAsync(request);
+
+                var strResult = response.Content;
+                Console.WriteLine(strResult);
+
+                if (string.IsNullOrEmpty(strResult))
+                    return 0;
+
+                result = JsonConvert.DeserializeObject<Hanet_Response>(strResult);
+
+                if (result == null) return 0;
+
+                if (result.returnCode != Hanet_Response_Static.SUCCESSCode)
+                    return 0;
+                int countData = 0;
+
+                countData = (int)result.data;
+
+                return countData;
+            }
+            catch (Exception ex)
+            {
+
+                Logger.Error(ex);
+                return 0;
             }
 
         }

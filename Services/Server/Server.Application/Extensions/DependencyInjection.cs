@@ -30,6 +30,7 @@ using Server.Core.Interfaces.A0;
 using Server.Core.Interfaces.A2.Devices;
 using Server.Core.Interfaces.A2.Organizations;
 using Server.Core.Interfaces.A2.Persons;
+using Server.Core.Interfaces.A2.ScheduleJobs;
 using Server.Core.Interfaces.A2.ScheduleSendEmails;
 using Server.Core.Interfaces.A2.SendEmails;
 using Server.Core.Interfaces.A2.Students;
@@ -44,6 +45,7 @@ using Server.Infrastructure.Repositories.A0.TimeConfigs;
 using Server.Infrastructure.Repositories.A2.Devices;
 using Server.Infrastructure.Repositories.A2.Organizations;
 using Server.Infrastructure.Repositories.A2.Persons;
+using Server.Infrastructure.Repositories.A2.ScheduleJobs;
 using Server.Infrastructure.Repositories.A2.ScheduleSendEmails;
 using Server.Infrastructure.Repositories.A2.SendEmails;
 using Server.Infrastructure.Repositories.A2.Students;
@@ -224,6 +226,7 @@ public static class DependencyInjection
         //SendEmail
         service.AddScoped<ISendEmailRepository, SendEmailRepository>();
         service.AddScoped<ISendEmailLogRepository, SendEmailLogRepository>();
+        service.AddScoped<IScheduleJobRepository, ScheduleJobRepository>();
 
         //Cache
         service.AddScoped<ICacheService, CacheService>();

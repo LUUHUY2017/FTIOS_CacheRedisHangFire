@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Học sinh đồng bộ";
+    ViewData["Title"] = "Khai báo khuôn mặt";
     Layout = "~/Views/Shared/_LayoutManage.cshtml";
 }
 
@@ -377,7 +377,7 @@
         });
 
         $('#classId').on("change", function () {
-            _stu.filter.classId = $(this).val() ?? null;
+            _stu.params.classId = $(this).val() ?? null;
 
             _stu.combobox.data = [];
             _stu.onLoadData();
@@ -397,9 +397,6 @@
             data: [],
 
             filter: {
-                classId: null,
-                schoolYearId: null,
-
                 RowsPerPage: 50,
                 CurentPage: 1,
                 FilterItems: [],
@@ -410,6 +407,7 @@
                 genderCode: null,
                 dateOfBirth: null,
                 className: null,
+                classId: null,
                 status: null,
             },
 
@@ -455,7 +453,6 @@
 
                         const pagingNumbers = $('#pagingNumbers');
                         this.renderPagination(pagingNumbers, this.totalPage, this.filter.CurentPage);
-
                     }
                     else {
                         alertify.notify(response.data.message, 'error', 6, function () { });
