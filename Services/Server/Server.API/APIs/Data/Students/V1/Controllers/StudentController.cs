@@ -74,6 +74,8 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
                     }
                 }
 
+
+
                 int totalRow = await items.CountAsync();
                 // phân trang
                 int skip = (request.CurentPage.Value - 1) * (request.RowsPerPage.Value);
