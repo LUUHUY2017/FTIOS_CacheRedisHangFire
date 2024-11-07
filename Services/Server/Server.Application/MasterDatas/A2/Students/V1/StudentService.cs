@@ -2,7 +2,6 @@
 using AutoMapper;
 using EventBus.Messages;
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Server.Application.MasterDatas.A2.Students.V1.Model;
@@ -263,64 +262,108 @@ public class StudentService
         return statusSync;
     }
 
+
+
+
     /// <summary>
     /// Lấy danh sách học sinh AMMS
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<Result<List<DtoStudentResponse>>> GetAlls(StudentSearchRequest request)
+    public async Task<IQueryable<DtoStudentResponse>> GetAlls(StudentSearchRequest request)
     {
         try
         {
-            var _data = await (from _do in _dbContext.A2_Student
+            var _data = (from _do in _dbContext.A2_Student
 
-                               join _la in _dbContext.A2_PersonFace on _do.Id equals _la.PersonId into K
-                               from la in K.DefaultIfEmpty()
+                         join _la in _dbContext.A2_PersonFace on _do.Id equals _la.PersonId into K
+                         from la in K.DefaultIfEmpty()
+                         orderby _do.CreatedDate descending
+                         select new DtoStudentResponse()
+                         {
+                             Id = _do.Id,
+                             Actived = _do.Actived,
+                             CreatedDate = _do.CreatedDate,
+                             LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
+                             StudentCode = _do.StudentCode,
+                             ReferenceId = _do.ReferenceId,
 
+                             FullName = _do.FullName,
+                             DateOfBirth = _do.DateOfBirth,
+                             GenderCode = _do.GenderCode,
+                             ImageSrc = _do.ImageSrc,
+                             ClassId = _do.ClassId,
+                             ClassName = _do.ClassName,
+                             IsExemptedFull = _do.IsExemptedFull,
+                             StatusCode = _do.StatusCode,
+                             Status = _do.Status,
+                             FullNameOther = _do.FullNameOther,
+                             EthnicCode = _do.EthnicCode,
+                             PolicyTargetCode = _do.PolicyTargetCode,
+                             PriorityEncourageCode = _do.PriorityEncourageCode,
+                             SyncCode = _do.SyncCode,
+                             SyncCodeClass = _do.SyncCodeClass,
+                             IdentifyNumber = _do.IdentifyNumber,
+                             StudentClassId = _do.StudentClassId,
+                             SortOrder = _do.SortOrder,
+                             Name = _do.Name,
+                             SortOrderByClass = _do.SortOrderByClass,
+                             GradeCode = _do.GradeCode,
+                             ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null
+                         });
 
-                               where (!string.IsNullOrWhiteSpace(request.ClassId) ? _do.ClassId == request.ClassId : true)
-                               orderby _do.CreatedDate descending
-                               select new DtoStudentResponse()
-                               {
-                                   Id = _do.Id,
-                                   Actived = _do.Actived,
-                                   CreatedDate = _do.CreatedDate,
-                                   LastModifiedDate = _do.LastModifiedDate,
-                                   StudentCode = _do.StudentCode,
-                                   ReferenceId = _do.ReferenceId,
-
-                                   FullName = _do.FullName,
-                                   DateOfBirth = _do.DateOfBirth,
-                                   GenderCode = _do.GenderCode,
-                                   ImageSrc = _do.ImageSrc,
-                                   ClassId = _do.ClassId,
-                                   ClassName = _do.ClassName,
-                                   IsExemptedFull = _do.IsExemptedFull,
-                                   StatusCode = _do.StatusCode,
-                                   Status = _do.Status,
-                                   FullNameOther = _do.FullNameOther,
-                                   EthnicCode = _do.EthnicCode,
-                                   PolicyTargetCode = _do.PolicyTargetCode,
-                                   PriorityEncourageCode = _do.PriorityEncourageCode,
-                                   SyncCode = _do.SyncCode,
-                                   SyncCodeClass = _do.SyncCodeClass,
-                                   IdentifyNumber = _do.IdentifyNumber,
-                                   StudentClassId = _do.StudentClassId,
-                                   SortOrder = _do.SortOrder,
-                                   Name = _do.Name,
-                                   SortOrderByClass = _do.SortOrderByClass,
-                                   GradeCode = _do.GradeCode,
-                                   ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null
-
-                               }).ToListAsync();
-
-            return new Result<List<DtoStudentResponse>>(_data, "Thành công!", true);
+            return _data;
         }
         catch (Exception ex)
         {
-            return new Result<List<DtoStudentResponse>>("Lỗi: " + ex.ToString(), false);
+            return null;
         }
     }
+    public async Task<IQueryable<DtoStudentResponse>> ApplyFilter(IQueryable<DtoStudentResponse> query, FilterItems filter)
+    {
+        switch (filter.PropertyName.ToLower())
+        {
+            case "fullname":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.FullName.Contains(filter.Value.Trim()));
+                break;
+            case "studentcode":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
+                break;
+            case "classid":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.ClassId.Contains(filter.Value.Trim()));
+                break;
+            case "classname":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
+                break;
+
+            case "gradecode":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.GradeCode.Contains(filter.Value.Trim()));
+                break;
+
+            case "status":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.Status.Contains(filter.Value.Trim()));
+                break;
+            case "identifynumber":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.IdentifyNumber.Contains(filter.Value.Trim()));
+                break;
+
+
+
+            default:
+                break;
+        }
+        return query;
+    }
+
+
+
 
     public async Task<Result<DtoStudentRequest>> SaveFromService(DtoStudentRequest request)
     {

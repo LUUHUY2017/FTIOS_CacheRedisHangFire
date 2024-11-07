@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.MasterDatas.A2.Students.V1.Model;
 using Server.Application.Services.VTSmart;
@@ -64,8 +65,40 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
         {
             try
             {
-                var students = await _studentService.GetAlls(request);
-                return Ok(students);
+                var items = await _studentService.GetAlls(request);
+                if (request.FilterItems != null && request.FilterItems.Count > 0)
+                {
+                    foreach (var filter in request.FilterItems)
+                    {
+                        items = await _studentService.ApplyFilter(items, filter);
+                    }
+                }
+
+                int totalRow = await items.CountAsync();
+                // phân trang
+                int skip = (request.CurentPage.Value - 1) * (request.RowsPerPage.Value);
+                int totalPage = 0;
+                totalPage = totalRow / (request.RowsPerPage.Value);
+                if (totalRow % (request.RowsPerPage.Value) > 0)
+                    totalPage++;
+
+                var datas = await items.Skip(skip).Take(request.RowsPerPage.Value).ToListAsync();
+                int totalDataRow = datas.Count();
+
+                var retVal = new
+                {
+                    items = datas,
+
+                    totalPage = totalPage,
+                    totalRow = totalRow,
+                    totalDataRow = totalDataRow,
+
+                    rowPerPage = request.RowsPerPage,
+                    curentPage = request.CurentPage,
+                };
+                return Ok(new Result<object>(retVal, "Thành công!", true));
+
+
             }
             catch (Exception ex)
             {

@@ -90,7 +90,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                 request.AddParameter("placeID", user.placeID);
                 request.AddParameter("title", "Học sinh");
                 request.AddParameter("type", "0");
-                request.AddParameter("departmentID", "1");
+                request.AddParameter("departmentID", user.departmentID);
                 if (string.IsNullOrEmpty(user.base64file))
                     request.AddFile("file", "C:/Users/ADMIN/Desktop/2.jpg");
                 else
@@ -331,7 +331,7 @@ namespace AMMS.Hanet.Applications.V1.Service
         /// url ảnh
         /// </summary>
         public string? Url { get; set; }
-
+        public string? departmentID { get; set; }
     }
 
 }
