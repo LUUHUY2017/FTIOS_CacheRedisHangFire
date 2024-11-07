@@ -1,4 +1,5 @@
-﻿using AMMS.VIETTEL.SMAS.Cores.Entities;
+﻿using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
+using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 
 namespace AMMS.VIETTEL.SMAS.Applications.Services.AppConfigs.V1.Models;
 
@@ -23,7 +24,7 @@ public class AppeConfigResponse
     {
         
     }
-    public AppeConfigResponse(app_config cf, Organization o)
+    public AppeConfigResponse(A0_AttendanceConfig cf, A2_Organization o)
     {
         Id = cf.Id;
         EndpointIdentity = cf.EndpointIdentity;

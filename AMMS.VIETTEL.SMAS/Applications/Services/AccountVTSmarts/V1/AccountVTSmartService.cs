@@ -1,5 +1,5 @@
 ﻿using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses;
-using AMMS.VIETTEL.SMAS.Cores.Entities;
+using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
 using AMMS.VIETTEL.SMAS.Cores.Identity.Entities;
 using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using Microsoft.AspNetCore.Identity;
@@ -33,9 +33,9 @@ public sealed class AccountVTSmartService
     public static string urlSSO = "https://sso.vtsmas.vn/connect/token";
     public static AccessToken _accessToken;
 
-    public async Task<app_config> GetConfig()
+    public async Task<A0_AttendanceConfig> GetConfig()
     {
-        app_config retval = null;
+        A0_AttendanceConfig retval = null;
         try
         {
             retval = await _dbContext.app_config.Where(o => o.Actived == true).FirstOrDefaultAsync();
@@ -46,7 +46,7 @@ public sealed class AccountVTSmartService
             }
             else
             {
-                retval = new app_config()
+                retval = new A0_AttendanceConfig()
                 {
                     EndpointIdentity = "https://sso.vtsmas.vn/connect/token",
                     AccountName = "lsn_thcs_yenvuong",

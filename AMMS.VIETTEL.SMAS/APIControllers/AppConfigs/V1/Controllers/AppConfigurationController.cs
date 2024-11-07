@@ -1,7 +1,7 @@
 ﻿using AMMS.VIETTEL.SMAS.Applications.Services.AccountVTSmarts.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.AppConfigs.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.AppConfigs.V1.Models;
-using AMMS.VIETTEL.SMAS.Cores.Entities;
+using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Share.WebApp.Controllers;
@@ -32,7 +32,7 @@ public class AppConfigurationController : AuthBaseAPIController
     }
 
     [HttpPost("SchoolAsync")]
-    public async Task<IActionResult> SchoolAsync(app_config model)
+    public async Task<IActionResult> SchoolAsync(A0_AttendanceConfig model)
     {
         var data = await _attendanceConfigService.SchoolAsync(model);
         return Ok(data);

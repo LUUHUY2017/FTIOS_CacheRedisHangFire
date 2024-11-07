@@ -1,4 +1,5 @@
-﻿using AMMS.VIETTEL.SMAS.Cores.Entities;
+﻿using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
+using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 
 namespace AMMS.VIETTEL.SMAS.Applications.Services.TimeConfigs.V1.Models;
 
@@ -25,7 +26,7 @@ public class TimeConfigResponse
 
     public string? Note { get; set; }
 
-    public TimeConfigResponse(TimeConfig tc, Organization o)
+    public TimeConfigResponse(A0_TimeConfig tc, A2_Organization o)
     {
          Id = tc.Id;
          OrganizationId = tc.OrganizationId;
