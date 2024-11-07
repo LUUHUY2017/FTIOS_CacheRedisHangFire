@@ -34,7 +34,7 @@ public sealed class SmartService
     public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
     public static string secretKey = "SMas$#3/*/lsn_diem_danh";
-   
+
 
     public async Task<AccessToken> GetToken(string orgId)
     {
@@ -109,7 +109,7 @@ public sealed class SmartService
     }
 
 
-    #region GET
+    #region GET V1
     public async Task<CurrentUserInfo> PostCurrentUser(string orgId)
     {
         CurrentUserInfo retval = new CurrentUserInfo();
@@ -281,9 +281,13 @@ public sealed class SmartService
         }
         return result;
     }
+    #endregion
 
 
 
+
+
+    #region POST V2
     public async Task<List<StudenSmasApiResponse>> PostListStudents(string provinceCode, string schoolCode, string schoolYearCode)
     {
         List<StudenSmasApiResponse> retval = new List<StudenSmasApiResponse>();
@@ -328,11 +332,6 @@ public sealed class SmartService
         }
         return retval;
     }
-    #endregion
-
-
-
-    #region POST
     public async Task<SyncDataResponse> PostSyncAttendence2Smas(SyncDataRequest req, string schoolCode)
     {
         SyncDataResponse retval = null;
@@ -366,6 +365,9 @@ public sealed class SmartService
         }
         return retval;
     }
+
+
+
     public string EncryptStringSMAS(string plaintext, byte[] key, byte[] iv)
     {
         using (Aes aes = Aes.Create())
