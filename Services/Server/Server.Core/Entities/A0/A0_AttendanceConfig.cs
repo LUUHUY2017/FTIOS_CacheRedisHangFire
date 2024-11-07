@@ -17,6 +17,9 @@ public class A0_AttendanceConfig : EntityBase
     public DateTime? TimeAsync { get; set; }
     public string? Note { get; set; }
 
+    public string? Key { get; set; }    
+    public string? KeyIV {get; set; }
+    public string? SecretKey {get; set;}
 
     public string? access_token { get; set; }
     public string? refresh_token { get; set; }
