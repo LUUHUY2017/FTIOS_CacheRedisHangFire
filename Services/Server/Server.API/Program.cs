@@ -15,6 +15,7 @@ using Server.API.SignalRs;
 using Server.Application.CronJobs;
 using Server.Application.Extensions;
 using Server.Core.Identity.Entities;
+using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Share.WebApp.Controllers;
 using Share.WebApp.Settings;
@@ -497,15 +498,19 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
-        //var masterDataDbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
-        //await masterDataDbContext.Database.MigrateAsync();
+        var masterDataDbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
+        await masterDataDbContext.Database.MigrateAsync();
 
         var identityContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
         await identityContext.Database.MigrateAsync();
 
+        var configurationDbContext = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+        await configurationDbContext.Database.MigrateAsync();
 
-        //var notificationDbContext = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
-        //await notificationDbContext.Database.MigrateAsync();
+        var persistedGrantDbContext = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
+        await persistedGrantDbContext.Database.MigrateAsync();
+
+
 
 
         var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();

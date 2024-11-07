@@ -1,6 +1,8 @@
 ﻿using AMMS.VIETTEL.SMAS.Applications.Services.AppConfigs.V1.Models;
 using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses;
 using AMMS.VIETTEL.SMAS.Cores.Entities;
+using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
+using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.AppConfigs;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Organizations;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.TimeConfigs;
@@ -47,7 +49,7 @@ public class AppConfigService
     public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
     public static string secretKey = "Smas!@#2023";
-    public async Task<AccessToken> GetToken(app_config configModel)
+    public async Task<AccessToken> GetToken(A0_AttendanceConfig configModel)
     {
         AccessToken retval = null;
         try
@@ -80,7 +82,7 @@ public class AppConfigService
         return retval;
     }
 
-    public async Task<SchoolResponse> PostSchool(app_config configModel)
+    public async Task<SchoolResponse> PostSchool(A0_AttendanceConfig configModel)
     {
         SchoolResponse retval = null;
         try
@@ -113,7 +115,7 @@ public class AppConfigService
     
     }
 
-    public async Task<Result<app_config>> SchoolAsync(app_config configModel)
+    public async Task<Result<A0_AttendanceConfig>> SchoolAsync(A0_AttendanceConfig configModel)
     {
         try
         {
@@ -123,14 +125,14 @@ public class AppConfigService
 
             if (postSchool == null)
             {
-                return new Result<app_config>(null, "Đồng bộ thất bại!", false);
+                return new Result<A0_AttendanceConfig>(null, "Đồng bộ thất bại!", false);
             }
             // kiểm tra xem trường đã có chưa nếu chưa thì thêm mới
             var checkSchoolAdd = await _organizationRepository.GetByFirstAsync(x => x.ReferenceId == postSchool.Id);
             if (checkSchoolAdd.Data == null)
             {
                 checkSchoolAdd = await _organizationRepository.AddAsync(
-                    new Organization()
+                    new A2_Organization()
                     {
                         ReferenceId = postSchool.Id,
                         OrganizationCode = postSchool.Code,
@@ -151,14 +153,14 @@ public class AppConfigService
                 //thêm vào time config
                 if (checkSchoolAdd.Data != null)
                 {
-                    await _timeConfigRepository.AddAsync(new TimeConfig() { OrganizationId = checkSchoolAdd.Data.Id });
+                    await _timeConfigRepository.AddAsync(new A0_TimeConfig() { OrganizationId = checkSchoolAdd.Data.Id });
                 }
 
             }
             else
             {
 
-                Organization checkSchool = checkSchoolAdd.Data;
+                A2_Organization checkSchool = checkSchoolAdd.Data;
 
                 checkSchool.ProvinceCode = postSchool.ProvinceCode;
                 checkSchool.ProvinceName = postSchool.ProvinceName;
@@ -168,7 +170,7 @@ public class AppConfigService
 
             if (checkSchoolAdd.Data == null)
             {
-                return new Result<app_config>(null, "Đồng bộ thất bại!", false);
+                return new Result<A0_AttendanceConfig>(null, "Đồng bộ thất bại!", false);
             }
 
 
@@ -185,10 +187,10 @@ public class AppConfigService
         }
         catch (Exception ex)
         {
-            return new Result<app_config>(null, $"Có lỗi: {ex.Message}", false);
+            return new Result<A0_AttendanceConfig>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
-    public async Task<Result<app_config>> SaveAsync(AppConfigRequest request)
+    public async Task<Result<A0_AttendanceConfig>> SaveAsync(AppConfigRequest request)
     {
         try
         {
@@ -197,10 +199,10 @@ public class AppConfigService
                 var check = await _appConfigRepository.GetByFirstAsync(x  => x.AccountName.Trim() == request.AccountName.Trim());
                 if (check.Data != null)
                 {
-                    return new Result<app_config>(null, $"Tài khoản đã có vui lòng sử dụng tài khoản khác!", false);
+                    return new Result<A0_AttendanceConfig>(null, $"Tài khoản đã có vui lòng sử dụng tài khoản khác!", false);
                 }    
 
-                var dataAdd = _mapper.Map<app_config>(request); 
+                var dataAdd = _mapper.Map<A0_AttendanceConfig>(request); 
                 var retVal = await _appConfigRepository.AddAsync(dataAdd);
                 return retVal;
             }
@@ -223,7 +225,7 @@ public class AppConfigService
         }
         catch (Exception ex)
         {
-            return new Result<app_config>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<A0_AttendanceConfig>(null, $"Lỗi: {ex.Message}", false);
         }
     }
 

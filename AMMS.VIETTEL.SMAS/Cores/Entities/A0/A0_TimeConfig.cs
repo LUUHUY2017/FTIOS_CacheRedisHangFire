@@ -1,10 +1,10 @@
 ﻿using Shared.Core.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AMMS.VIETTEL.SMAS.Cores.Entities;
+namespace AMMS.VIETTEL.SMAS.Cores.Entities.A0;
 
 [Table("A0_Timeconfig")]
-public class TimeConfig : EntityBase
+public class A0_TimeConfig : EntityBase
 {
     public string? OrganizationId { get; set; }
 
