@@ -4,10 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.API.APIs.Data.ScheduleJobs.V1.Requests;
-<<<<<<< HEAD
 using Server.Application.MasterDatas.A2.ScheduleJobs.V1.Models;
-=======
->>>>>>> 9969c0e0f72576e1dab2f3266bdef031653b21d4
 using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.ScheduleJobs;
 using Server.Core.Interfaces.A2.ScheduleJobs.Requests;
@@ -176,21 +173,7 @@ public class ScheduleJobController : AuthBaseAPIController
     {
         var result = await _scheduleJobRepository.InActiveAsync(request);
         var retVal = await _scheduleJobRepository.GetById(request.Id);
-<<<<<<< HEAD
-        //if (retVal.Succeeded)
-        //{
-        //    string JobId = "";
-        //    if (retVal.Data.ScheduleSequential == "Daily")
-        //    {
-        //        JobId = $"ScheduleJobDaily" + "_" + retVal.Data.Id;
-        //    }
-        //    else if (retVal.Data.ScheduleSequential == "Monthly")
-        //    {
-        //        JobId = $"ScheduleJobMonthly" + "_" + retVal.Data.Id;
-        //    }
-        //    _recurringJobManager.RemoveIfExists(JobId);
-        //}
-=======
+
         if (retVal.Succeeded)
         {
             string JobId = "";
@@ -204,7 +187,6 @@ public class ScheduleJobController : AuthBaseAPIController
             }
             _recurringJobManager.RemoveIfExists(JobId);
         }
->>>>>>> 9969c0e0f72576e1dab2f3266bdef031653b21d4
         return Ok(result);
     }
 
