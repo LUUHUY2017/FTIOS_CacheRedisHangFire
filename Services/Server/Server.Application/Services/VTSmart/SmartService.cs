@@ -322,13 +322,18 @@ public sealed class SmartService
                         {
                             retval = res.Responses;
                         }
+                        else
+                        {
+                            throw new InvalidOperationException(res.Message);
+                        }
                     }
                 }
             }
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Logger.Error(e);
+            Logger.Error(ex);
+            throw new Exception("Error occurred while fetching student data.", ex);
         }
         return retval;
     }
