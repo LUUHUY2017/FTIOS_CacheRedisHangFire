@@ -409,34 +409,7 @@ if (builder.Configuration["Hangfire:Enable"] == "True")
     app.UseHangfireServer();
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    //Khởi tạo siganlr
-    try
-    {
-        var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
-        signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
-        signalRClient.Start();
-    }
-    catch (Exception ex) { Logger.Error(ex); }
-
-    //KHởi tạo job kiểm tra dữ liệu
-    try
-    {
-        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}SyncSmas", () => conJobService.SyncStudentFromSmas("11"), "*/30 * * * *", TimeZoneInfo.Local);
-        //var scheduleLists = await sendMailRepository.GetAlls(new ScheduleSendEmailModel() { Actived = "1" });
-        //conJobService.CreateScheduleSendMailCronJob(scheduleLists);
-
-    }
-    catch (Exception ex)
-    {
-
-        Logger.Error(ex);
-    }
-
-}
-
+ 
 
 app.UseCors("CorsPolicy");
 Common.Follder = app.Environment.WebRootPath;
@@ -480,19 +453,6 @@ app.UseEndpoints(endpoints =>
 });
 
 
-
-//Tạo các job chạy tự động, theo dõi trạng thái của các job     
-//app.UseHangfireDashboard("/hangfire_dashboard");
-//app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
-//{
-//    IgnoreAntiforgeryToken = true,
-//    Authorization = new[] { new DashboardNoAuthorizationFilter() }
-//});
-//app.UseHangfireServer();
-
-
-
-
 app.MapHub<AmmsHub>("/ammshub");
 using (var scope = app.Services.CreateScope())
 {
@@ -511,14 +471,14 @@ using (var scope = app.Services.CreateScope())
         await persistedGrantDbContext.Database.MigrateAsync();
 
 
-
-
         var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
         signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
         signalRClient.Start();
 
-        //var conJobService = scope.ServiceProvider.GetRequiredService<IConJobService>();
+        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
+        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}SyncStudentFromSmas", () => conJobService.SyncStudentFromSmas("11"), "*/30 * * * *", TimeZoneInfo.Local);
         //var scheduleLists = await sendMailRepository.GetAlls(new ScheduleSendEmailModel() { Actived = "1" });
+        //conJobService.CreateScheduleSendMailCronJob(scheduleLists);
 
     }
     catch (Exception e)

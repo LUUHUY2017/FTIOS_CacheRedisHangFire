@@ -94,7 +94,7 @@
                                 </tr>
                                 <tr>
                                     <th>
-                                        <button type="button" class="btn btn-primary" v-on:click="onLoadData()"> <i class="fa fa-search"></i> </button>
+                                        <button type="button" class="btn btn-primary" v-on:click="onLoadData(true)"> <i class="fa fa-search"></i> </button>
                                     </th>
                                     <th> </th>
                                     <th>
@@ -434,9 +434,13 @@
 
         },
         methods: {
-            onLoadData() {
+            onLoadData(resetPage) {
                 $('.loader').show();
                 this.checkParams();
+                if (resetPage)
+                    this.filter.CurentPage = 1;
+
+
                 axios.post('/api/v1/Student/Post', this.filter, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;

@@ -1,4 +1,4 @@
-﻿namespace Server.API.APIs.Data.ScheduleJobs.V1.Requests;
+﻿namespace Server.Application.MasterDatas.A2.ScheduleJobs.V1.Models;
 
 public class ScheduleJobRequest
 {
@@ -27,7 +27,7 @@ public class ScheduleJobRequest
     /// </summary>
     public string? ScheduleSequential { get; set; }
 
-  
+
     public string? ScheduleTime { get; set; }
 
     public string? ScheduleNote { get; set; }
