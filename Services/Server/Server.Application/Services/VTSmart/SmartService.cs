@@ -297,7 +297,7 @@ public sealed class SmartService
 
             //if (accessToken != null)
             {
-                string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, "20186511");
+                string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, schoolCode); //  "20186511"
                 var req = new StudentSmasApiRequest()
                 {
                     secretKey = _secretKey,
@@ -366,8 +366,7 @@ public sealed class SmartService
         return retval;
     }
 
-
-
+     
     public string EncryptStringSMAS(string plaintext, byte[] key, byte[] iv)
     {
         using (Aes aes = Aes.Create())
