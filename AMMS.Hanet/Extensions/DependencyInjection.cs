@@ -52,6 +52,7 @@ public static class DependencyInjection
         service.AddScoped<HANET_Server_Push_Service>();
         service.AddScoped<HANET_Device_Reponse_Service>();
         service.AddScoped<HANET_StartUp_Service>();
+        service.AddScoped<HANET_API_Service>();
 
         // Monitor Device
         service.AddScoped<MonitorDeviceService>();

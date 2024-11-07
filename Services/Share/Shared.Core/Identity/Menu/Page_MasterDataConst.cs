@@ -18,7 +18,7 @@ public partial class PagesConst
     public static readonly PageObject URL_V1_TimeAttenceEvent = new PageObject
     {
         Id = "f95d61e5-128d-4a90-aa60-a13124b32466",
-        Name = "Lịch sử điểm danh",
+        Name = "Báo cáo điểm danh",
         Url = "V1/TimeAttenceEvent",
         Module = Module.Master,
         RolePermission = RoleConst.SuperAdmin_Role,
@@ -75,7 +75,7 @@ public partial class PagesConst
         Url = "V1/Device",
         Module = Module.Master,
         RolePermission = RoleConst.SuperAdmin_Role,
-        CategoryMenu = Category.KhaiBaoDuLieu.Id,
+        CategoryMenu = Category.ThietLap.Id,
     };
 
     public static readonly PageObject URL_V1_DeviceAdmin = new PageObject
@@ -85,7 +85,7 @@ public partial class PagesConst
         Url = "V1/DeviceAdmin",
         Module = Module.Master,
         RolePermission = RoleConst.SuperAdmin_Role,
-        CategoryMenu = Category.KhaiBaoDuLieu.Id,
+        CategoryMenu = Category.ThietLap.Id,
     };
 
     public static readonly PageObject URL_V1_Organization = new PageObject
@@ -158,7 +158,7 @@ public partial class PagesConst
         {
             var _ListMenu = new List<PageObject>();
 
-            _ListMenu.Add(URL_Dashboard);
+            //_ListMenu.Add(URL_Dashboard);
             _ListMenu.Add(URL_V1_TimeAttenceEvent);
             _ListMenu.Add(URL_V1_TimeAttendenceSync);
 

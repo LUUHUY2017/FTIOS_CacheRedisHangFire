@@ -31,7 +31,9 @@ public class AppConfigService
                 userID = data.UserId,
                 expire = data.Expire ?? 0,
                 token_type = data.TokenType,
+                
             };
+            HanetParam.PlateId = data.PlateId;
         }
         return new Result<app_config>(data, "Thành công!", true);
     }

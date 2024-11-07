@@ -8,6 +8,7 @@ public interface IStudentRepository : IAsyncRepository<A2_Student>
 {
 
     Task<Result<A2_Student>> SaveAsync(A2_Student data);
+    Task<Result<A2_Student>> SaveDataAsync(A2_Student data);
 
 }
 

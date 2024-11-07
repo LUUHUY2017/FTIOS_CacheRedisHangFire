@@ -417,16 +417,16 @@ using (var scope = app.Services.CreateScope())
         signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
         signalRClient.Start();
     }
-    catch (Exception ex)
-    {
-        Logger.Error(ex);
-    }
+    catch (Exception ex) { Logger.Error(ex); }
 
     //KHởi tạo job kiểm tra dữ liệu
     try
     {
         var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}SyncSmas", () => conJobService.SyncStudentFromSmas(), "*/1 * * * *", TimeZoneInfo.Local);
+        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}SyncSmas", () => conJobService.SyncStudentFromSmas("11"), "*/30 * * * *", TimeZoneInfo.Local);
+        //var scheduleLists = await sendMailRepository.GetAlls(new ScheduleSendEmailModel() { Actived = "1" });
+        //conJobService.CreateScheduleSendMailCronJob(scheduleLists);
+
     }
     catch (Exception ex)
     {
