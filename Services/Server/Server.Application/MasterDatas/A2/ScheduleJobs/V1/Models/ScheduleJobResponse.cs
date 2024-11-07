@@ -1,6 +1,6 @@
 ﻿using Server.Core.Entities.A2;
 
-namespace Server.API.APIs.Data.ScheduleSendMails.V1.Responses;
+namespace Server.Application.MasterDatas.A2.ScheduleJobs.V1.Models;
 public class ScheduleJobResponse : ScheduleJob
 {
     /// <summary>

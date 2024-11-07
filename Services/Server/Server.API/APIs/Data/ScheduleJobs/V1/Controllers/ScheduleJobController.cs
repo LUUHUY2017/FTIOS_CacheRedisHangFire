@@ -1,19 +1,23 @@
 ﻿using AutoMapper;
 using Hangfire;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.API.APIs.Data.ScheduleSendMails.V1.Requests;
+using Server.API.APIs.Data.ScheduleJobs.V1.Requests;
+using Server.Application.MasterDatas.A2.ScheduleJobs.V1.Models;
 using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.ScheduleJobs;
 using Server.Core.Interfaces.A2.ScheduleJobs.Requests;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
-namespace Server.API.APIs.Data.ScheduleSendMails.V1.Controllers;
+namespace Server.API.APIs.Data.ScheduleJobs.V1.Controllers;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
+[Authorize("Bearer")]
+//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 public class ScheduleJobController : AuthBaseAPIController
 {
     private readonly IMediator _mediator;
@@ -43,7 +47,7 @@ public class ScheduleJobController : AuthBaseAPIController
     /// <param name="model"></param>
     /// <returns></returns>
     [HttpPost("Gets")]
-    public async Task<ActionResult> Filter(ScheduleSendEmailFilter request)
+    public async Task<ActionResult> Filter(ScheduleJobFilter request)
     {
         var model = _mapper.Map<ScheduleJobFilterRequest>(request);
         var data = await _scheduleJobRepository.GetAlls(model);
@@ -68,7 +72,7 @@ public class ScheduleJobController : AuthBaseAPIController
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPut("Edit")]
-    public async Task<ActionResult> Edit(ScheduleSendEmailRequest request)
+    public async Task<ActionResult> Edit(ScheduleJobRequest request)
     {
         try
         {
@@ -169,19 +173,19 @@ public class ScheduleJobController : AuthBaseAPIController
     {
         var result = await _scheduleJobRepository.InActiveAsync(request);
         var retVal = await _scheduleJobRepository.GetById(request.Id);
-        if (retVal.Succeeded)
-        {
-            string JobId = "";
-            if (retVal.Data.ScheduleSequentialSending == "Daily")
-            {
-                JobId = $"ScheduleSendMailReportDaily" + "_" + retVal.Data.Id;
-            }
-            else if (retVal.Data.ScheduleSequentialSending == "Monthly")
-            {
-                JobId = $"ScheduleSendMailReportMonthly" + "_" + retVal.Data.Id;
-            }
-            _recurringJobManager.RemoveIfExists(JobId);
-        }
+        //if (retVal.Succeeded)
+        //{
+        //    string JobId = "";
+        //    if (retVal.Data.ScheduleSequential == "Daily")
+        //    {
+        //        JobId = $"ScheduleJobDaily" + "_" + retVal.Data.Id;
+        //    }
+        //    else if (retVal.Data.ScheduleSequential == "Monthly")
+        //    {
+        //        JobId = $"ScheduleJobMonthly" + "_" + retVal.Data.Id;
+        //    }
+        //    _recurringJobManager.RemoveIfExists(JobId);
+        //}
         return Ok(result);
     }
 

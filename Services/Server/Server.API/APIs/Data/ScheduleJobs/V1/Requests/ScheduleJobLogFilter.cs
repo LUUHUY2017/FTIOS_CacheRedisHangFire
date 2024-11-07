@@ -1,4 +1,4 @@
-﻿namespace Server.API.APIs.Data.ScheduleSendMails.V1.Requests;
+﻿namespace Server.API.APIs.Data.ScheduleJobs.V1.Requests;
 
 public class ScheduleJobLogFilter
 {
