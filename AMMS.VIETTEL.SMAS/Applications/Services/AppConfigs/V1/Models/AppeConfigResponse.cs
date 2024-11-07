@@ -20,6 +20,10 @@ public class AppeConfigResponse
     public string? OrganizationId { get; set; }
     public string? OrganizationName { get; set; }   
     public string? Note { get; set; }
+
+    public string? Key { get; set; }
+    public string? KeyIV { get; set; }
+    public string? SecretKey { get; set; }
     public AppeConfigResponse()
     {
         
@@ -38,5 +42,8 @@ public class AppeConfigResponse
         TimeAsync = cf.TimeAsync;
         OrganizationId = cf.OrganizationId;
         OrganizationName = o?.OrganizationName;
+        Key = cf.Key;
+        KeyIV = cf.KeyIV;
+        SecretKey = cf.SecretKey;
     }
 }
