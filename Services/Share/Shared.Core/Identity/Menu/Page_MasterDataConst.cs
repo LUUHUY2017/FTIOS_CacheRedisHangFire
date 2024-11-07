@@ -158,7 +158,7 @@ public partial class PagesConst
         {
             var _ListMenu = new List<PageObject>();
 
-            _ListMenu.Add(URL_Dashboard);
+            //_ListMenu.Add(URL_Dashboard);
             _ListMenu.Add(URL_V1_TimeAttenceEvent);
             _ListMenu.Add(URL_V1_TimeAttendenceSync);
 

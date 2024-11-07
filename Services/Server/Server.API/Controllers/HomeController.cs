@@ -8,15 +8,23 @@ namespace Server.API.Controllers;
 
 [AuthorizeMaster]
 public class HomeController : AuthBaseController
-{  
-    public HomeController( )
-    { 
+{
+    public HomeController()
+    {
     }
+
+    const string pathUrl = "~/Areas/Managers/Students/V1/Views/";
 
     public IActionResult Index()
     {
-        return View();
+        var access_token = Request.Cookies["amms.master.webapp.access_token"];
+        return View(pathUrl + "Index.cshtml", access_token);
     }
+
+    //public IActionResult Index()
+    //{
+    //    return View();
+    //}
 
     public IActionResult Privacy()
     {
