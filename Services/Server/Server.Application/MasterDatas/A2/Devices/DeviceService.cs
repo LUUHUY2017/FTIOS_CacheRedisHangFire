@@ -39,27 +39,27 @@ namespace Server.Application.MasterDatas.A2.Devices
             _configuration = configuration;
         }
 
-        public async Task<List<A2_Device>> GetAll()
+        public async Task<List<Device>> GetAll()
         {
             var data = await _deviceRepository.GetAllAsync();
             return data;
         }
 
-        public async Task<Result<List<A2_Device>>> GetsForDeviceModel(string deviceModel)
+        public async Task<Result<List<Device>>> GetsForDeviceModel(string deviceModel)
         {
             try
             {
                 var data = await _deviceRepository.GetAllAsync(x => x.DeviceModel == deviceModel);
-                return new Result<List<A2_Device>>(data, $"Thành công!", true);
+                return new Result<List<Device>>(data, $"Thành công!", true);
             }
             catch (Exception ex)
             {
-                return new Result<List<A2_Device>>(null, $"Có lỗi: {ex.Message}", false);
+                return new Result<List<Device>>(null, $"Có lỗi: {ex.Message}", false);
             }
 
         }
 
-        public async Task<Result<A2_Device>> GetById(string id)
+        public async Task<Result<Device>> GetById(string id)
         {
             var data = await _deviceRepository.GetByIdAsync(id);
             return data;
@@ -71,7 +71,7 @@ namespace Server.Application.MasterDatas.A2.Devices
             return data;
         }
 
-        public async Task<Result<A2_Device>> UpdateV2(DeviceRequest request)
+        public async Task<Result<Device>> UpdateV2(DeviceRequest request)
         {
             try
             {
@@ -79,25 +79,25 @@ namespace Server.Application.MasterDatas.A2.Devices
                     || string.IsNullOrEmpty(request.HTTPPort.ToString())
                     )
                 {
-                    return new Result<A2_Device>(null, "Bạn phải nhập đầy đủ các trường yêu cầu!", false);
+                    return new Result<Device>(null, "Bạn phải nhập đầy đủ các trường yêu cầu!", false);
                 }
 
-                var model = _mapper.Map<A2_Device>(request);
+                var model = _mapper.Map<Device>(request);
                 var relval = await _deviceRepository.UpdateAsyncV2(model);
 
 
                 if (relval.Succeeded)
-                    return new Result<A2_Device>(relval.Data, $"Thao tác thành công!", true);
+                    return new Result<Device>(relval.Data, $"Thao tác thành công!", true);
                 else
-                    return new Result<A2_Device>(null, $"Có lỗi khi cập nhật: " + relval.Messages, false);
+                    return new Result<Device>(null, $"Có lỗi khi cập nhật: " + relval.Messages, false);
             }
             catch (Exception ex)
             {
-                return new Result<A2_Device>(null, $"Lỗi: {ex.Message}", false);
+                return new Result<Device>(null, $"Lỗi: {ex.Message}", false);
             }
         }
 
-        public async Task<Result<A2_Device>> Update(DeviceRequest request)
+        public async Task<Result<Device>> Update(DeviceRequest request)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace Server.Application.MasterDatas.A2.Devices
                        || string.IsNullOrEmpty(request.DeviceModel)
                        )
                 {
-                    return new Result<A2_Device>(null, "Bạn phải nhập đầy đủ các trường yêu cầu!", false);
+                    return new Result<Device>(null, "Bạn phải nhập đầy đủ các trường yêu cầu!", false);
                 }
                 var checkSeri = await _deviceRepository.GetByFirstAsync(x => x.SerialNumber == request.SerialNumber);
 
@@ -115,9 +115,9 @@ namespace Server.Application.MasterDatas.A2.Devices
                     //thêm thiết bị 
                     if (checkSeri.Data != null)
                     {
-                        return new Result<A2_Device>(null, "SerialNumber đã có vui lòng tạo mới!", false);
+                        return new Result<Device>(null, "SerialNumber đã có vui lòng tạo mới!", false);
                     }
-                    var modelAdd = _mapper.Map<A2_Device>(request);
+                    var modelAdd = _mapper.Map<Device>(request);
                     var result = await _deviceRepository.AddAsync(modelAdd);
                     if (result.Succeeded)
                     {
@@ -152,7 +152,7 @@ namespace Server.Application.MasterDatas.A2.Devices
                     var modelUpdate = (await _deviceRepository.GetByFirstAsync(x => x.Id == request.Id)).Data;
                     if (checkSeri.Data != null && checkSeri.Data.Id != modelUpdate.Id)
                     {
-                        return new Result<A2_Device>(null, "SerialNumber đã có vui lòng tạo mới!", false);
+                        return new Result<Device>(null, "SerialNumber đã có vui lòng tạo mới!", false);
                     }
                     modelUpdate.Actived = request.Actived;
                     modelUpdate.DeviceName = request.DeviceName;
@@ -165,7 +165,7 @@ namespace Server.Application.MasterDatas.A2.Devices
             }
             catch (Exception ex)
             {
-                return new Result<A2_Device>(null, $"Lỗi: {ex.Message}", false);
+                return new Result<Device>(null, $"Lỗi: {ex.Message}", false);
             }
         }
 
@@ -212,13 +212,13 @@ namespace Server.Application.MasterDatas.A2.Devices
             }
         }
 
-        public async Task<Result<A2_Device>> Active(ActiveRequest request)
+        public async Task<Result<Device>> Active(ActiveRequest request)
         {
             try
             {
                 var modelDel = await _deviceRepository.GetByIdAsync(request.Id);
                 if (modelDel == null)
-                    return new Result<A2_Device>(null, "Không tìm thấy dữ liệu!", false);
+                    return new Result<Device>(null, "Không tìm thấy dữ liệu!", false);
 
                 var response = await _deviceRepository.ActiveAsync(request);
 
@@ -226,16 +226,16 @@ namespace Server.Application.MasterDatas.A2.Devices
             }
             catch (Exception ex)
             {
-                return new Result<A2_Device>(null, $"Lỗi: {ex.Message}", false);
+                return new Result<Device>(null, $"Lỗi: {ex.Message}", false);
             }
         }
-        public async Task<Result<A2_Device>> InActive(InactiveRequest request)
+        public async Task<Result<Device>> InActive(InactiveRequest request)
         {
             try
             {
                 var modelDel = await _deviceRepository.GetByIdAsync(request.Id);
                 if (modelDel == null)
-                    return new Result<A2_Device>(null, "Không tìm thấy dữ liệu!", false);
+                    return new Result<Device>(null, "Không tìm thấy dữ liệu!", false);
 
                 var response = await _deviceRepository.InactiveAsync(request);
 
@@ -243,7 +243,7 @@ namespace Server.Application.MasterDatas.A2.Devices
             }
             catch (Exception ex)
             {
-                return new Result<A2_Device>(null, $"Lỗi: {ex.Message}", false);
+                return new Result<Device>(null, $"Lỗi: {ex.Message}", false);
             }
         }
 

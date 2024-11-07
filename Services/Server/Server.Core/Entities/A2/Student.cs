@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.A2;
 
-public class A2_Student : EntityBase
+public class Student : EntityBase
 {
     public string? StudentCode { get; set; }
     public string? FullName { get; set; }

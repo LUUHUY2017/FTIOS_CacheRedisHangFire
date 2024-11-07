@@ -187,7 +187,7 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
         {
             try
             {
-                A2_Person request = new A2_Person();
+                Person request = new Person();
                 request.Note = model.Description;
                 request.FirstName = model.FirstName;
                 request.LastName = model.LastName;

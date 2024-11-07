@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.TA
 {
-    public class TA_TimeAttendenceSync : EntityBase
+    public class TimeAttendenceSync : EntityBase
     {
         public string? TimeAttendenceEventId { get; set; }
         public string? ParamRequests { get; set; }

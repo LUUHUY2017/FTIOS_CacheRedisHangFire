@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Core.Entities.A0
 {
-    public class A0_RoleGroupDetail : EntityBase
+    public class RoleGroupDetail : EntityBase
     {
         [MaxLength(50)]
         public string? RoleGroupId { get; set; }

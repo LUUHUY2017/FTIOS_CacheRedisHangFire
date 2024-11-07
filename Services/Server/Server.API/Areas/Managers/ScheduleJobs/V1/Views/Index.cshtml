@@ -155,7 +155,7 @@
                                             <label class="col-form-label col-md-3">Tuần suất <span class="text-danger">*</span></label>
                                             <div class="col-md-9">
                                                 <select data-dropdown-parent="#ModelAddEdit" data-placeholder="Vui lòng chọn tuần suất " required id="scheduleSequential" class="form-control select">
-                                                    <option v-for="option in combobox.sequentialSendings" v-bind:value="option.id">
+                                                    <option v-for="option in combobox.sequentials" v-bind:value="option.id">
                                                         {{ option.name }}
                                                     </option>
 
@@ -205,13 +205,13 @@
             _Schedule.item.scheduleType = $(this).val();
         });
         $('#organizationId').on("change", function () {
-            _Schedule.item.organizationId = $(this).val();
-            _Schedule.item.organizationName = $(this).find("option:selected").text()?.trim();
+            _Schedule.item.organizationId = $(this).val() ?? null;
+            _Schedule.item.organizationName = $(this).find("option:selected").text()?.trim() ?? null;
         });
 
 
         $('#FOrganization').on("change", function () {
-            _Schedule.filter.organizationId = $(this).val();
+            _Schedule.filter.organizationId = $(this).val() ?? null;
         });
         $('#FActived').on("change", function () {
             _Schedule.filter.actived = $(this).val();
@@ -334,12 +334,12 @@
                 actived: "1",
                 key: "",
                 export: "0",
-                organizationId: 0,
+                organizationId: null,
                 scheduleNote: "LAPLICHDONGBO",
             },
             item: {},
             combobox: {
-                sequentialSendings: [],
+                sequentials: [],
                 organizations: [],
                 scheduleTypes: [],
             },
@@ -452,21 +452,22 @@
 
 
             loadCombox() {
-                axios.get('/api/v1/ScheduleJob/Organizations', this.object.config).then(response => {
+                axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 
-                    this.combobox.organizations = response.data.items;
+                    this.combobox.organizations = response.data.data;
                 }).catch(error => {
                     console.log(error);
                 });
 
-                axios.get('/api/v1/ScheduleJob/ScheduleEmailOptions', this.object.config).then(response => {
+                axios.get('/api/v1/ScheduleJob/ScheduleOptions', this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 
                     this.combobox.scheduleTypes = response.data.scheduleTypes;
-                    this.combobox.sequentialSendings = response.data.sequentialSendings;
+                    this.combobox.sequentials = response.data.sequentials;
+
                 }).catch(error => {
                     console.log(error);
                 });

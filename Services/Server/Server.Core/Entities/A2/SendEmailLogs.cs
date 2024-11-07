@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.A2;
 
-public class A2_SendEmailLog : EntityBase
+public class SendEmailLogs : EntityBase
 {
 
     public string? SendEmailId { get; set; }

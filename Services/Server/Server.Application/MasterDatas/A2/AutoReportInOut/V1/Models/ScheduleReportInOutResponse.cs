@@ -2,7 +2,7 @@
 
 namespace Server.Application.MasterDatas.A2.AutoReportInOut.V1.Models;
 
-public class ScheduleReportInOutResponse : A2_ScheduleSendMail
+public class ScheduleReportInOutResponse : ScheduleSendMail
 {
     /// <summary>
     /// Loại file xuất báo cáo

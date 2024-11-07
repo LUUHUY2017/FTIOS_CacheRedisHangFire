@@ -41,7 +41,7 @@ public sealed class SmartService
         AccessToken accessToken = null;
         try
         {
-            A0_AttendanceConfig retval = await _dbContext.A0_AttendanceConfig.Where(o => o.Actived == true && o.OrganizationId == orgId).FirstOrDefaultAsync();
+            AttendanceConfig retval = await _dbContext.AttendanceConfig.Where(o => o.Actived == true && o.OrganizationId == orgId).FirstOrDefaultAsync();
             if (retval != null)
             {
                 if (string.IsNullOrWhiteSpace(retval.access_token) || retval.time_expires_in.Value <= DateTime.Now)
@@ -77,7 +77,7 @@ public sealed class SmartService
         }
         return accessToken;
     }
-    public async Task<AccessToken> RefreshToken(A0_AttendanceConfig conf)
+    public async Task<AccessToken> RefreshToken(AttendanceConfig conf)
     {
         AccessToken retval = null;
         try

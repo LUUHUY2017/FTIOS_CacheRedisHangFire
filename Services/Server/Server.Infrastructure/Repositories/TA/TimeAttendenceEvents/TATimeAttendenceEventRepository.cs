@@ -14,60 +14,60 @@ public class TATimeAttendenceEventRepository : ITATimeAttendenceEventRepository
         _db = biDbContext;
     }
 
-    public async Task<Result<TA_TimeAttendenceEvent>> CreateAsync(TA_TimeAttendenceEvent data)
+    public async Task<Result<TimeAttendenceEvent>> CreateAsync(TimeAttendenceEvent data)
     {
         string message = "";
         try
         {
-            var _order = new TA_TimeAttendenceEvent();
+            var _order = new TimeAttendenceEvent();
             data.CopyPropertiesTo(_order);
-            _db.TA_TimeAttendenceEvent.Add(_order);
+            _db.TimeAttendenceEvent.Add(_order);
 
             message = "Thêm mới thành công";
             var retVal = await _db.SaveChangesAsync();
-            return new Result<TA_TimeAttendenceEvent>(data, message, true);
+            return new Result<TimeAttendenceEvent>(data, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<TA_TimeAttendenceEvent>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<TimeAttendenceEvent>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<TA_TimeAttendenceEvent>> UpdateAsync(TA_TimeAttendenceEvent data)
+    public async Task<Result<TimeAttendenceEvent>> UpdateAsync(TimeAttendenceEvent data)
     {
         string message = "";
         try
         {
-            var _order = _db.TA_TimeAttendenceEvent.FirstOrDefault(o => o.Id == data.Id);
+            var _order = _db.TimeAttendenceEvent.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
                 data.CopyPropertiesTo(_order);
-                _db.TA_TimeAttendenceEvent.Update(_order);
+                _db.TimeAttendenceEvent.Update(_order);
                 message = "Cập nhật thành công";
             }
             else
             {
-                _order = new TA_TimeAttendenceEvent();
+                _order = new TimeAttendenceEvent();
                 data.CopyPropertiesTo(_order);
-                _db.TA_TimeAttendenceEvent.Add(_order);
+                _db.TimeAttendenceEvent.Add(_order);
                 message = "Thêm mới thành công";
             }
             var retVal = await _db.SaveChangesAsync();
-            return new Result<TA_TimeAttendenceEvent>(data, message, true);
+            return new Result<TimeAttendenceEvent>(data, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<TA_TimeAttendenceEvent>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<TimeAttendenceEvent>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
     public async Task<Result<int>> DeleteAsync(string id)
     {
         try
         {
-            var result = _db.TA_TimeAttendenceEvent.FirstOrDefault(o => o.Id == id);
+            var result = _db.TimeAttendenceEvent.FirstOrDefault(o => o.Id == id);
             if (result == null)
                 return new Result<int>("Không tìm thấy dữ liệu", false);
 
-            _db.TA_TimeAttendenceEvent.Remove(result);
+            _db.TimeAttendenceEvent.Remove(result);
             var retVal = await _db.SaveChangesAsync();
 
             return new Result<int>(retVal, "Xóa thành công!", true);

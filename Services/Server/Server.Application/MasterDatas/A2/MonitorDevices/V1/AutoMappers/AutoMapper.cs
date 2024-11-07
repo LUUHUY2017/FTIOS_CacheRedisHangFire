@@ -8,7 +8,7 @@ public class AutoMapper : Profile
 {
     public AutoMapper()
     {
-        CreateMap<A2_Device, MDeviceRequest>().ReverseMap();
-        CreateMap<A2_Device, MDeviceResponse>().ReverseMap();
+        CreateMap<Device, MDeviceRequest>().ReverseMap();
+        CreateMap<Device, MDeviceResponse>().ReverseMap();
     }
 }

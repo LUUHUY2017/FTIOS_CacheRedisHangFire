@@ -5,8 +5,8 @@ namespace Server.Core.Interfaces.TA.TimeAttendenceEvents;
 
 public interface ITATimeAttendenceEventRepository
 {
-    Task<Result<TA_TimeAttendenceEvent>> CreateAsync(TA_TimeAttendenceEvent data);
-    Task<Result<TA_TimeAttendenceEvent>> UpdateAsync(TA_TimeAttendenceEvent data);
+    Task<Result<TimeAttendenceEvent>> CreateAsync(TimeAttendenceEvent data);
+    Task<Result<TimeAttendenceEvent>> UpdateAsync(TimeAttendenceEvent data);
     Task<Result<int>> DeleteAsync(string id);
 }
 

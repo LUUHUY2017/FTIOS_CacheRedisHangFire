@@ -1,12 +1,12 @@
 ﻿using Server.Core.Entities.A2;
 
-namespace Server.Application.MasterDatas.A2.ScheduleJobs.V1.Models;
-public class ScheduleJobResponse : ScheduleJob
+namespace Server.Core.Interfaces.A2.ScheduleJobs.Reponses;
+public class ScheduleJobReportResponse : ScheduleJob
 {
     /// <summary>
     /// Loại đồng bộ
     /// </summary>
-    public string? ScheduleJobTypeName { get; set; }
+    public string? ScheduleTypeName { get; set; }
 
     /// <summary>
     /// Tuần suất gửi

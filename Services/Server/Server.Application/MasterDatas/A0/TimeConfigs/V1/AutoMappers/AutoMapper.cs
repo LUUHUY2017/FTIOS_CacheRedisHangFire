@@ -8,7 +8,7 @@ public class AutoMapper : Profile
 {
     public AutoMapper()
     {
-        CreateMap<A0_TimeConfig, TimeConfigRequest>().ReverseMap();
-        CreateMap<A0_TimeConfig, TimeConfigResponse>().ReverseMap();
+        CreateMap<TimeConfig, TimeConfigRequest>().ReverseMap();
+        CreateMap<TimeConfig, TimeConfigResponse>().ReverseMap();
     }
 }

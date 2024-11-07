@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.A2;
 
-public partial class A2_SendEmail : EntityBase
+public partial class SendEmails : EntityBase
 {
 
     public string? EmailSenderId { get; set; }

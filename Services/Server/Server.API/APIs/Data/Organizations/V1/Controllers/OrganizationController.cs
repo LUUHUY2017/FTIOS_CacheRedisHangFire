@@ -15,7 +15,7 @@ namespace Server.API.APIs.Data.Organizations.V1.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[Authorize("Bearer")]
+[Authorize("Bearer")]
 //[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 public class OrganizationController : AuthBaseAPIController
 {
@@ -75,7 +75,7 @@ public class OrganizationController : AuthBaseAPIController
     {
         try
         {
-            var model = _mapper.Map<A2_Organization>(request);
+            var model = _mapper.Map<Organization>(request);
             var retVal = await _organizationRepository.UpdateAsync(model);
 
             return Ok(retVal);

@@ -40,7 +40,7 @@ public class TimeAttendenceSyncSmasConsumer : IConsumer<SyncDataRequest>
 
             if (res != null)
             {
-                var item = new TA_TimeAttendenceSync() { Id = datas.Id, };
+                var item = new TimeAttendenceSync() { Id = datas.Id, };
                 if (res.IsSuccess)
                 {
                     string response = JsonConvert.SerializeObject(res);

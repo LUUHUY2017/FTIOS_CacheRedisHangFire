@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Core.Entities.A0
 {
-    public class A2_PersonSynToDevice : EntityBase
+    public class PersonSynToDevice : EntityBase
     {
         [MaxLength(50)]
         public string? PersonId { get; set; }

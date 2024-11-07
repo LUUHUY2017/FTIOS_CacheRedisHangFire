@@ -84,18 +84,18 @@ public partial class TimeAttendenceEventService
     /// <param name="person"></param>
     /// <param name="employee"></param>
     /// <returns></returns>
-    private bool CheckStudents(TA_AttendenceHistory data, ref A2_Student employee, ref A2_Organization organization)
+    private bool CheckStudents(TA_AttendenceHistory data, ref Student employee, ref Organization organization)
     {
         try
         {
-            var employee1 = _dbContext.A2_Student.FirstOrDefault(o => o.StudentCode == data.PersonCode);
+            var employee1 = _dbContext.Student.FirstOrDefault(o => o.StudentCode == data.PersonCode);
             if (employee1 == null)
             {
                 Logger.Information(data.PersonCode + "không tìm thấy thông tin học sinh");
                 return false;
             }
 
-            var organization1 = _dbContext.A2_Organization.FirstOrDefault(o => o.Id == employee1.OrganizationId);
+            var organization1 = _dbContext.Organization.FirstOrDefault(o => o.Id == employee1.OrganizationId);
             if (organization1 == null)
             {
                 Logger.Information(data.PersonCode + "chưa gán trường");
@@ -129,7 +129,7 @@ public partial class TimeAttendenceEventService
 
             if (data.Any())
             {
-                var config = _dbContext.A0_TimeConfig.Where(o => o.Actived == true).FirstOrDefault();
+                var config = _dbContext.TimeConfig.Where(o => o.Actived == true).FirstOrDefault();
 
                 if (config != null)
                 {
@@ -138,8 +138,8 @@ public partial class TimeAttendenceEventService
 
                     foreach (var info in data)
                     {
-                        A2_Student student = null;
-                        A2_Organization organization = null;
+                        Student student = null;
+                        Organization organization = null;
                         bool isset = CheckStudents(info, ref student, ref organization);
                         if (!isset)
                             continue;
@@ -210,13 +210,13 @@ public partial class TimeAttendenceEventService
                         // Buổi tối
 
 
-                        var time = _dbContext.TA_TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode
+                        var time = _dbContext.TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode
                         && o.EventTime.Value.Date == info.TimeEvent.Value.Date && o.AttendenceSection == sectionTime
                         ).FirstOrDefault();
 
                         if (time == null)
                         {
-                            time = new TA_TimeAttendenceEvent();
+                            time = new TimeAttendenceEvent();
                             time.Actived = true;
                             addEvent = true;
                         }
@@ -236,19 +236,19 @@ public partial class TimeAttendenceEventService
 
 
                         if (addEvent)
-                            _dbContext.TA_TimeAttendenceEvent.Add(time);
+                            _dbContext.TimeAttendenceEvent.Add(time);
                         else
-                            _dbContext.TA_TimeAttendenceEvent.Update(time);
+                            _dbContext.TimeAttendenceEvent.Update(time);
 
 
                         ExtraProperties extra = null;
 
                         if (valueAttendence == "X" && valueAttendence == "C")
                         {
-                            var history = _dbContext.TA_TimeAttendenceDetail.FirstOrDefault(o => o.TA_TimeAttendenceEventId == time.Id);
+                            var history = _dbContext.TimeAttendenceDetail.FirstOrDefault(o => o.TA_TimeAttendenceEventId == time.Id);
                             if (history == null)
                             {
-                                history = new TA_TimeAttendenceDetail();
+                                history = new TimeAttendenceDetail();
                                 history.Actived = true;
                                 history.TA_TimeAttendenceEventId = time.Id;
                                 add = true;
@@ -268,9 +268,9 @@ public partial class TimeAttendenceEventService
                             history.AbsenceTime = dateTime;
 
                             if (add)
-                                _dbContext.TA_TimeAttendenceDetail.Add(history);
+                                _dbContext.TimeAttendenceDetail.Add(history);
                             else
-                                _dbContext.TA_TimeAttendenceDetail.Update(history);
+                                _dbContext.TimeAttendenceDetail.Update(history);
 
                             CopyProperties.CopyPropertiesTo(history, extra);
                         }
@@ -302,7 +302,7 @@ public partial class TimeAttendenceEventService
 
                         string paras = JsonConvert.SerializeObject(paramData);
 
-                        var timeSync = new TA_TimeAttendenceSync()
+                        var timeSync = new TimeAttendenceSync()
                         {
                             Id = time.Id,
                             TimeAttendenceEventId = time.Id,
@@ -330,7 +330,7 @@ public partial class TimeAttendenceEventService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<bool> SaveStatuSyncSmas(TA_TimeAttendenceSync request)
+    public async Task<bool> SaveStatuSyncSmas(TimeAttendenceSync request)
     {
         bool statusSync = false;
         try

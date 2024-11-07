@@ -2,7 +2,7 @@
 
 namespace Server.Application.MasterDatas.A2.MonitorDevices.V1.Models;
 
-public class MDeviceResponse : A2_Device
+public class MDeviceResponse : Device
 {
    
 }

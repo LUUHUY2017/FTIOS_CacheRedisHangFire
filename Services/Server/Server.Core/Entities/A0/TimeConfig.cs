@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.A0;
 
-public class A0_TimeConfig : EntityBase
+public class TimeConfig : EntityBase
 {
     public string? OrganizationId { get; set; }
 

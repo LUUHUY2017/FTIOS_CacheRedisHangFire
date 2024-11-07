@@ -1,11 +1,14 @@
 ﻿using AMMS.Notification.Commons;
 using AMMS.Notification.Workers.Emails;
+using DocumentFormat.OpenXml.Drawing;
 using Hangfire;
 using Hangfire.Storage;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.MasterDatas.A2.Students.V1.Model;
 using Server.Application.Services.VTSmart;
+using Server.Core.Entities.A2;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Emails.V1.Commons;
 using Shared.Core.Loggers;
@@ -33,19 +36,43 @@ public class CronJobService : ICronJobService
         _configuration = configuration;
         _signalRService = signalRClientService;
     }
+    public async Task CreateScheduleSendMailCronJob(List<ScheduleJob> scheduleLists)
+    {
+        foreach (var item in scheduleLists)
+        {
+            var timeSentHour = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
+            var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
+            var newCronExpression = "0 * * * *";
+            if (item.ScheduleNote == "LAPLICHDONGBO")
+            {
+                newCronExpression = item.ScheduleSequential switch
+                {
+                    "Minutely" => "* * * * *",
+                    "Hourly" => "0 * * * *",
+                    "Daily" => $"{timeSentMinute} {timeSentHour} * * *",
+                    "Weekly" => $"{timeSentMinute} {timeSentHour} * * 0",
+                    "Monthly" => $"{timeSentMinute} {timeSentHour} 1 * *",
+                    "Yearly" => $"{timeSentMinute} {timeSentHour} 1 1 *",
+                    _ => throw new ArgumentException("Invalid ScheduleSequential value")
+                };
+                await UpdateSchedulCronJob("ScheduleJob" + item.ScheduleSequential, item.Id, newCronExpression);
+            }
+        }
+    }
 
-
-    public async Task UpdateScheduleSyncSmasCronJob(string jobId, string sheduleId, string newCronExpression)
+    public async Task UpdateSchedulCronJob(string jobId, string sheduleId, string newCronExpression)
     {
         //var recurringJobs = JobStorage.Current.GetConnection().GetRecurringJobs();
         string JobName = jobId + "_" + sheduleId;
-
-        //if (jobId == "ScheduleSendMailReportDaily")
-        {
-            RecurringJob.AddOrUpdate(JobName, () => SyncStudentFromSmas(sheduleId), newCronExpression, TimeZoneInfo.Local);
-        }
-
+        RecurringJob.AddOrUpdate(JobName, () => SyncStudentFromSmas(sheduleId), newCronExpression, TimeZoneInfo.Local);
     }
+
+    public async Task RemoveScheduleCronJob(string jobId, string sheduleId)
+    {
+        string JobName = jobId + "_" + sheduleId;
+        RecurringJob.RemoveIfExists(JobName);
+    }
+
 
     static bool Is_Run_SyncStudentSmasDaily = false;
     public async Task SyncStudentFromSmas(string sheduleId)
@@ -53,39 +80,16 @@ public class CronJobService : ICronJobService
         DateTime now = DateTime.Now;
         try
         {
-            //var datas = await _dbContext.ScheduleSendMail.Where(o => o.Actived == true && o.ScheduleSequentialSending == "Daily").ToListAsync();
-            //if (datas.Any())
-            //{
-            //foreach (var item in datas)
-            //{
-            DateTime date = DateTime.Now;
-            // Nếu dữ liệu lấy ngày hôm trước -1days
-            //if (item.ScheduleDataCollect != "Current")
-            //    date = DateTime.Now.AddDays(-1);
+            var jobRes = await _dbContext.ScheduleJob.FirstOrDefaultAsync(o => o.Actived == true && o.Id == sheduleId);
+            if (jobRes == null)
+                return;
 
-            //var timeNow = now.Hour;
-            //var timeSend = item.ScheduleTimeSend.Value.Hours;
-            //var start_date = new DateTime(date.Year, date.Month, date.Day, 00, 00, 00);
-            //var end_date = new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
+            var orgRes = await _dbContext.Organization.FirstOrDefaultAsync(o => o.Id == jobRes.OrganizationId && o.Actived == true);
+            if (orgRes == null)
+                return;
 
-            //// Reset lại thời gian gửi
-            //if (now.Hour == 0)
-            //    item.ReportSent = false;
-            //// Kiểm tra đúng thời gian cấu hình sẽ gửi
-            //if (timeNow != timeSend)
-            //    continue;
-            //// Nếu thời gian chạy ngắn màn bản tin check đã gửi rồi thì không gửi nữa
-            //if (timeNow == timeSend && item.ReportSent == true)
-            //    continue;
-
-            //if (sheduleId != item.Id)
-            //    continue;
-
-            //}
-            //}
-
-            string provinceCode = "20";
-            string schoolCode = "20186511";
+            string provinceCode = orgRes.ProvinceCode; // 20 tỉnh Lạng Sơn
+            string schoolCode = orgRes.OrganizationCode; // "20186511"
             string schoolYearCode = "2024-2025";
             var res = await _smartService.PostListStudents(provinceCode, schoolCode, schoolYearCode);
             if (res.Any())

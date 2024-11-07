@@ -8,7 +8,7 @@ public partial class AutoMapper : Profile
 {
     public AutoMapper()
     {
-        CreateMap<DtoStudentRequest, A2_Student>().ForMember(dest => dest.ReferenceId, opt => opt.MapFrom(src => src.Id)).ReverseMap();
-        CreateMap<A2_Student, A2_Person>().ReverseMap();
+        CreateMap<DtoStudentRequest, Student>().ForMember(dest => dest.ReferenceId, opt => opt.MapFrom(src => src.Id)).ReverseMap();
+        CreateMap<Student, Person>().ReverseMap();
     }
 }

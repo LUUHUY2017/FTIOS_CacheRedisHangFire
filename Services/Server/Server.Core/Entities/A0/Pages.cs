@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Core.Entities.A0
 {
-    public class A0_Page : EntityBase
+    public class Pages : EntityBase
     {
         [MaxLength(50)]
         public string? Module { get; set; }

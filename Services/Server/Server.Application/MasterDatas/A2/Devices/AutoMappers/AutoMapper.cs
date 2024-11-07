@@ -8,7 +8,7 @@ namespace Server.Application.MasterDatas.A2.Devices.AutoMappers
     {
         public AutoMapper()
         {
-            CreateMap<DeviceRequest, A2_Device>().ReverseMap();
+            CreateMap<DeviceRequest, Device>().ReverseMap();
         }
     }
 }

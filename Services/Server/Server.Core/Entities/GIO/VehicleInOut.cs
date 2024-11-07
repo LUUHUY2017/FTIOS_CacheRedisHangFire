@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Core.Entities.GIO
 {
-    public class GIO_VehicleInOut : EntityBase
+    public class VehicleInOut : EntityBase
     {
         public string? VehicleId { get; set; }
         [MaxLength(20)]

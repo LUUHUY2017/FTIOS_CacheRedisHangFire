@@ -32,13 +32,13 @@ public class TimeConfigService
         _organizationService = organizationService;
     }
 
-    public async Task<Result<A0_TimeConfig>> SaveAsync(TimeConfigRequest request)
+    public async Task<Result<TimeConfig>> SaveAsync(TimeConfigRequest request)
     {
         try
         {
             if (string.IsNullOrEmpty(request.Id))
             {
-                var dataAdd = _mapper.Map<A0_TimeConfig>(request);
+                var dataAdd = _mapper.Map<TimeConfig>(request);
                 var retVal = await _timeConfigRepository.AddAsync(dataAdd);
                 return retVal;
             }
@@ -66,7 +66,7 @@ public class TimeConfigService
         }
         catch (Exception ex)
         {
-            return new Result<A0_TimeConfig>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<TimeConfig>(null, $"Lỗi: {ex.Message}", false);
         }
     }
 
@@ -107,8 +107,8 @@ public class TimeConfigService
         {
             _organizationService.UserId = UserId;
             var userOrgIds = (await _organizationService.GetForUser()).Data.Select(x => x.Id).ToList();
-            var retVal = await (from o in _dBContext.A2_Organization
-                                join tc in _dBContext.A0_TimeConfig on o.Id equals tc.OrganizationId into orgGroup
+            var retVal = await (from o in _dBContext.Organization
+                                join tc in _dBContext.TimeConfig on o.Id equals tc.OrganizationId into orgGroup
                                 from tc in orgGroup.DefaultIfEmpty() // LEFT JOIN
                                 where (tc.Actived == true
                                   && (!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? tc.OrganizationId == filter.OrganizationId : true

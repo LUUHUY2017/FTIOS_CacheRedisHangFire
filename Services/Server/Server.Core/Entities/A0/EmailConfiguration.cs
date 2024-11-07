@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.A0
 {
-    public class A0_EmailConfiguration : EntityBase
+    public class EmailConfiguration : EntityBase
     {
         public string Server { get; set; }
         public string? UserName { get; set; }

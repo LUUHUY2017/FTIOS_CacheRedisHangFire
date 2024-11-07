@@ -8,7 +8,7 @@ public class AutoMapper : Profile
 {
     public AutoMapper()
     {
-        CreateMap<A0_AttendanceConfig, AttendanceConfigResponse>().ReverseMap();
-        CreateMap<A0_AttendanceConfig, AttendanceConfigRequest>().ReverseMap();
+        CreateMap<AttendanceConfig, AttendanceConfigResponse>().ReverseMap();
+        CreateMap<AttendanceConfig, AttendanceConfigRequest>().ReverseMap();
     }
 }

@@ -59,7 +59,7 @@ public class StudentService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<Result<RB_ServerRequest>> PushPersonByEventBusAsync(A2_Student data)
+    public async Task<Result<RB_ServerRequest>> PushPersonByEventBusAsync(Student data)
     {
         try
         {
@@ -91,10 +91,10 @@ public class StudentService
     {
         try
         {
-            var stu = _map.Map<A2_Student>(request);
+            var stu = _map.Map<Student>(request);
             await _studentRepository.SaveAsync(stu);
 
-            var per = new A2_Person()
+            var per = new Person()
             {
                 Id = request.Id,
                 Actived = true,
@@ -164,30 +164,30 @@ public class StudentService
     /// </summary>
     /// <param name="stu"></param>
     /// <returns></returns>
-    public async Task<List<RB_ServerRequest>> SyncToDevice(A2_Student stu)
+    public async Task<List<RB_ServerRequest>> SyncToDevice(Student stu)
     {
-        List<A2_PersonSynToDevice> list = new List<A2_PersonSynToDevice>();
+        List<PersonSynToDevice> list = new List<PersonSynToDevice>();
         List<RB_ServerRequest> list_Sync = new List<RB_ServerRequest>();
 
         try
         {
             // orrgniaztionId
-            var _devis = _dbContext.A2_Device.Where(o => o.Actived == true).ToList();
+            var _devis = _dbContext.Device.Where(o => o.Actived == true).ToList();
             if (_devis.Any())
             {
                 foreach (var device in _devis)
                 {
-                    var item = _dbContext.A2_PersonSynToDevice.FirstOrDefault(o => o.DeviceId == device.Id && o.PersonId == stu.Id);
+                    var item = _dbContext.PersonSynToDevice.FirstOrDefault(o => o.DeviceId == device.Id && o.PersonId == stu.Id);
                     if (item == null)
                     {
-                        item = new A2_PersonSynToDevice()
+                        item = new PersonSynToDevice()
                         {
                             DeviceId = device.Id,
                             PersonId = stu.Id,
                             SynAction = ServerRequestAction.ActionAdd,
                             LastModifiedDate = DateTime.Now
                         };
-                        await _dbContext.A2_PersonSynToDevice.AddAsync(item);
+                        await _dbContext.PersonSynToDevice.AddAsync(item);
                     }
                     else
                     {
@@ -243,7 +243,7 @@ public class StudentService
         bool statusSync = false;
         try
         {
-            var _devis = _dbContext.A2_PersonSynToDevice.FirstOrDefault(o => o.Id == request.Id);
+            var _devis = _dbContext.PersonSynToDevice.FirstOrDefault(o => o.Id == request.Id);
             if (_devis != null)
             {
                 _devis.SynStatus = request.IsSuccessed;
@@ -274,9 +274,9 @@ public class StudentService
     {
         try
         {
-            var _data = (from _do in _dbContext.A2_Student
+            var _data = (from _do in _dbContext.Student
 
-                         join _la in _dbContext.A2_PersonFace on _do.Id equals _la.PersonId into K
+                         join _la in _dbContext.PersonFace on _do.Id equals _la.PersonId into K
                          from la in K.DefaultIfEmpty()
                          orderby _do.CreatedDate descending
                          select new DtoStudentResponse()
@@ -369,10 +369,10 @@ public class StudentService
     {
         try
         {
-            var stu = _map.Map<A2_Student>(request);
+            var stu = _map.Map<Student>(request);
             await _studentRepository.SaveDataAsync(stu);
 
-            var per = new A2_Person()
+            var per = new Person()
             {
                 Id = request.Id,
                 Actived = true,

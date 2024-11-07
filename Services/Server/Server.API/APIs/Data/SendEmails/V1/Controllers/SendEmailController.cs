@@ -64,7 +64,7 @@ public class SendEmailController : AuthBaseAPIController
     {
         try
         {
-            var model = _mapper.Map<A2_SendEmail>(request);
+            var model = _mapper.Map<SendEmails>(request);
             var retVal = await _sendEmailRepository.UpdateAsync(model);
 
             try
@@ -73,7 +73,7 @@ public class SendEmailController : AuthBaseAPIController
                 var retvlCon = await _sendEmailRepository.GetEmailConfiguration(data.OrganizationId);
                 if (retvlCon.Succeeded)
                 {
-                    A0_EmailConfiguration emailConfig = retvlCon.Data;
+                    EmailConfiguration emailConfig = retvlCon.Data;
                     string fullName = Common.GetCurentFolder() + data.AttachFile;
                     var attachFiles = new List<string>() { fullName };
                     var retVal1 = await _sendEmailMessageService1.SendByEventBusAsync(

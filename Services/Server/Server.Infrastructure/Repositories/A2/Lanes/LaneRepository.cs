@@ -16,53 +16,53 @@ public class LaneRepository : ILaneRepository
         _db = biDbContext;
     }
 
-    public async Task<Result<A2_Lane>> ActiveAsync(ActiveRequest data)
+    public async Task<Result<Lane>> ActiveAsync(ActiveRequest data)
     {
         string message = "";
         try
         {
-            var _order = _db.A2_Lane.FirstOrDefault(o => o.Id == data.Id);
+            var _order = _db.Lane.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
                 _order.Actived = true;
-                _db.A2_Lane.Update(_order);
+                _db.Lane.Update(_order);
                 message = "Cập nhật thành công";
             }
             var retVal = await _db.SaveChangesAsync();
-            return new Result<A2_Lane>(_order, message, true);
+            return new Result<Lane>(_order, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_Lane>("Lỗi: " + ex.ToString(), false);
+            return new Result<Lane>("Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<A2_Lane>> InActiveAsync(InactiveRequest data)
+    public async Task<Result<Lane>> InActiveAsync(InactiveRequest data)
     {
         string message = "";
         try
         {
-            var _order = _db.A2_Lane.FirstOrDefault(o => o.Id == data.Id);
+            var _order = _db.Lane.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
                 _order.Actived = false;
-                _db.A2_Lane.Update(_order);
+                _db.Lane.Update(_order);
                 message = "Cập nhật thành công";
             }
             var retVal = await _db.SaveChangesAsync();
-            return new Result<A2_Lane>(_order, message, true);
+            return new Result<Lane>(_order, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_Lane>("Lỗi: " + ex.ToString(), false);
+            return new Result<Lane>("Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<List<A2_Lane>> Gets(LaneFilterRequest req)
+    public async Task<List<Lane>> Gets(LaneFilterRequest req)
     {
         try
         {
             bool activedVal = req.Actived == "1";
 
-            var _data = await (from o in _db.A2_Lane
+            var _data = await (from o in _db.Lane
                                where o.Actived == activedVal
                                     && (!string.IsNullOrWhiteSpace(req.Key) && req.ColumnTable == "LaneName" ? o.LaneName.Contains(req.Key) : true)
                                     && (!string.IsNullOrWhiteSpace(req.Key) && req.ColumnTable == "LaneName" ? o.LaneName.Contains(req.Key) : true)
@@ -75,11 +75,11 @@ public class LaneRepository : ILaneRepository
             throw new Exception(e.Message);
         }
     }
-    public async Task<List<A2_Lane>> GetAll()
+    public async Task<List<Lane>> GetAll()
     {
         try
         {
-            var _data = await (from o in _db.A2_Lane
+            var _data = await (from o in _db.Lane
                                where o.Actived == true
                                select o).ToListAsync();
             return _data;
@@ -89,36 +89,36 @@ public class LaneRepository : ILaneRepository
             throw new Exception(e.Message);
         }
     }
-    public async Task<Result<A2_Lane>> GetById(string id)
+    public async Task<Result<Lane>> GetById(string id)
     {
         string message = "";
         try
         {
-            var _order = _db.A2_Lane.FirstOrDefault(o => o.Id == id);
-            return new Result<A2_Lane>(_order, message, true);
+            var _order = _db.Lane.FirstOrDefault(o => o.Id == id);
+            return new Result<Lane>(_order, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_Lane>("Lỗi: " + ex.ToString(), false);
+            return new Result<Lane>("Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<A2_Lane>> UpdateAsync(A2_Lane data)
+    public async Task<Result<Lane>> UpdateAsync(Lane data)
     {
         string message = "";
         try
         {
-            var _order = await _db.A2_Lane.SingleOrDefaultAsync(o => o.Id == data.Id); // Use async version of query
+            var _order = await _db.Lane.SingleOrDefaultAsync(o => o.Id == data.Id); // Use async version of query
             if (_order != null)
             {
                 data.CopyPropertiesTo(_order);
-                _db.A2_Lane.Update(_order);
+                _db.Lane.Update(_order);
                 message = "Cập nhật thành công";
             }
             else
             {
-                _order = new A2_Lane();
+                _order = new Lane();
                 data.CopyPropertiesTo(_order);
-                await _db.A2_Lane.AddAsync(_order);
+                await _db.Lane.AddAsync(_order);
                 message = "Thêm mới thành công";
             }
 
@@ -133,11 +133,11 @@ public class LaneRepository : ILaneRepository
                 message = $"Error occurred: {ex.Message}";
             }
 
-            return new Result<A2_Lane>(_order, message, true);
+            return new Result<Lane>(_order, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_Lane>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<Lane>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
 

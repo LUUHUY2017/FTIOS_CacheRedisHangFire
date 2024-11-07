@@ -2,7 +2,7 @@
 
 namespace Server.Core.Interfaces.ScheduleSendEmails.Responses;
 
-public class VehicleInOutReportResponse : GIO_VehicleInOut
+public class VehicleInOutReportResponse : VehicleInOut
 {
     public string? VehicleInOutStatusName { get; set; }
     public string? LaneInName { get; set; }

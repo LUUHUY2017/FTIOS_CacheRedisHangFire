@@ -4,11 +4,11 @@ using Shared.Core.Commons;
 
 namespace Server.Core.Interfaces.A2.Students;
 
-public interface IStudentRepository : IAsyncRepository<A2_Student>
+public interface IStudentRepository : IAsyncRepository<Student>
 {
 
-    Task<Result<A2_Student>> SaveAsync(A2_Student data);
-    Task<Result<A2_Student>> SaveDataAsync(A2_Student data);
+    Task<Result<Student>> SaveAsync(Student data);
+    Task<Result<Student>> SaveDataAsync(Student data);
 }
 
 

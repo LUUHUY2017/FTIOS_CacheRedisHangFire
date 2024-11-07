@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.TA
 {
-    public class TA_TimeAttendenceEvent : EntityBase
+    public class TimeAttendenceEvent : EntityBase
     {
         public string? DeviceId { get; set; }
         public string? DeviceIP { get; set; }

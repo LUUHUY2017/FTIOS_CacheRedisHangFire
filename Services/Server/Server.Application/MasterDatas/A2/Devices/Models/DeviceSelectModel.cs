@@ -5,6 +5,6 @@ namespace Server.Application.MasterDatas.A2.Devices.Models;
 
 public class DeviceSelectModel
 {
-    public List<A2_Device> DeviceSelected { get; set; }
-    public List<A2_Device> DeviceUnSelected { get; set; }
+    public List<Device> DeviceSelected { get; set; }
+    public List<Device> DeviceUnSelected { get; set; }
 }

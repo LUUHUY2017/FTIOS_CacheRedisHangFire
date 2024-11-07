@@ -104,8 +104,6 @@
 
     <Compile Include="APIs\Data\ScheduleJobs\V1\Controllers\ScheduleJobController.cs" />
 
-    <Compile Include="APIs\Data\ScheduleJobs\V1\Requests\ScheduleJobFilter.cs" />
-
     <Compile Include="APIs\Data\ScheduleJobs\V1\Requests\ScheduleJobLogFilter.cs" />
 
     <Compile Include="APIs\Data\Students\V1\Controllers\StudentController.cs" />

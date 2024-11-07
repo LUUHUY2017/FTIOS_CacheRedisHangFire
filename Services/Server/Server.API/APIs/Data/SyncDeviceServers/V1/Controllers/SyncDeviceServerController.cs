@@ -86,7 +86,7 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
                     imgSrc = resImg.Data.FaceData;
                 }
 
-                A2_Student student = retval.Data;
+                Student student = retval.Data;
                 student.ImageSrc = imgSrc;
 
                 var datas = await _studentService.PushPersonByEventBusAsync(student);

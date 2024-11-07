@@ -42,11 +42,11 @@ public class DeviceController : AuthBaseAPIController
         try
         {
             var data = await _deviceService.GetAll();
-            return Ok(new Result<List<A2_Device>>(data, "Thành công!", true));
+            return Ok(new Result<List<Device>>(data, "Thành công!", true));
         }
         catch (Exception ex)
         {
-            return Ok(new Result<List<A2_Device>>(null, "Lỗi:" + ex.Message, false));
+            return Ok(new Result<List<Device>>(null, "Lỗi:" + ex.Message, false));
         }
     }
 
@@ -72,11 +72,11 @@ public class DeviceController : AuthBaseAPIController
         try
         {
             var data = await _deviceService.GetAll();
-            return Ok(new Result<List<A2_Device>>(data, "Thành công!", true));
+            return Ok(new Result<List<Device>>(data, "Thành công!", true));
         }
         catch (Exception ex)
         {
-            return Ok(new Result<List<A2_Device>>(null, "Lỗi:" + ex.Message, false));
+            return Ok(new Result<List<Device>>(null, "Lỗi:" + ex.Message, false));
         }
     }
 

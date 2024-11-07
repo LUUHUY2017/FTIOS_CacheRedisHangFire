@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Core.Entities.A2;
 
-public class A2_Device : EntityBase
+public class Device : EntityBase
 {
     [MaxLength(250)]
     public string? DeviceCode { get; set; }

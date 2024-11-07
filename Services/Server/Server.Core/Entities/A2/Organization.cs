@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Core.Entities.A2;
 
-public class A2_Organization : EntityBase
+public class Organization : EntityBase
 {
     [MaxLength(250)]
     public string? OrganizationCode { get; set; }

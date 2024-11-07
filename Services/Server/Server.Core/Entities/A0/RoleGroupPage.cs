@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Server.Core.Entities.A0
 {
 
-    public class A0_RoleGroupPage : EntityBase
+    public class RoleGroupPage : EntityBase
     {
         [MaxLength(50)]
         public string? PageId { get; set; }

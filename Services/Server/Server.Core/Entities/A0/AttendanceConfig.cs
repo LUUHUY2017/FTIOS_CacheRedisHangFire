@@ -3,7 +3,7 @@ using Shared.Core.Entities;
 
 namespace Server.Core.Entities.A0;
 
-public class A0_AttendanceConfig : EntityBase
+public class AttendanceConfig : EntityBase
 {
     public string? EndpointIdentity { get; set; }
     public string? AccountName { get; set; }

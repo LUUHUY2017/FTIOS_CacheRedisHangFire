@@ -8,7 +8,7 @@ namespace Server.Application.MasterDatas.A2.Lanes.AutoMappers
     {
         public AutoMapper()
         {
-            CreateMap<LaneRequest, A2_Lane>().ReverseMap();
+            CreateMap<LaneRequest, Lane>().ReverseMap();
         }
     }
 }

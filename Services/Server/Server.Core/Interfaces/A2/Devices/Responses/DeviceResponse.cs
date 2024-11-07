@@ -1,13 +1,13 @@
 ﻿using Server.Core.Entities.A2;
 
 namespace Server.Core.Interfaces.A2.Devices.RequeResponsessts;
-public class DeviceResponse : A2_Device
+public class DeviceResponse : Device
 {
     public DeviceResponse()
     {
         
     }
-    public DeviceResponse(A2_Device o)
+    public DeviceResponse(Device o)
     {
         Id = o.Id;
         Actived = o.Actived;

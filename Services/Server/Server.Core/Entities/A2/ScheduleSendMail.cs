@@ -3,7 +3,7 @@ using Shared.Core.Entities;
 
 namespace Server.Core.Entities.A2;
 
-public class A2_ScheduleSendMail : EntityBase
+public class ScheduleSendMail : EntityBase
 {
 
     public string? OrganizationId { get; set; }
@@ -69,7 +69,7 @@ public class A2_ScheduleSendMail : EntityBase
 
 }
 
-public class ListCategory
+public class ListScheduleEmailCategory
 {
     public static List<ObjectString> ReportType = new List<ObjectString>()
     {
@@ -120,6 +120,7 @@ public class ListCategory
          new ObjectString() { Id = "CANHBAOTHIETBIMATKETNOI", Name = "Cảnh báo thiết bị mất kết nối" },
          new ObjectString() { Id = "BAOCAOSOSANH", Name = "Báo cáo so sánh" },
     };
+
 }
 
 

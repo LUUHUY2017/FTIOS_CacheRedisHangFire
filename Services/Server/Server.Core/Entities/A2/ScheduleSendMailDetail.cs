@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.A2;
 
-public class A2_ScheduleSendMailDetail : EntityBase
+public class ScheduleSendMailDetail : EntityBase
 {
 
     /// <summary>

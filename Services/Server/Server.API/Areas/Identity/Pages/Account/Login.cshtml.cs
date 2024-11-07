@@ -137,12 +137,12 @@ public class LoginModel : PageModel
                         // Xử lý trường hợp thành công: hệ thống VT có tài khoản
 
                         // Kiểm tra school
-                        var checkSchool = await _masterDataDbContext.A2_Organization
+                        var checkSchool = await _masterDataDbContext.Organization
                                                 .FirstOrDefaultAsync(x => x.OrganizationName.ToLower().Trim() == response.currentTenant.name.ToLower().Trim());
                         if (checkSchool == null)
                         {
                             // Trường hợp trường chưa được khai báo
-                            var newSchool = new A2_Organization()
+                            var newSchool = new Organization()
                             {
                                 Id = response.currentUser.id.ToString(),
                                 OrganizationName = response.currentTenant?.name,
@@ -167,8 +167,8 @@ public class LoginModel : PageModel
                         if (result1.Succeeded)
                         {
                             //Gắn RoleGroup cho user
-                            var roleManager = await _masterDataDbContext.A0_RoleGroup.FirstOrDefaultAsync(x => x.Name == "Manager");
-                            await _masterDataDbContext.A0_RoleGroupUser.AddAsync(new A0_RoleGroupUser()
+                            var roleManager = await _masterDataDbContext.RoleGroup.FirstOrDefaultAsync(x => x.Name == "Manager");
+                            await _masterDataDbContext.RoleGroupUser.AddAsync(new RoleGroupUser()
                             {
                                 UserId = userNew.Id,
                                 RoleGroupId = roleManager?.Id,

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Core.Entities.A2
 {
-    public class A2_Person : EntityBase
+    public class Person : EntityBase
     {
         [MaxLength(50)]
         public string? OrganizationId { get; set; }
@@ -45,7 +45,7 @@ namespace Server.Core.Entities.A2
 
         [MaxLength(50)]
         public string? PersonTypeId { get; set; }
-        public A2_PersonType? PersonType { get; set; }
+        public PersonType? PersonType { get; set; }
 
         [MaxLength(50)]
         public string? Language { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.TA
 {
-    public class TA_TimeAttendenceDetail : EntityBase
+    public class TimeAttendenceDetail : EntityBase
     {
         public string? TA_TimeAttendenceEventId { get; set; }
         public bool? IsLate { get; set; }

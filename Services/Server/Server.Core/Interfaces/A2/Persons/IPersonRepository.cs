@@ -6,11 +6,11 @@ using Shared.Core.Commons;
 namespace Server.Core.Interfaces.A2.Persons
 {
 
-    public interface IPersonRepository : IAsyncRepository<A2_Person>
+    public interface IPersonRepository : IAsyncRepository<Person>
     {
-        Task<Result<A2_Person>> SaveAsync(A2_Person data);
-        Task<Result<A2_PersonFace>> SaveImageAsync(string personId, string data);
-        Task<Result<A2_PersonFace>> GetFacePersonById(string id);
+        Task<Result<Person>> SaveAsync(Person data);
+        Task<Result<PersonFace>> SaveImageAsync(string personId, string data);
+        Task<Result<PersonFace>> GetFacePersonById(string id);
     }
 
 }

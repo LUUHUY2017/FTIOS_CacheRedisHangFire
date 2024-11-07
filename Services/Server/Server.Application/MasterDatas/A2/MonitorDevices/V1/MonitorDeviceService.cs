@@ -58,14 +58,14 @@ public class MonitorDeviceService
         }
     }
 
-    public async Task<Result<List<A2_Device>>> UpdateStatusConnect(List<MDeviceStatusRequest> requests)
+    public async Task<Result<List<Device>>> UpdateStatusConnect(List<MDeviceStatusRequest> requests)
     {
         try
         {
-            var dataUpdate = new List<A2_Device>();
+            var dataUpdate = new List<Device>();
             foreach (var request in requests)
             {
-                var deviceUpdate = await _dbContext.A2_Device.FirstOrDefaultAsync(x => x.SerialNumber == request.SerialNumber);
+                var deviceUpdate = await _dbContext.Device.FirstOrDefaultAsync(x => x.SerialNumber == request.SerialNumber);
                 if (deviceUpdate != null)
                 {
                     deviceUpdate.CheckConnectTime = request.ConnectUpdateTime;
@@ -83,20 +83,20 @@ public class MonitorDeviceService
                 }
             }
 
-             _dbContext.A2_Device.UpdateRange(dataUpdate);
+             _dbContext.Device.UpdateRange(dataUpdate);
             var check = _dbContext.SaveChanges();
             if (check > 0)
             {
-                return new Result<List<A2_Device>>(dataUpdate, $"Thành công!", true);
+                return new Result<List<Device>>(dataUpdate, $"Thành công!", true);
             }
             else
             {
-                return new Result<List<A2_Device>>(null, $"Có lỗi xảy ra!", false);
+                return new Result<List<Device>>(null, $"Có lỗi xảy ra!", false);
             }    
         }
         catch (Exception e)
         {
-            return new Result<List<A2_Device>>(null, $"Có lỗi: {e.Message}", false);
+            return new Result<List<Device>>(null, $"Có lỗi: {e.Message}", false);
         }
         
     } 

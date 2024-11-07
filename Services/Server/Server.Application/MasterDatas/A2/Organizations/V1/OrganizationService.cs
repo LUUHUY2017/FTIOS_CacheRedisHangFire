@@ -24,13 +24,13 @@ public class OrganizationService
         _mapper = mapper;
     }
 
-    public async Task<Result<A2_Organization>> SaveAsync(OrganizationRequest request)
+    public async Task<Result<Organization>> SaveAsync(OrganizationRequest request)
     {
         try
         {
             if (string.IsNullOrEmpty(request.Id))
             {
-                var dataAdd = _mapper.Map<A2_Organization>(request);
+                var dataAdd = _mapper.Map<Organization>(request);
                 var retVal = await _organizationRepository.AddAsync(dataAdd);
                 return retVal;
             }
@@ -49,7 +49,7 @@ public class OrganizationService
         }
         catch (Exception ex)
         {
-            return new Result<A2_Organization>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<Organization>(null, $"Lỗi: {ex.Message}", false);
         }
     }
 

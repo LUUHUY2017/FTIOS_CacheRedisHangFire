@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.A3
 {
-    public class A3_Image : EntityBase
+    public class Images : EntityBase
     {
         public string? ImageName { get; set; }
         public string? ImageFolder { get; set; }

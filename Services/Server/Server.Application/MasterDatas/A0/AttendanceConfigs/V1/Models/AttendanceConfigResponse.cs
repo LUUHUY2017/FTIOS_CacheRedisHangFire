@@ -20,7 +20,7 @@ public class AttendanceConfigResponse
     public string? OrganizationId { get; set; }
     public string? OrganizationName { get; set; }   
     public string? Note { get; set; }
-    public AttendanceConfigResponse(A0_AttendanceConfig cf, A2_Organization o)
+    public AttendanceConfigResponse(AttendanceConfig cf, Organization o)
     {
         Id = cf.Id;
         EndpointIdentity = cf.EndpointIdentity;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Core.Entities.A2;
 
-public class A2_Notification : EntityBase
+public class Notifications : EntityBase
 {
     public string? UserId { get; set; }
     public string? Title { get; set; }
