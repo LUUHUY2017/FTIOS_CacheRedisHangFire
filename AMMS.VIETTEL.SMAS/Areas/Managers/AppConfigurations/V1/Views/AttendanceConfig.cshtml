@@ -53,76 +53,6 @@
                             <table class="table table-bordered">
                                 <tbody>
                                     <tr>
-                                        <td class="p-2 fw-bold">Kết nối SSO</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <!--Endpoint-identity-->
-                                            <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">Endpoint-identity <span class="text-danger">*</span></label>
-                                                <div class="col-lg-9">
-                                                    <input type="text" class="form-control" required v-model="item.endpointIdentity">
-                                                    <div class="invalid-feedback">Vui lòng nhập Endpoint-identity</div>
-                                                    <div class="valid-feedback"> </div>
-                                                </div>
-                                            </div>
-                                            <!--Tài khoản-->
-                                            <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">Tài khoản <span class="text-danger">*</span></label>
-                                                <div class="col-lg-9">
-                                                    <input type="text" class="form-control" required v-model="item.accountName">
-                                                    <div class="invalid-feedback">Vui lòng nhập tên tài khoản</div>
-                                                    <div class="valid-feedback"> </div>
-                                                </div>
-                                            </div>
-                                            <!--Mật khẩu-->
-                                            <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">Mật khẩu <span class="text-danger">*</span></label>
-                                                <div class="col-lg-9">
-                                                    <input type="text" class="form-control" required v-model="item.password">
-                                                    <div class="invalid-feedback">Vui lòng nhập mật khẩu</div>
-                                                    <div class="valid-feedback"> </div>
-                                                </div>
-                                            </div>
-                                            <!--Grant_type-->
-                                            <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">Grant type <span class="text-danger">*</span></label>
-                                                <div class="col-lg-9">
-                                                    <input type="text" class="form-control" required v-model="item.grantType">
-                                                    <div class="invalid-feedback">Vui lòng nhập Grant type</div>
-                                                    <div class="valid-feedback"> </div>
-                                                </div>
-                                            </div>
-                                            <!--Scope-->
-                                            <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">Scope <span class="text-danger">*</span></label>
-                                                <div class="col-lg-9">
-                                                    <input type="text" class="form-control" required v-model="item.scope">
-                                                    <div class="invalid-feedback">Vui lòng nhập Scope</div>
-                                                    <div class="valid-feedback"> </div>
-                                                </div>
-                                            </div>
-                                            <!--Client_id-->
-                                            <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">Client_id <span class="text-danger">*</span></label>
-                                                <div class="col-lg-9">
-                                                    <input type="text" class="form-control" required v-model="item.clientId">
-                                                    <div class="invalid-feedback">Vui lòng nhập Client Id</div>
-                                                    <div class="valid-feedback"> </div>
-                                                </div>
-                                            </div>
-                                            <!--client_secret-->
-                                            <div class="row mb-3">
-                                                <label class="col-form-label text-start col-lg-3">client_secret <span class="text-danger">*</span></label>
-                                                <div class="col-lg-9">
-                                                    <input type="text" class="form-control" required v-model="item.clientSecret">
-                                                    <div class="invalid-feedback">Vui lòng nhập client_secret</div>
-                                                    <div class="valid-feedback"> </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <td class="p-2 fw-bold ">Kết nối Gateway</td>
                                     </tr>
                                     <tr>
@@ -133,6 +63,30 @@
                                                 <div class="col-lg-9">
                                                     <input type="text" class="form-control" required v-model="item.endpointGateway">
                                                     <div class="invalid-feedback">Vui lòng nhập Endpoint-gateway</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">Key  <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.key">
+                                                    <div class="invalid-feedback">Vui lòng nhập Key</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">KeyIV  <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.keyIV">
+                                                    <div class="invalid-feedback">Vui lòng nhập KeyIV</div>
+                                                    <div class="valid-feedback"> </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label class="col-form-label text-start col-lg-3">SecretKey  <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" class="form-control" required v-model="item.secretKey">
+                                                    <div class="invalid-feedback">Vui lòng nhập SecretKey</div>
                                                     <div class="valid-feedback"> </div>
                                                 </div>
                                             </div>
@@ -263,35 +217,50 @@
                     sortable: true,
                 },
                 {
-                    title: 'AccountName',
-                    field: 'accountName',
+                    title: "key",
+                    field: 'key',
                     sortable: true,
                 },
                 {
-                    title: "Password",
-                    field: "password",
+                    title: "keyIV",
+                    field: 'keyIV',
                     sortable: true,
                 },
                 {
-                    title: "GrantType",
-                    field: "grantType",
+                    title: "secretKey",
+                    field: 'secretKey',
                     sortable: true,
                 },
-                {
-                    title: "Scope",
-                    field: "scope",
-                    sortable: true,
-                },
-                {
-                    title: "ClientId",
-                    field: "clientId",
-                    sortable: true,
-                },
-                {
-                    title: "ClientSecret",
-                    field: "clientSecret",
-                    sortable: true,
-                },
+                // {
+                //     title: 'AccountName',
+                //     field: 'accountName',
+                //     sortable: true,
+                // },
+                // {
+                //     title: "Password",
+                //     field: "password",
+                //     sortable: true,
+                // },
+                // {
+                //     title: "GrantType",
+                //     field: "grantType",
+                //     sortable: true,
+                // },
+                // {
+                //     title: "Scope",
+                //     field: "scope",
+                //     sortable: true,
+                // },
+                // {
+                //     title: "ClientId",
+                //     field: "clientId",
+                //     sortable: true,
+                // },
+                // {
+                //     title: "ClientSecret",
+                //     field: "clientSecret",
+                //     sortable: true,
+                // },
                 
             ],
             data: [],

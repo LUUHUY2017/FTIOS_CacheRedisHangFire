@@ -1,6 +1,4 @@
-﻿using Server.Core.Entities;
-
-namespace Server.Core.Caches.Redis;
+﻿namespace Server.Core.Caches.Redis;
 
 //public interface IDeviceCacheService
 //{

@@ -13,7 +13,7 @@
         public string StartDateTime { get; set; } = DateTime.Now.ToLocalTime().Date.ToString("dd/MM/yyyy HH:mm:ss");
         public string EndDateTime { get; set; } = DateTime.Now.ToLocalTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59).ToString("dd/MM/yyyy HH:mm:ss");
 
-        public List<FilterItems> FilterItems { get; set; }
+        public List<FilterItems>? FilterItems { get; set; } = null;
     }
 
     public class FilterItems

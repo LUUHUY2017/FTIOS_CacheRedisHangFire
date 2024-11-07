@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Infrastructure.Datas.MasterData;
 
@@ -10,9 +11,10 @@ using Server.Infrastructure.Datas.MasterData;
 namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 {
     [DbContext(typeof(MasterDataDbContext))]
-    partial class MasterDataDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241107100841_MasterData_Init_add11")]
+    partial class MasterData_Init_add11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1210,6 +1212,125 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.ToTable("A2_PersonType");
                 });
 
+            modelBuilder.Entity("Server.Core.Entities.A2.A2_ScheduleJob", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<bool?>("Actived")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Logs")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OrganizationId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("ReferenceId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ScheduleJobName")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("ScheduleNote")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("ScheduleSequentialSending")
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<TimeSpan?>("ScheduleTimeSend")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("Scheduleype")
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(250)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("A2_ScheduleJob");
+                });
+
+            modelBuilder.Entity("Server.Core.Entities.A2.A2_ScheduleJobLog", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<bool?>("Actived")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Logs")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("OrganizationId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("ReferenceId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ScheduleJobId")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("ScheduleJobParams")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool?>("ScheduleJobStatus")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("ScheduleLogNote")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("A2_ScheduleJobLog");
+                });
+
             modelBuilder.Entity("Server.Core.Entities.A2.A2_ScheduleSendMail", b =>
                 {
                     b.Property<string>("Id")
@@ -1583,125 +1704,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.HasKey("Id");
 
                     b.ToTable("A2_Student");
-                });
-
-            modelBuilder.Entity("Server.Core.Entities.A2.ScheduleJob", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<bool?>("Actived")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Logs")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("OrganizationId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Reason")
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ScheduleJobName")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<string>("ScheduleNote")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<string>("ScheduleSequentialSending")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
-
-                    b.Property<TimeSpan?>("ScheduleTimeSend")
-                        .HasColumnType("time(6)");
-
-                    b.Property<string>("Scheduleype")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ScheduleJob");
-                });
-
-            modelBuilder.Entity("Server.Core.Entities.A2.ScheduleJobLog", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<bool?>("Actived")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Logs")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Message")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<string>("OrganizationId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Reason")
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ScheduleJobId")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<string>("ScheduleJobParams")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool?>("ScheduleJobStatus")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("ScheduleLogNote")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ScheduleJobLog");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A3.A3_Image", b =>

@@ -1,13 +1,11 @@
-﻿using AMMS.Shared.Commons;
-using AutoMapper;
+﻿using AutoMapper;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Server.API.APIs.Data.ScheduleSendMails.V1.Requests;
-using Server.API.APIs.Data.ScheduleSendMails.V1.Responses;
 using Server.Core.Entities.A2;
-using Server.Core.Interfaces.A2.ScheduleSendEmails;
-using Server.Core.Interfaces.A2.ScheduleSendEmails.Requests;
+using Server.Core.Interfaces.A2.ScheduleJobs;
+using Server.Core.Interfaces.A2.ScheduleJobs.Requests;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
@@ -16,31 +14,25 @@ namespace Server.API.APIs.Data.ScheduleSendMails.V1.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-public class ScheduleSendEmailController : AuthBaseAPIController
+public class ScheduleJobController : AuthBaseAPIController
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
-    private readonly IScheduleSendMailRepository _sheduleSendEmailReponsity;
-    //private readonly IOrganizationRepository _organizationRepository;
-    //private readonly IConJobService _IConJobService;
+    private readonly IScheduleJobRepository _scheduleJobRepository;
     private readonly IRecurringJobManager _recurringJobManager;
 
 
 
-    public ScheduleSendEmailController(
+    public ScheduleJobController(
         IMediator mediator,
         IMapper mapper,
-        IScheduleSendMailRepository sheduleSendEmailReponsity,
-        //IOrganizationRepository organizationRepository,
-        //IConJobService iConJobService,
+        IScheduleJobRepository scheduleJobRepository,
         IRecurringJobManager recurringJobManager
         )
     {
         _mediator = mediator;
         _mapper = mapper;
-        _sheduleSendEmailReponsity = sheduleSendEmailReponsity;
-        //_organizationRepository = organizationRepository;
-        //_IConJobService = iConJobService;
+        _scheduleJobRepository = scheduleJobRepository;
         _recurringJobManager = recurringJobManager;
 
     }
@@ -53,25 +45,21 @@ public class ScheduleSendEmailController : AuthBaseAPIController
     [HttpPost("Gets")]
     public async Task<ActionResult> Filter(ScheduleSendEmailFilter request)
     {
-        var model = _mapper.Map<ScheduleSendEmailFilterRequest>(request);
-        var data = await _sheduleSendEmailReponsity.GetAlls(model);
+        var model = _mapper.Map<ScheduleJobFilterRequest>(request);
+        var data = await _scheduleJobRepository.GetAlls(model);
 
-        var items = new List<ScheduleSendEmailResponse>();
-
-        if (data.Any())
-        {
-            foreach (var item in data)
-            {
-                var ite = new ScheduleSendEmailResponse();
-                CopyProperties.CopyPropertiesTo(item, ite);
-                ite.ScheduleExportTypeName = ListCategory.ExportType.FirstOrDefault(o => o.Id == item.ScheduleExportType)?.Name;
-                ite.ScheduleReportTypeName = ListCategory.ReportType.FirstOrDefault(o => o.Id == item.ScheduleReportType)?.Name;
-                ite.ScheduleSequentialSendingName = ListCategory.SequentialSending.FirstOrDefault(o => o.Id == item.ScheduleSequentialSending)?.Name;
-                ite.ScheduleDataCollectName = ListCategory.DataCollectType.FirstOrDefault(o => o.Id == item.ScheduleDataCollect)?.Name;
-                items.Add(ite);
-            }
-        }
-        return Ok(new { items = items });
+        //var items = new List<ScheduleJobResponse>();
+        //if (data.Any())
+        //{
+        //    foreach (var item in data)
+        //    {
+        //        var ite = new ScheduleJobResponse();
+        //        CopyProperties.CopyPropertiesTo(item, ite);
+        //        ite.ScheduleJobTypeName = ListCategory.ExportType.FirstOrDefault(o => o.Id == item.ScheduleExportType)?.Name;
+        //        items.Add(ite);
+        //    }
+        //}
+        return Ok(new { items = data });
     }
 
     /// <summary>
@@ -84,13 +72,13 @@ public class ScheduleSendEmailController : AuthBaseAPIController
     {
         try
         {
-            if (request.ScheduleReportType == "BAOCAOCHITIETNGAY")
-                request.ScheduleSequentialSending = "Daily";
-            if (request.ScheduleReportType == "BAOCAOCHITIETTHANG")
-                request.ScheduleSequentialSending = "Monthly";
+            //if (request.ScheduleReportType == "BAOCAOCHITIETNGAY")
+            //    request.ScheduleSequentialSending = "Daily";
+            //if (request.ScheduleReportType == "BAOCAOCHITIETTHANG")
+            //    request.ScheduleSequentialSending = "Monthly";
 
-            var model = _mapper.Map<A2_ScheduleSendMail>(request);
-            var retVal = await _sheduleSendEmailReponsity.UpdateAsync(model);
+            var model = _mapper.Map<ScheduleJob>(request);
+            var retVal = await _scheduleJobRepository.UpdateAsync(model);
 
             //try
             //{
@@ -130,7 +118,7 @@ public class ScheduleSendEmailController : AuthBaseAPIController
     [HttpGet("Resend")]
     public async Task<ActionResult> Resend(string id)
     {
-        var retVal = await _sheduleSendEmailReponsity.GetById(id);
+        var retVal = await _scheduleJobRepository.GetById(id);
         //if (retVal.Succeeded)
         //{
         //    if (retVal.Data.ScheduleSequentialSending == "Daily" && retVal.Data.ScheduleNote == "BAOCAOTUDONG")
@@ -149,8 +137,8 @@ public class ScheduleSendEmailController : AuthBaseAPIController
     [HttpPost("Active")]
     public async Task<IActionResult> Active([FromBody] ActiveRequest request)
     {
-        var result = await _sheduleSendEmailReponsity.ActiveAsync(request);
-        var retVal = await _sheduleSendEmailReponsity.GetById(request.Id);
+        var result = await _scheduleJobRepository.ActiveAsync(request);
+        var retVal = await _scheduleJobRepository.GetById(request.Id);
         //if (retVal.Succeeded)
         //{
         //    var newCronExpression = "0 * * * *";
@@ -179,8 +167,8 @@ public class ScheduleSendEmailController : AuthBaseAPIController
     [HttpPost("Inactive")]
     public async Task<ActionResult> Inactive([FromBody] InactiveRequest request)
     {
-        var result = await _sheduleSendEmailReponsity.InActiveAsync(request);
-        var retVal = await _sheduleSendEmailReponsity.GetById(request.Id);
+        var result = await _scheduleJobRepository.InActiveAsync(request);
+        var retVal = await _scheduleJobRepository.GetById(request.Id);
         if (retVal.Succeeded)
         {
             string JobId = "";

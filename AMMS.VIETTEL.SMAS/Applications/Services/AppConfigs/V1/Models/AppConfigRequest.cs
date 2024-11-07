@@ -15,4 +15,8 @@ public class AppConfigRequest
     public string? OrganizationId { get; set; }
 
     public string? Note { get; set; }
+
+    public string? Key { get; set; }
+    public string? KeyIV { get; set; }
+    public string? SecretKey { get; set; }
 }
