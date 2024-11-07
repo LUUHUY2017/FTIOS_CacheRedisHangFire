@@ -1,6 +1,6 @@
 ﻿using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.TimeConfigs.V1.Models;
-using AMMS.VIETTEL.SMAS.Cores.Entities;
+using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.TimeConfigs;
 using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using AutoMapper;
@@ -29,13 +29,13 @@ public class TimeConfigService
         _organizationService = organizationService;
     }
 
-    public async Task<Result<TimeConfig>> SaveAsync(TimeConfigRequest request)
+    public async Task<Result<A0_TimeConfig>> SaveAsync(TimeConfigRequest request)
     {
         try
         {
             if (string.IsNullOrEmpty(request.Id))
             {
-                var dataAdd = _mapper.Map<TimeConfig>(request);
+                var dataAdd = _mapper.Map<A0_TimeConfig>(request);
                 var retVal = await _timeConfigRepository.AddAsync(dataAdd);
                 return retVal;
             }
@@ -63,7 +63,7 @@ public class TimeConfigService
         }
         catch (Exception ex)
         {
-            return new Result<TimeConfig>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<A0_TimeConfig>(null, $"Lỗi: {ex.Message}", false);
         }
     }
 

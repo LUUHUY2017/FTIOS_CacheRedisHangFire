@@ -1,4 +1,5 @@
-﻿using AMMS.VIETTEL.SMAS.Cores.Entities;
+﻿using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
+using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 using AMMS.VIETTEL.SMAS.Infratructures.Databases.Seeds;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +18,9 @@ public class ViettelDbContext : BaseDbContext, IViettelDbContext
     {
     }
 
-    public DbSet<hanet_terminal> hanet_terminal { get; set; }
-    public DbSet<app_config> app_config { get; set; }
-    public DbSet<TimeConfig> TimeConfig { get; set; }
-    public DbSet<Organization> Organization { get; set; }
-    public DbSet<hanet_commandlog> hanet_commandlog { get; set; }
-    public DbSet<hanet_transaction> hanet_transaction { get; set; }
+    public DbSet<A0_AttendanceConfig> app_config { get; set; }
+    public DbSet<A0_TimeConfig> TimeConfig { get; set; }
+    public DbSet<A2_Organization> Organization { get; set; }
 
 
 
