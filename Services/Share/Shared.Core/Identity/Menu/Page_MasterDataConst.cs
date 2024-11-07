@@ -66,7 +66,15 @@ public partial class PagesConst
     };
 
 
-
+    public static readonly PageObject URL_V1_ScheduleJob = new PageObject
+    {
+        Id = "e7d6cf64-4105-44c5-8f94-ba4930db4e22",
+        Name = "Lập lịch đồng bộ ",
+        Url = "V1/ScheduleJob",
+        Module = Module.Master,
+        RolePermission = RoleConst.SuperAdmin_Role,
+        CategoryMenu = Category.ThietLap.Id,
+    };
 
     public static readonly PageObject URL_V1_DeviceSuperAdmin = new PageObject
     {
@@ -166,6 +174,7 @@ public partial class PagesConst
             _ListMenu.Add(URL_V1_Student);
             _ListMenu.Add(URL_V1_SyncDeviceServer);
 
+            _ListMenu.Add(URL_V1_ScheduleJob);
             _ListMenu.Add(URL_V1_DeviceSuperAdmin);
             _ListMenu.Add(URL_V1_DeviceAdmin);
             _ListMenu.Add(URL_V1_Organization);
@@ -173,8 +182,6 @@ public partial class PagesConst
 
             _ListMenu.Add(URL_V1_Configuration);
             //_ListMenu.Add(URL_V1_SystemConfiguration);
-
-
 
             _ListMenu.Add(URL_V1_User);
             _ListMenu.Add(URL_V1_RoleGroup);

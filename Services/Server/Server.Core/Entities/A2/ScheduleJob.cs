@@ -10,21 +10,21 @@ public class ScheduleJob : EntityBase
     [MaxLength(500)]
     public string? ScheduleJobName { get; set; }
     /// <summary>
-    /// Thời gian gửi báo cáo
+    /// Thời gian chạy
     /// </summary>
-    public TimeSpan? ScheduleTimeSend { get; set; }
+    public TimeSpan? ScheduleTime { get; set; }
     /// <summary>
     /// Tuần suất gửi: 1 phút 1 lần, 1 ngày 1 lần, 
     /// </summary>
     /// 
     [MaxLength(250)]
-    public string? ScheduleSequentialSending { get; set; }
+    public string? ScheduleSequential { get; set; }
 
     /// <summary>
     /// Loại đồng bộ: Học sinh, Điểm danh
     /// </summary>
     [MaxLength(250)]
-    public string? Scheduleype { get; set; }
+    public string? ScheduleType { get; set; }
     [MaxLength(500)]
     public string? ScheduleNote { get; set; }
 }
