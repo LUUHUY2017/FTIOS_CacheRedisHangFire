@@ -563,7 +563,7 @@
 
                 this.item = el;
                 try { this.item.dateOfBirth1 = ConvertDinhDangNgay(el.dateOfBirth); } catch (Ex) { }
-                try { this.item.imageSrc1 = el.imageBase64 != null ? "data:image/png;base64," + el.imageBase64 : null } catch (Ex) { }
+                try { this.item.imageSrc = el.imageBase64 != null ? "data:image/png;base64," + el.imageBase64 : null } catch (Ex) { }
                 this.item = { ...this.item };
 
                 this.object.form_tile = "Thông tin học sinh";

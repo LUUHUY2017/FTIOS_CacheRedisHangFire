@@ -104,6 +104,10 @@ public class CronJobService : ICronJobService
             var res = await _smartService.PostListStudents( schoolCode);
             if (res.Any())
             {
+
+
+
+
                 foreach (var item in res)
                 {
                     var el = new DtoStudentRequest()
