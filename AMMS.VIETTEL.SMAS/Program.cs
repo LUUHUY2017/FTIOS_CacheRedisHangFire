@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -264,7 +265,7 @@ app.UseCors("CorsPolicy");
 
 if (configuration["Authentication:Swagger:Active"] == "True")
 {
-    app.UseSwagger(); 
+    app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.OAuthClientId(configuration["Authentication:Swagger:ClientId"]);
@@ -327,6 +328,9 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
+        var viettelDbContext = scope.ServiceProvider.GetRequiredService<ViettelDbContext>();
+        await viettelDbContext.Database.MigrateAsync();
+
         //var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
         //RecurringJob.AddOrUpdate("Test", () => conJobService.Write(), "*/1 * * * *", TimeZoneInfo.Local);
         //RecurringJob.AddOrUpdate("CheckDeviceOnline" ,() => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);

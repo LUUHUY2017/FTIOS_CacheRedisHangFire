@@ -16,6 +16,8 @@ using Share.WebApp.Controllers;
 using Share.WebApp.Settings;
 using Shared.Core.Loggers;
 using AMMS.Hanet.Applications.V1.Service;
+using AMMS.Hanet.Datas.Databases;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
@@ -168,7 +170,7 @@ services.AddScopedServices();
 
 //Swagger
 if (configuration["Authentication:Swagger:Active"] == "True")
-{ 
+{
     services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(
@@ -311,45 +313,48 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
-        //Khởi tạo siganlr
-        try
-        {
-            var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
-            signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
-            signalRClient.Start();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-        //Lấy dữ liệu danh sách thiết bị
-        try
-        {
-            var startUpService = scope.ServiceProvider.GetRequiredService<HANET_StartUp_Service>();
-            await startUpService.LoadConfigData();
-
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-        //KHởi tạo job kiểm tra dữ liệu
-        try
-        {
-            var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-            RecurringJob.AddOrUpdate($"{configuration["DataArea"]}CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/1 * * * *", TimeZoneInfo.Local);
-
-        }
-        catch (Exception ex)
-        {
-
-            Logger.Error(ex);
-        }
+        var deviceAutoPushDbContext = scope.ServiceProvider.GetRequiredService<DeviceAutoPushDbContext>();
+        await deviceAutoPushDbContext.Database.MigrateAsync();
     }
     catch (Exception e)
     {
         Logger.Error(e);
     }
+    //Khởi tạo siganlr
+    try
+    {
+        var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
+        signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
+        signalRClient.Start();
+    }
+    catch (Exception ex)
+    {
+        Logger.Error(ex);
+    }
+    //Lấy dữ liệu danh sách thiết bị
+    try
+    {
+        var startUpService = scope.ServiceProvider.GetRequiredService<HANET_StartUp_Service>();
+        await startUpService.LoadConfigData();
+
+    }
+    catch (Exception ex)
+    {
+        Logger.Error(ex);
+    }
+    //KHởi tạo job kiểm tra dữ liệu
+    try
+    {
+        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
+        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/1 * * * *", TimeZoneInfo.Local);
+
+    }
+    catch (Exception ex)
+    {
+
+        Logger.Error(ex);
+    }
+
 }
 
 if (app.Environment.IsDevelopment())
