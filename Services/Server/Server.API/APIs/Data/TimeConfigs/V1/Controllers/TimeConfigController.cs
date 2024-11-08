@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Extensions;
+﻿using AMMS.Share.WebApp.Helps;
+using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
@@ -10,8 +11,8 @@ namespace Server.API.APIs.Data.TimeConfigs.V1.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[Authorize("Bearer")]
+[AuthorizeMaster]
 public class TimeConfigController : AuthBaseAPIController
 {
     private readonly TimeConfigService _timeConfigService;

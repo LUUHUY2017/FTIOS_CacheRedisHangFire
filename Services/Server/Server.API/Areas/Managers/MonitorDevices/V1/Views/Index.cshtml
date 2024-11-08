@@ -541,7 +541,7 @@
                 });
             },
             loadCombox() {
-                // axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
+                // axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
                 //     if (response.request.responseURL.includes('Auth/Login')) {
                 //         window.location = window.location.href;
                 //     }
@@ -550,7 +550,7 @@
                 //     console.warn(error);
                 // });
 
-                axios.get('/api/v1/device/GetDeviceBrands', this.object.config).then(response => {
+                axios.get('/api/v1/device/GetDeviceBrands', this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }

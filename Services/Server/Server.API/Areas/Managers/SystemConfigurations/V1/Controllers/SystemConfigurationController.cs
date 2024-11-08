@@ -5,7 +5,7 @@ using Shared.Core.Identity;
 namespace Server.API.Areas.Managers.SystemConfigurations.V1.Controllers;
 
 [Route("v1/[controller]")]
-//[AuthorizeMaster(Roles = RoleConst.SuperAdminPage)]
+[AuthorizeMaster]
 public class SystemConfigurationController : Controller
 {
     const string pathUrl = "~/Areas/Managers/SystemConfigurations/V1/Views/";

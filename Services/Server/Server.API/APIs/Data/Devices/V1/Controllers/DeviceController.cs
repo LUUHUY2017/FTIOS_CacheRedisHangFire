@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A2.Devices;
@@ -10,14 +11,14 @@ using Server.Core.Interfaces.A2.Devices.Requests;
 using Share.Core.Pagination;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
+using Shared.Core.Identity;
 
 namespace Server.API.APIs.Data.Devices.V1.Controllers;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[AuthorizeMaster(Roles = RoleConst.SuperAdmin_Role)]
 public class DeviceController : AuthBaseAPIController
 {
     private readonly DeviceService _deviceService;

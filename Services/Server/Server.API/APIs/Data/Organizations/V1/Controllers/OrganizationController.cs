@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +16,8 @@ namespace Server.API.APIs.Data.Organizations.V1.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[Authorize("Bearer")]
+[AuthorizeMaster]
 public class OrganizationController : AuthBaseAPIController
 {
     private readonly IMapper _mapper;
