@@ -3,14 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.TA;
 
-[Table("TimeAttendenceEvent")]
 
-namespace Server.Core.Entities.TA
+public class TimeAttendenceEvent : EntityBase
 {
-    public class TimeAttendenceEvent : EntityBase
-    {
-        public string? DeviceId { get; set; }
-        public string? DeviceIP { get; set; }
+    public string? DeviceId { get; set; }
+    public string? DeviceIP { get; set; }
 
     public string? PersonId { get; set; }
     public string? EnrollNumber { get; set; }

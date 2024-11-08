@@ -3,14 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A3;
 
-[Table("Image")]
 
-namespace Server.Core.Entities.A3
+
+public class Images : EntityBase
 {
-    public class Images : EntityBase
-    {
-        public string? ImageName { get; set; }
-        public string? ImageFolder { get; set; }
+    public string? ImageName { get; set; }
+    public string? ImageFolder { get; set; }
 
     /// <summary>
     /// Vị trí ảnh

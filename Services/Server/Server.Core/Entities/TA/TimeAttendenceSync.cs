@@ -5,8 +5,6 @@ namespace Server.Core.Entities.TA;
 
 [Table("TimeAttendenceSync")]
 
-namespace Server.Core.Entities.TA;
-
 public class TimeAttendenceSync : EntityBase
 {
     public string? TimeAttendenceEventId { get; set; }

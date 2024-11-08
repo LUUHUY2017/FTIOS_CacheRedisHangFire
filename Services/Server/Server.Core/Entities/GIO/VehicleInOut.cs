@@ -2,19 +2,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Server.Core.Entities.GIO
+namespace Server.Core.Entities.GIO;
+
+public class VehicleInOut : EntityBase
 {
-    public class VehicleInOut : EntityBase
-    {
-        public string? VehicleId { get; set; }
-        [MaxLength(20)]
-        public string? VehicleCode { get; set; }
-        [MaxLength(20)]
-        public string? VehicleName { get; set; }
-        public string? PlateNumber { get; set; }
-        // Đã nhận dạng biển số
-        public string? PlateNumberIdentification { get; set; }
-        public string? PlateNumberIdentificationOut { get; set; }
+    public string? VehicleId { get; set; }
+    [MaxLength(20)]
+    public string? VehicleCode { get; set; }
+    [MaxLength(20)]
+    public string? VehicleName { get; set; }
+    public string? PlateNumber { get; set; }
+    // Đã nhận dạng biển số
+    public string? PlateNumberIdentification { get; set; }
+    public string? PlateNumberIdentificationOut { get; set; }
 
 
     public DateTime? DateTimeIn { get; set; }

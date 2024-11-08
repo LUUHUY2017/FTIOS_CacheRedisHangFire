@@ -2,12 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Server.Core.Entities.A2
+namespace Server.Core.Entities.A2;
+
+public class Person : EntityBase
 {
-    public class Person : EntityBase
-    {
-        [MaxLength(50)]
-        public string? OrganizationId { get; set; }
+    [MaxLength(50)]
+    public string? OrganizationId { get; set; }
 
     [MaxLength(50)]
     public string? PersonCode { get; set; }
