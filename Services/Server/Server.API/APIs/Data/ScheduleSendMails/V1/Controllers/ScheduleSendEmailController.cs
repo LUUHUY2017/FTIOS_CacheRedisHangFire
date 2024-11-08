@@ -64,10 +64,10 @@ public class ScheduleSendEmailController : AuthBaseAPIController
             {
                 var ite = new ScheduleSendEmailResponse();
                 CopyProperties.CopyPropertiesTo(item, ite);
-                ite.ScheduleExportTypeName = ListCategory.ExportType.FirstOrDefault(o => o.Id == item.ScheduleExportType)?.Name;
-                ite.ScheduleReportTypeName = ListCategory.ReportType.FirstOrDefault(o => o.Id == item.ScheduleReportType)?.Name;
-                ite.ScheduleSequentialSendingName = ListCategory.SequentialSending.FirstOrDefault(o => o.Id == item.ScheduleSequentialSending)?.Name;
-                ite.ScheduleDataCollectName = ListCategory.DataCollectType.FirstOrDefault(o => o.Id == item.ScheduleDataCollect)?.Name;
+                ite.ScheduleExportTypeName = ListScheduleEmailCategory.ExportType.FirstOrDefault(o => o.Id == item.ScheduleExportType)?.Name;
+                ite.ScheduleReportTypeName = ListScheduleEmailCategory.ReportType.FirstOrDefault(o => o.Id == item.ScheduleReportType)?.Name;
+                ite.ScheduleSequentialSendingName = ListScheduleEmailCategory.SequentialSending.FirstOrDefault(o => o.Id == item.ScheduleSequentialSending)?.Name;
+                ite.ScheduleDataCollectName = ListScheduleEmailCategory.DataCollectType.FirstOrDefault(o => o.Id == item.ScheduleDataCollect)?.Name;
                 items.Add(ite);
             }
         }
@@ -89,7 +89,7 @@ public class ScheduleSendEmailController : AuthBaseAPIController
             if (request.ScheduleReportType == "BAOCAOCHITIETTHANG")
                 request.ScheduleSequentialSending = "Monthly";
 
-            var model = _mapper.Map<A2_ScheduleSendMail>(request);
+            var model = _mapper.Map<ScheduleSendMail>(request);
             var retVal = await _sheduleSendEmailReponsity.UpdateAsync(model);
 
             //try
@@ -218,14 +218,14 @@ public class ScheduleSendEmailController : AuthBaseAPIController
     [HttpGet("ScheduleEmailOptions")]
     public async Task<ActionResult> ScheduleEmailOptions()
     {
-        var reportTypes = ListCategory.ReportType.ToList();
-        var reportTypesDevice = ListCategory.ReportTypeDevice.ToList();
-        var reportTypesInOut = ListCategory.ReportTypeInOut.ToList();
-        var sequentialSendings = ListCategory.SequentialSending.ToList();
-        var sequentialSendingsDevice = ListCategory.SequentialSendingDevice.ToList();
-        var sequentialSendingsInOut = ListCategory.SequentialSendingInOut.ToList();
-        var exportTypes = ListCategory.ExportType.ToList();
-        var dataCollectTypes = ListCategory.DataCollectType.ToList();
+        var reportTypes = ListScheduleEmailCategory.ReportType.ToList();
+        var reportTypesDevice = ListScheduleEmailCategory.ReportTypeDevice.ToList();
+        var reportTypesInOut = ListScheduleEmailCategory.ReportTypeInOut.ToList();
+        var sequentialSendings = ListScheduleEmailCategory.SequentialSending.ToList();
+        var sequentialSendingsDevice = ListScheduleEmailCategory.SequentialSendingDevice.ToList();
+        var sequentialSendingsInOut = ListScheduleEmailCategory.SequentialSendingInOut.ToList();
+        var exportTypes = ListScheduleEmailCategory.ExportType.ToList();
+        var dataCollectTypes = ListScheduleEmailCategory.DataCollectType.ToList();
         return Ok(new
         {
             reportTypes = reportTypes,

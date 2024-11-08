@@ -8,7 +8,7 @@ public class AutoMapper : Profile
 {
     public AutoMapper()
     {
-        CreateMap<OrganizationRequest, A2_Organization>().ReverseMap();
-        CreateMap<OrganizationResponse, A2_Organization>().ReverseMap();
+        CreateMap<OrganizationRequest, Organization>().ReverseMap();
+        CreateMap<OrganizationResponse, Organization>().ReverseMap();
     }
 }

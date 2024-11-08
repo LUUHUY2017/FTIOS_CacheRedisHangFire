@@ -4,8 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A2;
 
-[Table("Lane")]
-public class A2_Lane : EntityBase
+public class Lane : EntityBase
 {
     [MaxLength(250)]
     public string? LaneCode { get; set; }

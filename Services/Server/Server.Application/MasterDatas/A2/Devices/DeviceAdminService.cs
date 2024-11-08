@@ -24,18 +24,18 @@ public class DeviceAdminService
         _dbContext = dbContext;
     }
 
-    public async Task<List<A2_Device>> GetAll()
+    public async Task<List<Device>> GetAll()
     {
         var data = await _deviceRepository.GetAllAsync();
         return data;
     }
 
-    public async Task<Result<A2_Device>> GetById(string id)
+    public async Task<Result<Device>> GetById(string id)
     {
         var data = await _deviceRepository.GetByIdAsync(id);
         if (data.Data?.DeviceParam == DeviceConst.Admin)
             return data;
-        return new Result<A2_Device>(null, "Không tìm thấy", false);
+        return new Result<Device>(null, "Không tìm thấy", false);
     }
 
     public async Task<Result<List<DeviceResponse>>> GetDevices(DeviceFilterRequest req)
@@ -44,7 +44,7 @@ public class DeviceAdminService
         {
             bool activedVal = req.Actived == "1";
 
-            var _data = await (from o in _dbContext.A2_Device
+            var _data = await (from o in _dbContext.Device
                                where o.Actived == activedVal
                                     && o.DeviceParam == DeviceConst.Admin
                                     && ((!string.IsNullOrEmpty(req.OrganizationId) && req.OrganizationId != "0") ? req.OrganizationId == o.OrganizationId : true)
@@ -70,9 +70,9 @@ public class DeviceAdminService
     {
         try
         {
-            var DeviceSelected = await _dbContext.A2_Device.Where(x => x.Actived == true && x.DeviceParam == DeviceConst.Admin).ToListAsync();
+            var DeviceSelected = await _dbContext.Device.Where(x => x.Actived == true && x.DeviceParam == DeviceConst.Admin).ToListAsync();
             var SelectedId = DeviceSelected.Select(x => x.Id).ToList();
-            var DeviceUnSelected = await _dbContext.A2_Device.Where(x => x.Actived == true && !SelectedId.Contains(x.Id)).ToListAsync();
+            var DeviceUnSelected = await _dbContext.Device.Where(x => x.Actived == true && !SelectedId.Contains(x.Id)).ToListAsync();
 
             var data = new DeviceSelectModel()
             {
@@ -87,7 +87,7 @@ public class DeviceAdminService
         }
     }
 
-    public async Task<Result<A2_Device>> Update(DeviceRequest request)
+    public async Task<Result<Device>> Update(DeviceRequest request)
     {
         try
         {
@@ -103,7 +103,7 @@ public class DeviceAdminService
                     || string.IsNullOrEmpty(request.OrganizationId)
                    )
                 {
-                    return new Result<A2_Device>(null, "Bạn phải nhập đầy đủ các trường yêu cầu!", false);
+                    return new Result<Device>(null, "Bạn phải nhập đầy đủ các trường yêu cầu!", false);
                 }
                 //cập nhật thiết bị
                 modelUpdate.Actived = request.Actived;
@@ -122,11 +122,11 @@ public class DeviceAdminService
         }
         catch (Exception ex)
         {
-            return new Result<A2_Device>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<Device>(null, $"Lỗi: {ex.Message}", false);
         }
     }
 
-    public async Task<Result<A2_Device>> UnSelected(DeviceRequest request)
+    public async Task<Result<Device>> UnSelected(DeviceRequest request)
     {
         try
         {
@@ -139,16 +139,16 @@ public class DeviceAdminService
         }
         catch (Exception ex)
         {
-            return new Result<A2_Device>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<Device>(null, $"Lỗi: {ex.Message}", false);
         }
     }
-    public async Task<Result<A2_Device>> Active(ActiveRequest request)
+    public async Task<Result<Device>> Active(ActiveRequest request)
     {
         try
         {
             var modelDel = await _deviceRepository.GetByIdAsync(request.Id);
             if (modelDel == null)
-                return new Result<A2_Device>(null, "Không tìm thấy dữ liệu!", false);
+                return new Result<Device>(null, "Không tìm thấy dữ liệu!", false);
 
             var response = await _deviceRepository.ActiveAsync(request);
 
@@ -156,16 +156,16 @@ public class DeviceAdminService
         }
         catch (Exception ex)
         {
-            return new Result<A2_Device>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<Device>(null, $"Lỗi: {ex.Message}", false);
         }
     }
-    public async Task<Result<A2_Device>> InActive(InactiveRequest request)
+    public async Task<Result<Device>> InActive(InactiveRequest request)
     {
         try
         {
             var modelDel = await _deviceRepository.GetByIdAsync(request.Id);
             if (modelDel == null)
-                return new Result<A2_Device>(null, "Không tìm thấy dữ liệu!", false);
+                return new Result<Device>(null, "Không tìm thấy dữ liệu!", false);
 
             var response = await _deviceRepository.InactiveAsync(request);
 
@@ -173,7 +173,7 @@ public class DeviceAdminService
         }
         catch (Exception ex)
         {
-            return new Result<A2_Device>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<Device>(null, $"Lỗi: {ex.Message}", false);
         }
     }
 }

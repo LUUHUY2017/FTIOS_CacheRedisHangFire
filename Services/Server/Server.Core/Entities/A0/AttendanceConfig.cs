@@ -4,8 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A0;
 
-[Table("AttendanceConfig")]
-public class A0_AttendanceConfig : EntityBase
+public class AttendanceConfig : EntityBase
 {
     public string? EndpointIdentity { get; set; }
     public string? AccountName { get; set; }

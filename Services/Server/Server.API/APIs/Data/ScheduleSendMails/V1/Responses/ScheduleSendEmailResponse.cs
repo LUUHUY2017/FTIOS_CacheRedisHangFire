@@ -1,7 +1,7 @@
 ﻿using Server.Core.Entities.A2;
 
 namespace Server.API.APIs.Data.ScheduleSendMails.V1.Responses;
-public class ScheduleSendEmailResponse : A2_ScheduleSendMail
+public class ScheduleSendEmailResponse : ScheduleSendMail
 {
     /// <summary>
     /// Loại file xuất báo cáo

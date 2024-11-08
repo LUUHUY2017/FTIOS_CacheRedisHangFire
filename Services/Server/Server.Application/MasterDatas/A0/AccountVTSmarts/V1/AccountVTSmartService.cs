@@ -33,12 +33,12 @@ public sealed class AccountVTSmartService
     public static string urlSSO = "https://sso.vtsmas.vn/connect/token";
     public static AccessTokenLocal _accessToken;
 
-    public async Task<A0_AttendanceConfig> GetConfig()
+    public async Task<AttendanceConfig> GetConfig()
     {
-        A0_AttendanceConfig retval = null;
+        AttendanceConfig retval = null;
         try
         {
-            retval = await _dbContext.A0_AttendanceConfig.Where(o => o.Actived == true).FirstOrDefaultAsync();
+            retval = await _dbContext.AttendanceConfig.Where(o => o.Actived == true).FirstOrDefaultAsync();
             if (retval != null)
             {
                 urlSSO = retval.EndpointIdentity;
@@ -46,7 +46,7 @@ public sealed class AccountVTSmartService
             }
             else
             {
-                retval = new A0_AttendanceConfig()
+                retval = new AttendanceConfig()
                 {
                     EndpointIdentity = "https://sso.vtsmas.vn/connect/token",
                     AccountName = "lsn_thcs_yenvuong",

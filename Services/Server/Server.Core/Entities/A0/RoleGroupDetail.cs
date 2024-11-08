@@ -2,13 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Server.Core.Entities.A0;
-
-[Table("RoleGroupDetail")]
-public class A0_RoleGroupDetail : EntityBase
+namespace Server.Core.Entities.A0
 {
-    [MaxLength(50)]
-    public string? RoleGroupId { get; set; }
+    public class RoleGroupDetail : EntityBase
+    {
+        [MaxLength(50)]
+        public string? RoleGroupId { get; set; }
 
     [MaxLength(50)]
     public string? RoleId { get; set; }

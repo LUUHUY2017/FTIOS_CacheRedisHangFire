@@ -10,8 +10,8 @@ public partial class TimeAttendenceEventService
     {
         try
         {
-            var _data = await (from _do in _dbContext.TA_TimeAttendenceEvent
-                               join _la in _dbContext.A2_Student on _do.StudentCode equals _la.StudentCode into K
+            var _data = await (from _do in _dbContext.TimeAttendenceEvent
+                               join _la in _dbContext.Student on _do.StudentCode equals _la.StudentCode into K
                                from la in K.DefaultIfEmpty()
 
                                where

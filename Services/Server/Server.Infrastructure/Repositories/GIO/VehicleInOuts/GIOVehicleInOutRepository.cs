@@ -22,8 +22,8 @@ public class GIOVehicleInOutRepository : IGIOVehicleInOutRepository
     {
         try
         {
-            var _data = await (from _do in _db.GIO_VehicleInOut
-                               join _la in _db.A2_Lane on _do.LaneInId equals _la.Id into K
+            var _data = await (from _do in _db.VehicleInOut
+                               join _la in _db.Lane on _do.LaneInId equals _la.Id into K
                                from la in K.DefaultIfEmpty()
                                where
                                 (request.StartDate != null ? _do.CreatedDate.Date >= request.StartDate.Value.Date : true)
@@ -83,7 +83,7 @@ public class GIOVehicleInOutRepository : IGIOVehicleInOutRepository
         ImageViewReportResponse images = null;
         try
         {
-            var data = await _db.A3_Image.Where(o => o.ReferenceId == id).ToListAsync();
+            var data = await _db.Image.Where(o => o.ReferenceId == id).ToListAsync();
             if (data.Count > 0)
             {
                 images = new ImageViewReportResponse()
@@ -109,49 +109,49 @@ public class GIOVehicleInOutRepository : IGIOVehicleInOutRepository
         }
         catch (Exception ex) { return new Result<ImageViewReportResponse>("Lỗi: " + ex.ToString(), false); }
     }
-    public async Task<Result<GIO_VehicleInOut>> CreateAsync(GIO_VehicleInOut data)
+    public async Task<Result<VehicleInOut>> CreateAsync(VehicleInOut data)
     {
         string message = "";
         try
         {
-            var _order = new GIO_VehicleInOut();
+            var _order = new VehicleInOut();
             data.CopyPropertiesTo(_order);
-            _db.GIO_VehicleInOut.Add(_order);
+            _db.VehicleInOut.Add(_order);
 
             message = "Thêm mới thành công";
             var retVal = await _db.SaveChangesAsync();
-            return new Result<GIO_VehicleInOut>(data, message, true);
+            return new Result<VehicleInOut>(data, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<GIO_VehicleInOut>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<VehicleInOut>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<GIO_VehicleInOut>> UpdateAsync(GIO_VehicleInOut data)
+    public async Task<Result<VehicleInOut>> UpdateAsync(VehicleInOut data)
     {
         string message = "";
         try
         {
-            var _order = _db.GIO_VehicleInOut.FirstOrDefault(o => o.Id == data.Id);
+            var _order = _db.VehicleInOut.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
                 data.CopyPropertiesTo(_order);
-                _db.GIO_VehicleInOut.Update(_order);
+                _db.VehicleInOut.Update(_order);
                 message = "Cập nhật thành công";
             }
             else
             {
-                _order = new GIO_VehicleInOut();
+                _order = new VehicleInOut();
                 data.CopyPropertiesTo(_order);
-                _db.GIO_VehicleInOut.Add(_order);
+                _db.VehicleInOut.Add(_order);
                 message = "Thêm mới thành công";
             }
             var retVal = await _db.SaveChangesAsync();
-            return new Result<GIO_VehicleInOut>(data, message, true);
+            return new Result<VehicleInOut>(data, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<GIO_VehicleInOut>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<VehicleInOut>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
 
@@ -159,11 +159,11 @@ public class GIOVehicleInOutRepository : IGIOVehicleInOutRepository
     {
         try
         {
-            var result = _db.GIO_VehicleInOut.FirstOrDefault(o => o.Id == id);
+            var result = _db.VehicleInOut.FirstOrDefault(o => o.Id == id);
             if (result == null)
                 return new Result<int>("Không tìm thấy dữ liệu", false);
 
-            _db.GIO_VehicleInOut.Remove(result);
+            _db.VehicleInOut.Remove(result);
             var retVal = await _db.SaveChangesAsync();
 
             return new Result<int>(retVal, "Xóa thành công!", true);

@@ -3,8 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A2;
 
-[Table("ScheduleSendMailDetail")]
-public class A2_ScheduleSendMailDetail : EntityBase
+public class ScheduleSendMailDetail : EntityBase
 {
 
     /// <summary>

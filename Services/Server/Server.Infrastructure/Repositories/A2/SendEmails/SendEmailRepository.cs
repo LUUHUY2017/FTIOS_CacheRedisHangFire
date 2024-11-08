@@ -17,7 +17,7 @@ public class SendEmailRepository : ISendEmailRepository
         _db = biDbContext;
     }
 
-    public async Task<Result<List<A2_SendEmail>>> GetAlls(ScheduleSendEmailLogModel request)
+    public async Task<Result<List<Core.Entities.A2.SendEmails>>> GetAlls(ScheduleSendEmailLogModel request)
     {
         try
         {
@@ -28,7 +28,7 @@ public class SendEmailRepository : ISendEmailRepository
             else if (sent == "0")
                 statusSent = false;
 
-            var _data = await (from _do in _db.A2_SendEmail
+            var _data = await (from _do in _db.SendEmail
                                where
                                 (request.StartDate != null ? _do.CreatedDate.Date >= request.StartDate.Value.Date : true)
                                 && (request.EndDate != null ? _do.CreatedDate.Date <= request.EndDate.Value.Date : true)
@@ -38,39 +38,39 @@ public class SendEmailRepository : ISendEmailRepository
                                orderby _do.CreatedDate descending
                                select _do).ToListAsync();
 
-            return new Result<List<A2_SendEmail>>(_data, "Thành công!", true);
+            return new Result<List<Core.Entities.A2.SendEmails>>(_data, "Thành công!", true);
         }
         catch (Exception ex)
         {
-            return new Result<List<A2_SendEmail>>("Lỗi: " + ex.ToString(), false);
+            return new Result<List<Core.Entities.A2.SendEmails>>("Lỗi: " + ex.ToString(), false);
         }
     }
 
-    public async Task<Result<A2_SendEmail>> UpdateAsync(A2_SendEmail data)
+    public async Task<Result<Core.Entities.A2.SendEmails>> UpdateAsync(Core.Entities.A2.SendEmails data)
     {
         string message = "";
         try
         {
-            var _order = _db.A2_SendEmail.FirstOrDefault(o => o.Id == data.Id);
+            var _order = _db.SendEmail.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
                 data.CopyPropertiesTo(_order);
-                _db.A2_SendEmail.Update(_order);
+                _db.SendEmail.Update(_order);
                 message = "Cập nhật thành công";
             }
             else
             {
-                _order = new A2_SendEmail();
+                _order = new Core.Entities.A2.SendEmails();
                 data.CopyPropertiesTo(_order);
-                _db.A2_SendEmail.Add(_order);
+                _db.SendEmail.Add(_order);
                 message = "Thêm mới thành công";
             }
             var retVal = await _db.SaveChangesAsync();
-            return new Result<A2_SendEmail>(data, message, true);
+            return new Result<Core.Entities.A2.SendEmails>(data, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_SendEmail>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<Core.Entities.A2.SendEmails>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
 
@@ -78,11 +78,11 @@ public class SendEmailRepository : ISendEmailRepository
     {
         try
         {
-            var result = _db.A2_SendEmail.FirstOrDefault(o => o.Id == id);
+            var result = _db.SendEmail.FirstOrDefault(o => o.Id == id);
             if (result == null)
                 return new Result<int>("Không tìm thấy dữ liệu", false);
 
-            _db.A2_SendEmail.Remove(result);
+            _db.SendEmail.Remove(result);
             var retVal = await _db.SaveChangesAsync();
 
             return new Result<int>(retVal, "Xóa thành công!", true);
@@ -93,17 +93,17 @@ public class SendEmailRepository : ISendEmailRepository
         }
     }
 
-    public async Task<Result<A0_EmailConfiguration>> GetEmailConfiguration(string orgId)
+    public async Task<Result<EmailConfiguration>> GetEmailConfiguration(string orgId)
     {
         string message = "";
         try
         {
-            var _order = _db.A0_EmailConfiguration.FirstOrDefault(o => o.OrganizationId == orgId);
-            return new Result<A0_EmailConfiguration>(_order, message, true);
+            var _order = _db.EmailConfiguration.FirstOrDefault(o => o.OrganizationId == orgId);
+            return new Result<EmailConfiguration>(_order, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A0_EmailConfiguration>("Lỗi: " + ex.ToString(), false);
+            return new Result<EmailConfiguration>("Lỗi: " + ex.ToString(), false);
         }
     }
 

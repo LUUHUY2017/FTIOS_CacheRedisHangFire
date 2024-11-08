@@ -3,9 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A0;
 
-[Table("TimeConfig")]
-
-public class A0_TimeConfig : EntityBase
+public class TimeConfig : EntityBase
 {
     public string? OrganizationId { get; set; }
 

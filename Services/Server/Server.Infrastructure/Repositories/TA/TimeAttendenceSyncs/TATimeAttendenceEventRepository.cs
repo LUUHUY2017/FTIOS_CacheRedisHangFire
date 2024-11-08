@@ -17,57 +17,57 @@ public class TATimeAttendenceSyncRepository : ITATimeAttendenceSyncRepository
         _db = biDbContext;
     }
 
-    public async Task<Result<TA_TimeAttendenceSync>> CreateAsync(TA_TimeAttendenceSync data)
+    public async Task<Result<TimeAttendenceSync>> CreateAsync(TimeAttendenceSync data)
     {
         string message = "";
         try
         {
-            var _order = new TA_TimeAttendenceSync();
+            var _order = new TimeAttendenceSync();
             data.CopyPropertiesTo(_order);
-            _db.TA_TimeAttendenceSync.Add(_order);
+            _db.TimeAttendenceSync.Add(_order);
 
             message = "Thêm mới thành công";
             var retVal = await _db.SaveChangesAsync();
-            return new Result<TA_TimeAttendenceSync>(data, message, true);
+            return new Result<TimeAttendenceSync>(data, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<TA_TimeAttendenceSync>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<TimeAttendenceSync>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<TA_TimeAttendenceSync>> UpdateAsync(TA_TimeAttendenceSync data)
+    public async Task<Result<TimeAttendenceSync>> UpdateAsync(TimeAttendenceSync data)
     {
         string message = "";
         try
         {
-            var _order = _db.TA_TimeAttendenceSync.FirstOrDefault(o => o.Id == data.Id);
+            var _order = _db.TimeAttendenceSync.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
                 data.CopyPropertiesTo(_order);
-                _db.TA_TimeAttendenceSync.Update(_order);
+                _db.TimeAttendenceSync.Update(_order);
                 message = "Cập nhật thành công";
             }
             else
             {
-                _order = new TA_TimeAttendenceSync();
+                _order = new TimeAttendenceSync();
                 data.CopyPropertiesTo(_order);
-                _db.TA_TimeAttendenceSync.Add(_order);
+                _db.TimeAttendenceSync.Add(_order);
                 message = "Thêm mới thành công";
             }
             var retVal = await _db.SaveChangesAsync();
-            return new Result<TA_TimeAttendenceSync>(data, message, true);
+            return new Result<TimeAttendenceSync>(data, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<TA_TimeAttendenceSync>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<TimeAttendenceSync>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<TA_TimeAttendenceSync>> UpdateStatusAsync(TA_TimeAttendenceSync data)
+    public async Task<Result<TimeAttendenceSync>> UpdateStatusAsync(TimeAttendenceSync data)
     {
         string message = "";
         try
         {
-            var _order = _db.TA_TimeAttendenceSync.FirstOrDefault(o => o.Id == data.Id);
+            var _order = _db.TimeAttendenceSync.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
                 message = "Cập nhật thành công";
@@ -75,34 +75,34 @@ public class TATimeAttendenceSyncRepository : ITATimeAttendenceSyncRepository
                 _order.SyncStatus = data.SyncStatus;
                 _order.Message = data.Message;
                 _order.ParamResponses = data.ParamResponses;
-                _db.TA_TimeAttendenceSync.Update(_order);
+                _db.TimeAttendenceSync.Update(_order);
             }
             else
             {
-                _order = new TA_TimeAttendenceSync();
+                _order = new TimeAttendenceSync();
                 data.CopyPropertiesTo(_order);
-                _db.TA_TimeAttendenceSync.Add(_order);
+                _db.TimeAttendenceSync.Add(_order);
 
                 message = "Thêm mới thành công";
             }
             var retVal = await _db.SaveChangesAsync();
 
-            return new Result<TA_TimeAttendenceSync>(data, message, true);
+            return new Result<TimeAttendenceSync>(data, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<TA_TimeAttendenceSync>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<TimeAttendenceSync>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
     public async Task<Result<int>> DeleteAsync(string id)
     {
         try
         {
-            var result = _db.TA_TimeAttendenceSync.FirstOrDefault(o => o.Id == id);
+            var result = _db.TimeAttendenceSync.FirstOrDefault(o => o.Id == id);
             if (result == null)
                 return new Result<int>("Không tìm thấy dữ liệu", false);
 
-            _db.TA_TimeAttendenceSync.Remove(result);
+            _db.TimeAttendenceSync.Remove(result);
             var retVal = await _db.SaveChangesAsync();
 
             return new Result<int>(retVal, "Xóa thành công!", true);

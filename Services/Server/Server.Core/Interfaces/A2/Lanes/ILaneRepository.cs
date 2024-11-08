@@ -6,12 +6,12 @@ namespace Server.Core.Interfaces.A2.Devices;
 
 public interface ILaneRepository
 {
-    Task<Result<A2_Lane>> GetById(string id);
-    Task<List<A2_Lane>> Gets(LaneFilterRequest request);
-    Task<List<A2_Lane>> GetAll();
-    Task<Result<A2_Lane>> UpdateAsync(A2_Lane data);
-    Task<Result<A2_Lane>> ActiveAsync(ActiveRequest data);
-    Task<Result<A2_Lane>> InActiveAsync(InactiveRequest data);
+    Task<Result<Lane>> GetById(string id);
+    Task<List<Lane>> Gets(LaneFilterRequest request);
+    Task<List<Lane>> GetAll();
+    Task<Result<Lane>> UpdateAsync(Lane data);
+    Task<Result<Lane>> ActiveAsync(ActiveRequest data);
+    Task<Result<Lane>> InActiveAsync(InactiveRequest data);
 
 
 

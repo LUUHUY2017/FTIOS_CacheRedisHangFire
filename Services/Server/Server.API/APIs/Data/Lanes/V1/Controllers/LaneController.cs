@@ -42,11 +42,11 @@ namespace Server.API.APIs.Data.Lanes.V1.Controllers
             try
             {
                 var data = await _laneRepository.GetAll();
-                return Ok(new Result<List<A2_Lane>>(data, "Thành công!", true));
+                return Ok(new Result<List<Lane>>(data, "Thành công!", true));
             }
             catch (Exception ex)
             {
-                return Ok(new Result<List<A2_Lane>>(null, "Lỗi:" + ex.Message, false));
+                return Ok(new Result<List<Lane>>(null, "Lỗi:" + ex.Message, false));
             }
         }
 
@@ -60,11 +60,11 @@ namespace Server.API.APIs.Data.Lanes.V1.Controllers
             try
             {
                 var data = await _laneRepository.Gets(request);
-                return Ok(new Result<List<A2_Lane>>(data, "Thành công!", true));
+                return Ok(new Result<List<Lane>>(data, "Thành công!", true));
             }
             catch (Exception ex)
             {
-                return Ok(new Result<List<A2_Lane>>(null, "Lỗi:" + ex.Message, false));
+                return Ok(new Result<List<Lane>>(null, "Lỗi:" + ex.Message, false));
             }
         }
 
@@ -76,7 +76,7 @@ namespace Server.API.APIs.Data.Lanes.V1.Controllers
         [HttpPut("Edit")]
         public async Task<IActionResult> Edit(LaneRequest model)
         {
-            var request = _mapper.Map<A2_Lane>(model);
+            var request = _mapper.Map<Lane>(model);
             var relval = await _laneRepository.UpdateAsync(request);
             return Ok(relval);
         }

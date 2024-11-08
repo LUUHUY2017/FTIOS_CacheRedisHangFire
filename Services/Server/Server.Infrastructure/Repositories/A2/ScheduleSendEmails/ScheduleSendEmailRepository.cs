@@ -16,52 +16,52 @@ public class ScheduleSendEmailRepository : IScheduleSendMailRepository
         _db = biDbContext;
     }
 
-    public async Task<Result<A2_ScheduleSendMail>> ActiveAsync(ActiveRequest data)
+    public async Task<Result<ScheduleSendMail>> ActiveAsync(ActiveRequest data)
     {
         string message = "";
         try
         {
-            var _order = _db.A2_ScheduleSendMail.FirstOrDefault(o => o.Id == data.Id);
+            var _order = _db.ScheduleSendMail.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
                 _order.Actived = true;
-                _db.A2_ScheduleSendMail.Update(_order);
+                _db.ScheduleSendMail.Update(_order);
                 message = "Cập nhật thành công";
             }
             var retVal = await _db.SaveChangesAsync();
-            return new Result<A2_ScheduleSendMail>(_order, message, true);
+            return new Result<ScheduleSendMail>(_order, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_ScheduleSendMail>("Lỗi: " + ex.ToString(), false);
+            return new Result<ScheduleSendMail>("Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<A2_ScheduleSendMail>> InActiveAsync(InactiveRequest data)
+    public async Task<Result<ScheduleSendMail>> InActiveAsync(InactiveRequest data)
     {
         string message = "";
         try
         {
-            var _order = _db.A2_ScheduleSendMail.FirstOrDefault(o => o.Id == data.Id);
+            var _order = _db.ScheduleSendMail.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
                 _order.Actived = false;
-                _db.A2_ScheduleSendMail.Update(_order);
+                _db.ScheduleSendMail.Update(_order);
                 message = "Cập nhật thành công";
             }
             var retVal = await _db.SaveChangesAsync();
-            return new Result<A2_ScheduleSendMail>(_order, message, true);
+            return new Result<ScheduleSendMail>(_order, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_ScheduleSendMail>("Lỗi: " + ex.ToString(), false);
+            return new Result<ScheduleSendMail>("Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<List<A2_ScheduleSendMail>> GetAlls(ScheduleSendEmailFilterRequest request)
+    public async Task<List<ScheduleSendMail>> GetAlls(ScheduleSendEmailFilterRequest request)
     {
         try
         {
             bool active = request.Actived == "1";
-            var _data = await (from _do in _db.A2_ScheduleSendMail
+            var _data = await (from _do in _db.ScheduleSendMail
                                where _do.Actived == active
                                && (request.OrganizationId != "0" ? _do.OrganizationId == request.OrganizationId : true)
                                && (!string.IsNullOrWhiteSpace(request.Key) && request.ColumnTable == "ScheduleName" ? _do.ScheduleName.Contains(request.Key) : true)
@@ -74,45 +74,45 @@ public class ScheduleSendEmailRepository : IScheduleSendMailRepository
             throw new Exception(e.Message);
         }
     }
-    public async Task<Result<A2_ScheduleSendMail>> GetById(string id)
+    public async Task<Result<ScheduleSendMail>> GetById(string id)
     {
         string message = "";
         try
         {
-            var _order = _db.A2_ScheduleSendMail.FirstOrDefault(o => o.Id == id);
-            return new Result<A2_ScheduleSendMail>(_order, message, true);
+            var _order = _db.ScheduleSendMail.FirstOrDefault(o => o.Id == id);
+            return new Result<ScheduleSendMail>(_order, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_ScheduleSendMail>("Lỗi: " + ex.ToString(), false);
+            return new Result<ScheduleSendMail>("Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<A2_ScheduleSendMail>> UpdateAsync(A2_ScheduleSendMail data)
+    public async Task<Result<ScheduleSendMail>> UpdateAsync(ScheduleSendMail data)
     {
         string message = "";
         try
         {
-            var _order = _db.A2_ScheduleSendMail.FirstOrDefault(o => o.Id == data.Id);
+            var _order = _db.ScheduleSendMail.FirstOrDefault(o => o.Id == data.Id);
             if (_order != null)
             {
                 data.CopyPropertiesTo(_order);
-                _db.A2_ScheduleSendMail.Update(_order);
+                _db.ScheduleSendMail.Update(_order);
                 message = "Cập nhật thành công";
             }
             else
             {
-                _order = new A2_ScheduleSendMail();
+                _order = new ScheduleSendMail();
                 data.CopyPropertiesTo(_order);
-                _db.A2_ScheduleSendMail.Add(_order);
+                _db.ScheduleSendMail.Add(_order);
                 message = "Thêm mới thành công";
             }
 
             var retVal = await _db.SaveChangesAsync();
-            return new Result<A2_ScheduleSendMail>(_order, message, true);
+            return new Result<ScheduleSendMail>(_order, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_ScheduleSendMail>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<ScheduleSendMail>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
 

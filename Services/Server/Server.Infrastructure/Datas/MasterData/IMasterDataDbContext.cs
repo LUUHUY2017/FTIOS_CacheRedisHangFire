@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AMMS.Notification.Datas;
+using AMMS.Notification.Datas.Entities;
+using Microsoft.EntityFrameworkCore;
 using Server.Core.Entities.A0;
 using Server.Core.Entities.A2;
 using Server.Core.Entities.A3;
@@ -10,14 +12,14 @@ namespace Server.Infrastructure.Datas.MasterData;
 public interface IMasterDataDbContext
 {
     #region A0
-    public DbSet<A0_EmailConfiguration> A0_EmailConfiguration { get; set; }
-    public DbSet<A0_RoleGroup> A0_RoleGroup { get; set; }
-    public DbSet<A0_RoleGroupDetail> A0_RoleGroupDetail { get; set; }
-    public DbSet<A0_RoleGroupUser> A0_RoleGroupUser { get; set; }
-    public DbSet<A0_Page> A0_Page { get; set; }
-    public DbSet<A0_RoleGroupPage> A0_RoleGroupPage { get; set; }
-    public DbSet<A0_AttendanceConfig> A0_AttendanceConfig { get; set; }
-    public DbSet<A0_TimeConfig> A0_TimeConfig { get; set; }
+    public DbSet<EmailConfiguration> EmailConfiguration { get; set; }
+    public DbSet<RoleGroup> RoleGroup { get; set; }
+    public DbSet<RoleGroupDetail> RoleGroupDetail { get; set; }
+    public DbSet<RoleGroupUser> RoleGroupUser { get; set; }
+    public DbSet<Pages> Page { get; set; }
+    public DbSet<RoleGroupPage> RoleGroupPage { get; set; }
+    public DbSet<AttendanceConfig> AttendanceConfig { get; set; }
+    public DbSet<TimeConfig> TimeConfig { get; set; }
 
     #endregion
 
@@ -26,38 +28,38 @@ public interface IMasterDataDbContext
 
     #region A2
 
-    public DbSet<A2_ScheduleSendMail> A2_ScheduleSendMail { get; set; }
-    public DbSet<A2_ScheduleSendMailDetail> A2_ScheduleSendMailDetail { get; set; }
-    public DbSet<A2_SendEmail> A2_SendEmail { get; set; }
-    public DbSet<A2_SendEmailLog> A2_SendEmailLog { get; set; }
-    public DbSet<A2_Device> A2_Device { get; set; }
-    public DbSet<A2_Organization> A2_Organization { get; set; }
-    public DbSet<A2_BusinessUnit> A2_BusinessUnit { get; set; }
-    public DbSet<A2_Notification> A2_Notification { get; set; }
-    public DbSet<A2_Lane> A2_Lane { get; set; }
-    public DbSet<A2_Person> A2_Person { get; set; }
-    public DbSet<A2_PersonType> A2_PersonType { get; set; }
-    public DbSet<A2_Student> A2_Student { get; set; }
-    public DbSet<A2_PersonFace> A2_PersonFace { get; set; }
-    public DbSet<A2_PersonSynToDevice> A2_PersonSynToDevice { get; set; }
-    public DbSet<ScheduleJob> A2_ScheduleJob { get; set; }
-    public DbSet<ScheduleJobLog> A2_ScheduleJobLog { get; set; }
+    public DbSet<ScheduleSendMail> ScheduleSendMail { get; set; }
+    public DbSet<ScheduleSendMailDetail> ScheduleSendMailDetail { get; set; }
+    public DbSet<SendEmails> SendEmail { get; set; }
+    public DbSet<SendEmailLogs> SendEmailLogs { get; set; }
+    public DbSet<Device> Device { get; set; }
+    public DbSet<Organization> Organization { get; set; }
+    public DbSet<BusinessUnit> BusinessUnit { get; set; }
+    public DbSet<Notifications> Notification { get; set; }
+    public DbSet<Lane> Lane { get; set; }
+    public DbSet<Person> Person { get; set; }
+    public DbSet<PersonType> PersonType { get; set; }
+    public DbSet<Student> Student { get; set; }
+    public DbSet<PersonFace> PersonFace { get; set; }
+    public DbSet<PersonSynToDevice> PersonSynToDevice { get; set; }
+    public DbSet<ScheduleJob> ScheduleJob { get; set; }
+    public DbSet<ScheduleJobLog> ScheduleJobLog { get; set; }
 
     #endregion
 
     #region A3
-    public DbSet<A3_Image> A3_Image { get; set; }
+    public DbSet<Images> Image { get; set; }
     #endregion
 
     #region GIO
-    public DbSet<GIO_VehicleInOut> GIO_VehicleInOut { get; set; }
+    public DbSet<VehicleInOut> VehicleInOut { get; set; }
 
     #endregion
 
     #region TA
-    public DbSet<TA_TimeAttendenceEvent> TA_TimeAttendenceEvent { get; set; }
-    public DbSet<TA_TimeAttendenceDetail> TA_TimeAttendenceDetail { get; set; }
-    public DbSet<TA_TimeAttendenceSync> TA_TimeAttendenceSync { get; set; }
+    public DbSet<TimeAttendenceEvent> TimeAttendenceEvent { get; set; }
+    public DbSet<TimeAttendenceDetail> TimeAttendenceDetail { get; set; }
+    public DbSet<TimeAttendenceSync> TimeAttendenceSync { get; set; }
     #endregion
 
     Task<int> SaveChangesAsync();

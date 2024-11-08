@@ -6,11 +6,11 @@ namespace Server.Core.Interfaces.A2.ScheduleSendEmails;
 
 public interface IScheduleSendMailRepository
 {
-    Task<Result<A2_ScheduleSendMail>> GetById(string id);
-    Task<List<A2_ScheduleSendMail>> GetAlls(ScheduleSendEmailFilterRequest request);
-    Task<Result<A2_ScheduleSendMail>> UpdateAsync(A2_ScheduleSendMail data);
-    Task<Result<A2_ScheduleSendMail>> ActiveAsync(ActiveRequest data);
-    Task<Result<A2_ScheduleSendMail>> InActiveAsync(InactiveRequest data);
+    Task<Result<ScheduleSendMail>> GetById(string id);
+    Task<List<ScheduleSendMail>> GetAlls(ScheduleSendEmailFilterRequest request);
+    Task<Result<ScheduleSendMail>> UpdateAsync(ScheduleSendMail data);
+    Task<Result<ScheduleSendMail>> ActiveAsync(ActiveRequest data);
+    Task<Result<ScheduleSendMail>> InActiveAsync(InactiveRequest data);
 
 
 

@@ -5,10 +5,12 @@ namespace Server.Core.Entities.A3;
 
 [Table("Image")]
 
-public class A3_Image : EntityBase
+namespace Server.Core.Entities.A3
 {
-    public string? ImageName { get; set; }
-    public string? ImageFolder { get; set; }
+    public class Images : EntityBase
+    {
+        public string? ImageName { get; set; }
+        public string? ImageFolder { get; set; }
 
     /// <summary>
     /// Vị trí ảnh

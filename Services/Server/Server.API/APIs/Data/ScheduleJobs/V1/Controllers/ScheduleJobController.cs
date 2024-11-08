@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.API.APIs.Data.ScheduleJobs.V1.Requests;
+using Server.Application.CronJobs;
 using Server.Application.MasterDatas.A2.ScheduleJobs.V1.Models;
 using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.ScheduleJobs;
@@ -24,6 +25,7 @@ public class ScheduleJobController : AuthBaseAPIController
     private readonly IMapper _mapper;
     private readonly IScheduleJobRepository _scheduleJobRepository;
     private readonly IRecurringJobManager _recurringJobManager;
+    private readonly ICronJobService _cronJobService;
 
 
 
@@ -31,13 +33,15 @@ public class ScheduleJobController : AuthBaseAPIController
         IMediator mediator,
         IMapper mapper,
         IScheduleJobRepository scheduleJobRepository,
-        IRecurringJobManager recurringJobManager
+        IRecurringJobManager recurringJobManager,
+        ICronJobService cronJobService
         )
     {
         _mediator = mediator;
         _mapper = mapper;
         _scheduleJobRepository = scheduleJobRepository;
         _recurringJobManager = recurringJobManager;
+        _cronJobService = cronJobService;
 
     }
 
@@ -47,22 +51,18 @@ public class ScheduleJobController : AuthBaseAPIController
     /// <param name="model"></param>
     /// <returns></returns>
     [HttpPost("Gets")]
-    public async Task<ActionResult> Filter(ScheduleJobFilter request)
+    public async Task<ActionResult> Filter(ScheduleJobFilterRequest request)
     {
-        var model = _mapper.Map<ScheduleJobFilterRequest>(request);
-        var data = await _scheduleJobRepository.GetAlls(model);
+        var data = await _scheduleJobRepository.GetAlls(request);
 
-        //var items = new List<ScheduleJobResponse>();
-        //if (data.Any())
-        //{
-        //    foreach (var item in data)
-        //    {
-        //        var ite = new ScheduleJobResponse();
-        //        CopyProperties.CopyPropertiesTo(item, ite);
-        //        ite.ScheduleJobTypeName = ListCategory.ExportType.FirstOrDefault(o => o.Id == item.ScheduleExportType)?.Name;
-        //        items.Add(ite);
-        //    }
-        //}
+        if (data.Any())
+        {
+            foreach (var item in data)
+            {
+                item.ScheduleTypeName = ListScheduleCategory.ScheduleTypes.FirstOrDefault(o => o.Id == item.ScheduleType)?.Name;
+                item.ScheduleSequentialName = ListScheduleCategory.Sequentials.FirstOrDefault(o => o.Id == item.ScheduleSequential)?.Name;
+            }
+        }
         return Ok(new { items = data });
     }
 
@@ -76,35 +76,20 @@ public class ScheduleJobController : AuthBaseAPIController
     {
         try
         {
-            //if (request.ScheduleReportType == "BAOCAOCHITIETNGAY")
-            //    request.ScheduleSequentialSending = "Daily";
-            //if (request.ScheduleReportType == "BAOCAOCHITIETTHANG")
-            //    request.ScheduleSequentialSending = "Monthly";
-
             var model = _mapper.Map<ScheduleJob>(request);
             var retVal = await _scheduleJobRepository.UpdateAsync(model);
 
-            //try
-            //{
-            //    if (retVal.Succeeded)
-            //    {
-            //        var newCronExpression = "0 * * * *";
-            //        var timeSentHour = retVal.Data.ScheduleTimeSend.Value.Hours;
-            //        var timeSentMinute = retVal.Data.ScheduleTimeSend.Value.Minutes;
+            try
+            {
+                if (retVal.Succeeded)
+                {
+                    var scheduleJobs = new List<ScheduleJob> { retVal.Data };
+                    await _cronJobService.CreateScheduleCronJob(scheduleJobs);
+                }
+            }
+            catch (Exception ex) { }
 
-            //        if (request.ScheduleSequentialSending == "Daily" && request.ScheduleNote == "BAOCAOTUDONG")
-            //        {
-            //            newCronExpression = $"{timeSentMinute} {timeSentHour} * * *";
-            //            _IConJobService.UpdateScheduleSendMailCronJob("ScheduleSendMailReportDaily", retVal.Data.Id, newCronExpression);
-            //        }
-            //        else if (request.ScheduleSequentialSending == "Monthly" && request.ScheduleNote == "BAOCAOTUDONG")
-            //        {
-            //            newCronExpression = $"{timeSentMinute} {timeSentHour} 1 * *";
-            //            _IConJobService.UpdateScheduleSendMailCronJob("ScheduleSendMailReportMonthly", retVal.Data.Id, newCronExpression);
-            //        }
-            //    }
-            //}
-            //catch (Exception ex) { }
+
             return Ok(retVal);
         }
         catch (Exception ex)
@@ -123,13 +108,13 @@ public class ScheduleJobController : AuthBaseAPIController
     public async Task<ActionResult> Resend(string id)
     {
         var retVal = await _scheduleJobRepository.GetById(id);
-        //if (retVal.Succeeded)
-        //{
-        //    if (retVal.Data.ScheduleSequentialSending == "Daily" && retVal.Data.ScheduleNote == "BAOCAOTUDONG")
-        //        _IConJobService.POC_Report_ScheduleSendMailReportDaily(uId);
-        //    else if (retVal.Data.ScheduleSequentialSending == "Monthly" && retVal.Data.ScheduleNote == "BAOCAOTUDONG")
-        //        _IConJobService.POC_Report_ScheduleSendMailReportMonthly(uId);
-        //}
+        if (retVal.Succeeded)
+        {
+            if (retVal.Data.ScheduleType == "DONGBOHOCSINH")
+                await _cronJobService.SyncStudentFromSmas(retVal.Data.Id);
+            if (retVal.Data.ScheduleType == "DONGBODIEMDANH")
+                await _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
+        }
         return Ok();
     }
 
@@ -143,23 +128,11 @@ public class ScheduleJobController : AuthBaseAPIController
     {
         var result = await _scheduleJobRepository.ActiveAsync(request);
         var retVal = await _scheduleJobRepository.GetById(request.Id);
-        //if (retVal.Succeeded)
-        //{
-        //    var newCronExpression = "0 * * * *";
-        //    var timeSentHour = retVal.Data.ScheduleTimeSend.Value.Hours;
-        //    var timeSentMinute = retVal.Data.ScheduleTimeSend.Value.Minutes;
-
-        //    if (retVal.Data.ScheduleSequentialSending == "Daily" && retVal.Data.ScheduleNote == "BAOCAOTUDONG")
-        //    {
-        //        newCronExpression = $"{timeSentMinute} {timeSentHour} * * *";
-        //        _IConJobService.UpdateScheduleSendMailCronJob("ScheduleSendMailReportDaily", retVal.Data.Id, newCronExpression);
-        //    }
-        //    else if (retVal.Data.ScheduleSequentialSending == "Monthly" && retVal.Data.ScheduleNote == "BAOCAOTUDONG")
-        //    {
-        //        newCronExpression = $"{timeSentMinute} {timeSentHour} 1 * *";
-        //        _IConJobService.UpdateScheduleSendMailCronJob("ScheduleSendMailReportMonthly", retVal.Data.Id, newCronExpression);
-        //    }
-        //}
+        if (retVal.Succeeded)
+        {
+            var scheduleJobs = new List<ScheduleJob> { retVal.Data };
+            await _cronJobService.CreateScheduleCronJob(scheduleJobs);
+        }
         return Ok(result);
     }
 
@@ -176,59 +149,27 @@ public class ScheduleJobController : AuthBaseAPIController
 
         if (retVal.Succeeded)
         {
-            string JobId = "";
-            if (retVal.Data.ScheduleSequential == "Daily")
-            {
-                JobId = $"ScheduleJobDaily" + "_" + retVal.Data.Id;
-            }
-            else if (retVal.Data.ScheduleSequential == "Monthly")
-            {
-                JobId = $"ScheduleJobMonthly" + "_" + retVal.Data.Id;
-            }
-            _recurringJobManager.RemoveIfExists(JobId);
+            string JobId = $"CronJobSyncSmas[*]" + retVal.Data.ScheduleType;
+            await _cronJobService.RemoveScheduleCronJob(JobId, retVal.Data.Id);
         }
         return Ok(result);
     }
 
     #region Options
     /// <summary>
-    /// Lấy danh sách tổ chức
-    /// </summary>
-    /// <param name="model"></param>
-    /// <returns></returns>
-    [HttpGet("Organizations")]
-    public async Task<ActionResult> Organizations()
-    {
-        //var items = await _organizationRepository.GetAlls();
-        var items = new List<object>();
-        return Ok(new { items = items });
-    }
-    /// <summary>
     /// Lấy danh sách cấu hình
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
-    [HttpGet("ScheduleEmailOptions")]
-    public async Task<ActionResult> ScheduleEmailOptions()
+    [HttpGet("ScheduleOptions")]
+    public async Task<ActionResult> ScheduleOptions()
     {
-        var reportTypes = ListCategory.ReportType.ToList();
-        var reportTypesDevice = ListCategory.ReportTypeDevice.ToList();
-        var reportTypesInOut = ListCategory.ReportTypeInOut.ToList();
-        var sequentialSendings = ListCategory.SequentialSending.ToList();
-        var sequentialSendingsDevice = ListCategory.SequentialSendingDevice.ToList();
-        var sequentialSendingsInOut = ListCategory.SequentialSendingInOut.ToList();
-        var exportTypes = ListCategory.ExportType.ToList();
-        var dataCollectTypes = ListCategory.DataCollectType.ToList();
+        var sequentials = ListScheduleCategory.Sequentials.ToList();
+        var scheduleTypes = ListScheduleCategory.ScheduleTypes.ToList();
         return Ok(new
         {
-            reportTypes = reportTypes,
-            reportTypesDevice = reportTypesDevice,
-            reportTypesInOut = reportTypesInOut,
-            sequentialSendings = sequentialSendings,
-            sequentialSendingsDevice = sequentialSendingsDevice,
-            sequentialSendingsInOut = sequentialSendingsInOut,
-            exportTypes = exportTypes,
-            dataCollectTypes = dataCollectTypes
+            sequentials = sequentials,
+            scheduleTypes = scheduleTypes
         });
     }
     #endregion

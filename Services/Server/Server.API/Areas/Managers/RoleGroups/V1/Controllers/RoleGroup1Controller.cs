@@ -41,8 +41,8 @@ public class RoleGroup1Controller : Controller
     {
         try
         {
-            var roles = _context.A0_RoleGroup.ToList();
-            return Ok(new Result<List<A0_RoleGroup>>
+            var roles = _context.RoleGroup.ToList();
+            return Ok(new Result<List<RoleGroup>>
             {
                 Code = 0,
                 Data = roles,
@@ -52,7 +52,7 @@ public class RoleGroup1Controller : Controller
         }
         catch (Exception ex)
         {
-            return Ok(new Result<List<A0_RoleGroup>>
+            return Ok(new Result<List<RoleGroup>>
             {
                 Code = 0,
                 Data = null,
@@ -66,17 +66,17 @@ public class RoleGroup1Controller : Controller
     {
         if (string.IsNullOrEmpty(model.Id))
         {
-            var role = new A0_RoleGroup()
+            var role = new RoleGroup()
             {
                 Id = Guid.NewGuid().ToString(),
                 Actived = model.Actived,
                 Name = model.Name,
                 Descriptions = model.Descriptions,
             };
-            _context.A0_RoleGroup.Add(role);
+            _context.RoleGroup.Add(role);
             await _context.SaveChangesAsync();
 
-            return Ok(new Result<A0_RoleGroup>
+            return Ok(new Result<RoleGroup>
             {
                 Code = 0,
                 Data = role,
@@ -86,17 +86,17 @@ public class RoleGroup1Controller : Controller
         }
         else
         {
-            var role = _context.A0_RoleGroup.FirstOrDefault(o => o.Id == model.Id);
+            var role = _context.RoleGroup.FirstOrDefault(o => o.Id == model.Id);
             if (role != null)
             {
                 role.Name = model.Name;
                 role.Descriptions = model.Descriptions;
                 role.Actived = model.Actived;
 
-                _context.A0_RoleGroup.Update(role);
+                _context.RoleGroup.Update(role);
                 await _context.SaveChangesAsync();
-                var roles = _context.A0_RoleGroup.ToList();
-                return Ok(new Result<A0_RoleGroup>
+                var roles = _context.RoleGroup.ToList();
+                return Ok(new Result<RoleGroup>
                 {
                     Code = 0,
                     Data = role,
@@ -106,7 +106,7 @@ public class RoleGroup1Controller : Controller
             }
             else
             {
-                return Ok(new Result<A0_RoleGroup>
+                return Ok(new Result<RoleGroup>
                 {
                     Code = 1,
                     Data = null,
@@ -120,13 +120,13 @@ public class RoleGroup1Controller : Controller
     [HttpGet("Delete")]
     public async Task<IActionResult> Delete(string id, string reasonDelete)
     {
-        var roleGroup = _context.A0_RoleGroup.FirstOrDefault(o => o.Id == id);
+        var roleGroup = _context.RoleGroup.FirstOrDefault(o => o.Id == id);
         if (roleGroup != null)
         {
-            _context.A0_RoleGroup.Remove(roleGroup);
-            var roleGroups = _context.A0_RoleGroupDetail.Where(o => o.RoleGroupId == roleGroup.Id);
+            _context.RoleGroup.Remove(roleGroup);
+            var roleGroups = _context.RoleGroupDetail.Where(o => o.RoleGroupId == roleGroup.Id);
             if (roleGroups != null && roleGroups.Count() > 0)
-                _context.A0_RoleGroupDetail.RemoveRange(roleGroups);
+                _context.RoleGroupDetail.RemoveRange(roleGroups);
 
             await _context.SaveChangesAsync();
 
@@ -139,7 +139,7 @@ public class RoleGroup1Controller : Controller
                     await Delete_RoleForUser(id, role);
             }
 
-            return Ok(new Result<A0_RoleGroup>
+            return Ok(new Result<RoleGroup>
             {
                 Code = 0,
                 Data = roleGroup,
@@ -147,7 +147,7 @@ public class RoleGroup1Controller : Controller
                 Succeeded = true,
             });
         }
-        return Ok(new Result<A0_RoleGroup>
+        return Ok(new Result<RoleGroup>
         {
             Code = 0,
             Data = null,
@@ -165,7 +165,7 @@ public class RoleGroup1Controller : Controller
         {
             //var roles = _roleManager.Roles.ToList();
             var roles = RoleConst.IdentityRoleList();
-            var roleGorups = _context.A0_RoleGroupDetail.ToList();
+            var roleGorups = _context.RoleGroupDetail.ToList();
             var rolesSelected = (from r in roles
                                  join rgd in roleGorups on r.Id equals rgd.RoleId
                                  where rgd.RoleGroupId == roleGroupId
@@ -212,16 +212,16 @@ public class RoleGroup1Controller : Controller
     [HttpGet("AddRole")]
     public async Task<IActionResult> AddRole(string roleGroupId, string roleId)
     {
-        var role = _context.A0_RoleGroupDetail.FirstOrDefault(o => o.RoleGroupId == roleGroupId && o.RoleId == roleId);
+        var role = _context.RoleGroupDetail.FirstOrDefault(o => o.RoleGroupId == roleGroupId && o.RoleId == roleId);
         if (role == null)
         {
-            role = new A0_RoleGroupDetail()
+            role = new RoleGroupDetail()
             {
                 Actived = true,
                 RoleId = roleId,
                 RoleGroupId = roleGroupId,
             };
-            _context.A0_RoleGroupDetail.Add(role);
+            _context.RoleGroupDetail.Add(role);
             await _context.SaveChangesAsync();
 
             //Lấy tất cả các userId trong RoleGroup
@@ -241,7 +241,7 @@ public class RoleGroup1Controller : Controller
                 }
             }
 
-            return Ok(new Result<A0_RoleGroupDetail>
+            return Ok(new Result<RoleGroupDetail>
             {
                 Code = 0,
                 Data = role,
@@ -249,7 +249,7 @@ public class RoleGroup1Controller : Controller
                 Succeeded = true,
             });
         }
-        return Ok(new Result<A0_RoleGroupDetail>
+        return Ok(new Result<RoleGroupDetail>
         {
             Code = 0,
             Data = null,
@@ -262,17 +262,17 @@ public class RoleGroup1Controller : Controller
     {
         try
         {
-            var roleGroupDetail = _context.A0_RoleGroupDetail.FirstOrDefault(o => o.RoleGroupId == roleGroupId && o.RoleId == roleId);
+            var roleGroupDetail = _context.RoleGroupDetail.FirstOrDefault(o => o.RoleGroupId == roleGroupId && o.RoleId == roleId);
             if (roleGroupDetail != null)
             {
-                _context.A0_RoleGroupDetail.Remove(roleGroupDetail);
+                _context.RoleGroupDetail.Remove(roleGroupDetail);
                 await _context.SaveChangesAsync();
 
                 var role = await _roleManager.FindByIdAsync(roleId);
                 if (role != null)
                     await Delete_RoleForUser(roleGroupId, role);
 
-                return Ok(new Result<A0_RoleGroupDetail>
+                return Ok(new Result<RoleGroupDetail>
                 {
                     Code = 0,
                     Data = roleGroupDetail,
@@ -280,7 +280,7 @@ public class RoleGroup1Controller : Controller
                     Succeeded = true,
                 });
             }
-            return Ok(new Result<A0_RoleGroupDetail>
+            return Ok(new Result<RoleGroupDetail>
             {
                 Code = 0,
                 Data = null,
@@ -290,7 +290,7 @@ public class RoleGroup1Controller : Controller
         }
         catch (Exception e)
         {
-            return Ok(new Result<A0_RoleGroupDetail>
+            return Ok(new Result<RoleGroupDetail>
             {
                 Code = 0,
                 Data = null,
@@ -310,7 +310,7 @@ public class RoleGroup1Controller : Controller
         try
         {
             var roles = _userManager.Users.ToList();
-            var roleGorups = _context.A0_RoleGroupUser.ToList();
+            var roleGorups = _context.RoleGroupUser.ToList();
 
             var rolesSelected = (from r in roles join rgd in roleGorups on r.Id equals rgd.UserId where rgd.RoleGroupId == roleGroupId select r).ToList();
             var rolesUnSelected = roles.Where(o => rolesSelected.All(x => x.Id != o.Id)).ToList();
@@ -353,16 +353,16 @@ public class RoleGroup1Controller : Controller
     [HttpGet("AddUser")]
     public async Task<IActionResult> AddUser(string roleGroupId, string userId)
     {
-        var roleGroupUser = _context.A0_RoleGroupUser.FirstOrDefault(o => o.RoleGroupId == roleGroupId && o.UserId == userId);
+        var roleGroupUser = _context.RoleGroupUser.FirstOrDefault(o => o.RoleGroupId == roleGroupId && o.UserId == userId);
         if (roleGroupUser == null)
         {
-            roleGroupUser = new A0_RoleGroupUser()
+            roleGroupUser = new RoleGroupUser()
             {
                 Actived = true,
                 UserId = userId,
                 RoleGroupId = roleGroupId,
             };
-            _context.A0_RoleGroupUser.Add(roleGroupUser);
+            _context.RoleGroupUser.Add(roleGroupUser);
             await _context.SaveChangesAsync();
 
 
@@ -371,7 +371,7 @@ public class RoleGroup1Controller : Controller
             if (user != null)
             {
                 var roles = _roleManager.Roles.ToList();
-                var roleGorups = _context.A0_RoleGroupDetail.ToList();
+                var roleGorups = _context.RoleGroupDetail.ToList();
                 var rolesSelected = (from r in roles join rgd in roleGorups on r.Id equals rgd.RoleId where rgd.RoleGroupId == roleGroupId select r).ToList();
 
                 if (rolesSelected != null && rolesSelected.Count() > 0)
@@ -387,7 +387,7 @@ public class RoleGroup1Controller : Controller
 
 
 
-            return Ok(new Result<A0_RoleGroupUser>
+            return Ok(new Result<RoleGroupUser>
             {
                 Code = 0,
                 Data = roleGroupUser,
@@ -395,7 +395,7 @@ public class RoleGroup1Controller : Controller
                 Succeeded = true,
             });
         }
-        return Ok(new Result<A0_RoleGroupUser>
+        return Ok(new Result<RoleGroupUser>
         {
             Code = 0,
             Data = null,
@@ -406,10 +406,10 @@ public class RoleGroup1Controller : Controller
     [HttpGet("DeleteUser")]
     public async Task<IActionResult> DeleteUser(string roleGroupId, string userId)
     {
-        var roleGroupUser = _context.A0_RoleGroupUser.FirstOrDefault(o => o.RoleGroupId == roleGroupId && o.UserId == userId);
+        var roleGroupUser = _context.RoleGroupUser.FirstOrDefault(o => o.RoleGroupId == roleGroupId && o.UserId == userId);
         if (roleGroupUser != null)
         {
-            _context.A0_RoleGroupUser.Remove(roleGroupUser);
+            _context.RoleGroupUser.Remove(roleGroupUser);
             await _context.SaveChangesAsync();
 
             //Delete Role To User
@@ -417,12 +417,12 @@ public class RoleGroup1Controller : Controller
             if (userToMakeAdmin != null)
             {
                 //Lấy danh sách RoleGroups theo User
-                var roleGroups = (from rg in _context.A0_RoleGroup join rgu in _context.A0_RoleGroupUser on rg.Id equals rgu.RoleGroupId where rgu.UserId == userId select rg).ToList();
+                var roleGroups = (from rg in _context.RoleGroup join rgu in _context.RoleGroupUser on rg.Id equals rgu.RoleGroupId where rgu.UserId == userId select rg).ToList();
                 if (roleGroups == null)
-                    roleGroups = new List<A0_RoleGroup>();
+                    roleGroups = new List<RoleGroup>();
                 //Lấy danh sách Roles theo RoleGroup
                 var roles = _roleManager.Roles.ToList();
-                var roleGroupDetais = _context.A0_RoleGroupDetail.ToList();
+                var roleGroupDetais = _context.RoleGroupDetail.ToList();
                 var roles_roleGroups = (from r in roles join rgd in roleGroupDetais on r.Id equals rgd.RoleId where rgd.RoleGroupId == roleGroupId select r).ToList();
                 if (roles_roleGroups == null)
                     roles_roleGroups = new List<IdentityRole>();
@@ -446,7 +446,7 @@ public class RoleGroup1Controller : Controller
                 }
             }
 
-            return Ok(new Result<A0_RoleGroupUser>
+            return Ok(new Result<RoleGroupUser>
             {
                 Code = 0,
                 Data = roleGroupUser,
@@ -454,7 +454,7 @@ public class RoleGroup1Controller : Controller
                 Succeeded = true,
             });
         }
-        return Ok(new Result<A0_RoleGroupUser>
+        return Ok(new Result<RoleGroupUser>
         {
             Code = 0,
             Data = null,
@@ -469,7 +469,7 @@ public class RoleGroup1Controller : Controller
         var user = await _userManager.FindByIdAsync(userId);
         if (user != null)
         {
-            var userRoleGroups = (from rg in _context.A0_RoleGroup join rgu in _context.A0_RoleGroupUser on rg.Id equals rgu.RoleGroupId where rgu.UserId == userId select rg).ToList();
+            var userRoleGroups = (from rg in _context.RoleGroup join rgu in _context.RoleGroupUser on rg.Id equals rgu.RoleGroupId where rgu.UserId == userId select rg).ToList();
 
             var user_roles = await _userManager.GetRolesAsync(user);
             var xx = new List<IdentityRole>();
@@ -508,7 +508,7 @@ public class RoleGroup1Controller : Controller
         try
         {
             var _roles = _roleManager.Roles.ToList();
-            var _roleGorups = _context.A0_RoleGroupDetail.ToList();
+            var _roleGorups = _context.RoleGroupDetail.ToList();
             var rolesSelected = (from r in _roles join rgd in _roleGorups on r.Id equals rgd.RoleId where rgd.RoleGroupId == roleGroupId select r).ToList();
             return rolesSelected;
         }
@@ -522,7 +522,7 @@ public class RoleGroup1Controller : Controller
         try
         {
             var _users = _userManager.Users.ToList();
-            var roleGroupUsers = _context.A0_RoleGroupUser.ToList();
+            var roleGroupUsers = _context.RoleGroupUser.ToList();
 
             var users = (from u in _users join rgu in roleGroupUsers on u.Id equals rgu.UserId where rgu.RoleGroupId == roleGroupId select u).ToList();
             return users;
@@ -598,12 +598,12 @@ public class RoleGroup1Controller : Controller
                 //Kiểm tra quyền có ở nhóm khác ứng với user này không? nếu không có thì mới xóa, có thì không xóa
                 //Lấy danh sách RoleGroups của user
                 var _users = _userManager.Users.ToList();
-                var _roleGroupUsers = _context.A0_RoleGroupUser.ToList();
+                var _roleGroupUsers = _context.RoleGroupUser.ToList();
 
                 var roleGroupIds = (from u in _users join rgu in _roleGroupUsers on u.Id equals rgu.UserId where rgu.RoleGroupId != roleGroupId select rgu.RoleGroupId).ToList();
                 //Lấy danh sách Roles của roleGroupIds
                 var _roles = _roleManager.Roles.ToList();
-                var _roleGroupDetais = _context.A0_RoleGroupDetail.ToList();
+                var _roleGroupDetais = _context.RoleGroupDetail.ToList();
                 var roleGroupIds_roles = (from r in _roles join rgd in _roleGroupDetais on r.Id equals rgd.RoleId where roleGroupIds.Contains(rgd.RoleGroupId) select r).ToList();
 
                 if (roleGroupIds_roles != null && roleGroupIds_roles.Count() > 0)
@@ -636,7 +636,7 @@ public class RoleGroup1Controller : Controller
     public async Task<IActionResult> RoleInfo(string roleId)
     {
         //Lấy roleGroups theo role
-        var roleGroups = (from rg in _context.A0_RoleGroup join rgd in _context.A0_RoleGroupDetail on rg.Id equals rgd.RoleGroupId where rgd.RoleId == roleId select rg).ToList();
+        var roleGroups = (from rg in _context.RoleGroup join rgd in _context.RoleGroupDetail on rg.Id equals rgd.RoleGroupId where rgd.RoleId == roleId select rg).ToList();
         var users = (from u in _identityContext.Users join ur in _identityContext.UserRoles on u.Id equals ur.UserId where ur.RoleId == roleId select u).ToList();
 
         return Ok(new Result<object>

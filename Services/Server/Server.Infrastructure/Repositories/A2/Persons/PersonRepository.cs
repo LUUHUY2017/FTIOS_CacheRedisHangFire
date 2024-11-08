@@ -8,7 +8,7 @@ using Shared.Core.Commons;
 
 namespace Server.Infrastructure.Repositories.A2.Persons;
 
-public class PersonRepository : RepositoryBaseMasterData<A2_Person>, IPersonRepository
+public class PersonRepository : RepositoryBaseMasterData<Person>, IPersonRepository
 {
 
     public string UserId { get; set; }
@@ -16,12 +16,12 @@ public class PersonRepository : RepositoryBaseMasterData<A2_Person>, IPersonRepo
     {
     }
 
-    public async Task<Result<A2_Person>> SaveAsync(A2_Person cus)
+    public async Task<Result<Person>> SaveAsync(Person cus)
     {
         string message = "";
         try
         {
-            var org = await _dbContext.A2_Person.FirstOrDefaultAsync(o => o.Id == cus.Id);
+            var org = await _dbContext.Person.FirstOrDefaultAsync(o => o.Id == cus.Id);
             if (org != null)
             {
                 cus.CopyPropertiesTo(org);
@@ -30,62 +30,62 @@ public class PersonRepository : RepositoryBaseMasterData<A2_Person>, IPersonRepo
             }
             else
             {
-                org = new A2_Person();
+                org = new Person();
                 cus.CopyPropertiesTo(org);
                 await AddAsync(org);
                 message = "Thêm mới thành công";
             }
-            return new Result<A2_Person>(org, message, true);
+            return new Result<Person>(org, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_Person>("Lỗi: " + ex.ToString(), false);
+            return new Result<Person>("Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<A2_PersonFace>> SaveImageAsync(string personId, string base64String)
+    public async Task<Result<PersonFace>> SaveImageAsync(string personId, string base64String)
     {
         string message = "";
         try
         {
-            var org = await _dbContext.A2_PersonFace.FirstOrDefaultAsync(o => o.PersonId == personId);
+            var org = await _dbContext.PersonFace.FirstOrDefaultAsync(o => o.PersonId == personId);
             if (org != null)
             {
                 org.FaceData = base64String;
-                _dbContext.A2_PersonFace.Update(org);
+                _dbContext.PersonFace.Update(org);
                 message = "Cập nhật thành công";
             }
             else
             {
-                org = new A2_PersonFace();
+                org = new PersonFace();
                 org.PersonId = personId;
                 org.FaceIndex = 1;
                 org.FaceData = base64String;
-                _dbContext.A2_PersonFace.Add(org);
+                _dbContext.PersonFace.Add(org);
                 message = "Thêm mới thành công";
             }
             await _dbContext.SaveChangesAsync();
 
-            return new Result<A2_PersonFace>(org, message, true);
+            return new Result<PersonFace>(org, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_PersonFace>("Lỗi: " + ex.ToString(), false);
+            return new Result<PersonFace>("Lỗi: " + ex.ToString(), false);
         }
     }
 
-    public async Task<Result<A2_PersonFace>> GetFacePersonById(string id)
+    public async Task<Result<PersonFace>> GetFacePersonById(string id)
     {
         try
         {
-            var _order = await _dbContext.A2_PersonFace.FirstOrDefaultAsync(o => o.PersonId == id);
+            var _order = await _dbContext.PersonFace.FirstOrDefaultAsync(o => o.PersonId == id);
             if (_order == null)
-                return new Result<A2_PersonFace>("Không có khuôn mặt", true);
+                return new Result<PersonFace>("Không có khuôn mặt", true);
 
-            return new Result<A2_PersonFace>(_order, "Thành công", true);
+            return new Result<PersonFace>(_order, "Thành công", true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_PersonFace>("Lỗi: " + ex.ToString(), false);
+            return new Result<PersonFace>("Lỗi: " + ex.ToString(), false);
         }
     }
 }

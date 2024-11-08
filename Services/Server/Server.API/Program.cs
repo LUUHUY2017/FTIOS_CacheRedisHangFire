@@ -15,6 +15,8 @@ using Server.API.SignalRs;
 using Server.Application.CronJobs;
 using Server.Application.Extensions;
 using Server.Core.Identity.Entities;
+using Server.Core.Interfaces.A2.ScheduleJobs;
+using Server.Core.Interfaces.A2.ScheduleSendEmails;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Share.WebApp.Controllers;
@@ -409,7 +411,7 @@ if (builder.Configuration["Hangfire:Enable"] == "True")
     app.UseHangfireServer();
 }
 
- 
+
 
 app.UseCors("CorsPolicy");
 Common.Follder = app.Environment.WebRootPath;
@@ -474,17 +476,20 @@ using (var scope = app.Services.CreateScope())
         var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
         signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
         signalRClient.Start();
-
-        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}SyncStudentFromSmas", () => conJobService.SyncStudentFromSmas("11"), "*/30 * * * *", TimeZoneInfo.Local);
-        //var scheduleLists = await sendMailRepository.GetAlls(new ScheduleSendEmailModel() { Actived = "1" });
-        //conJobService.CreateScheduleSendMailCronJob(scheduleLists);
-
     }
-    catch (Exception e)
+    catch (Exception e) { Logger.Error(e); }
+
+
+    try
     {
-        Logger.Error(e);
+        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
+        var scheduleJob = scope.ServiceProvider.GetRequiredService<IScheduleJobRepository>();
+
+        var scheduleLists = await scheduleJob.Gets(true);
+        await conJobService.CreateScheduleCronJob(scheduleLists);
     }
+    catch (Exception e) { Logger.Error(e); }
+
 }
 
 

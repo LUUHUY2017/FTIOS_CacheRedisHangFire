@@ -47,7 +47,7 @@ public class AttendanceConfigService
     public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
     public static string secretKey = "Smas!@#2023";
-    public async Task<AccessTokenLocal> GetToken(A0_AttendanceConfig configModel)
+    public async Task<AccessTokenLocal> GetToken(AttendanceConfig configModel)
     {
         AccessTokenLocal retval = null;
         try
@@ -80,7 +80,7 @@ public class AttendanceConfigService
         return retval;
     }
 
-    public async Task<SchoolResponse> PostSchool(A0_AttendanceConfig configModel)
+    public async Task<SchoolResponse> PostSchool(AttendanceConfig configModel)
     {
         SchoolResponse retval = null;
         try
@@ -113,7 +113,7 @@ public class AttendanceConfigService
 
     }
 
-    public async Task<Result<A0_AttendanceConfig>> SchoolAsync(A0_AttendanceConfig configModel)
+    public async Task<Result<AttendanceConfig>> SchoolAsync(AttendanceConfig configModel)
     {
         try
         {
@@ -123,14 +123,14 @@ public class AttendanceConfigService
 
             if (postSchool == null)
             {
-                return new Result<A0_AttendanceConfig>(null, "Đồng bộ thất bại!", false);
+                return new Result<AttendanceConfig>(null, "Đồng bộ thất bại!", false);
             }
             // kiểm tra xem trường đã có chưa nếu chưa thì thêm mới
             var checkSchoolAdd = await _organizationRepository.GetByFirstAsync(x => x.ReferenceId == postSchool.Id);
             if (checkSchoolAdd.Data == null)
             {
                 checkSchoolAdd = await _organizationRepository.AddAsync(
-                    new A2_Organization()
+                    new Organization()
                     {
                         ReferenceId = postSchool.Id,
                         OrganizationCode = postSchool.Code,
@@ -151,14 +151,14 @@ public class AttendanceConfigService
                 //thêm vào time config
                 if (checkSchoolAdd.Data != null)
                 {
-                    await _timeConfigRepository.AddAsync(new A0_TimeConfig() { OrganizationId = checkSchoolAdd.Data.Id });
+                    await _timeConfigRepository.AddAsync(new TimeConfig() { OrganizationId = checkSchoolAdd.Data.Id });
                 }
 
             }
             else
             {
 
-                A2_Organization checkSchool = checkSchoolAdd.Data;
+                Organization checkSchool = checkSchoolAdd.Data;
 
                 checkSchool.ProvinceCode = postSchool.ProvinceCode;
                 checkSchool.ProvinceName = postSchool.ProvinceName;
@@ -168,7 +168,7 @@ public class AttendanceConfigService
 
             if (checkSchoolAdd.Data == null)
             {
-                return new Result<A0_AttendanceConfig>(null, "Đồng bộ thất bại!", false);
+                return new Result<AttendanceConfig>(null, "Đồng bộ thất bại!", false);
             }
 
 
@@ -185,11 +185,11 @@ public class AttendanceConfigService
         }
         catch (Exception ex)
         {
-            return new Result<A0_AttendanceConfig>(null, $"Có lỗi: {ex.Message}", false);
+            return new Result<AttendanceConfig>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
 
-    public async Task<Result<A0_AttendanceConfig>> SaveAsync(AttendanceConfigRequest request)
+    public async Task<Result<AttendanceConfig>> SaveAsync(AttendanceConfigRequest request)
     {
         try
         {
@@ -198,10 +198,10 @@ public class AttendanceConfigService
                 var check = await _attendanceConfigRepository.GetByFirstAsync(x => x.AccountName.Trim() == request.AccountName.Trim());
                 if (check.Data != null)
                 {
-                    return new Result<A0_AttendanceConfig>(null, $"Tài khoản đã có vui lòng sử dụng tài khoản khác!", false);
+                    return new Result<AttendanceConfig>(null, $"Tài khoản đã có vui lòng sử dụng tài khoản khác!", false);
                 }
 
-                var dataAdd = _mapper.Map<A0_AttendanceConfig>(request);
+                var dataAdd = _mapper.Map<AttendanceConfig>(request);
                 var retVal = await _attendanceConfigRepository.AddAsync(dataAdd);
                 return retVal;
             }
@@ -224,7 +224,7 @@ public class AttendanceConfigService
         }
         catch (Exception ex)
         {
-            return new Result<A0_AttendanceConfig>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<AttendanceConfig>(null, $"Lỗi: {ex.Message}", false);
         }
     }
 
@@ -262,8 +262,8 @@ public class AttendanceConfigService
     {
         try
         {
-            var retVal = await (from cf in _dBContext.A0_AttendanceConfig
-                                join o in _dBContext.A2_Organization on cf.OrganizationId equals o.Id into orgGroup
+            var retVal = await (from cf in _dBContext.AttendanceConfig
+                                join o in _dBContext.Organization on cf.OrganizationId equals o.Id into orgGroup
                                 from o in orgGroup.DefaultIfEmpty() // LEFT JOIN
                                 where (cf.Actived == true
                                 && (!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? cf.OrganizationId == filter.OrganizationId : true

@@ -4,7 +4,7 @@ using Server.Infrastructure.Datas.MasterData;
 
 namespace Server.Infrastructure.Repositories.A0.AttendanceConfigs;
 
-public class AttendanceConfigRepository : RepositoryBaseMasterData<A0_AttendanceConfig>, IAttendanceConfigRepository
+public class AttendanceConfigRepository : RepositoryBaseMasterData<AttendanceConfig>, IAttendanceConfigRepository
 {
     public AttendanceConfigRepository(MasterDataDbContext dbContext) : base(dbContext)
     {

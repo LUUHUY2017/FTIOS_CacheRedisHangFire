@@ -33,8 +33,8 @@ namespace Server.Application.MasterDatas.A0.Accounts.V1
         public async Task<List<UserAccountRes>> GetAccountSystems()
         {
             var userSuperAdmin = await _userManager.FindByIdAsync(UserId);
-            var groupManager = (await _dbContext.A0_RoleGroup.Where(x => x.Name == "Manager" || x.Name == "Operator" || x.Name == "SupperAdmin").ToListAsync()).Select(x => x.Id);
-            var groupUserIds = (await _dbContext.A0_RoleGroupUser.Where(x => !groupManager.Contains(x.RoleGroupId)).ToListAsync()).Select(x => x.UserId);
+            var groupManager = (await _dbContext.RoleGroup.Where(x => x.Name == "Manager" || x.Name == "Operator" || x.Name == "SupperAdmin").ToListAsync()).Select(x => x.Id);
+            var groupUserIds = (await _dbContext.RoleGroupUser.Where(x => !groupManager.Contains(x.RoleGroupId)).ToListAsync()).Select(x => x.UserId);
             var all_accounts = await _userManager.Users.Where(x => groupUserIds.Contains(x.Id)).ToListAsync();
             if (userSuperAdmin != null && string.IsNullOrEmpty(userSuperAdmin.Type))
             {
@@ -63,8 +63,8 @@ namespace Server.Application.MasterDatas.A0.Accounts.V1
         {
             try
             {
-                var groupManager = (await _dbContext.A0_RoleGroup.Where(x => x.Name == "Manager" || x.Name == "Operator").ToListAsync()).Select(x => x.Id);
-                var groupUserIds = (await _dbContext.A0_RoleGroupUser.Where(x => groupManager.Contains(x.RoleGroupId)).ToListAsync()).Select(x => x.UserId);
+                var groupManager = (await _dbContext.RoleGroup.Where(x => x.Name == "Manager" || x.Name == "Operator").ToListAsync()).Select(x => x.Id);
+                var groupUserIds = (await _dbContext.RoleGroupUser.Where(x => groupManager.Contains(x.RoleGroupId)).ToListAsync()).Select(x => x.UserId);
                 var all_accounts = await _userManager.Users.Where(x => groupUserIds.Contains(x.Id)).ToListAsync();
                 var accounts = all_accounts.Select(u => new UserAccountRes()
                 {

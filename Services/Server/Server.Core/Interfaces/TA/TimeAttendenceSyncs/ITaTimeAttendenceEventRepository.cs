@@ -5,9 +5,9 @@ namespace Server.Core.Interfaces.TA.TimeAttendenceSyncs;
 
 public interface ITATimeAttendenceSyncRepository
 {
-    Task<Result<TA_TimeAttendenceSync>> CreateAsync(TA_TimeAttendenceSync data);
-    Task<Result<TA_TimeAttendenceSync>> UpdateAsync(TA_TimeAttendenceSync data);
-    Task<Result<TA_TimeAttendenceSync>> UpdateStatusAsync(TA_TimeAttendenceSync data);
+    Task<Result<TimeAttendenceSync>> CreateAsync(TimeAttendenceSync data);
+    Task<Result<TimeAttendenceSync>> UpdateAsync(TimeAttendenceSync data);
+    Task<Result<TimeAttendenceSync>> UpdateStatusAsync(TimeAttendenceSync data);
     Task<Result<int>> DeleteAsync(string id);
 }
 

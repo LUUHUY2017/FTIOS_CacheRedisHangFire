@@ -7,10 +7,10 @@ namespace Server.Core.Interfaces.A2.SendEmails;
 
 public interface ISendEmailRepository
 {
-    Task<Result<List<A2_SendEmail>>> GetAlls(ScheduleSendEmailLogModel request);
-    Task<Result<A2_SendEmail>> UpdateAsync(A2_SendEmail data);
+    Task<Result<List<Entities.A2.SendEmails>>> GetAlls(ScheduleSendEmailLogModel request);
+    Task<Result<Entities.A2.SendEmails>> UpdateAsync(Entities.A2.SendEmails data);
     Task<Result<int>> DeleteAsync(string id);
-    Task<Result<A0_EmailConfiguration>> GetEmailConfiguration(string orgId);
+    Task<Result<EmailConfiguration>> GetEmailConfiguration(string orgId);
 }
 
 

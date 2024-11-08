@@ -10,8 +10,8 @@ public interface IGIOVehicleInOutRepository
 {
     Task<Result<List<VehicleInOutReportResponse>>> GetAlls(VehicleInOutReportRequest request);
     Task<Result<ImageViewReportResponse>> GetImage(string id);
-    Task<Result<GIO_VehicleInOut>> CreateAsync(GIO_VehicleInOut data);
-    Task<Result<GIO_VehicleInOut>> UpdateAsync(GIO_VehicleInOut data);
+    Task<Result<VehicleInOut>> CreateAsync(VehicleInOut data);
+    Task<Result<VehicleInOut>> UpdateAsync(VehicleInOut data);
     Task<Result<int>> DeleteAsync(string id);
     Task<List<RangeHour>> GetRangHour(int startHour, int endHour);
 }

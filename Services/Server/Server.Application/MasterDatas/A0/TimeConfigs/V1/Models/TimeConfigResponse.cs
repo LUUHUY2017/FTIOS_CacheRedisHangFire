@@ -26,7 +26,7 @@ public class TimeConfigResponse
 
     public string? Note { get; set; }
 
-    public TimeConfigResponse(A0_TimeConfig tc, A2_Organization o)
+    public TimeConfigResponse(TimeConfig tc, Organization o)
     {
          Id = tc?.Id;
          OrganizationId = o?.Id;

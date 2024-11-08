@@ -2,9 +2,9 @@
 
 public class ScheduleJobRequest
 {
-    public int? Id { get; set; }
+    public string? Id { get; set; }
 
-    public int? OrganizationId { get; set; }
+    public string? OrganizationId { get; set; }
 
     /// <summary>
     /// Trạng thái
@@ -15,7 +15,6 @@ public class ScheduleJobRequest
     /// Tên lịch báo cáo
     /// </summary>
     public string? ScheduleJobName { get; set; }
-
 
     /// <summary>
     /// Loại báo cáo
@@ -31,6 +30,5 @@ public class ScheduleJobRequest
     public string? ScheduleTime { get; set; }
 
     public string? ScheduleNote { get; set; }
-    public string? OrganizationName { get; set; }
 
 }

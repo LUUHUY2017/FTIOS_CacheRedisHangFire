@@ -334,9 +334,9 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
                 var pages = PagesConst._Menu_General_Left.ToList();
                 var categories = Category.ListCategory.ToList();
 
-                var _RoleGroupUser = await _context.A0_RoleGroupUser.Where(o => o.UserId == id).ToListAsync();
+                var _RoleGroupUser = await _context.RoleGroupUser.Where(o => o.UserId == id).ToListAsync();
                 var GroupIds = _RoleGroupUser.Select(o => o.RoleGroupId).ToList();
-                var _RoleGroupPage = await _context.A0_RoleGroupPage.Where(o => GroupIds.Contains(o.RoleGroupId)).ToListAsync();
+                var _RoleGroupPage = await _context.RoleGroupPage.Where(o => GroupIds.Contains(o.RoleGroupId)).ToListAsync();
 
                 pageObjects = (from groupPage in _RoleGroupPage
                                join _page in pages on groupPage.PageId equals _page.Id into PA

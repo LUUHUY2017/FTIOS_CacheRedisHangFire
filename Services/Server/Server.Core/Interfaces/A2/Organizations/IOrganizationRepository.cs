@@ -5,11 +5,11 @@ using Shared.Core.Commons;
 
 namespace Server.Core.Interfaces.A2.Organizations;
 
-public interface IOrganizationRepository : IAsyncRepository<A2_Organization>
+public interface IOrganizationRepository : IAsyncRepository<Organization>
 {
-    Task<Result<List<A2_Organization>>> GetAlls(OrganizationFilterRequest request);
-    Task<Result<A2_Organization>> GetById(string id);
-    Task<Result<A2_Organization>> UpdateAsync(A2_Organization data);
-    Task<Result<A2_Organization>> ActiveAsync(ActiveRequest data);
-    Task<Result<A2_Organization>> InActiveAsync(InactiveRequest data);
+    Task<Result<List<Organization>>> GetAlls(OrganizationFilterRequest request);
+    Task<Result<Organization>> GetById(string id);
+    Task<Result<Organization>> UpdateAsync(Organization data);
+    Task<Result<Organization>> ActiveAsync(ActiveRequest data);
+    Task<Result<Organization>> InActiveAsync(InactiveRequest data);
 }

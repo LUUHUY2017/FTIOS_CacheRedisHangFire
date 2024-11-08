@@ -5,10 +5,12 @@ namespace Server.Core.Entities.TA;
 
 [Table("TimeAttendenceEvent")]
 
-public class TA_TimeAttendenceEvent : EntityBase
+namespace Server.Core.Entities.TA
 {
-    public string? DeviceId { get; set; }
-    public string? DeviceIP { get; set; }
+    public class TimeAttendenceEvent : EntityBase
+    {
+        public string? DeviceId { get; set; }
+        public string? DeviceIP { get; set; }
 
     public string? PersonId { get; set; }
     public string? EnrollNumber { get; set; }

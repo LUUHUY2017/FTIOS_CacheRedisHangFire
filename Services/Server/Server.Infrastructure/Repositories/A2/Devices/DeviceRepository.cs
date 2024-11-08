@@ -9,7 +9,7 @@ using Shared.Core.Commons;
 
 namespace Server.Infrastructure.Repositories.A2.Devices;
 
-public class DeviceRepository : RepositoryBaseMasterData<A2_Device>, IDeviceRepository
+public class DeviceRepository : RepositoryBaseMasterData<Device>, IDeviceRepository
 {
     public DeviceRepository(MasterDataDbContext dbContext) : base(dbContext)
     {
@@ -21,7 +21,7 @@ public class DeviceRepository : RepositoryBaseMasterData<A2_Device>, IDeviceRepo
         {
             bool activedVal = req.Actived == "1";
 
-            var _data = await (from o in _dbContext.A2_Device
+            var _data = await (from o in _dbContext.Device
                                where o.Actived == activedVal
                                 && ((!string.IsNullOrEmpty(req.OrganizationId) && req.OrganizationId != "0") ? req.OrganizationId == o.OrganizationId : true)
                                 && ((!string.IsNullOrEmpty(req.DeviceModel) && req.DeviceModel != "0") ? req.DeviceModel == o.DeviceModel : true)
@@ -39,23 +39,23 @@ public class DeviceRepository : RepositoryBaseMasterData<A2_Device>, IDeviceRepo
             throw new Exception(e.Message);
         }
     }
-    public async Task<Result<A2_Device>> UpdateAsyncV2(A2_Device data)
+    public async Task<Result<Device>> UpdateAsyncV2(Device data)
     {
         string message = "";
         try
         {
-            var _order = await _dbContext.A2_Device.SingleOrDefaultAsync(o => o.Id == data.Id); // Use async version of query
+            var _order = await _dbContext.Device.SingleOrDefaultAsync(o => o.Id == data.Id); // Use async version of query
             if (_order != null)
             {
                 data.CopyPropertiesTo(_order);
-                _dbContext.A2_Device.Update(_order);
+                _dbContext.Device.Update(_order);
                 message = "Cập nhật thành công";
             }
             else
             {
-                _order = new A2_Device();
+                _order = new Device();
                 data.CopyPropertiesTo(_order);
-                await _dbContext.A2_Device.AddAsync(_order);
+                await _dbContext.Device.AddAsync(_order);
                 message = "Thêm mới thành công";
             }
 
@@ -70,11 +70,11 @@ public class DeviceRepository : RepositoryBaseMasterData<A2_Device>, IDeviceRepo
                 message = $"Error occurred: {ex.Message}";
             }
 
-            return new Result<A2_Device>(_order, message, true);
+            return new Result<Device>(_order, message, true);
         }
         catch (Exception ex)
         {
-            return new Result<A2_Device>(data, "Lỗi: " + ex.ToString(), false);
+            return new Result<Device>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
 

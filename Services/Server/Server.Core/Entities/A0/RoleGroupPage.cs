@@ -6,10 +6,10 @@ namespace Server.Core.Entities.A0;
 
 [Table("RoleGroupPage")]
 
-public class A0_RoleGroupPage : EntityBase
-{
-    [MaxLength(50)]
-    public string? PageId { get; set; }
+    public class RoleGroupPage : EntityBase
+    {
+        [MaxLength(50)]
+        public string? PageId { get; set; }
 
     [MaxLength(50)]
     public string? RoleGroupId { get; set; }

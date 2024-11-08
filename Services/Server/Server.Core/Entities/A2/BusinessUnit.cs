@@ -3,8 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A2;
 
-[Table("BusinessUnit")]
-public class A2_BusinessUnit : EntityBase
+public class BusinessUnit : EntityBase
 {
     public string? ParentId { get; set; }
     public string? OrganizationId { get; set; }

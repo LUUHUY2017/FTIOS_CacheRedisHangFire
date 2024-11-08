@@ -34,7 +34,7 @@ public class AttendanceConfigController : AuthBaseAPIController
     }
 
     [HttpPost("SchoolAsync")]
-    public async Task<IActionResult> SchoolAsync(A0_AttendanceConfig model)
+    public async Task<IActionResult> SchoolAsync(AttendanceConfig model)
     {
         var data = await _attendanceConfigService.SchoolAsync(model);
         return Ok(data);

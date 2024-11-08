@@ -4,9 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A2;
 
-[Table("Device")]
-
-public class A2_Device : EntityBase
+public class Device : EntityBase
 {
     [MaxLength(250)]
     public string? DeviceCode { get; set; }

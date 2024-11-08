@@ -47,12 +47,12 @@ public partial class SyncDeviceServerService
     {
         try
         {
-            var _data = await (from _do in _dbContext.A2_PersonSynToDevice
+            var _data = await (from _do in _dbContext.PersonSynToDevice
 
-                               join _la in _dbContext.A2_Student on _do.PersonId equals _la.Id into K
+                               join _la in _dbContext.Student on _do.PersonId equals _la.Id into K
                                from la in K.DefaultIfEmpty()
 
-                               join _de in _dbContext.A2_Device on _do.DeviceId equals _de.Id into KG
+                               join _de in _dbContext.Device on _do.DeviceId equals _de.Id into KG
                                from de in KG.DefaultIfEmpty()
 
 

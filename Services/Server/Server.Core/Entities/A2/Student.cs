@@ -3,9 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A2;
 
-[Table("Student")]
-
-public class A2_Student : EntityBase
+public class Student : EntityBase
 {
     public string? StudentCode { get; set; }
     public string? FullName { get; set; }

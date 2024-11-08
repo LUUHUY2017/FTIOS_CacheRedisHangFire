@@ -2,13 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Server.Core.Entities.A2;
-
-[Table("Person")]
-public class A2_Person : EntityBase
+namespace Server.Core.Entities.A2
 {
-    [MaxLength(50)]
-    public string? OrganizationId { get; set; }
+    public class Person : EntityBase
+    {
+        [MaxLength(50)]
+        public string? OrganizationId { get; set; }
 
     [MaxLength(50)]
     public string? PersonCode { get; set; }
@@ -45,9 +44,9 @@ public class A2_Person : EntityBase
     [MaxLength(250)]
     public string? Email { get; set; }
 
-    [MaxLength(50)]
-    public string? PersonTypeId { get; set; }
-    public A2_PersonType? PersonType { get; set; }
+        [MaxLength(50)]
+        public string? PersonTypeId { get; set; }
+        public PersonType? PersonType { get; set; }
 
     [MaxLength(50)]
     public string? Language { get; set; }

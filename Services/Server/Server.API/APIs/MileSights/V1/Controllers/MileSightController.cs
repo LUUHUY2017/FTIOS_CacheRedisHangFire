@@ -61,11 +61,11 @@ public class MileSightController : ControllerBase
         {
             sn = sn.ToUpper();
 
-            var device = _db.A2_Device.FirstOrDefault(o => o.SerialNumber.ToUpper() == sn || o.MacAddress.ToUpper() == sn);
+            var device = _db.Device.FirstOrDefault(o => o.SerialNumber.ToUpper() == sn || o.MacAddress.ToUpper() == sn);
 
             if (device != null)
             {
-                var lane = _db.A2_Lane.FirstOrDefault(o => o.Id == device.LaneId);
+                var lane = _db.Lane.FirstOrDefault(o => o.Id == device.LaneId);
                 if (lane != null)
                 {
                     //mes += $", Vị trí: {lane.LaneName}";
@@ -81,7 +81,7 @@ public class MileSightController : ControllerBase
                     string plate = message.plate.Replace(" ", "").Replace("-", "").Replace(".", "").ToUpper();
                     mes += $", Biển số nhận dạng: {message.plate}";
 
-                    var vehicleInOut = new GIO_VehicleInOut()
+                    var vehicleInOut = new VehicleInOut()
                     {
                         Actived = true,
                         CreatedDate = now,
@@ -122,7 +122,7 @@ public class MileSightController : ControllerBase
                         // Lưu hình toàn cảnh
                         if (!string.IsNullOrWhiteSpace(message.full_image))
                         {
-                            var imageArea = new A3_Image();
+                            var imageArea = new Images();
                             imageArea.ImageIndex = 1;
                             imageArea.ReferenceId = referenceId;
                             imageArea.TimeWeight = 1;
@@ -143,13 +143,13 @@ public class MileSightController : ControllerBase
                             catch (Exception e)
                             { }
 
-                            await _db.A3_Image.AddAsync(imageArea);
+                            await _db.Image.AddAsync(imageArea);
                         }
 
                         // Lưu hình biển số
                         if (!string.IsNullOrWhiteSpace(message.plate_image))
                         {
-                            var imagePlate = new A3_Image();
+                            var imagePlate = new Images();
                             imagePlate.ReferenceId = referenceId;
                             imagePlate.ImageIndex = 1;
                             imagePlate.TimeWeight = 1;
@@ -170,7 +170,7 @@ public class MileSightController : ControllerBase
                             catch (Exception e)
                             { }
 
-                            await _db.A3_Image.AddAsync(imagePlate);
+                            await _db.Image.AddAsync(imagePlate);
                         }
                         await _db.SaveChangesAsync();
                     }

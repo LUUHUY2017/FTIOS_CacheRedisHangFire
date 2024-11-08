@@ -11,8 +11,8 @@ public class AutoMapper : Profile
     public AutoMapper()
     {
         CreateMap<ScheduleReportInOutFilter, ScheduleSendEmailFilterRequest>().ReverseMap();
-        CreateMap<A2_ScheduleSendMail, ScheduleReportInOutRequest>().ReverseMap();
-        CreateMap<A2_ScheduleSendMail, ScheduleReportInOutResponse>().ReverseMap();
+        CreateMap<ScheduleSendMail, ScheduleReportInOutRequest>().ReverseMap();
+        CreateMap<ScheduleSendMail, ScheduleReportInOutResponse>().ReverseMap();
 
     }
 }

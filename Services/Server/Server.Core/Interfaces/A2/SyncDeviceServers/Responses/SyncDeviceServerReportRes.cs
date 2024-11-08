@@ -2,7 +2,7 @@
 
 namespace Server.Core.Interfaces.A2.SyncDeviceServers.Responses;
 
-public class SyncDeviceServerReportRes : A2_PersonSynToDevice
+public class SyncDeviceServerReportRes : PersonSynToDevice
 {
     public string StudentCode { get; set; }
     public string StudentName { get; set; }

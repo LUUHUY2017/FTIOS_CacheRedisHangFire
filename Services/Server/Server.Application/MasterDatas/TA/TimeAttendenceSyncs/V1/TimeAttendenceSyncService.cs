@@ -35,12 +35,12 @@ public partial class TimeAttendenceSyncService
     {
         try
         {
-            var _data = await (from _do in _dbContext.TA_TimeAttendenceSync
+            var _data = await (from _do in _dbContext.TimeAttendenceSync
 
-                               join _la in _dbContext.TA_TimeAttendenceEvent on _do.TimeAttendenceEventId equals _la.Id into K
+                               join _la in _dbContext.TimeAttendenceEvent on _do.TimeAttendenceEventId equals _la.Id into K
                                from la in K.DefaultIfEmpty()
 
-                               join _st in _dbContext.A2_Student on la.StudentCode equals _st.StudentCode into KD
+                               join _st in _dbContext.Student on la.StudentCode equals _st.StudentCode into KD
                                from st in KD.DefaultIfEmpty()
 
                                where

@@ -54,7 +54,7 @@ public class ScheduleSendEmailDetailController : AuthBaseAPIController
     {
         try
         {
-            var model = _mapper.Map<A2_ScheduleSendMailDetail>(request);
+            var model = _mapper.Map<ScheduleSendMailDetail>(request);
             var retVal = await _scheduleSendMailDetailRepository.UpdateAsync(model);
             return Ok(retVal);
         }

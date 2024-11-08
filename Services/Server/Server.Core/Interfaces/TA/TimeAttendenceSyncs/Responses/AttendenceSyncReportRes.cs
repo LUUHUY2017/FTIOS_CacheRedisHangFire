@@ -2,7 +2,7 @@
 
 namespace Server.Core.Interfaces.TimeAttendenceSyncs.Responses;
 
-public class AttendenceSyncReportRes : TA_TimeAttendenceSync
+public class AttendenceSyncReportRes : TimeAttendenceSync
 {
     public string StudentCode { get; set; }
     public string StudentName { get; set; }

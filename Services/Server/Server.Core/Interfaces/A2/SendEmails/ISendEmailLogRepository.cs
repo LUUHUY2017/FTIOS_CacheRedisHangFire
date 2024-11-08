@@ -6,9 +6,9 @@ namespace Server.Core.Interfaces.A2.SendEmails;
 
 public interface ISendEmailLogRepository
 {
-    Task<Result<List<A2_SendEmailLog>>> Get(string sendEMailId);
-    Task<Result<List<A2_SendEmailLog>>> GetAlls(ScheduleSendEmailLogModel request);
-    Task<Result<A2_SendEmailLog>> UpdateAsync(A2_SendEmailLog data);
+    Task<Result<List<SendEmailLogs>>> Get(string sendEMailId);
+    Task<Result<List<SendEmailLogs>>> GetAlls(ScheduleSendEmailLogModel request);
+    Task<Result<SendEmailLogs>> UpdateAsync(SendEmailLogs data);
     Task<Result<int>> DeleteAsync(string id);
 }
 

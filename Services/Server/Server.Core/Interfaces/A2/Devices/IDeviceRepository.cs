@@ -6,10 +6,10 @@ using Shared.Core.Commons;
 
 namespace Server.Core.Interfaces.A2.Devices;
 
-public interface IDeviceRepository : IAsyncRepository<A2_Device>
+public interface IDeviceRepository : IAsyncRepository<Device>
 {
     Task<List<DeviceResponse>> GetFilters(DeviceFilterRequest req);
-    Task<Result<A2_Device>> UpdateAsyncV2(A2_Device data);
+    Task<Result<Device>> UpdateAsyncV2(Device data);
 }
 
 
