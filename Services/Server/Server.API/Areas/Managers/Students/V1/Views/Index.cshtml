@@ -222,12 +222,12 @@
                                         <div class="col-md-10 col-sm-12  ">
                                             <input class="form-control  mb-1 " type="text" readonly required id="studentCode" name="studentCode" v-model:value="item.studentCode">
                                         </div>
-
+@* 
                                         <div class="form-group">
                                             <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Căn cước  </label>
                                             <div class="col-md-10 col-sm-12  ">
                                                 <input class="form-control  mb-1 " type="text" readonly required id="identifyNumber" name="identifyNumber" v-model:value="item.identifyNumber">
-                                            </div>
+                                            </div> *@
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Lớp  </label>
@@ -236,13 +236,13 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
+                                    @*     <div class="form-group">
                                             <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Giới tính</label>
                                             <div class="col-md-10 col-sm-12  ">
                                                 <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="01"> Nam</label>
                                                 <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="02">Nữ </label>
                                             </div>
-                                        </div>
+                                        </div> *@
                                     </div>
 
                                     <div class="col-md-5">
@@ -253,12 +253,12 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
+                                      @*   <div class="form-group">
                                             <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Trạng thái </label>
                                             <div class="col-md-10 col-sm-12  ">
                                                 <input type="text" id="status" name="status" readonly required class="form-control  mb-1  " v-model:value="item.status">
                                             </div>
-                                        </div>
+                                        </div> *@
 
                                         <div class="form-group">
                                             <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Năm sinh</label>
@@ -281,6 +281,8 @@
             </div>
         </div>
     </div>
+
+
 
     <div class="modal fade" id="ModelImage" aria-hidden="true">
         <div id="waitDialog" class="modal-dialog modal-md">
@@ -563,7 +565,7 @@
 
                 this.item = el;
                 try { this.item.dateOfBirth1 = ConvertDinhDangNgay(el.dateOfBirth); } catch (Ex) { }
-                try { this.item.imageSrc1 = el.imageBase64 != null ? "data:image/png;base64," + el.imageBase64 : null } catch (Ex) { }
+                try { this.item.imageSrc = el.imageBase64 != null ? "data:image/png;base64," + el.imageBase64 : null } catch (Ex) { }
                 this.item = { ...this.item };
 
                 this.object.form_tile = "Thông tin học sinh";

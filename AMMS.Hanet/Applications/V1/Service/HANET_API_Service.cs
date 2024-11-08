@@ -323,7 +323,7 @@ namespace AMMS.Hanet.Applications.V1.Service
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public async Task<int> GetCountUserByPlate(string plateId)
+        public async Task<int> GetCountUserByPlace(string placeId)
         {
             Hanet_Response result = null;
             try
@@ -333,10 +333,11 @@ namespace AMMS.Hanet.Applications.V1.Service
                     MaxTimeout = -1,
                 };
                 var client = new RestClient(options);
-                var request = new RestRequest("/person/remove", Method.Post);
+                var request = new RestRequest("/person/getTotalPersonByPlaceID", Method.Post);
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
                 request.AddParameter("token", HanetParam.Token.access_token);
-                request.AddParameter("placeID", plateId);
+                request.AddParameter("placeID", placeId);
+                request.AddParameter("type", "0");
                 RestResponse response = await client.ExecuteAsync(request);
 
                 var strResult = response.Content;
@@ -365,6 +366,63 @@ namespace AMMS.Hanet.Applications.V1.Service
             }
 
         }
+
+        /// <summary>
+        /// Lấy user theo placeId
+        /// </summary>
+        /// <param name="placeId"></param>
+        /// <param name="page"></param>
+        /// <param name="pagesize"></param>
+        /// <returns></returns>
+        public async Task<List<Hanet_User>> UserByPlaceId(string placeId, int page, int pagesize = 100)
+        {
+            Hanet_Response_Array result = null;
+            try
+            {
+                var options = new RestClientOptions(ServerHanet)
+                {
+                    MaxTimeout = -1,
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("/person/getListByPlace", Method.Post);
+                request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+                request.AddParameter("token", HanetParam.Token.access_token);
+                request.AddParameter("placeID", placeId);
+                request.AddParameter("type", "0");
+                request.AddParameter("page", page);
+                request.AddParameter("size", pagesize);
+                RestResponse response = await client.ExecuteAsync(request);
+
+                var strResult = response.Content;
+                Console.WriteLine(strResult);
+
+                if (string.IsNullOrEmpty(strResult))
+                    return null;
+
+                result = JsonConvert.DeserializeObject<Hanet_Response_Array>(strResult);
+
+                if (result == null) return null;
+
+                if (result.returnCode != Hanet_Response_Static.SUCCESSCode)
+                    return null;
+                List<Hanet_User> data = null;
+                foreach (var obj in result.data)
+                {
+                    var h_user = (Hanet_User)obj;
+                    data.Add(h_user);
+                }
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+
+                Logger.Error(ex);
+                return null;
+            }
+
+        }
+
 
         /// <summary>
         /// Chuyển ảnh thành stream content
