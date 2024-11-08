@@ -5,7 +5,6 @@ using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using Server.Application.Services.VTSmart;
 using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
 

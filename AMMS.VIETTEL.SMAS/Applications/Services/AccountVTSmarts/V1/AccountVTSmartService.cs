@@ -1,11 +1,11 @@
-﻿using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses;
+﻿using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
+using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses;
 using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
 using AMMS.VIETTEL.SMAS.Cores.Identity.Entities;
 using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Server.Application.Services.VTSmart;
 using Shared.Core.Loggers;
 using System.Text;
 

@@ -10,8 +10,9 @@ using Org.BouncyCastle.Ocsp;
 using Shared.Core.Loggers;
 using System.Security.Cryptography;
 using System.Text;
+using static AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses.StudentResponse;
 
-namespace Server.Application.Services.VTSmart;
+namespace AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
 
 public sealed class SmartService
 {
@@ -454,7 +455,7 @@ public sealed class SmartService
         var parameter = new StringContent(JsonConvert.SerializeObject(new
         {
             secretKey = _secretKey,
-            schoolCode = schoolCode
+            schoolCode
 
         }), Encoding.UTF8, "application/json");
         using (HttpClient client = new HttpClient())
@@ -478,5 +479,41 @@ public sealed class SmartService
                 };
             }
         }
+    }
+    public static string EncryptStringVSMAS(string plaintext, byte[] key, byte[] iv)
+    {
+        using (Aes aes = Aes.Create())
+        {
+            aes.Key = key;
+            aes.IV = iv;
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+
+            using (ICryptoTransform encryptor = aes.CreateEncryptor())
+            {
+                byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
+                byte[] ciphertextBytes = encryptor.TransformFinalBlock(plaintextBytes, 0, plaintextBytes.Length);
+                return Convert.ToBase64String(ciphertextBytes);
+            }
+        }
+    }
+    public static string GetSecretKeyVMSAS(string secretKey, string keyHas, string keyIV, string schoolCode)
+    {
+        TimeZoneInfo timezone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); // UTC+7 (Indochina Time)
+        DateTime currentDateTime = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
+
+        string dateTimeFormatted = currentDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+        // $plaintext cần phải đúng định dạng <SecretKey>||<Mã trường CSDL>||<Ngày hiện tại> ví dụ: “Abc@123||TH00001||2024-07-30 HH:mm:ss”
+        // Ngày hiện tại được tính là ngày của thời điểm call api, định dạng yyyy-MM-dd HH:mm:ss
+        // Bắt buộc truyền đúng plaintext sau đó encrypt plaintext để có kết quả đầu ra
+        // SecretKey sẽ được cấp thông qua đầu mối tích hợp
+
+        string plaintext = $"{secretKey}||{schoolCode}||{dateTimeFormatted}";
+
+        byte[] key = Convert.FromBase64String(keyHas);
+        byte[] iv = Convert.FromBase64String(keyIV);
+        string encryptedString = EncryptStringVSMAS(plaintext, key, iv);
+
+        return encryptedString;
     }
 }

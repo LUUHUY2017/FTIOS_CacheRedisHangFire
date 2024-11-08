@@ -1,7 +1,6 @@
 ﻿using AMMS.VIETTEL.SMAS.Applications.Services.AppConfigs.V1.Models;
 using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
 using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses;
-using AMMS.VIETTEL.SMAS.Cores.Entities;
 using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
 using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.AppConfigs;
@@ -11,7 +10,6 @@ using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Server.Application.Services.VTSmart;
 using Shared.Core.Commons;
 using Shared.Core.Loggers;
 using System.Text;
