@@ -6,7 +6,7 @@ namespace AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 
 
 [Table("Organization")]
-public class A2_Organization : EntityBase
+public class Organization : EntityBase
 {
     [MaxLength(250)]
     public string? OrganizationCode { get; set; }

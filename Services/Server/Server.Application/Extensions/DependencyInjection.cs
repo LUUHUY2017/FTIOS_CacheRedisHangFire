@@ -27,6 +27,7 @@ using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 using Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
 using Server.Application.Services.VTSmart;
 using Server.Core.Identity.Interfaces.Accounts.Services;
+using Server.Core.Identity.Repositories;
 using Server.Core.Interfaces.A0;
 using Server.Core.Interfaces.A2.Devices;
 using Server.Core.Interfaces.A2.Organizations;
@@ -41,6 +42,7 @@ using Server.Core.Interfaces.TA.TimeAttendenceEvents;
 using Server.Core.Interfaces.TA.TimeAttendenceSyncs;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
+using Server.Infrastructure.Repositories;
 using Server.Infrastructure.Repositories.A0.AttendanceConfigs;
 using Server.Infrastructure.Repositories.A0.TimeConfigs;
 using Server.Infrastructure.Repositories.A2.Devices;
@@ -284,6 +286,9 @@ public static class DependencyInjection
 
         //Monitor thiết bị
         service.AddScoped<MonitorDeviceService>();
+
+        //OTP
+        service.AddScoped<IOTPRepository, OTPRepository>();
 
 
     }

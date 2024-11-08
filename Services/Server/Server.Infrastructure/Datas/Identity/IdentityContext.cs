@@ -12,6 +12,7 @@ namespace Server.Infrastructure.Identity;
 
 public class IdentityContext : IdentityDbContext<ApplicationUser>
 {
+    public DbSet<OTP> OTP { get; set; }
     public IdentityContext(DbContextOptions<IdentityContext> options) : base(options)
     {
     }
@@ -52,7 +53,10 @@ public class IdentityContext : IdentityDbContext<ApplicationUser>
         {
             entity.ToTable("UserTokens");
         });
-
+        modelBuilder.Entity<OTP>(entity =>
+        {
+            entity.ToTable(name: "Otp");
+        });
         //modelBuilder.Seed();
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AMMS.VIETTEL.SMAS.Cores.Entities.A0;
 
 [Table("Timeconfig")]
-public class A0_TimeConfig : EntityBase
+public class TimeConfig : EntityBase
 {
     public string? OrganizationId { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,7 @@ using Server.Core.Identity.Interfaces.Accounts.Services;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Shared.Core.Commons;
+using Shared.Core.Identity;
 using Shared.Core.Identity.Menu;
 using Shared.Core.Identity.Object;
 using Shared.Core.Identity.User;
@@ -22,6 +24,8 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
+    [Authorize("Bearer")]
+    [AuthorizeMaster(Roles = RoleConst.AdminPage)]
     //[Authorize("Bearer")]
     //[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 

@@ -29,13 +29,13 @@ public class TimeConfigService
         _organizationService = organizationService;
     }
 
-    public async Task<Result<A0_TimeConfig>> SaveAsync(TimeConfigRequest request)
+    public async Task<Result<TimeConfig>> SaveAsync(TimeConfigRequest request)
     {
         try
         {
             if (string.IsNullOrEmpty(request.Id))
             {
-                var dataAdd = _mapper.Map<A0_TimeConfig>(request);
+                var dataAdd = _mapper.Map<TimeConfig>(request);
                 var retVal = await _timeConfigRepository.AddAsync(dataAdd);
                 return retVal;
             }
@@ -63,7 +63,7 @@ public class TimeConfigService
         }
         catch (Exception ex)
         {
-            return new Result<A0_TimeConfig>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<TimeConfig>(null, $"Lỗi: {ex.Message}", false);
         }
     }
 

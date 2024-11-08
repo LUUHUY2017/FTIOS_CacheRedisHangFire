@@ -464,17 +464,17 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
-        var masterDataDbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
-        await masterDataDbContext.Database.MigrateAsync();
+        //var masterDataDbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
+        //await masterDataDbContext.Database.MigrateAsync();
 
-        var identityContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
-        await identityContext.Database.MigrateAsync();
+        //var identityContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
+        //await identityContext.Database.MigrateAsync();
 
-        var configurationDbContext = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-        await configurationDbContext.Database.MigrateAsync();
+        //var configurationDbContext = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+        //await configurationDbContext.Database.MigrateAsync();
 
-        var persistedGrantDbContext = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-        await persistedGrantDbContext.Database.MigrateAsync();
+        //var persistedGrantDbContext = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
+        //await persistedGrantDbContext.Database.MigrateAsync();
 
 
         var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();

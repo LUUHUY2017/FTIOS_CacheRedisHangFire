@@ -1,5 +1,6 @@
 ﻿using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1.Models;
+using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
 using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Organizations;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Organizations.Requests;
