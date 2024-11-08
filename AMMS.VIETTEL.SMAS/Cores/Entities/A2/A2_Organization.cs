@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 
 
-[Table("A2_Organization")]
+[Table("Organization")]
 public class A2_Organization : EntityBase
 {
     [MaxLength(250)]

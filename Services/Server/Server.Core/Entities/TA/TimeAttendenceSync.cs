@@ -1,4 +1,9 @@
 ﻿using Shared.Core.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Server.Core.Entities.TA;
+
+[Table("TimeAttendenceSync")]
 
 namespace Server.Core.Entities.TA
 {

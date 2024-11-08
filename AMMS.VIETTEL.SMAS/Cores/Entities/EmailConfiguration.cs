@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AMMS.VIETTEL.SMAS.Cores.Entities;
 
-[Table("A0_Emailconfiguration")]
+[Table("Emailconfiguration")]
 public class EmailConfiguration : EntityBase
 {
     public string Server { get; set; }
