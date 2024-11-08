@@ -119,7 +119,7 @@ public class CronJobService : ICronJobService
                         FullName = item.StudentName,
                         OrganizationId = orgRes.Id,
                     };
-                    _studentService.SaveFromService(el);
+                await _studentService.SaveFromService(el);
                 }
             }
         }
@@ -145,7 +145,7 @@ public class CronJobService : ICronJobService
 
 
             // Lấy dữ liệu theo block gửi qua api
-            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.SchoolCode == orgRes.OrganizationCode && o.EventType != true).OrderBy(o => o.EventTime).Take(20).ToListAsync();
+            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.SchoolCode == orgRes.OrganizationCode && o.EventType != true).OrderBy(o => o.EventTime).Take(15).ToListAsync();
             var studentAbs = new List<StudentAbsence>();
             foreach (var item in datas)
             {
@@ -163,6 +163,7 @@ public class CronJobService : ICronJobService
                 AbsenceDate = DateTime.Now,
                 Section = 0,
                 FormSendSMS = 1,
+                StudentCodeType = 1,
                 StudentAbsenceByDevices = studentAbs,
             };
             var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
