@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Ocsp;
 using Shared.Core.Loggers;
 using System.Security.Cryptography;
 using System.Text;
@@ -28,7 +29,10 @@ public sealed class SmartService
     }
 
     public static string urlServerName = "https://gateway.vtsmas.vn";
-    public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
+    public static string urlSSO = "https://sso.vtsmas.vn/connect/token";
+    public static AccessToken _accessToken;
+
+    public static string key { get; set; } = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
     public static string secretKey = "SMas$#3/*/lsn_diem_danh";
 
@@ -442,8 +446,37 @@ public sealed class SmartService
     }
     #endregion
 
+    public static async Task<StudentResponse1> GetStudents(string schoolCode)
+    {
+        string _secretKey = GetSecretKeyVMSAS("SMas$#@$20@4/*/lsn-diem-danh-app-client", key, keyIV, schoolCode);
 
+        var api = string.Format("https://gateway.vtsmas.vn/api/hoc-tap/diem-danh-hoc-sinh/lay-danh-sach-hoc-sinh-diem-danh-thiet-bi");
+        var parameter = new StringContent(JsonConvert.SerializeObject(new
+        {
+            secretKey = _secretKey,
+            schoolCode = schoolCode
 
+        }), Encoding.UTF8, "application/json");
+        using (HttpClient client = new HttpClient())
+        {
+            //client.DefaultRequestHeaders.Accept.Clear();
+            //client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _accessToken.access_token);
 
-
+            var result = await client.PostAsync(api, parameter);
+            if (result.IsSuccessStatusCode)
+            {
+                var data = await result.Content.ReadAsStringAsync();
+                var retval = JsonConvert.DeserializeObject<StudentResponse1>(data);
+                return retval;
+            }
+            else
+            {
+                return new StudentResponse1()
+                {
+                    isSuccess = false,
+                    message = await result.Content.ReadAsStringAsync(),
+                };
+            }
+        }
+    }
 }

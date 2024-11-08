@@ -59,7 +59,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                         name = data.FullName,
                         aliasID = data.PersonCode,
                         //placeID = rB_ServerRequest.SchoolId,
-                        placeID = HanetParam.PlateId,
+                        placeID = HanetParam.PlaceId,
                     };
 
                     if (await _hanetAPIService.CheckUser(user))
@@ -121,7 +121,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                         name = data.FullName,
                         aliasID = data.PersonCode,
                         //placeID = rB_ServerRequest.SchoolId,
-                        placeID = HanetParam.PlateId,
+                        placeID = HanetParam.PlaceId,
                     };
                     if (await _hanetAPIService.RemoveUser(user))
                     {

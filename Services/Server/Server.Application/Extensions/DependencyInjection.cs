@@ -334,6 +334,7 @@ public static class DependencyInjection
         }
         #endregion
 
+
         #region MasterDBConnection
         var MasterDBConnectionType = configuration.GetConnectionString("MasterDBConnectionType");
         if (MasterDBConnectionType == "MySQL")
@@ -367,6 +368,7 @@ public static class DependencyInjection
               configuration.GetConnectionString("MasterDBConnection"), builder => builder.UseRowNumberForPaging()));
         }
         #endregion
+
 
         //var xx = configuration.GetConnectionString("MasterDBConnection");
         //services.AddDbContext<BiDbContext>(options => options.UseSqlServer(xx, builder => builder.UseRowNumberForPaging()));

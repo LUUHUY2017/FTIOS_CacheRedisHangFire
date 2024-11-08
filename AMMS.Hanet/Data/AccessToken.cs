@@ -7,19 +7,23 @@ public class AccessToken
     public string email { get; set; }
     public string userID { get; set; }
     public long expire { get; set; }
+    public string token_type { get; set; }
+}
+/// <summary>
+/// Lưu thông tin vào biến để sử dụng trong hệ thống
+/// </summary>
+public class HanetParam
+{
+    public static string Host { get; set; } = "https://oauth.hanet.com/";
+    public static string PlaceId { get; set; } = "28340";
+    public static long TimeExpireTick { get; set; }
     public DateTime TimeExpires
     {
         get
         {
-            return new DateTime(expire);
+            return new DateTime(TimeExpireTick);
         }
     }
-    public string token_type { get; set; }
-}
-public class HanetParam
-{
-    public static string Host { get; set; } = "https://oauth.hanet.com/";
-    public static string PlateId { get; set; } = "28340";
     public static AccessToken Token { get; set; } = new AccessToken()
     {
         refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxMjYyMTM0MDE3Mjc3NDY2NDEiLCJlbWFpbCI6Im5hbW5kQGFjcy52biIsImNsaWVudF9pZCI6ImUwZjM0NWRhNWYxODdkMjZiMDE4ZTFkMzYwM2FkOGE4IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJpYXQiOjE3MzAxODYxOTAsImV4cCI6MTc2MTcyMjE5MH0.jhX-qtVsjM0wmPShdGbUC5oOB9_d-tzN1To6ef4SvGs",

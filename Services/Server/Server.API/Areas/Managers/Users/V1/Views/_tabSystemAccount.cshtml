@@ -57,7 +57,7 @@
                             </div>
                         </div> *@
 
-                        <div class="row mb-3">
+                        <div class="row mb-3" v-if="!showRole">
                             <label class="col-form-label text-end col-lg-2">Email<span class="text-danger">*</span></label>
                             <div class="col-lg-8">
                                 <input type="email" class="form-control" required placeholder="Email" v-model="item.email">

@@ -1,9 +1,12 @@
 ﻿using AMMS.Hanet.Applications.AppConfigs.V1;
 using AMMS.Hanet.Applications.AppConfigs.V1.Models;
 using AMMS.Hanet.Data;
+using AMMS.Hanet.Datas.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Shared.Core.Commons;
 using Shared.Core.Loggers;
+using static MassTransit.ValidationResultExtensions;
 
 namespace AMMS.Hanet.APIControllers.AppConfigs.V1.Controllers;
 
@@ -37,7 +40,22 @@ public class AppConfigController : ControllerBase
     {
         return Ok(await _appConfigService.AddOrEdit(request));
     }
+    /// <summary>
+    /// Thêm mới hoặc cập nhật cấu hình
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("GetToken")]
+    public async Task<IActionResult> GetToken(AppConfigRequest request)
+    {
+        var token = await _appConfigService.GetToken();
+        if (token == null)
+        {
+            return Ok(new Result<app_config>(null, $"Có lỗi khi lấy token", false));
+        }
 
+        return Ok(new Result<app_config>(token, $"Thành công", true));
+ 
+    }
     [HttpGet("Test")]
     public async Task<IActionResult> Test()
     {
