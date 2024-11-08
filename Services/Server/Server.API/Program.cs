@@ -22,6 +22,7 @@ using Server.Infrastructure.Identity;
 using Share.WebApp.Controllers;
 using Share.WebApp.Settings;
 using Shared.Core.Commons;
+using Shared.Core.Emails.V1.Commons;
 using Shared.Core.Identity;
 using Shared.Core.Loggers;
 using System.Reflection;
@@ -105,6 +106,7 @@ if (builder.Configuration["Hangfire:Enable"] == "True")
 
 //Add Database Service
 services.AddDbContext(configuration);
+
 
 #region  IdentityServer4
 
@@ -240,6 +242,8 @@ builder1.AddDeveloperSigningCredential(); //Chạy trên môi trường dev
 
 
 services.Configure<Authentication>(configuration.GetSection("Authentication"));
+services.Configure<EmailSettings>(configuration.GetSection("MailSettings"));
+
 
 services.AddAuthentication()
  .AddLocalApi("Bearer", option =>
@@ -485,8 +489,8 @@ using (var scope = app.Services.CreateScope())
         var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
         var scheduleJob = scope.ServiceProvider.GetRequiredService<IScheduleJobRepository>();
 
-        var scheduleLists = await scheduleJob.Gets(true);
-        await conJobService.CreateScheduleCronJob(scheduleLists);
+        //var scheduleLists = await scheduleJob.Gets(true);
+        //await conJobService.CreateScheduleCronJob(scheduleLists);
     }
     catch (Exception e) { Logger.Error(e); }
 

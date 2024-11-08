@@ -3,6 +3,7 @@ using AMMS.DeviceData.RabbitMq;
 using AMMS.Notification.Datas;
 using AMMS.Notification.Datas.Interfaces.SendEmails;
 using AMMS.Notification.Datas.Repositories.SendEmails;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using EntityFrameworkCore.UseRowNumberForPaging;
 using EventBus.Messages;
 using MassTransit;
@@ -56,6 +57,7 @@ using Server.Infrastructure.Repositories.TA.TimeAttendenceSyncs;
 using Share.Core.Pagination;
 using Shared.Core.Caches.Redis;
 using Shared.Core.Emails.V1.Adapters;
+using Shared.Core.Emails.V1.Commons;
 using Shared.Core.Repositories;
 using Shared.Core.SignalRs;
 using System.Reflection;
@@ -207,6 +209,7 @@ public static class DependencyInjection
         ////ConJob chạy các dịch vụ tự động
         service.AddScoped<ICronJobService, CronJobService>();
 
+       // services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
         service.AddScoped<SMTP_Email_Adpater>();
         service.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailSenderService>();
 
@@ -326,6 +329,7 @@ public static class DependencyInjection
         }
         #endregion
 
+
         #region MasterDBConnection
         var MasterDBConnectionType = configuration.GetConnectionString("MasterDBConnectionType");
         if (MasterDBConnectionType == "MySQL")
@@ -359,6 +363,7 @@ public static class DependencyInjection
               configuration.GetConnectionString("MasterDBConnection"), builder => builder.UseRowNumberForPaging()));
         }
         #endregion
+
 
         //var xx = configuration.GetConnectionString("MasterDBConnection");
         //services.AddDbContext<BiDbContext>(options => options.UseSqlServer(xx, builder => builder.UseRowNumberForPaging()));

@@ -21,7 +21,7 @@ public class EmailSenderService : IEmailSender
     }
     public async Task SendEmailAsync(string toEmail, string subject, string htmlMessage)
     {
-        var a = Console.ReadLine();
+        //var a = Console.ReadLine();
 
         try
         {
@@ -36,7 +36,8 @@ public class EmailSenderService : IEmailSender
             smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
             smtp.Authenticate(_mailSettings.UserName, _mailSettings.Password);
             //smtp.Authenticate("nguyencongquyet@gmail.com", "tiax zdkq envs rsjv");
-            //
+            //smtp.Authenticate("info@amms.acs.vn", "fyih rvcy qglw mjto");
+            
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
         }

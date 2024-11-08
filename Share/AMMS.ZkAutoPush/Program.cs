@@ -16,7 +16,9 @@ using Hangfire.MySql;
 using AMMS.ZkAutoPush.Applications.CronJobs;
 using AMMS.ZkAutoPush.Applications.V1;
 using AMMS.ZkAutoPush.Helps.Authorizations;
-using Shared.Core.Loggers; 
+using Shared.Core.Loggers;
+using AMMS.ZkAutoPush.Datas.Databases;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
@@ -338,6 +340,9 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
+        var viettelDbContext = scope.ServiceProvider.GetRequiredService<DeviceAutoPushDbContext>();
+        await viettelDbContext.Database.MigrateAsync();
+
 
         var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
         signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");

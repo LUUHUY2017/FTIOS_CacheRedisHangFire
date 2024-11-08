@@ -52,6 +52,7 @@ namespace Server.Application.MasterDatas.A0.Accounts.V1
                 Email = u.Email,
                 UserType = UserType.User,
                 Type = u.Type,
+                EmailConfirmed = u.EmailConfirmed,
             }).ToList();
 
             if (accounts == null)

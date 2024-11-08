@@ -9,14 +9,15 @@ using Server.Core.Interfaces.A2.Devices.Requests;
 using Share.Core.Pagination;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
+using AMMS.Share.WebApp.Helps;
 
 namespace Server.API.APIs.Data.Devices.V1.Controllers;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[Authorize("Bearer")]
+[AuthorizeMaster]
 public class DeviceAdminController : AuthBaseAPIController
 {
     private readonly DeviceAdminService _deviceAdminService;

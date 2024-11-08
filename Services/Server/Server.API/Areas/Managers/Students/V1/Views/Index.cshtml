@@ -382,6 +382,15 @@
             _stu.combobox.data = [];
             _stu.onLoadData();
         });
+
+        $("ul.pagination").on("click", "li", function () {
+            var pageNumber = $(this).find("a").data('number');
+            if (pageNumber != undefined) {
+                _stu.filter.CurentPage = pageNumber;
+                _stu.onLoadData();
+            }
+
+        });
     });
 
 </script>

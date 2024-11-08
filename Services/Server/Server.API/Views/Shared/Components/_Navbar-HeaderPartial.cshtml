@@ -331,6 +331,13 @@
             comboboxNav: {
                 schoolNavs: [],
             },
+            object: {
+                dateNow: formatDateTime(new Date()),
+                editAction: false,
+                config: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
         },
         methods: {
             logout: function () {
@@ -393,7 +400,8 @@
                     }
                 }
                 else {
-                    axios.get('/api/v1/Organization/GetForUser').then(response => {
+                    console.log(this.token);
+                    axios.get('/api/v1/Organization/GetForUser',this.object.config).then(response => {
                         if (response.request.responseURL.includes('Auth/Login')) {
                             window.location = window.location.href;
                         }
