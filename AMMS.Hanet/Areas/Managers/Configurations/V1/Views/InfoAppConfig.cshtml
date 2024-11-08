@@ -23,10 +23,10 @@
                                 </div>
                                 <!--Plate Id-->
                                 <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-2">PlateId </label>
+                                    <label class="col-form-label text-start col-lg-2">PlaceId </label>
                                     <div class="col-lg-10">
-                                        <input type="text" class="form-control" required v-model="item.plateId">
-                                        <div class="invalid-feedback">Vui lòng nhập PlateId</div>
+                                        <input type="text" class="form-control" required v-model="item.placeId">
+                                        <div class="invalid-feedback">Vui lòng nhập PlaceId</div>
                                         <div class="valid-feedback"> </div>
                                     </div>
                                 </div>
@@ -48,6 +48,16 @@
                                         <div class="valid-feedback"> </div>
                                     </div>
                                 </div>
+                                <!--Grant Type-->
+                                <div class="row mb-3">
+                                    <label class="col-form-label text-start col-lg-2">Refresh token </label>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" required v-model="item.refreshToken">
+                                        <div class="invalid-feedback">Vui lòng nhập Refresh token</div>
+                                        <div class="valid-feedback"> </div>
+                                    </div>
+                                </div>
+
                                 <div class="row mb-3">
                                     <div class="col-lg-12">
                                         <button type="button" class="btn btn-primary" v-on:click="onSaveData()">Lưu dữ liệu</button>
@@ -119,7 +129,7 @@
 
                                 <div class="row mb-3">
                                     <div class="col-lg-10">
-                                        <a class="btn btn-primary" href="~/Configuration/Code">Lấy token</a>
+                                        <a class="btn btn-primary" v-on:click="onGetToken()">Lấy token</a>
                                     </div>
                                 </div>
                                
@@ -224,7 +234,24 @@
             },
 
             onGetToken() {
+                $('.loader').show();
+                axios.post('/api/v1/AppConfig/GetToken', this.item, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
 
+                    if (response.data.succeeded) {
+                        alertify.success("Thành công");
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    console.log(error);
+                    $('.loader').delay(100).hide(0);
+                });
             },
         },
         mounted() {
