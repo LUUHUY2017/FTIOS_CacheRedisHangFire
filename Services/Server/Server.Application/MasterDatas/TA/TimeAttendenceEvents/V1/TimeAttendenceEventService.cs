@@ -289,15 +289,12 @@ public partial class TimeAttendenceEventService
                         {
                             Id = time.Id,
                             SchoolCode = organization.OrganizationCode,
-                            SchoolYearCode = "2024-2025",
-                            ClassId = student.ClassId,
-                            ProvinceCode = organization.ProvinceCode,
 
 
                             AbsenceDate = dateTime,
                             Section = sectionTime,
                             FormSendSMS = 1,
-                            StudentAbsences = studentAbs,
+                            StudentAbsenceByDevices = studentAbs,
                         };
 
                         string paras = JsonConvert.SerializeObject(paramData);

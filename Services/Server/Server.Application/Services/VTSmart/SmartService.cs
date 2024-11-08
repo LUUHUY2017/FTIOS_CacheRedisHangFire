@@ -30,7 +30,7 @@ public sealed class SmartService
     public static string urlServerName = "https://gateway.vtsmas.vn";
     public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
-    public static string secretKey = "SMas$#3/*/lsn_diem_danh";
+    public static string secretKey = "SMas$#@$20@4/*/lsn-diem-danh-app-client";
 
 
     public async Task<AccessToken> GetToken1(string orgId)
@@ -320,7 +320,7 @@ public sealed class SmartService
 
 
     #region POST V2
-    public async Task<List<StudenSmasApiResponse>> PostListStudents(string provinceCode, string schoolCode, string schoolYearCode)
+    public async Task<List<StudenSmasApiResponse>> PostListStudents( string schoolCode)
     {
         List<StudenSmasApiResponse> retval = new List<StudenSmasApiResponse>();
         try
@@ -333,9 +333,7 @@ public sealed class SmartService
                 var req = new StudentSmasApiRequest()
                 {
                     secretKey = _secretKey,
-                    provinceCode = provinceCode,
                     schoolCode = schoolCode,
-                    schoolYearCode = schoolYearCode,
                 };
 
                 var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/lay-danh-sach-hoc-sinh-diem-danh-thiet-bi", urlServerName);

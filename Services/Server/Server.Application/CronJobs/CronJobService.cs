@@ -100,10 +100,8 @@ public class CronJobService : ICronJobService
             if (orgRes == null)
                 return;
 
-            string provinceCode = orgRes.ProvinceCode; // 20 tỉnh Lạng Sơn
             string schoolCode = orgRes.OrganizationCode; // "20186511"
-            string schoolYearCode = "2024-2025";
-            var res = await _smartService.PostListStudents(provinceCode, schoolCode, schoolYearCode);
+            var res = await _smartService.PostListStudents( schoolCode);
             if (res.Any())
             {
                 foreach (var item in res)
@@ -161,7 +159,7 @@ public class CronJobService : ICronJobService
                 AbsenceDate = DateTime.Now,
                 Section = 0,
                 FormSendSMS = 1,
-                StudentAbsences = studentAbs,
+                StudentAbsenceByDevices = studentAbs,
             };
             var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
             if (res != null)

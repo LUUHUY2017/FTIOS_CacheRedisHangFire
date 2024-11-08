@@ -6,23 +6,17 @@
         public string? Id { get; set; }
         public string? SecretKey { get; set; }
         public string? SchoolCode { get; set; }
-        public string? SchoolYearCode { get; set; }
-        /// <summary>
-        /// bỏ v2
-        /// </summary>
-        public string? ClassCode { get; set; }
-
-        /// <summary>
-        /// add v2
-        /// </summary>
-        public string? ClassId { get; set; }
-        public string? ProvinceCode { get; set; }
-
 
         public DateTime? AbsenceDate { get; set; }
         public int? Section { get; set; }
         public int? FormSendSMS { get; set; }
-        public List<StudentAbsence>? StudentAbsences { get; set; }
+        /// <summary>
+        /// Kiểu nộp học sinh:
+        //1. Nộp theo mã SSO
+        //2. Nộp theo mã SMAS
+        /// </summary>
+        public int? StudentCodeType { get; set; }
+        public List<StudentAbsence>? StudentAbsenceByDevices { get; set; }
     }
     public class ExtraProperties
     {
