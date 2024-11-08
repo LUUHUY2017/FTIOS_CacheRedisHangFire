@@ -6,11 +6,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Ocsp;
 using Shared.Core.Loggers;
 using System.Security.Cryptography;
 using System.Text;
-using static AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses.StudentResponse;
 
 namespace AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
 

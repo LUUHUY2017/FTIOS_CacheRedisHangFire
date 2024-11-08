@@ -8,18 +8,18 @@ namespace AMMS.VIETTEL.SMAS.Applications.Services.Students.V1;
 public class StudentConsumer : IConsumer<RB_ServerResponse>
 {
     private readonly IEventBusAdapter _eventBusAdapter;
-    private readonly ISignalRClientService _signalRClientService;
+    //private readonly ISignalRClientService _signalRClientService;
     private readonly StudentService _studentService;
 
 
     public StudentConsumer(
-        IEventBusAdapter eventBusAdapter
-      , ISignalRClientService signalRClientService,
+        IEventBusAdapter eventBusAdapter,
+      //ISignalRClientService signalRClientService,
         StudentService studentService
         )
     {
         _eventBusAdapter = eventBusAdapter;
-        _signalRClientService = signalRClientService;
+        //_signalRClientService = signalRClientService;
         _studentService = studentService;
     }
 
