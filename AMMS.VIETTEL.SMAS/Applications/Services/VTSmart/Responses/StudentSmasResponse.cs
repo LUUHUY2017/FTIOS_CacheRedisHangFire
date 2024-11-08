@@ -1,6 +1,6 @@
 ﻿namespace AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses
 {
-    public class StudentResponse
+    public class StudentSmasResponse
     {
         public string? Id { get; set; }
         public string? StudentCode { get; set; }

@@ -66,6 +66,17 @@
                             </div>
                         </div>
 
+                        <div class="row mb-3" v-if="showRole">
+                            <label class="col-form-label text-end col-lg-2">Email<span class="text-danger">*</span></label>
+                            <div class="position-relative col-lg-8">
+                                <input type="email" v-model:value="item.email" readonly="readonly" required class="form-control">
+                                <button type="button" v-on:click="onPopupModelChangeEmail()" class="btn btn-primary position-absolute top-50 end-0 translate-middle-y">
+                                    <i class="ph-pencil"></i>
+                                </button>
+                                <div class="invalid-feedback">Vui lòng nhập email</div>
+                                <div class="valid-feedback"> </div>
+                            </div>
+                        </div>
                         <div class="row mb-3" v-if="!showRole">
                             <label class="col-form-label text-end col-lg-2">Mật khẩu <span class="text-danger">*</span></label>
                             <div class="col-lg-8">
@@ -173,6 +184,68 @@
         </div>
     </div>
 
+    <!-- Model đổi thông tin email -->
+    <div class="modal fade" id="modelChangeEmail" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">Đổi email</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body" v-if="showFormChangeSentOtp">
+                        <form v-on:submit.prevent="onChangeEmailSentOtp" class="needs-validation" id="FormChangeEmailSentOtp" novalidate>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email hiện tại</label>
+                                        <input type="text" v-model:value="userInfo.email" readonly="readonly" required class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email mới</label>
+                                        <input type="text" v-model:value="changeEmail.email" required class="form-control">
+                                        <div class="invalid-feedback">Email yêu cầu nhập</div>
+                                        <div class="valid-feedback">Success!</div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-body" v-if="!showFormChangeSentOtp">
+                        <form v-on:submit.prevent="onChangeEmailConfirm" class="needs-validation" id="FormChangeEmailConfirm" novalidate>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="text" v-model:value="changeEmail.email" readonly="readonly" required class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nhập mã OTP (Kiểm tra email để lấy mã OTP)</label>
+                                        <input type="text" v-model:value="changeEmail.otp" required class="form-control">
+                                        <div class="invalid-feedback">Nhập mã OTP</div>
+                                        <div class="valid-feedback">Success!</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Xác nhận</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -464,6 +537,16 @@
             ],
             data_user_role_info: [],
 
+            userInfo: {},
+            ///////Change email
+            showFormChangeSentOtp: true,
+            changeEmail: {
+                email: '',
+                otp: '',
+                code: '',
+                key: '',
+            },
+
             combobox: {
                 types: [],
             },
@@ -476,7 +559,7 @@
         methods: {
             onGet() {
                 $('.loader').show();
-                axios.get('/v1/User/Gets?tab=' + '@ViewBag.Tab').then(response => {
+                axios.get('/v1/User/Gets?tab=' + '@ViewBag.Tab', this.object.config).then(response => {
                     if (response.status == 200) {
                         this.data = response.data.data;
                     }
@@ -569,7 +652,7 @@
                     // }
                 }
                 $('.loader').show();
-                axios.post('/v1/User/Update', this.item).then(response => {
+                axios.post('/v1/User/Update', this.item, this.object.config).then(response => {
                     $('.loader').hide(0);
                     if (!response.data.succeeded) {
                         alertify.error(response.data.message);
@@ -599,7 +682,7 @@
             },
 
             onGetDetail() {
-                axios.get('/v1/User/Detail?userId=' + this.item.id).then(response => {
+                axios.get('/v1/User/Detail?userId=' + this.item.id, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 
@@ -617,7 +700,7 @@
             },
 
             onGetUserDetail(userId) {
-                axios.get('/v1/RoleGroup/GetUserInfo?userId=' + userId).then(response => {
+                axios.get('/v1/RoleGroup/GetUserInfo?userId=' + userId, this.object.config).then(response => {
                     if (response.status == 200) {
                         this.data_user_roleGroup_info = response.data.data.userRoleGroups;
                         this.data_user_role_info = response.data.data.userRoles;
@@ -631,7 +714,7 @@
 
             onAddRoleGroup2User(userId, roleGroupId) {
                 $('.loader').show();
-                axios.get('/v1/User/AddRoleGroup?roleGroupId=' + roleGroupId + '&userId=' + userId).then(response => {
+                axios.get('/v1/User/AddRoleGroup?roleGroupId=' + roleGroupId + '&userId=' + userId, this.object.config).then(response => {
                     $('.loader').hide(0)
                     this.onGetDetail();
                 }).catch(error => {
@@ -642,7 +725,7 @@
 
             onDeleteRoleGroup2User(userId, roleGroupId) {
                 $('.loader').show();
-                axios.get('/v1/User/DeleteRoleGroup?roleGroupId=' + roleGroupId + '&userId=' + userId).then(response => {
+                axios.get('/v1/User/DeleteRoleGroup?roleGroupId=' + roleGroupId + '&userId=' + userId, this.object.config).then(response => {
                     $('.loader').hide(0);
                     this.onGetDetail();
                 }).catch(error => {
@@ -654,7 +737,7 @@
 
             onAddRole2User(userId, roleId) {
                 //$('.loader').show();
-                axios.get('/v1/User/AddRole?roleId=' + roleId + '&userId=' + userId).then(response => {
+                axios.get('/v1/User/AddRole?roleId=' + roleId + '&userId=' + userId, this.object.config).then(response => {
                     //$('.loader').hide(0);
                     this.onGetDetail();
                     //});
@@ -667,7 +750,7 @@
 
             onDeleteRole2User(userId, roleId) {
                 //$('.loader').show();
-                axios.get('/v1/User/DeleteRole?roleId=' + roleId + '&userId=' + userId).then(response => {
+                axios.get('/v1/User/DeleteRole?roleId=' + roleId + '&userId=' + userId, this.object.config).then(response => {
                     //$('.loader').hide(0);
                     this.onGetDetail();
                     //});
@@ -677,9 +760,42 @@
                     //alertify.notify(error.response.data.message, error.response.data.css, 6, function () { });
                 });
             },
-
+            ////////////////////// đổi email
+            onPopupModelChangeEmail() {
+                this.showFormChangeSentOtp = true;
+                this.userInfo = { ...this.item };
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('modelChangeEmail')).show();
+            },
+            onChangeEmailSentOtp() {
+                axios.get('/api/v1/UserProfile/ChangeEmail/SendOtp?email=' + this.changeEmail.email, this.object.config).then(response => {
+                    if (response.data.succeeded) {
+                        this.changeEmail.code = response.data.data.code;
+                        this.changeEmail.key = response.data.data.key;
+                        this.showFormChangeSentOtp = false;
+                    }
+                    else {
+                        alertify.warning(response.data.message);
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+            onChangeEmailConfirm() {
+                axios.post('/api/v1/UserProfile/ChangeEmail', this.changeEmail, this.object.config).then(response => {
+                    if (response.data.succeeded) {
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('modelChangeEmail')).hide();
+                        alertify.success(response.data.message);
+                        this.userInfo = { ...this.item };
+                    }
+                    else {
+                        alertify.warning(response.data.message);
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
             loadCombox() {
-                axios.get('/api/v1/user/GetTypes', this.object.config).then(response => {
+                axios.get('/api/v1/user/GetTypes', this.object.config, this.object.config).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }

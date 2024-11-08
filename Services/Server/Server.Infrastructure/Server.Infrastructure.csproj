@@ -62,8 +62,4 @@
 		<ProjectReference Include="..\Server.Core\Server.Core.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Repositories\A0\" />
-	</ItemGroup>
-
 </Project>

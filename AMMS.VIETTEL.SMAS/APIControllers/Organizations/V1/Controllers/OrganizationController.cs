@@ -76,7 +76,7 @@ public class OrganizationController : AuthBaseAPIController
     {
         try
         {
-            var model = _mapper.Map<A2_Organization>(request);
+            var model = _mapper.Map<Organization>(request);
             var retVal = await _organizationRepository.UpdateAsync(model);
 
             return Ok(retVal);

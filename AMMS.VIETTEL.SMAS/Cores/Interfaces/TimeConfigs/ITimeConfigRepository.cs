@@ -3,6 +3,6 @@ using Shared.Core.Repositories;
 
 namespace AMMS.VIETTEL.SMAS.Cores.Interfaces.TimeConfigs;
 
-public interface ITimeConfigRepository : IAsyncRepository<A0_TimeConfig>
+public interface ITimeConfigRepository : IAsyncRepository<TimeConfig>
 {
 }

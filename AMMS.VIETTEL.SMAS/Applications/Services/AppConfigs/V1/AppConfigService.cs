@@ -1,4 +1,5 @@
 ﻿using AMMS.VIETTEL.SMAS.Applications.Services.AppConfigs.V1.Models;
+using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
 using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses;
 using AMMS.VIETTEL.SMAS.Cores.Entities;
 using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
@@ -44,14 +45,14 @@ public class AppConfigService
 
     public static string urlServerName = "https://gateway.vtsmas.vn";
     public static string urlSSO = "https://sso.vtsmas.vn/connect/token";
-    public static AccessToken _accessToken;
+    public static AccessTokenLocal _AccessTokenLocal;
 
     public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
     public static string secretKey = "Smas!@#2023";
-    public async Task<AccessToken> GetToken(A0_AttendanceConfig configModel)
+    public async Task<AccessTokenLocal> GetToken(AttendanceConfig configModel)
     {
-        AccessToken retval = null;
+        AccessTokenLocal retval = null;
         try
         {
             var client = new HttpClient();
@@ -70,8 +71,8 @@ public class AppConfigService
             if (result.IsSuccessStatusCode)
             {
                 var data = await result.Content.ReadAsStringAsync();
-                retval = JsonConvert.DeserializeObject<AccessToken>(data);
-                _accessToken = new AccessToken(retval.access_token, retval.expires_in, retval.token_type, retval.scope);
+                retval = JsonConvert.DeserializeObject<AccessTokenLocal>(data);
+                _AccessTokenLocal = new AccessTokenLocal(retval.access_token, retval.expires_in, retval.token_type, retval.scope);
             }
         }
         catch (Exception e)
@@ -82,21 +83,21 @@ public class AppConfigService
         return retval;
     }
 
-    public async Task<SchoolResponse> PostSchool(A0_AttendanceConfig configModel)
+    public async Task<SchoolResponse> PostSchool(AttendanceConfig configModel)
     {
         SchoolResponse retval = null;
         try
         {
-            if (_accessToken == null || !_accessToken.IsTokenValid())
+            if (_AccessTokenLocal == null || !_AccessTokenLocal.IsTokenValid())
                 await GetToken(configModel);
-            if (_accessToken != null)
+            if (_AccessTokenLocal != null)
             {
                 var api = string.Format("{0}/api/truong-hoc/public/current", urlServerName);
                 var parameter = new StringContent(JsonConvert.SerializeObject(null), Encoding.UTF8, "application/json");
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _accessToken.access_token);
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _AccessTokenLocal.access_token);
 
                     var result = await client.GetAsync(api);
                     if (result.IsSuccessStatusCode)
@@ -115,7 +116,7 @@ public class AppConfigService
     
     }
 
-    public async Task<Result<A0_AttendanceConfig>> SchoolAsync(A0_AttendanceConfig configModel)
+    public async Task<Result<AttendanceConfig>> SchoolAsync(AttendanceConfig configModel)
     {
         try
         {
@@ -125,14 +126,14 @@ public class AppConfigService
 
             if (postSchool == null)
             {
-                return new Result<A0_AttendanceConfig>(null, "Đồng bộ thất bại!", false);
+                return new Result<AttendanceConfig>(null, "Đồng bộ thất bại!", false);
             }
             // kiểm tra xem trường đã có chưa nếu chưa thì thêm mới
             var checkSchoolAdd = await _organizationRepository.GetByFirstAsync(x => x.ReferenceId == postSchool.Id);
             if (checkSchoolAdd.Data == null)
             {
                 checkSchoolAdd = await _organizationRepository.AddAsync(
-                    new A2_Organization()
+                    new Organization()
                     {
                         ReferenceId = postSchool.Id,
                         OrganizationCode = postSchool.Code,
@@ -153,14 +154,14 @@ public class AppConfigService
                 //thêm vào time config
                 if (checkSchoolAdd.Data != null)
                 {
-                    await _timeConfigRepository.AddAsync(new A0_TimeConfig() { OrganizationId = checkSchoolAdd.Data.Id });
+                    await _timeConfigRepository.AddAsync(new TimeConfig() { OrganizationId = checkSchoolAdd.Data.Id });
                 }
 
             }
             else
             {
 
-                A2_Organization checkSchool = checkSchoolAdd.Data;
+                Organization checkSchool = checkSchoolAdd.Data;
 
                 checkSchool.ProvinceCode = postSchool.ProvinceCode;
                 checkSchool.ProvinceName = postSchool.ProvinceName;
@@ -170,7 +171,7 @@ public class AppConfigService
 
             if (checkSchoolAdd.Data == null)
             {
-                return new Result<A0_AttendanceConfig>(null, "Đồng bộ thất bại!", false);
+                return new Result<AttendanceConfig>(null, "Đồng bộ thất bại!", false);
             }
 
 
@@ -187,10 +188,10 @@ public class AppConfigService
         }
         catch (Exception ex)
         {
-            return new Result<A0_AttendanceConfig>(null, $"Có lỗi: {ex.Message}", false);
+            return new Result<AttendanceConfig>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
-    public async Task<Result<A0_AttendanceConfig>> SaveAsync(AppConfigRequest request)
+    public async Task<Result<AttendanceConfig>> SaveAsync(AppConfigRequest request)
     {
         try
         {
@@ -199,10 +200,10 @@ public class AppConfigService
                 var check = await _appConfigRepository.GetByFirstAsync(x  => x.AccountName.Trim() == request.AccountName.Trim());
                 if (check.Data != null)
                 {
-                    return new Result<A0_AttendanceConfig>(null, $"Tài khoản đã có vui lòng sử dụng tài khoản khác!", false);
+                    return new Result<AttendanceConfig>(null, $"Tài khoản đã có vui lòng sử dụng tài khoản khác!", false);
                 }    
 
-                var dataAdd = _mapper.Map<A0_AttendanceConfig>(request); 
+                var dataAdd = _mapper.Map<AttendanceConfig>(request); 
                 var retVal = await _appConfigRepository.AddAsync(dataAdd);
                 return retVal;
             }
@@ -228,7 +229,7 @@ public class AppConfigService
         }
         catch (Exception ex)
         {
-            return new Result<A0_AttendanceConfig>(null, $"Lỗi: {ex.Message}", false);
+            return new Result<AttendanceConfig>(null, $"Lỗi: {ex.Message}", false);
         }
     }
 
@@ -266,7 +267,7 @@ public class AppConfigService
     {
         try
         {
-            var retVal = await (from cf in _dBContext.app_config
+            var retVal = await (from cf in _dBContext.AttendanceConfig
                                 join o in _dBContext.Organization on cf.OrganizationId equals o.Id into orgGroup
                                 from o in orgGroup.DefaultIfEmpty() // LEFT JOIN
                                 where (cf.Actived == true

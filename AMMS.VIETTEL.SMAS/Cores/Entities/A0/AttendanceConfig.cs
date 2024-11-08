@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AMMS.VIETTEL.SMAS.Cores.Entities.A0;
 
 [Table("Attendanceconfig")]
-public class A0_AttendanceConfig : EntityBase
+public class AttendanceConfig : EntityBase
 {
     public string? EndpointIdentity { get; set; }
     public string? AccountName { get; set; }

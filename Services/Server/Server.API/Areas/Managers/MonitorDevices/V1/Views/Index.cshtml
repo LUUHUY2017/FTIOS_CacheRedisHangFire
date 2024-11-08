@@ -261,22 +261,27 @@
 
     function offAllDevice() {
         //console.log("Không nhận được dữ liệu trong vòng 10 phút.");
-        let dataPost = [];
-        for (var i = 0; i < _mDevice.devicesAll.length; i++) {
-            dataPost.push({
-                serialNumber: _mDevice.devicesAll[i].serialNumber,
-                connectionStatus: false,
-                connectUpdateTime: new Date()
-            });
+        if (_mDevice.checkSignalR) {
+            let dataPost = [];
+            for (var i = 0; i < _mDevice.devicesAll.length; i++) {
+                dataPost.push({
+                    serialNumber: _mDevice.devicesAll[i].serialNumber,
+                    connectionStatus: false,
+                    connectUpdateTime: new Date()
+                });
+            }
+            _mDevice.updateStatus(dataPost);
+            _mDevice.loadData();
+            _mDevice.checkSignalR = false;
         }
-        _mDevice.updateStatus(dataPost);
-        _mDevice.loadData();
+        
     }
     let timeoutHandle;
     const TIMEOUT_DURATION = 10 * 60 * 1000; // 10 phút
     timeoutHandle = setInterval(offAllDevice, TIMEOUT_DURATION);
 
     connection.on("RefreshDevice", function (data) {
+        _mDevice.checkSignalR = true;
         var data1s = JSON.parse(data);
         //console.log(data1);
         var listUpdate = [];
@@ -525,6 +530,7 @@
                 saveFile: false,
                 receivingData: false,
             },
+            checkSignalR: true,
         },
         methods: {
             loadData() {

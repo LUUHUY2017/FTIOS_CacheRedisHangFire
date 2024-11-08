@@ -3,6 +3,6 @@ using Shared.Core.Repositories;
 
 namespace AMMS.VIETTEL.SMAS.Cores.Interfaces.AppConfigs;
 
-public interface IAppConfigRepository : IAsyncRepository<A0_AttendanceConfig>
+public interface IAppConfigRepository : IAsyncRepository<AttendanceConfig>
 {
 }

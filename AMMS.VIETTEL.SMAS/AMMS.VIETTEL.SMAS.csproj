@@ -7,8 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Infratructures\" />
+		<Folder Include="APIControllers\ScheduleJobs\V1\Responses\" />
 		<Folder Include="Applications\Extensions\" />
+		<Folder Include="Cores\Interfaces\Students\Requests\" />
+		<Folder Include="Cores\Interfaces\Students\Responses\" />
 		<Folder Include="Infratructures\Databases\" />
 		<Folder Include="Helps\" />
 	</ItemGroup>
@@ -61,6 +63,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\AMMS.DeviceData\AMMS.DeviceData.csproj" />
+		<ProjectReference Include="..\Services\Share\AMMS.Notification\AMMS.Notification.csproj" />
 		<ProjectReference Include="..\Services\Share\EventBus.Messages\EventBus.Messages.csproj" />
 		<ProjectReference Include="..\Services\Share\Share.WebApp\Share.WebApp.csproj" />
 		<ProjectReference Include="..\Services\Share\Shared.Core\Shared.Core.csproj" />

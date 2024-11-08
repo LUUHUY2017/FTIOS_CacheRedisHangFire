@@ -6,13 +6,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Server.API.APIs.Data.Users.V1.Models;
 using Server.Core.Entities.A2;
 using Server.Core.Identity.Entities;
+using Server.Core.Identity.Repositories;
 using Server.Core.Interfaces.A2.Persons;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
 using Shared.Core.Identity;
+using System.Text;
 
 namespace Server.API.APIs.Data.Users.V1.Controllers
 {
@@ -34,6 +37,7 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
         private readonly IServiceProvider _serviceProvider;
         private readonly IEmailSender _emailSender;
         private readonly IPersonRepository _personRepository;
+        private readonly IOTPRepository _oTPRepository;
 
 
         public UserProfileController(
@@ -45,7 +49,8 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
             IMediator mediator,
             IServiceProvider serviceProvider,
             IEmailSender emailSender,
-            IPersonRepository personRepository
+            IPersonRepository personRepository,
+            IOTPRepository oTPRepository
             )
         {
             _userManager = userManager;
@@ -57,6 +62,7 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
             _serviceProvider = serviceProvider;
             _personRepository = personRepository;
             _emailSender = emailSender;
+            _oTPRepository = oTPRepository;
         }
 
 
@@ -362,5 +368,138 @@ namespace Server.API.APIs.Data.Users.V1.Controllers
             }
         }
 
+
+        #region Đổi email
+        /// <summary>
+        /// Xác thực OTP để đổi email
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpGet("ChangeEmail/SendOtp")]
+        public async Task<IActionResult> ChangeEmailSendOtp(string email)
+        {
+            try
+            {
+                //validate email
+                if (EmailCommon.Validate(ref email))
+                {
+                    // Kiểm tra email đã tồn tại chưa?
+                    if (_userManager.Users.Count(o => o.Email == email) > 0)
+                        return Ok(new Result<string>($"Email {email} đã có vui lòng nhập email khác", false));
+
+                    var user = await _userManager.FindByIdAsync(User.GetSubjectId());
+                    if (user == null)
+                    {
+                        return Ok(new Result<object>("Có lỗi khi thay đổi email.", false));
+                    }
+                    var code = await _userManager.GenerateChangeEmailTokenAsync(user, email);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var key = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(user.Id));
+
+
+                    //Random generator = new Random();
+                    //string r = generator.Next(0, 1000000).ToString("D6");
+                    string r = "123456";
+                    string emailContent = $"Mã OTP để đổi email là <b>{r}</b> có giá trị trong vòng 15 phút, không chia sẻ cho bất cứ ai.";
+                    //Add Otp To DB
+                    var otpEntity = new OTP()
+                    {
+                        Code = code,
+                        Key = key,
+                        OtpCode = r,
+                        Id = Guid.NewGuid().ToString(),
+                        CreateTime = DateTime.Now,
+                        ExpTime = DateTime.Now.AddMinutes(15),
+                        UserId = user.Id,
+                        Type = "ChangeEmail",
+                        Content = emailContent
+                    };
+                    await _oTPRepository.AddAsync(otpEntity);
+
+                    await _emailSender.SendEmailAsync(email, "AMMT IoT - Change email", emailContent);
+
+                    return Ok(new Result<ChangeEmailByOTPResponse>(new ChangeEmailByOTPResponse() { Code = code, Key = key }, "Kiểm tra email nhận mã OTP", true));
+                }
+                else
+                    return Ok(new Result<ChangeEmailByOTPResponse>($"Email {email} không đúng định dạng", false));
+            }
+            catch (Exception ex)
+            {
+                return Ok(new Result<ChangeEmailByOTPResponse>($"Có lỗi khi gửi mã OTP đến email {email}: {ex.Message}", false));
+            }
+        }
+
+
+        /// <summary>
+        /// Đổi email
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost("ChangeEmail")]
+        public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailByOTP input)
+        {
+            try
+            {
+                bool otpValid = false;
+                var otpEntity = (await _oTPRepository.GetAllAsync(o => o.Code == input.Code && o.Key == input.Key)).OrderByDescending(o => o.CreateTime).FirstOrDefault();
+                if (otpEntity != null && otpEntity.Verified == null && DateTime.Now < otpEntity.ExpTime)
+                {
+                    if (otpEntity.OtpCode == input.Otp)
+                    {
+                        otpEntity.Verified = true;
+                        otpEntity.VerifiedTime = DateTime.Now;
+                        await _oTPRepository.UpdateAsync(otpEntity);
+                        otpValid = true;
+                    }
+                }
+                if (!otpValid)
+                    return Ok(new Result<string>("", $"Mã OTP không hợp lệ", false));
+
+                var user = await _userManager.FindByIdAsync(User.GetSubjectId());
+                if (user == null)
+                {
+                    return Ok(new Result<object>("Có lỗi khi thay đổi email.", false));
+                }
+                var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(input.Code));
+                var emailOld = user.Email;
+                var result = await _userManager.ChangeEmailAsync(user, input.Email, code);
+                if (result.Succeeded)
+                {
+                    //Thay đổi tên đăng nhập
+                    if (user.UserName == emailOld)
+                    {
+                        user = await _userManager.FindByIdAsync(User.GetSubjectId());
+                        user.UserName = input.Email;
+                        var result1 = await _userManager.UpdateAsync(user);
+                    }
+
+                    //Cập nhật bảng Person
+                    var personRet = await _personRepository.GetByIdAsync(user.Id);
+                    if (personRet.Succeeded && personRet.Data != null)
+                    {
+                        personRet.Data.Email = input.Email;
+                        await _personRepository.UpdateAsync(personRet.Data);
+                    }
+
+                    return Ok(new Result<object>("Thay đổi email thành công", true));
+                }
+
+                List<string> errors = new List<string>();
+                foreach (var error in result.Errors)
+                {
+                    errors.Add(error.Description);
+                }
+
+                return Ok(new Result<string>("Có lỗi khi thay đổi email. Xem chi tiết lỗi", false)
+                {
+                    Errors = errors
+                });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new Result<string>($"Có lỗi khi thay đổi email: {ex.Message}", false));
+            }
+        }
+        #endregion
     }
 }

@@ -4,7 +4,7 @@ using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 
 namespace AMMS.VIETTEL.SMAS.Infratructures.Repositories.AppConfigs;
 
-public class AppConfigRepository : RepositoryBase<A0_AttendanceConfig>, IAppConfigRepository
+public class AppConfigRepository : RepositoryBase<AttendanceConfig>, IAppConfigRepository
 {
     public AppConfigRepository(ViettelDbContext dbContext) : base(dbContext)
     {

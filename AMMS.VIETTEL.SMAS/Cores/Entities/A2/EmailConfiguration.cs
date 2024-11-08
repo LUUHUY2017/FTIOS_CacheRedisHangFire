@@ -1,7 +1,7 @@
 ﻿using Shared.Core.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AMMS.VIETTEL.SMAS.Cores.Entities;
+namespace AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 
 [Table("Emailconfiguration")]
 public class EmailConfiguration : EntityBase

@@ -28,7 +28,7 @@ public class AppeConfigResponse
     {
         
     }
-    public AppeConfigResponse(A0_AttendanceConfig cf, A2_Organization o)
+    public AppeConfigResponse(AttendanceConfig cf, Organization o)
     {
         Id = cf.Id;
         EndpointIdentity = cf.EndpointIdentity;

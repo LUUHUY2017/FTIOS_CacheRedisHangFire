@@ -7,19 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Identity\Repositories\**" />
     <Compile Remove="Interfaces\TA\TimeAttendenceDetails\Requests\**" />
     <Compile Remove="Interfaces\TA\TimeAttendenceDetails\Responses\**" />
     <Compile Remove="MasterDatas\**" />
     <Compile Remove="Sites\**" />
     <Compile Remove="Terminals\**" />
-    <EmbeddedResource Remove="Identity\Repositories\**" />
     <EmbeddedResource Remove="Interfaces\TA\TimeAttendenceDetails\Requests\**" />
     <EmbeddedResource Remove="Interfaces\TA\TimeAttendenceDetails\Responses\**" />
     <EmbeddedResource Remove="MasterDatas\**" />
     <EmbeddedResource Remove="Sites\**" />
     <EmbeddedResource Remove="Terminals\**" />
-    <None Remove="Identity\Repositories\**" />
     <None Remove="Interfaces\TA\TimeAttendenceDetails\Requests\**" />
     <None Remove="Interfaces\TA\TimeAttendenceDetails\Responses\**" />
     <None Remove="MasterDatas\**" />
