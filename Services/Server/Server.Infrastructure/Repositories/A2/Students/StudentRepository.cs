@@ -63,8 +63,18 @@ public class StudentRepository : RepositoryBaseMasterData<Student>, IStudentRepo
             var _order = await _dbContext.Student.FirstOrDefaultAsync(o => o.StudentCode == data.StudentCode);
             if (_order != null)
             {
-                data.CopyPropertiesTo(_order);
-                _order.ImageSrc = null;
+                _order.ReferenceId = data.Id;
+                _order.ClassId = data.ClassId;
+                _order.ClassName = data.ClassName;
+                _order.OrganizationId = data.OrganizationId;
+                _order.StudentCode = data.StudentCode;
+                _order.Name = data.Name;
+                _order.FullName = data.FullName;
+                _order.DateOfBirth = data.DateOfBirth;
+                _order.GenderCode = data.GenderCode;
+                _order.GradeCode = data.GradeCode;
+
+
                 _dbContext.Student.Update(_order);
                 message = "Cập nhật thành công";
             }

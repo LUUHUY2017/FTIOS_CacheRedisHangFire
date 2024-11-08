@@ -114,7 +114,8 @@ public class CronJobService : ICronJobService
                         ClassId = item.ClassId,
                         ClassName = item.ClassName,
                         DateOfBirth = item.BirthDay,
-                        FullName = item.StudentName
+                        FullName = item.StudentName,
+                        OrganizationId = orgRes.Id,
                     };
                     _studentService.SaveFromService(el);
                 }

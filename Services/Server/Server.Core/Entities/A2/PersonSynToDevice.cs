@@ -1,5 +1,6 @@
 ﻿using Shared.Core.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A0
 {
@@ -14,13 +15,12 @@ namespace Server.Core.Entities.A0
         public bool? SynStatus { get; set; }
         public string? SynMessage { get; set; }
 
-        public bool? SynFaceStatus { get; set; }
-        public string? SynFaceMessage { get; set; }
+    public bool? SynFaceStatus { get; set; }
+    public string? SynFaceMessage { get; set; }
 
-        public bool? SynFingerStatus { get; set; }
-        public string? SynFingerMessage { get; set; }
+    public bool? SynFingerStatus { get; set; }
+    public string? SynFingerMessage { get; set; }
 
-        public bool? SynCardStatus { get; set; }
-        public string? SynCardMessage { get; set; }
-    }
+    public bool? SynCardStatus { get; set; }
+    public string? SynCardMessage { get; set; }
 }

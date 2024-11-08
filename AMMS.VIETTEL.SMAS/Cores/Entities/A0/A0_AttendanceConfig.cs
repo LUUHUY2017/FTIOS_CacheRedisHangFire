@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AMMS.VIETTEL.SMAS.Cores.Entities.A0;
 
-[Table("A0_Attendanceconfig")]
+[Table("Attendanceconfig")]
 public class A0_AttendanceConfig : EntityBase
 {
     public string? EndpointIdentity { get; set; }
