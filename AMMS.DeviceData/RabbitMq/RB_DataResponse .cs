@@ -13,6 +13,7 @@
     {
         public static string AttendenceHistory = "AttendenceHistory";
         public static string AttendenceImage = "AttendenceImage";
+        public static string UserInfo = "UserInfo";
 
     }
 }

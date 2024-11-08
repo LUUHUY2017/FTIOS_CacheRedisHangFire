@@ -36,7 +36,7 @@ public class AppConfigService
                 token_type = data.TokenType,
 
             };
-            HanetParam.PlaceId = data.PlateId;
+            HanetParam.PlaceId = data.PlaceId;
         }
         return new Result<app_config>(data, "Thành công!", true);
     }
@@ -72,7 +72,7 @@ public class AppConfigService
                 dataUpdate.ClientScret = request.ClientScret;
                 dataUpdate.GrantType = request.GrantType;
                 dataUpdate.ClientId = request.ClientId;
-                dataUpdate.PlateId = request.PlaceId?.Trim();
+                dataUpdate.PlaceId = request.PlaceId?.Trim();
 
                 var result = _dbContext.app_config.Update(dataUpdate);
                 var check = await _dbContext.SaveChangesAsync();
@@ -129,7 +129,7 @@ public class AppConfigService
                 return null;
 
             HanetParam.Token = accessToken;
-            HanetParam.PlaceId = config.PlateId;
+            HanetParam.PlaceId = config.PlaceId;
             HanetParam.TimeExpireTick = accessToken.expire + DateTime.Now.Ticks;
 
             config.AccessToken = accessToken.access_token;

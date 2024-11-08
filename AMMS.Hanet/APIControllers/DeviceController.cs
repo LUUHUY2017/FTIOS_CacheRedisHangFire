@@ -15,14 +15,18 @@ namespace AMMS.Hanet.APIControllers;
 public class DeviceController : ControllerBase
 {
     HANET_Server_Push_Service _HANET_Process_Service;
-     private readonly IEventBusAdapter _eventBusAdapter;
+    HANET_Device_Reponse_Service _HANET_Device_Reponse_Service;
+    HANET_API_Service _hANET_API_Service;
+    private readonly IEventBusAdapter _eventBusAdapter;
     private readonly IConfiguration _configuration;
 
-    public DeviceController(HANET_Server_Push_Service HANET_Process_Service, IConfiguration configuration,   IEventBusAdapter eventBusAdapter)
+    public DeviceController(HANET_Server_Push_Service HANET_Process_Service, IConfiguration configuration, IEventBusAdapter eventBusAdapter, HANET_API_Service hANET_API_Service, HANET_Device_Reponse_Service hANET_Device_Reponse_Service)
     {
-         _HANET_Process_Service = HANET_Process_Service;
+        _HANET_Process_Service = HANET_Process_Service;
         _eventBusAdapter = eventBusAdapter;
         _configuration = configuration;
+        _hANET_API_Service = hANET_API_Service;
+        _HANET_Device_Reponse_Service = hANET_Device_Reponse_Service;
     }
 
     /// <summary>
@@ -87,7 +91,7 @@ public class DeviceController : ControllerBase
             RequestParam = JsonConvert.SerializeObject(user)
         };
 
-       
+
         await _HANET_Process_Service.ProcessDataServerPush(request);
 
         return Ok();
@@ -118,4 +122,20 @@ public class DeviceController : ControllerBase
         }
         return Ok();
     }
+    /// <summary>
+    /// Lấy dữ liệu khuôn mặt
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("getAllUserFace")]
+    public async Task<IActionResult> GetAllUserFace()
+    {
+        var count = await _hANET_API_Service.GetCountUserByPlace(HanetParam.PlaceId);
+
+        Console.WriteLine(count.ToString());
+
+        var top100Data = await _hANET_API_Service.UserByPlaceId(HanetParam.PlaceId, 1);
+
+        return Ok(top100Data);
+    }
+
 }

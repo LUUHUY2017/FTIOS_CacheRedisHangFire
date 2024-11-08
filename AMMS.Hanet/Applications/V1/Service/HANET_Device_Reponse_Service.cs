@@ -21,7 +21,7 @@ namespace AMMS.Hanet.Applications.V1.Service
         private readonly IConfiguration _configuration;
 
         DeviceAutoPushDbContext _deviceAutoPushDbContext;
-        public HANET_Device_Reponse_Service(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter,IConfiguration configuration1)
+        public HANET_Device_Reponse_Service(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter, IConfiguration configuration1)
         {
             _deviceAutoPushDbContext = deviceAutoPushDbContext;
             _eventBusAdapter = eventBusAdapter;
@@ -86,7 +86,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                         ReponseType = RB_DataResponseType.AttendenceHistory,
                     };
 
-                     var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
 
                     await aa.Send(rB_Response);
 
@@ -146,6 +146,40 @@ namespace AMMS.Hanet.Applications.V1.Service
                 Logger.Warning(ex.Message);
             }
         }
+
+        private async Task AddUserData(Hanet_User_Data data)
+        {
+            try
+            {
+                var image = ConvertImage(data.avatar, data.aliasID + ".jpg", ImageFormat.Jpeg);
+
+
+                TA_PersonInfo obj = new TA_PersonInfo()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    PersonCode = data.aliasID,
+                    SerialNumber = "",
+                    DeviceModel = EventBusConstants.HANET,
+                    FullName = data.name,
+                    UserFace = image,
+                };
+
+                RB_DataResponse rB_DataResponse = new RB_DataResponse()
+                {
+                    Id = obj.Id,
+                    Content = JsonConvert.SerializeObject(obj),
+                    ReponseType = RB_DataResponseType.UserInfo,
+                };
+
+                var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
+                await aa.Send(rB_DataResponse);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warning(ex.Message);
+            }
+        }
+
         public string? ConvertImage(string imageUrl, string filename, ImageFormat format)
         {
 
