@@ -235,7 +235,10 @@
                 {
                     title: 'Trạng thái',
                     sortable: true,
-                    field: 'descriptions'
+                    field: 'emailConfirmed',
+                    formatter: (value) => value 
+                        ? '<span style="color: green; font-weight: bold;">Đã kích hoạt</span>' 
+                        : '<span style="color: orange; font-weight: bold;">Chưa kích hoạt</span>'
                 },
                 {
                     field: '#action',

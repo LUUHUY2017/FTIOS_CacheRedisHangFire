@@ -122,7 +122,7 @@
                                 <label class="col-form-label text-end col-lg-3">Nhãn hiệu <span class="text-danger">*</span></label>
                                 <div class="col-lg-7">
                                     <select class="form-select" data-placeholder="Vui lòng chọn nhãn hiệu" required v-model="item.deviceModel">
-                                        <option v-for="option in combobox.deviceBrands" v-bind:value="option.id">
+                                        <option v-for="option in deviceBrandsAdd" v-bind:value="option.id">
                                             {{ option.name }}
                                         </option>
                                     </select>
@@ -377,6 +377,7 @@
                     headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
                 }
             },
+            deviceBrandsAdd: [],
             item: { actived: true, },
             combobox: { schools: [], deviceBrands: [],},
         },
@@ -475,6 +476,7 @@
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }
+                    this.deviceBrandsAdd = response.data.data;
                     this.combobox.deviceBrands = [{ id: "0", name: "Tất cả" }, ...response.data.data];
                 }).catch(error => {
                     console.warn(error);

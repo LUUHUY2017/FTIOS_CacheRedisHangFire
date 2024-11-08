@@ -6,7 +6,7 @@ public static class DeviceBrandConst
     public const string ZKTeco = "zkteco";
     public static readonly List<object> BrandNames = new List<object>
     {
-        new { Id = Hanet, Name = "Thiết bị Hanet" },
-        new { Id = ZKTeco, Name = "Thiết bị ZKTeco" }
+        new { Id = Hanet, Name = "Hanet" },
+        new { Id = ZKTeco, Name = "ZKTeco" }
     };
 }

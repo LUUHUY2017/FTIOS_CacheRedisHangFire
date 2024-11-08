@@ -19,8 +19,6 @@ using Shared.Core.Identity;
 namespace Server.API.Areas.Managers.Users.V1.Controllers;
 
 [Route("v1/[controller]")]
-[Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 //[Authorize("Bearer")]
 //[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
 public class UserController : Controller
@@ -232,7 +230,7 @@ public class UserController : Controller
             }
 
             curent_user.FirstName = model.FirstName;
-            curent_user.UserName = model.Email;
+            //curent_user.UserName = model.Email;
             curent_user.Email = model.Email;
             curent_user.PhoneNumber = model.PhoneNumber;
             curent_user.Type = model.Type;
