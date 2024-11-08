@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A2.Devices.Models;
@@ -15,8 +16,8 @@ namespace Server.API.APIs.Data.Lanes.V1.Controllers
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    //[Authorize("Bearer")]
-    //[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+    [Authorize("Bearer")]
+    [AuthorizeMaster]
     public class LaneController : AuthBaseAPIController
     {
         private readonly ILaneRepository _laneRepository;

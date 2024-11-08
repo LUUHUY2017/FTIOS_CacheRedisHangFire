@@ -479,7 +479,7 @@
                 if (parts.length === 2) return parts.pop().split(";").shift();
             },
             loadCombox() {
-                axios.get('/api/v1/Organization/GetForUser', this.object.config).then(response => {
+                axios.get('/api/v1/Organization/GetForUser', this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }

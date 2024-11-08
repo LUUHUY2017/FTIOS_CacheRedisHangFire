@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AMMS.Share.WebApp.Helps;
+using Microsoft.AspNetCore.Mvc;
 using Share.WebApp.Controllers;
 
 namespace Server.API.Areas.Managers.MonitorDevices.V1.Controllers;
 
 [Route("v1/[controller]")]
-//[AuthorizeClient]
+[AuthorizeMaster]
 
 public class MonitorDeviceController : AuthBaseController
 {

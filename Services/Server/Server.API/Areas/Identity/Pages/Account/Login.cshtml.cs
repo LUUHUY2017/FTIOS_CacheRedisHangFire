@@ -100,7 +100,7 @@ public class LoginModel : PageModel
                 ModelState.AddModelError(string.Empty, "Account not confirmed!");
                 return Page();
             }
-            var result = await _signInManager.PasswordSignInAsync(user?.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(user?.UserName ?? "", Input.Password, Input.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
                 if (!returnUrl.Contains("/connect/authorize/callback?client_id"))

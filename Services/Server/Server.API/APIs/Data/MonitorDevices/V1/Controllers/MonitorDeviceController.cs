@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AMMS.Share.WebApp.Helps;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -16,8 +17,8 @@ namespace Server.API.APIs.Data.MonitorDevices.V1.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[Authorize("Bearer")]
+[AuthorizeMaster]
 public class MonitorDeviceController : AuthBaseAPIController
 {
     private readonly MonitorDeviceService _monitorDeviceService;

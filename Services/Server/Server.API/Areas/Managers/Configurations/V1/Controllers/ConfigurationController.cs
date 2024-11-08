@@ -6,7 +6,7 @@ namespace Server.API.Areas.Managers.Configurations.V1.Controllers;
 
 
 [Route("v1/[controller]")]
-//[AuthorizeMaster(Roles = RoleConst.ManagerPage)]
+[AuthorizeMaster]
 public class ConfigurationController : Controller
 {
     const string pathUrl = "~/Areas/Managers/Configurations/V1/Views/";

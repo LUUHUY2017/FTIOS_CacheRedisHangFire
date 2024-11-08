@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AMMS.Share.WebApp.Helps;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Core.Commons;
 using Shared.Core.Identity;
@@ -10,8 +11,8 @@ namespace Server.API.APIs.Data.Roles.V1.Controllers;
 /// </summary>
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[ApiController]
-//[AuthorizeMaster(Roles = RoleConst.AdminPage)]
+[ApiController]
+[AuthorizeMaster(Roles = RoleConst.SuperAdmin_Role)]
 public class RoleController : ControllerBase
 {
     private readonly IServiceProvider _serviceProvider;
