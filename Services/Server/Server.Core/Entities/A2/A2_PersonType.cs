@@ -1,10 +1,11 @@
 ﻿using Shared.Core.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Server.Core.Entities.A2
+namespace Server.Core.Entities.A2;
+
+[Table("PersonType")]
+public class A2_PersonType : EntityBase
 {
-    public class A2_PersonType : EntityBase
-    {
-        public string? Name { get; set; }
-        public string? Note { get; set; }
-    }
+    public string? Name { get; set; }
+    public string? Note { get; set; }
 }

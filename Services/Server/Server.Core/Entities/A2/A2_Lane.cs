@@ -1,8 +1,10 @@
 ﻿using Shared.Core.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A2;
 
+[Table("Lane")]
 public class A2_Lane : EntityBase
 {
     [MaxLength(250)]

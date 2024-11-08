@@ -1,7 +1,9 @@
 ﻿using Shared.Core.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A2;
 
+[Table("ScheduleSendMailDetail")]
 public class A2_ScheduleSendMailDetail : EntityBase
 {
 

@@ -111,7 +111,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A0_AttendanceConfig");
+                    b.ToTable("AttendanceConfig");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A0_EmailConfiguration", b =>
@@ -171,7 +171,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A0_EmailConfiguration");
+                    b.ToTable("Emailconfiguration");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A0_Page", b =>
@@ -232,7 +232,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A0_Page");
+                    b.ToTable("Page");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A0_RoleGroup", b =>
@@ -279,7 +279,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A0_RoleGroup");
+                    b.ToTable("RoleGroup");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A0_RoleGroupDetail", b =>
@@ -333,7 +333,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasIndex("A0_RoleGroupId");
 
-                    b.ToTable("A0_RoleGroupDetail");
+                    b.ToTable("RoleGroupDetail");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A0_RoleGroupPage", b =>
@@ -386,7 +386,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A0_RoleGroupPage");
+                    b.ToTable("RoleGroupPage");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A0_RoleGroupUser", b =>
@@ -440,7 +440,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasIndex("A0_RoleGroupId");
 
-                    b.ToTable("A0_RoleGroupUser");
+                    b.ToTable("RoleGroupUser");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A0_TimeConfig", b =>
@@ -520,7 +520,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A0_TimeConfig");
+                    b.ToTable("TimeConfig");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A2_PersonFace", b =>
@@ -575,7 +575,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_PersonFace");
+                    b.ToTable("PersonFace");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A2_PersonSynToDevice", b =>
@@ -652,7 +652,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_PersonSynToDevice");
+                    b.ToTable("PersonSynToDevice");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_BusinessUnit", b =>
@@ -696,7 +696,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_BusinessUnit");
+                    b.ToTable("BusinessUnit");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_Device", b =>
@@ -828,7 +828,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_Device");
+                    b.ToTable("Device");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_Lane", b =>
@@ -882,7 +882,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_Lane");
+                    b.ToTable("Lane");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_Notification", b =>
@@ -945,7 +945,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_Notification");
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_Organization", b =>
@@ -1047,7 +1047,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_Organization");
+                    b.ToTable("Organization");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_Person", b =>
@@ -1160,7 +1160,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasIndex("PersonTypeId");
 
-                    b.ToTable("A2_Person");
+                    b.ToTable("Person");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_PersonType", b =>
@@ -1207,7 +1207,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_PersonType");
+                    b.ToTable("PersonType");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_ScheduleSendMail", b =>
@@ -1290,7 +1290,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_ScheduleSendMail");
+                    b.ToTable("ScheduleSendMail");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_ScheduleSendMailDetail", b =>
@@ -1342,7 +1342,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_ScheduleSendMailDetail");
+                    b.ToTable("ScheduleSendMailDetail");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_SendEmail", b =>
@@ -1416,7 +1416,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_SendEmail");
+                    b.ToTable("SendEmail");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_SendEmailLog", b =>
@@ -1469,7 +1469,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_SendEmailLog");
+                    b.ToTable("SendEmailLog");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.A2_Student", b =>
@@ -1582,7 +1582,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A2_Student");
+                    b.ToTable("Student");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A2.ScheduleJob", b =>
@@ -1760,7 +1760,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("A3_Image");
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.GIO.GIO_VehicleInOut", b =>
@@ -1876,7 +1876,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GIO_VehicleInOut");
+                    b.ToTable("VehicleInOut");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.TA.TA_TimeAttendenceDetail", b =>
@@ -1956,7 +1956,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TA_TimeAttendenceDetail");
+                    b.ToTable("TimeAttendenceDetail");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.TA.TA_TimeAttendenceEvent", b =>
@@ -2054,7 +2054,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TA_TimeAttendenceEvent");
+                    b.ToTable("TimeAttendenceEvent");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.TA.TA_TimeAttendenceSync", b =>
@@ -2110,7 +2110,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TA_TimeAttendenceSync");
+                    b.ToTable("TimeAttendenceSync");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.A0_RoleGroupDetail", b =>

@@ -1,6 +1,9 @@
 ﻿using Shared.Core.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A0;
+
+[Table("TimeConfig")]
 
 public class A0_TimeConfig : EntityBase
 {

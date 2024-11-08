@@ -1,8 +1,10 @@
 ﻿using Shared.Core.Commons;
 using Shared.Core.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A2;
 
+[Table("ScheduleSendMail")]
 public class A2_ScheduleSendMail : EntityBase
 {
 

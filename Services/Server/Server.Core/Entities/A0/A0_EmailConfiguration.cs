@@ -1,7 +1,9 @@
 ﻿using Shared.Core.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Core.Entities.A0
 {
+    [Table("Emailconfiguration")]
     public class A0_EmailConfiguration : EntityBase
     {
         public string Server { get; set; }
