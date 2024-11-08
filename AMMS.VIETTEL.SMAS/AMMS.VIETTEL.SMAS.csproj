@@ -61,6 +61,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Services\Server\Server.Application\Server.Application.csproj" />
+		<ProjectReference Include="..\Services\Server\Server.Core\Server.Core.csproj" />
+		<ProjectReference Include="..\Services\Server\Server.Infrastructure\Server.Infrastructure.csproj" />
 		<ProjectReference Include="..\Services\Share\EventBus.Messages\EventBus.Messages.csproj" />
 		<ProjectReference Include="..\Services\Share\Share.WebApp\Share.WebApp.csproj" />
 		<ProjectReference Include="..\Services\Share\Shared.Core\Shared.Core.csproj" />
