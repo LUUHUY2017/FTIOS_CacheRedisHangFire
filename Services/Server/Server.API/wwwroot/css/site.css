@@ -340,3 +340,10 @@ video, img {
 .ROW_WARN {
     background-color: #ffcf76;
 }
+.float-right.pagination-detail {
+    float: right !important;
+}
+
+li.page-item {
+    cursor: pointer;
+}

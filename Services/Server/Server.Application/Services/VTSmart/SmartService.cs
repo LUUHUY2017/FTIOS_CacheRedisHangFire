@@ -28,15 +28,12 @@ public sealed class SmartService
     }
 
     public static string urlServerName = "https://gateway.vtsmas.vn";
-    //public static string urlSSO = "https://sso.vtsmas.vn/connect/token";
-    //public static AccessTokenLocal _accessToken;
-
     public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
     public static string secretKey = "SMas$#3/*/lsn_diem_danh";
 
 
-    public async Task<AccessToken> GetToken(string orgId)
+    public async Task<AccessToken> GetToken1(string orgId)
     {
         AccessToken accessToken = null;
         try
@@ -106,6 +103,41 @@ public sealed class SmartService
             Logger.Error(e);
         }
         return retval;
+    }
+
+    //DEV TEST khi chưa có V2
+    public async Task<AccessToken> GetToken(string id)
+    {
+        AccessToken accessToken = null;
+        try
+        {
+            string urlSSO = "https://sso.vtsmas.vn/connect/token";
+            var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post, urlSSO);
+            var content = new MultipartFormDataContent();
+
+            content.Add(new StringContent("password"), "grant_type");
+            content.Add(new StringContent("openid profile IdentityService TenantService InternalGateway BackendAdminAppGateway EmployeeService CategoryService SmasCustomerService AdminSettingService SettingService ClassroomSupervisorService StudentService ScoreBookService MongoDynamicPageService"), "scope");
+            content.Add(new StringContent("lsn_thcs_yenvuong"), "username");
+            content.Add(new StringContent("Vucuong@1971"), "password");
+            content.Add(new StringContent("backend-admin-app-client"), "client_id");
+            content.Add(new StringContent("1q2w3e*"), "client_secret");
+
+
+            request.Content = content;
+            var result = await client.SendAsync(request);
+            if (result.IsSuccessStatusCode)
+            {
+                var data = await result.Content.ReadAsStringAsync();
+                accessToken = JsonConvert.DeserializeObject<AccessToken>(data);
+                accessToken.endpoint_gateway = urlServerName;
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+        return accessToken;
     }
 
 
@@ -371,7 +403,7 @@ public sealed class SmartService
         return retval;
     }
 
-     
+
     public string EncryptStringSMAS(string plaintext, byte[] key, byte[] iv)
     {
         using (Aes aes = Aes.Create())
