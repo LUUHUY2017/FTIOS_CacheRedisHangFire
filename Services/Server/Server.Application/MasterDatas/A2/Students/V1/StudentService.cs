@@ -92,19 +92,21 @@ public class StudentService
         try
         {
             var stu = _map.Map<Student>(request);
-            await _studentRepository.SaveAsync(stu);
-
-            var per = new Person()
+           var res =  await _studentRepository.SaveDataAsync(stu);
+            if (res.Succeeded)
             {
-                Id = request.Id,
-                Actived = true,
-                PersonCode = request.StudentCode,
-                FirstName = request.Name,
-                LastName = request.FullName,
-                CitizenId = request.IdentifyNumber,
-            };
-            var data = await _personRepository.SaveAsync(per);
-
+                var per = new Person()
+                {
+                    Id = res.Data.Id,
+                    Actived = true,
+                    PersonCode = request.StudentCode,
+                    FirstName = request.Name,
+                    LastName = request.FullName,
+                    CitizenId = request.IdentifyNumber,
+                };
+                var data = await _personRepository.SaveAsync(per);
+            }
+             
             try
             {
                 DateTime dateStudent = DateTime.Now;
