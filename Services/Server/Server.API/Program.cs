@@ -489,8 +489,8 @@ using (var scope = app.Services.CreateScope())
         var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
         var scheduleJob = scope.ServiceProvider.GetRequiredService<IScheduleJobRepository>();
 
-        var scheduleLists = await scheduleJob.Gets(true);
-        await conJobService.CreateScheduleCronJob(scheduleLists);
+        //var scheduleLists = await scheduleJob.Gets(true);
+        //await conJobService.CreateScheduleCronJob(scheduleLists);
     }
     catch (Exception e) { Logger.Error(e); }
 
