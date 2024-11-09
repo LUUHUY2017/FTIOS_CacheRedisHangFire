@@ -34,6 +34,7 @@
         <div class="content">
             <div class="card">
                 <div class="card-body">
+
                     <div class="row mb-3  ">
                         <div class="col-md-2">
                             <label class="form-label">Từ ngày</label>
@@ -51,36 +52,7 @@
                                       placeholder="Vui lòng chọn thời gian...">
                             </datetime>
                         </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Trường học</label>
-                            <select id="schoolLevelCode" class="form-control select" v-model:value="dtoClass.schoolLevelCode">
-                                <option selected value="">Vui lòng chọn trường học </option>
-                                <option v-for="option in combobox.schools" v-bind:value="option.schoolLevelCode">
-                                    {{ option.schoolLevelName }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Năm học</label>
-                            <select id="schoolYearId" class="form-control select" v-model:value="dtoClass.schoolYearId">
-                                <option selected value="">Vui lòng chọn năm học </option>
-                                <option v-for="option in combobox.schoolYears" v-bind:value="option.schoolYearId">
-                                    {{ option.code }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Lớp</label>
-                            <select id="classId" class="form-control select">
-                                <option selected value="">Vui lòng chọn lớp </option>
-                                <option v-for="option in combobox.classes" v-bind:value="option.id">
-                                    {{ option.className }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row ">
-                        <div class="text-start">
+                        <div class="col-md-2 d-flex align-items-end">
                             <button type="button" v-on:click=onLoadData() class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
                         </div>
                     </div>
@@ -229,43 +201,8 @@
         _syncD.onLoadData();
     });
 
-    $(document).ready(function () {
-        $('#schoolLevelCode').on("change", function () {
-            _syncD.dtoClass.schoolLevelCode = $(this).val() ?? null;
-
-            _syncD.combobox.classes = [];
-            _syncD.combobox.data = [];
-
-            _syncD.onPostClass();
-            _syncD.onLoadData();
-
-            localStorage.setItem('schoolLevelCode', $(this).val());
-
-        });
-
-        $('#schoolYearId').on("change", function () {
-            _syncD.filter.schoolYearId = $(this).val() ?? null;
-            _syncD.dtoClass.schoolYearId = $(this).val() ?? null;
-            _syncD.dtoClass.schoolyear = $(this).find(":selected").text()?.trim() ?? null;
-
-            _syncD.combobox.classes = [];
-            _syncD.combobox.data = [];
-
-            _syncD.onPostClass();
-            _syncD.onLoadData();
-
-
-            localStorage.setItem('schoolYearId', $(this).val()) ?? null;
-            localStorage.setItem('schoolyear', $(this).find(":selected").text()?.trim());
-
-        });
-
-        $('#classId').on("change", function () {
-            _syncD.filter.classId = $(this).val() ?? null;
-            _syncD.combobox.data = [];
-            _syncD.onLoadData();
-        });
-    });
+    // $(document).ready(function () {
+    // });
 
 </script>
 
@@ -418,16 +355,6 @@
                 startDate: formatDateTime(new Date()),
                 endDate: formatDateTime(new Date()),
             },
-            dtoStudent: {
-                classId: null,
-                schoolYearId: null,
-                key: "",
-            },
-            dtoClass: {
-                schoolLevelCode: null,
-                schoolYearId: null,
-                schoolyear: null,
-            },
             object: {
                 dateNow: formatDateTime(new Date()),
                 form_tile: '',
@@ -534,59 +461,10 @@
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
                 })
-
-
-            },
-            onPostClass() {
-                axios.post('/api/v1/StudentSmas/PostClass', this.dtoClass, this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login')) {
-                        window.location = window.location.href;
-                    }
-
-                    if (response.data.succeeded) {
-                        this.combobox.classes = {
-                            ...response.data.data.classes
-                        };
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                    $('.loader').delay(100).hide(0);
-                }).catch(error => {
-                    $('.loader').delay(100).hide(0);
-                })
-            },
-            onLoadLocalStorage() {
-                const _schoolLevelCode = localStorage.getItem('schoolLevelCode');
-                if (_schoolLevelCode) {
-                    this.dtoClass.schoolLevelCode = _schoolLevelCode;
-                } else {
-                    this.dtoClass.schoolLevelCode = "";
-                }
-
-
-                const _schoolYearId = localStorage.getItem('schoolYearId');
-                if (_schoolYearId) {
-                    this.dtoClass.schoolYearId = _schoolYearId;
-                    this.dtoStudent.schoolYearId = _schoolYearId;
-                } else {
-                    this.dtoClass.schoolYearId = "";
-                    this.dtoStudent.schoolYearId = "";;
-                }
-
-
-                const _schoolyear = localStorage.getItem('schoolyear');
-                if (_schoolyear) {
-                    this.dtoClass.schoolyear = _schoolyear;
-                } else {
-                    this.dtoClass.schoolyear = "";
-                }
             },
         },
         mounted() {
-            this.onLoadLocalStorage();
-            this.onLoadCombobox();
-            this.onPostClass();
+            // this.onLoadCombobox();
             this.onLoadData();
 
         },

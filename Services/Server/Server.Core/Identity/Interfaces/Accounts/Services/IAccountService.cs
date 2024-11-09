@@ -77,6 +77,7 @@ namespace Server.Core.Identity.Interfaces.Accounts.Services
 
         Task<List<UserAccountRes>> GetAccountSystems();
         Task<List<UserAccountRes>> GetAccountSchools();
+        Task SendEmailConfirm(string email);
         ////Task<List<UserAccountRes>> GetAccountEmployees();
         ////Task<List<UserAccountRes>> GetAccountVendors();
         ////Task<List<UserAccountRes>> GetAccountCustomers();

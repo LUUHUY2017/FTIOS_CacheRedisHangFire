@@ -7,6 +7,7 @@
         public string? OrganizationId { get; set; }
 
         public int Export { get; set; } = 0;
+        public string Actived { get; set; } = "1";
         public int? RowsPerPage { get; set; } = 25;
         public int? CurentPage { get; set; } = 1;
 

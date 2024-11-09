@@ -65,6 +65,7 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
         {
             try
             {
+                request.OrganizationId = GetOrganizationId();
                 var items = await _studentService.GetAlls(request);
                 if (request.FilterItems != null && request.FilterItems.Count > 0)
                 {
@@ -73,7 +74,6 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
                         items = await _studentService.ApplyFilter(items, filter);
                     }
                 }
-
 
 
                 int totalRow = await items.CountAsync();

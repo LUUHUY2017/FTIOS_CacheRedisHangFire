@@ -5,7 +5,6 @@
 
 <!-- Main content -->
 <div class="content-wrapper" id="webui">
-
     <!-- Inner content -->
     <div class="content-inner">
 
@@ -44,33 +43,6 @@
                                       placeholder="Vui lòng chọn thời gian...">
                             </datetime>
                         </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Trường học</label>
-                            <select id="schoolLevelCode" class="form-control select" v-model:value="dtoClass.schoolLevelCode">
-                                <option selected value="">Vui lòng chọn trường học </option>
-                                <option v-for="option in combobox.schools" v-bind:value="option.schoolLevelCode">
-                                    {{ option.schoolLevelName }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Năm học</label>
-                            <select id="schoolYearId" class="form-control select" v-model:value="dtoClass.schoolYearId">
-                                <option selected value="">Vui lòng chọn năm học </option>
-                                <option v-for="option in combobox.schoolYears" v-bind:value="option.schoolYearId">
-                                    {{ option.code }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Lớp</label>
-                            <select id="classId" class="form-control select">
-                                <option selected value="">Vui lòng chọn lớp </option>
-                                <option v-for="option in combobox.classes" v-bind:value="option.id">
-                                    {{ option.className }}
-                                </option>
-                            </select>
-                        </div>
                     </div>
                     <div class="row mb-3">
                         <div class="text-start">
@@ -79,6 +51,32 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <bootstrap-table :columns="columns" :data="data" :options="optionTable.options"></bootstrap-table>
+
+                    <div class="row ">
+                        <div class="text-danger">Lưu ý:</div>
+                    @*     <div class="col-md-12" style=" justify-content: center;">
+                            <ul style="list-style-type: none; padding-left: 0px;">
+                                <li class="list-color"><span class="block-color ROW_WHITE"> C </span> Có mặt </li>
+                                <li class="list-color"><span class="block-color ROW_SUCCESS">K </span> Nghỉ không phép </li>
+                                <li class="list-color"><span class="block-color ROW_WARN ">P </span> Nghỉ không phép </li>
+                                <li class="list-color" style="margin-left: 1px;"><span class="block-color  ROW_DANGER"> X </span> Trường hợp đặc biệt (Đi muộn, bỏ tiết, về sớm)</li>
+                            </ul>
+                        </div>
+ *@
+                        <div class="col-md-12" style=" justify-content: center;">
+                            <ul style="list-style-type: none; padding-left: 0px;">
+                                <li class="list-color"><span class="block-color ROW_WHITE"> 0 </span> Sáng  </li>
+                                <li class="list-color"><span class="block-color ROW_SUCCESS">1 </span> Chiều </li>
+                                <li class="list-color"><span class="block-color ROW_WARN ">2 </span> Tối </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -131,41 +129,11 @@
 
 <script>
     $(document).ready(function () {
-        $('#schoolLevelCode').on("change", function () {
-            _bcX.dtoClass.schoolLevelCode = $(this).val() ?? null;
-
-            _bcX.combobox.classes = [];
-            _bcX.combobox.data = [];
-
-            _bcX.onPostClass();
-            _bcX.onLoadData();
-
-            localStorage.setItem('schoolLevelCode', $(this).val());
-
-        });
-
-        $('#schoolYearId').on("change", function () {
-            _bcX.filter.schoolYearId = $(this).val() ?? null;
-            _bcX.dtoClass.schoolYearId = $(this).val() ?? null;
-            _bcX.dtoClass.schoolyear = $(this).find(":selected").text()?.trim() ?? null;
-
-            _bcX.combobox.classes = [];
-            _bcX.combobox.data = [];
-
-            _bcX.onPostClass();
-            _bcX.onLoadData();
-
-
-            localStorage.setItem('schoolYearId', $(this).val()) ?? null;
-            localStorage.setItem('schoolyear', $(this).find(":selected").text()?.trim());
-
-        });
-
-        $('#classId').on("change", function () {
-            _bcX.filter.classId = $(this).val() ?? null;
-            _bcX.combobox.data = [];
-            _bcX.onLoadData();
-        });
+        // $('#classId').on("change", function () {
+        //     _bcX.filter.classId = $(this).val() ?? null;
+        //     _bcX.combobox.data = [];
+        //     _bcX.onLoadData();
+        // });
     });
 
     var _bcX = new Vue({
@@ -268,16 +236,6 @@
                     headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
                 }
             },
-            dtoStudent: {
-                classId: null,
-                schoolYearId: null,
-                key: "",
-            },
-            dtoClass: {
-                schoolLevelCode: null,
-                schoolYearId: null,
-                schoolyear: null,
-            },
             optionTable: {
                 options: {
                     search: true,
@@ -345,79 +303,11 @@
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
                 })
-
-                axios.post('/api/v1/StudentSmas/PostSchoolYears', null, this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login')) {
-                        window.location = window.location.href;
-                    }
-
-                    if (response.data.succeeded) {
-                        this.combobox.schoolYears = {
-                            ...response.data.data.schoolYears
-                        };
-
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                    $('.loader').delay(100).hide(0);
-                }).catch(error => {
-                    $('.loader').delay(100).hide(0);
-                })
-
-
-            },
-            onPostClass() {
-                axios.post('/api/v1/StudentSmas/PostClass', this.dtoClass, this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login')) {
-                        window.location = window.location.href;
-                    }
-
-                    if (response.data.succeeded) {
-                        this.combobox.classes = {
-                            ...response.data.data.classes
-                        };
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                    $('.loader').delay(100).hide(0);
-                }).catch(error => {
-                    $('.loader').delay(100).hide(0);
-                })
-            },
-            onLoadLocalStorage() {
-                const _schoolLevelCode = localStorage.getItem('schoolLevelCode');
-                if (_schoolLevelCode) {
-                    this.dtoClass.schoolLevelCode = _schoolLevelCode;
-                } else {
-                    this.dtoClass.schoolLevelCode = "";
-                }
-
-
-                const _schoolYearId = localStorage.getItem('schoolYearId');
-                if (_schoolYearId) {
-                    this.dtoClass.schoolYearId = _schoolYearId;
-                    this.dtoStudent.schoolYearId = _schoolYearId;
-                } else {
-                    this.dtoClass.schoolYearId = "";
-                    this.dtoStudent.schoolYearId = "";;
-                }
-
-
-                const _schoolyear = localStorage.getItem('schoolyear');
-                if (_schoolyear) {
-                    this.dtoClass.schoolyear = _schoolyear;
-                } else {
-                    this.dtoClass.schoolyear = "";
-                }
             },
 
         },
         mounted() {
-            this.onLoadLocalStorage();
-            this.onLoadCombobox();
-            this.onPostClass();
+            // this.onLoadCombobox();
             this.onLoadData();
         },
     })
