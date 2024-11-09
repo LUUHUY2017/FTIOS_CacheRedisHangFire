@@ -120,7 +120,6 @@ public class CronJobService : ICronJobService
                         FullName = item.StudentName,
                         OrganizationId = orgRes.Id,
                         SchoolCode = orgRes.OrganizationCode,
-                        LastModifiedDate = DateTime.Now,
                     };
                     await _studentService.SaveFromService(el);
                 }

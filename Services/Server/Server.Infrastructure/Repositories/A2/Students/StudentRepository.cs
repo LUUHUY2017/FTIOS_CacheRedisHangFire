@@ -64,6 +64,8 @@ public class StudentRepository : RepositoryBaseMasterData<Student>, IStudentRepo
             if (_order != null)
             {
                 _order.ReferenceId = data.Id;
+                _order.LastModifiedDate = DateTime.Now;
+
                 _order.ClassId = data.ClassId;
                 _order.ClassName = data.ClassName;
                 _order.OrganizationId = data.OrganizationId;
