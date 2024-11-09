@@ -50,14 +50,15 @@ namespace Server.Application.MasterDatas.A0.Accounts.V1
 
         public async Task<List<UserAccountRes>> GetAccountSystems()
         {
-            var userSuperAdmin = await _userManager.FindByIdAsync(UserId);
-            var groupManager = (await _dbContext.RoleGroup.Where(x => x.Name == "Manager" || x.Name == "Operator" || x.Name == "SupperAdmin").ToListAsync()).Select(x => x.Id);
-            var groupUserIds = (await _dbContext.RoleGroupUser.Where(x => !groupManager.Contains(x.RoleGroupId)).ToListAsync()).Select(x => x.UserId);
-            var all_accounts = await _userManager.Users.Where(x => groupUserIds.Contains(x.Id)).ToListAsync();
-            if (userSuperAdmin != null && string.IsNullOrEmpty(userSuperAdmin.Type))
+            var userSuper = await _userManager.GetUsersInRoleAsync("SuperAdmin");
+            var userSuperIds = userSuper.Select(x => x.Id).ToList();
+            var all_accounts = await _userManager.Users.ToListAsync();
+
+            if (!userSuperIds.Contains(UserId))
             {
-                all_accounts = await _userManager.Users.Where(x => groupUserIds.Contains(x.Id) || string.IsNullOrEmpty(x.Type)).ToListAsync();
+                all_accounts = all_accounts.Where(x => !userSuperIds.Contains(x.Id)).ToList();
             }
+
             var accounts = all_accounts.Select(u => new UserAccountRes()
             {
                 Id = u.Id,

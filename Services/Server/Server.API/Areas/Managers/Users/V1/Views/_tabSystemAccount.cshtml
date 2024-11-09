@@ -20,24 +20,33 @@
     </div>
 
     <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
-        <div id="waitDialog" class="modal-dialog modal-sm">
-            <div class="modal-content">
+        <div id="waitDialog" class="modal-dialog">
+            <div class="modal-content p-2">
                 <div class="modal-header"><h5 id="staticBackdropLabel" class="modal-title">{{form_tile}} tài khoản</h5> <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button></div>
                 <div class="modal-body">
                     <form class="needs-validation" id="FormAddEdit" novalidate>
 
                         <div class="row mb-3">
-                            <label class="col-form-label">Tên tài khoản<span class="text-danger">*</span></label>
-                            <div>
-                                <input type="text" class="form-control" required placeholder="Tên tài khoản" v-model="item.firstName">
-                                <div class="invalid-feedback">Vui lòng nhập tên tài khoản</div>
+                            <label class="col-form-label text-start col-lg-3">Họ đệm</label>
+                            <div class=col-lg-7">
+                                <input type="text" class="form-control" placeholder="Họ đệm" v-model="item.lastName">
+                                <div class="invalid-feedback">Vui lòng nhập họ đệm</div>
                                 <div class="valid-feedback"> </div>
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-form-label">Email<span class="text-danger">*</span></label>
-                            <div>
+                            <label class="col-form-label text-start col-lg-2">Tên<span class="text-danger">*</span></label>
+                            <div class=col-lg-7">
+                                <input type="text" class="form-control" required placeholder="Tên" v-model="item.firstName">
+                                <div class="invalid-feedback">Vui lòng nhập tên</div>
+                                <div class="valid-feedback"> </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-form-label text-start col-lg-2">Email<span class="text-danger">*</span></label>
+                            <div class=col-lg-7">
                                 <input type="email" class="form-control" required placeholder="Email" v-model="item.email">
                                 <div class="invalid-feedback">Vui lòng nhập email</div>
                                 <div class="valid-feedback"> </div>
@@ -45,9 +54,9 @@
                         </div>
 
                         <div class="row mb-3" v-if="!showRole">
-                            <label class="col-form-label">Mật khẩu <span class="text-danger">*</span></label>
-                            <div>
-                                <input type="password" name="password" id="Password" class="form-control" pattern=".{6,}" required placeholder="Mật khẩu tối thiểu 6 ký tự" v-model="item.password">
+                            <label class="col-form-label text-start col-lg-2">Mật khẩu <span class="text-danger">*</span></label>
+                            <div class=col-lg-7">
+                                <input type="password" name="password" id="Password" class="form-control " pattern=".{6,}" required placeholder="Mật khẩu tối thiểu 6 ký tự" v-model="item.password">
                                 <div class="invalid-feedback">Vui lòng nhập mật khẩu tối thiểu 6 ký tự</div>
                                 <div class="valid-feedback"> </div>
                             </div>
@@ -55,8 +64,8 @@
                         </div>
 
                         <div class="row mb-3" v-if="!showRole">
-                            <label class="col-form-label">Nhập lại mật khẩu<span class="text-danger">*</span></label>
-                            <div>
+                            <label class="col-form-label text-start col-lg-2">Nhập lại mật khẩu<span class="text-danger">*</span></label>
+                            <div class=col-lg-7">
                                 <input type="password" name="passwordConfirm" id="passwordConfirm" class="form-control" required placeholder="Nhập lại mật khẩu" v-model="item.passwordConfirm">
                                 <div class="invalid-feedback">Vui lòng nhập mật khẩu</div>
                                 <div class="valid-feedback"> </div>
@@ -64,17 +73,17 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-form-label">Số điện thoại</label>
-                            <div>
-                                <input type="text" class="form-control" pattern="[0-9]{10,12}" placeholder="Số điện thoại" v-model="item.phoneNumber">
+                            <label class="col-form-label text-start col-lg-2">Số điện thoại</label>
+                            <div class=col-lg-7">
+                                <input type="text" class="form-control " pattern="[0-9]{10,12}" placeholder="Số điện thoại" v-model="item.phoneNumber">
                                 <div class="invalid-feedback">Vui lòng nhập số điện thoại đúng</div>
                                 <div class="valid-feedback"> </div>
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-form-label">Hoạt động</label>
-                            <div>
+                            <label class="col-form-label text-start col-lg-2">Hoạt động</label>
+                            <div class=col-lg-7">
                                 <div class="form-check-horizontal">
                                     <label class="form-check form-switch mb-0">
                                         <input type="checkbox" class="form-check-input" v-model="item.actived">
@@ -89,8 +98,8 @@
                             </div>
                         </div>
                     </form>
-                    <!--
-                    <ul class="nav nav-tabs" role="tablist" hidden>
+                    
+                    <ul class="nav nav-tabs" role="tablist">
                         <li  class="nav-item">
                             <a class="nav-link active" data-bs-toggle="tab" href="#tab_user_details">Nhóm quyền </a>
                         </li>
@@ -99,7 +108,7 @@
                             <a class="nav-link" data-bs-toggle="tab" href="#tab_role_details">Quyền </a>
                         </li> *@
                     </ul>
-                    <div  class="tab-content" style="padding: inherit;" :class="{ 'disabled': !showRole }" hidden>
+                    <div  class="tab-content" style="padding: inherit;" :class="{ 'disabled': !showRole }">
                         <div id="tab_user_details" class="  tab-pane active">
                             <p><b>Nhóm chưa đăng ký </b></p>
                             <bootstrap-table :columns="columns_roleGroups_unselect" :data="data_roleGroups_unselect" :options="options"></bootstrap-table>
@@ -112,7 +121,7 @@
                             <bootstrap-table :columns="columns_role_select" :data="data_role_select" :options="options"></bootstrap-table>
                         </div> *@
                     </div>
-                     -->
+                     
                 </div>
             </div>
         </div>
@@ -234,6 +243,11 @@
                     },
                 },
                 {
+                    title: 'Họ đệm',
+                    sortable: true,
+                    field: 'lastName'
+                },
+                {
                     title: 'Tên',
                     sortable: true,
                     field: 'firstName'
@@ -248,7 +262,7 @@
                 //     },
                 // },
                 {
-                    title: 'Tài khoản',
+                    title: 'Tên tài khoản',
                     sortable: true,
                     field: 'userName'
                 },

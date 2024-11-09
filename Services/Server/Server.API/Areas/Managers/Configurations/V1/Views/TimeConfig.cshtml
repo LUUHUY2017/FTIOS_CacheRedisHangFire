@@ -5,7 +5,7 @@
 
         <div class="content">
 
-            <div class="card">
+            <div class="card" hidden>
                <div class="card-body">
                     <form v-on:submit.prevent="loadData">
                         <div class="row mb-3">
@@ -26,10 +26,8 @@
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-body">
-                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
-                </div>
+            <div class="card-body">
+                <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
             </div>
 
         </div>
