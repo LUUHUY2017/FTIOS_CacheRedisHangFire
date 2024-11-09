@@ -147,7 +147,7 @@ namespace AMMS.Hanet.Applications.V1.Service
             }
         }
 
-        private async Task AddUserData(Hanet_User_Data data)
+        public async Task AddUserData(Hanet_User_Data data)
         {
             try
             {

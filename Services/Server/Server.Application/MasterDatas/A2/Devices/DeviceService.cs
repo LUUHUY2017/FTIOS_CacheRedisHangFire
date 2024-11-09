@@ -1,6 +1,5 @@
 ﻿using AMMS.DeviceData.RabbitMq;
 using AutoMapper;
-using DocumentFormat.OpenXml.Office2019.Drawing.Model3D;
 using EventBus.Messages;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -12,7 +11,6 @@ using Server.Core.Interfaces.A2.Devices.RequeResponsessts;
 using Server.Core.Interfaces.A2.Devices.Requests;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
-using static MassTransit.ValidationResultExtensions;
 
 namespace Server.Application.MasterDatas.A2.Devices
 {
@@ -68,6 +66,12 @@ namespace Server.Application.MasterDatas.A2.Devices
         public async Task<List<DeviceResponse>> GetDevices(DeviceFilterRequest request)
         {
             var data = await _deviceRepository.GetFilters(request);
+            return data;
+        }
+
+        public async Task<List<DeviceResponse>> GetByOrgId(bool actived, string organizationId)
+        {
+            var data = await _deviceRepository.GetByOrgId(actived, organizationId);
             return data;
         }
 

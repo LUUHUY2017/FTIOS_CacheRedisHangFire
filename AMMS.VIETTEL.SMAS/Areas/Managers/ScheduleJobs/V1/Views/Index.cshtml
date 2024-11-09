@@ -52,7 +52,7 @@
 
                             <div class="col-md-2">
                                 <select class="form-select select" required data-placeholder="Vui lòng chọn trường" id="FOrganization">
-                                    <option selected value="0">Tất cả </option>
+                                    <option selected value="">Tất cả </option>
                                     <option v-for="option in combobox.organizations" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>

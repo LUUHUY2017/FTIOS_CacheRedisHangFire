@@ -13,11 +13,6 @@
         public string? StatusCode { get; set; }
         public string? Status { get; set; }
         public string? FullNameOther { get; set; }
-        public string? EthnicCode { get; set; }
-        public string? PolicyTargetCode { get; set; }
-        public string? PriorityEncourageCode { get; set; }
-        public string? SyncCode { get; set; }
-        public string? SyncCodeClass { get; set; }
         public string? IdentifyNumber { get; set; }
         public string? StudentClassId { get; set; }
         public int? SortOrder { get; set; }
@@ -26,9 +21,8 @@
         public string? GradeCode { get; set; }
 
         public string? ImageBase64 { get; set; }
-
-
         public string? OrganizationId { get; set; }
+        public string? SchoolCode { get; set; }
 
     }
 }
