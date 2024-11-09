@@ -541,14 +541,14 @@
 
 
             loadCombox() {
-                // axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
-                //     if (response.request.responseURL.includes('~/Account/Login'))
-                //         window.location = window.location.href;
+                axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
 
-                //     this.combobox.organizations = response.data.data;
-                // }).catch(error => {
-                //     console.log(error);
-                // });
+                    this.combobox.organizations = response.data.data;
+                }).catch(error => {
+                    console.log(error);
+                });
 
                 axios.get('/api/v1/ScheduleJob/ScheduleOptions', this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
