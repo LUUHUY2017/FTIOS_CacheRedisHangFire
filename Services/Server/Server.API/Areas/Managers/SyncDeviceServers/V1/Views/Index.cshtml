@@ -52,6 +52,27 @@
                                       placeholder="Vui lòng chọn thời gian...">
                             </datetime>
                         </div>
+
+                        <div class="col-md-2 d-flex align-items-end">
+                            <select class="form-select select" data-placeholder="Vui lòng chọn thiết bị" id="FDevice">
+                                <option selected value="">Tất cả </option>
+                                <option v-for="option in combobox.devices" v-bind:value="option.id">
+                                    {{ option.deviceName }} - {{option.serialNumber}}
+                                </option>
+                            </select>
+                        </div>
+
+
+                        @*   <div class="col-md-2">
+                        <select class="form-select select" required data-placeholder="Vui lòng chọn trường" id="FOrganization">
+                        <option selected value="">Tất cả </option>
+                        <option v-for="option in combobox.organizations" v-bind:value="option.id">
+                        {{ option.organizationName }}
+                        </option>
+                        </select>
+                        </div> *@
+
+
                         <div class="col-md-2 d-flex align-items-end">
                             <button type="button" v-on:click=onLoadData() class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
                         </div>
@@ -201,8 +222,11 @@
         _syncD.onLoadData();
     });
 
-    // $(document).ready(function () {
-    // });
+    $(document).ready(function () {
+        $('#FDevice').on("change", function () {
+            _syncD.filter.deviceId = $(this).val() ?? null;
+        });
+    });
 
 </script>
 
@@ -351,6 +375,7 @@
                 export: 0,
                 classId: null,
                 schoolYearId: null,
+                deviceId: null,
 
                 startDate: formatDateTime(new Date()),
                 endDate: formatDateTime(new Date()),
@@ -365,7 +390,7 @@
                 }
             },
             item: {},
-            combobox: { schools: [], schoolYears: [], classes: [] },
+            combobox: { devices: [] },
         },
         methods: {
             onLoadData() {
@@ -426,33 +451,14 @@
             },
 
             onLoadCombobox() {
-                axios.post('/api/v1/StudentSmas/PostSchool', null, this.object.config).then(response => {
+                axios.get('/api/v1/device/GetByOrgId', this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
                     if (response.data.succeeded) {
-                        this.combobox.schools = {
-                            ...response.data.data.schools
+                        this.combobox.devices = {
+                            ...response.data.data
                         };
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                    $('.loader').delay(100).hide(0);
-                }).catch(error => {
-                    $('.loader').delay(100).hide(0);
-                })
-
-                axios.post('/api/v1/StudentSmas/PostSchoolYears', null, this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login')) {
-                        window.location = window.location.href;
-                    }
-
-                    if (response.data.succeeded) {
-                        this.combobox.schoolYears = {
-                            ...response.data.data.schoolYears
-                        };
-
                     }
                     else {
                         alertify.notify(response.data.message, 'error', 6, function () { });
@@ -464,7 +470,7 @@
             },
         },
         mounted() {
-            // this.onLoadCombobox();
+            this.onLoadCombobox();
             this.onLoadData();
 
         },

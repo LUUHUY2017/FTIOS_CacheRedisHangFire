@@ -28,7 +28,7 @@ public class GIOVehicleInOutRepository : IGIOVehicleInOutRepository
                                where
                                 (request.StartDate != null ? _do.CreatedDate.Date >= request.StartDate.Value.Date : true)
                                 && (request.EndDate != null ? _do.CreatedDate.Date <= request.EndDate.Value.Date : true)
-                                && (!string.IsNullOrWhiteSpace(request.OrganizationId) ? _do.OrganizationId == request.OrganizationId : true)
+                                   && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
                                 && (!string.IsNullOrWhiteSpace(request.LaneId) ? _do.LaneInId == request.LaneId : true)
                                 //&& (request.VehicleInOutStatus != 0 ? _do.VehicleInOutStatus == request.VehicleInOutStatus : true) 
                                 && (!string.IsNullOrWhiteSpace(request.PlateNumber) ? _do.PlateNumber.Contains(request.PlateNumber) : true)

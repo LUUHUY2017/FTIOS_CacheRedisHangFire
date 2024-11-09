@@ -10,6 +10,7 @@ public interface IDeviceRepository : IAsyncRepository<Device>
 {
     Task<List<DeviceResponse>> GetFilters(DeviceFilterRequest req);
     Task<Result<Device>> UpdateAsyncV2(Device data);
+    Task<List<DeviceResponse>> GetByOrgId(bool actived, string organizationId);
 }
 
 

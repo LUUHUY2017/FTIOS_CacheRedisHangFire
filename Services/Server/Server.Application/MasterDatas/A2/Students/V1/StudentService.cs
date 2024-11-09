@@ -287,7 +287,7 @@ public class StudentService
                          join _la in _dbContext.PersonFace on _do.Id equals _la.PersonId into K
                          from la in K.DefaultIfEmpty()
                          where _do.Actived == actived
-                         && ((!string.IsNullOrWhiteSpace(request.OrganizationId)) ? _do.OrganizationId == request.OrganizationId : true)
+                            && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
 
                          orderby _do.CreatedDate descending
                          select new DtoStudentResponse()
@@ -320,7 +320,9 @@ public class StudentService
                              Name = _do.Name,
                              SortOrderByClass = _do.SortOrderByClass,
                              GradeCode = _do.GradeCode,
-                             ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null
+                             ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null,
+                             IsFace = la != null ? true : false,
+                             IsFaceName = la != null ? "Có" : "Không",
                          });
 
             return _data;
@@ -363,6 +365,11 @@ public class StudentService
             case "status":
                 if (filter.Comparison == 0)
                     query = query.Where(p => p.Status.Contains(filter.Value.Trim()));
+                break;
+
+            case "isfacename":
+                if (!string.IsNullOrWhiteSpace(filter.Value))
+                    query = query.Where(p => p.IsFaceName.Contains(filter.Value.Trim()));
                 break;
             case "identifynumber":
                 if (filter.Comparison == 0)
