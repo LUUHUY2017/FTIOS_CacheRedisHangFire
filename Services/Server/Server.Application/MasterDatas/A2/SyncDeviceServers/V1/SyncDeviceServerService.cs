@@ -123,9 +123,10 @@ public partial class SyncDeviceServerService
             case "synstatus":
                 if (!string.IsNullOrWhiteSpace(filter.Value))
                 {
-                    if (filter.Value.ToLower() == "true")
+                    var statusValue = filter.Value.ToLower();
+                    if (statusValue == "true")
                         query = query.Where(p => p.SynStatus == true);
-                    else if (filter.Value.ToLower() == "false")
+                    else if (statusValue == "false")
                         query = query.Where(p => p.SynStatus == false);
                     else
                         query = query.Where(p => p.SynStatus == null);
