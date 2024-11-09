@@ -92,7 +92,7 @@ public class StudentService
         try
         {
             var stu = _map.Map<Student>(request);
-           var res =  await _studentRepository.SaveDataAsync(stu);
+            var res = await _studentRepository.SaveDataAsync(stu);
             if (res.Succeeded)
             {
                 var per = new Person()
@@ -106,7 +106,7 @@ public class StudentService
                 };
                 var data = await _personRepository.SaveAsync(per);
             }
-             
+
             try
             {
                 DateTime dateStudent = DateTime.Now;
@@ -276,10 +276,14 @@ public class StudentService
     {
         try
         {
+            bool actived = request.Actived == "1" ? true : false;
             var _data = (from _do in _dbContext.Student
 
                          join _la in _dbContext.PersonFace on _do.Id equals _la.PersonId into K
                          from la in K.DefaultIfEmpty()
+                         where _do.Actived == actived
+                         && ((!string.IsNullOrWhiteSpace(request.OrganizationId)) ? _do.OrganizationId == request.OrganizationId : true)
+
                          orderby _do.CreatedDate descending
                          select new DtoStudentResponse()
                          {
@@ -336,6 +340,10 @@ public class StudentService
             case "classid":
                 if (filter.Comparison == 0)
                     query = query.Where(p => p.ClassId.Contains(filter.Value.Trim()));
+                break;
+            case "organizationid":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.OrganizationId.Contains(filter.Value.Trim()));
                 break;
             case "classname":
                 if (filter.Comparison == 0)

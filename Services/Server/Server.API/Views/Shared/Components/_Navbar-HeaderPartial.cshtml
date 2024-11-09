@@ -401,12 +401,12 @@
                 }
                 else {
                     console.log(this.token);
-                    axios.get('/api/v1/Organization/GetForUser',this.object.config).then(response => {
+                    axios.get('/api/v1/Organization/Gets',this.object.config).then(response => {
                         if (response.request.responseURL.includes('Auth/Login')) {
                             window.location = window.location.href;
                         }
                         this.comboboxNav.schoolNavs = response.data.data;
-                        this.comboboxNav.schoolNavs = [{ id: "0", organizationName: "Tất cả" }, ...this.comboboxNav.schoolNavs];
+                        this.comboboxNav.schoolNavs = [{ id: "", organizationName: "Tất cả" }, ...this.comboboxNav.schoolNavs];
                         localStorage.setItem('schools', JSON.stringify(this.comboboxNav.schoolNavs));
                         if (this.getCookie("organizationId")) {
                             this.selectedSchoolNav = this.getCookie("organizationId");

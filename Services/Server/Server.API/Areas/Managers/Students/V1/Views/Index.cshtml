@@ -38,36 +38,14 @@
                     <form v-on:submit.prevent="onLoadData">
                         <div class="row mb-3">
                             <div class="col-md-2">
-                                <label class="form-label">Trường học</label>
-                                <select id="schoolLevelCode" class="form-control select" v-model:value="dtoClass.schoolLevelCode">
-                                    <option selected value="">Vui lòng chọn trường học </option>
-                                    <option v-for="option in combobox.schools" v-bind:value="option.schoolLevelCode">
-                                        {{ option.schoolLevelName }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label">Năm học</label>
-                                <select id="schoolYearId" class="form-control select" v-model:value="dtoClass.schoolYearId">
-                                    <option selected value="">Vui lòng chọn năm học </option>
-                                    <option v-for="option in combobox.schoolYears" v-bind:value="option.schoolYearId">
-                                        {{ option.code }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label">Lớp</label>
-                                <select id="classId" class="form-control select">
-                                    <option selected value="">Vui lòng chọn lớp </option>
-                                    <option v-for="option in combobox.classes" v-bind:value="option.id">
-                                        {{ option.className }}
-                                    </option>
+                                <select class="form-select select" id="FActived">
+                                    <option value="1">Hoạt động</option>
+                                    <option value="0">Ngừng hoạt động</option>
                                 </select>
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
                                 <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
                             </div>
-
                         </div>
                     </form>
                 </div>
@@ -189,11 +167,11 @@
     <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
         <div id="waitDialog" class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}}</h5>
-                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
-                </div>
                 <form class="form-horizontal has-validation-callback" v-on:submit.prevent="onSubmitFormAddEdit" id="FormAddEdit">
+                    <div class="modal-header">
+                        <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}}</h5>
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                    </div>
                     <div class="modal-body">
                         <div class="box">
                             <div class="row">
@@ -222,49 +200,48 @@
                                         <div class="col-md-10 col-sm-12  ">
                                             <input class="form-control  mb-1 " type="text" readonly required id="studentCode" name="studentCode" v-model:value="item.studentCode">
                                         </div>
-@* 
+                                        @*
                                         <div class="form-group">
-                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Căn cước  </label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <input class="form-control  mb-1 " type="text" readonly required id="identifyNumber" name="identifyNumber" v-model:value="item.identifyNumber">
-                                            </div> *@
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Lớp  </label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <input class="form-control  mb-1  " type="text" readonly required id="className" name="className" v-model:value="item.className">
-                                            </div>
-                                        </div>
-
-                                    @*     <div class="form-group">
-                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Giới tính</label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="01"> Nam</label>
-                                                <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="02">Nữ </label>
-                                            </div>
+                                        <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Căn cước  </label>
+                                        <div class="col-md-10 col-sm-12  ">
+                                        <input class="form-control  mb-1 " type="text" readonly required id="identifyNumber" name="identifyNumber" v-model:value="item.identifyNumber">
                                         </div> *@
                                     </div>
-
-                                    <div class="col-md-5">
-                                        <div class="form-group">
-                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Họ và tên    </label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <input type="text" id="fullName" name="fullName" readonly required class="form-control  mb-1  " v-model:value="item.fullName">
-                                            </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Lớp  </label>
+                                        <div class="col-md-10 col-sm-12  ">
+                                            <input class="form-control  mb-1  " type="text" readonly required id="className" name="className" v-model:value="item.className">
                                         </div>
+                                    </div>
 
-                                      @*   <div class="form-group">
-                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Trạng thái </label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <input type="text" id="status" name="status" readonly required class="form-control  mb-1  " v-model:value="item.status">
-                                            </div>
-                                        </div> *@
+                                    @*     <div class="form-group">
+                                    <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Giới tính</label>
+                                    <div class="col-md-10 col-sm-12  ">
+                                    <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="01"> Nam</label>
+                                    <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="02">Nữ </label>
+                                    </div>
+                                    </div> *@
+                                </div>
 
-                                        <div class="form-group">
-                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Năm sinh</label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <input type="text" id="syncCode" name="syncCode" readonly required class="form-control  mb-1" v-model:value="item.dateOfBirth1">
-                                            </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Họ và tên    </label>
+                                        <div class="col-md-10 col-sm-12  ">
+                                            <input type="text" id="fullName" name="fullName" readonly required class="form-control  mb-1  " v-model:value="item.fullName">
+                                        </div>
+                                    </div>
+
+                                    @*   <div class="form-group">
+                                    <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Trạng thái </label>
+                                    <div class="col-md-10 col-sm-12  ">
+                                    <input type="text" id="status" name="status" readonly required class="form-control  mb-1  " v-model:value="item.status">
+                                    </div>
+                                    </div> *@
+
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Năm sinh</label>
+                                        <div class="col-md-10 col-sm-12  ">
+                                            <input type="text" id="syncCode" name="syncCode" readonly required class="form-control  mb-1" v-model:value="item.dateOfBirth1">
                                         </div>
                                     </div>
                                 </div>
@@ -281,59 +258,57 @@
             </div>
         </div>
     </div>
+</div>
 
-
-
-    <div class="modal fade" id="ModelImage" aria-hidden="true">
-        <div id="waitDialog" class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 id="staticBackdropLabel" class="modal-title">Cắt ảnh</h5>
-                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+<div class="modal fade" id="ModelImage" aria-hidden="true">
+    <div id="waitDialog" class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="staticBackdropLabel" class="modal-title">Cắt ảnh</h5>
+                <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <img id="image" style="max-width: 100%; display: none;">
                 </div>
-                <div class="modal-body">
-                    <div>
-                        <img id="image" style="max-width: 100%; display: none;">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="text-end">
-                        <button id="cropBtn" type="button" class="btn btn-primary "> <i class="ph-crop me-2"></i> Cắt ảnh </button>
-                        <button type="button" class="btn mr-5" data-bs-dismiss="modal"> Bỏ qua </button>
-                    </div>
+            </div>
+            <div class="modal-footer">
+                <div class="text-end">
+                    <button id="cropBtn" type="button" class="btn btn-primary "> <i class="ph-crop me-2"></i> Cắt ảnh </button>
+                    <button type="button" class="btn mr-5" data-bs-dismiss="modal"> Bỏ qua </button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="modal fade" id="ModelCapture" aria-hidden="true">
-        <div id="waitDialog" class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 id="staticBackdropLabel" class="modal-title">Chụp ảnh</h5>
-                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close closeC"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-12 col-md-6">
-                            <video id="video" autoplay></video>
-                            <button type="button" id="capturePhoto" class="btn  btn-primary"><i class="ph-camera ph me-2"></i>  Chụp ảnh </button>
-                            <button style="display:none" type="button" id="switchCamera" class="btn  btn-primary"><i class="ph-arrows-ph me-2"></i> Switch </button>
+<div class="modal fade" id="ModelCapture" aria-hidden="true">
+    <div id="waitDialog" class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="staticBackdropLabel" class="modal-title">Chụp ảnh</h5>
+                <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close closeC"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <video id="video" autoplay></video>
+                        <button type="button" id="capturePhoto" class="btn  btn-primary"><i class="ph-camera ph me-2"></i>  Chụp ảnh </button>
+                        <button style="display:none" type="button" id="switchCamera" class="btn  btn-primary"><i class="ph-arrows-ph me-2"></i> Switch </button>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <canvas id="canvas" style="display: none;"></canvas>
+                        <div class="div-image-capture ">
+                            <img id="capturedImage" alt="Captured Photo" style="display: none;" />
                         </div>
-                        <div class="col-sm-12 col-md-6">
-                            <canvas id="canvas" style="display: none;"></canvas>
-                            <div class="div-image-capture ">
-                                <img id="capturedImage" alt="Captured Photo" style="display: none;" />
-                            </div>
 
-                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <div class="text-end">
-                        <button id="cropPhoto" type="button" class="btn btn-primary "> <i class="ph-crop me-2"></i> Cắt ảnh </button>
-                        <button type="button" class="btn mr-5 closeC" data-bs-dismiss="modal"> Đóng </button>
-                    </div>
+            </div>
+            <div class="modal-footer">
+                <div class="text-end">
+                    <button id="cropPhoto" type="button" class="btn btn-primary "> <i class="ph-crop me-2"></i> Cắt ảnh </button>
+                    <button type="button" class="btn mr-5 closeC" data-bs-dismiss="modal"> Đóng </button>
                 </div>
             </div>
         </div>
@@ -348,53 +323,18 @@
     });
 
     $(document).ready(function () {
-        $('#schoolLevelCode').on("change", function () {
-            _stu.dtoClass.schoolLevelCode = $(this).val() ?? null;
-
-            _stu.combobox.classes = [];
-            _stu.combobox.data = [];
-
-            _stu.onPostClass();
-            _stu.onLoadData();
-
-            localStorage.setItem('schoolLevelCode', $(this).val());
-
-        });
-
-        $('#schoolYearId').on("change", function () {
-            _stu.filter.schoolYearId = $(this).val() ?? null;
-            _stu.dtoClass.schoolYearId = $(this).val() ?? null;
-            _stu.dtoClass.schoolyear = $(this).find(":selected").text()?.trim() ?? null;
-
-            _stu.combobox.classes = [];
-            _stu.combobox.data = [];
-
-            _stu.onPostClass();
-            _stu.onLoadData();
-
-
-            localStorage.setItem('schoolYearId', $(this).val()) ?? null;
-            localStorage.setItem('schoolyear', $(this).find(":selected").text()?.trim()) ?? null;
-
-        });
-
-        $('#classId').on("change", function () {
-            _stu.params.classId = $(this).val() ?? null;
-
-            _stu.combobox.data = [];
-            _stu.onLoadData();
-        });
-
         $("ul.pagination").on("click", "li", function () {
             var pageNumber = $(this).find("a").data('number');
             if (pageNumber != undefined) {
                 _stu.filter.CurentPage = pageNumber;
                 _stu.onLoadData();
             }
+        });
 
+        $('#FActived').on("change", function () {
+            _stu.filter.actived = $(this).val();
         });
     });
-
 </script>
 
 
@@ -406,10 +346,10 @@
         },
         data: {
             data: [],
-
             filter: {
                 RowsPerPage: 50,
                 CurentPage: 1,
+                Actived: "1",
                 FilterItems: [],
             },
             params: {
@@ -422,11 +362,6 @@
                 status: null,
             },
 
-            dtoClass: {
-                schoolLevelCode: null,
-                schoolYearId: null,
-                schoolyear: null,
-            },
             object: {
                 dateNow: formatDateTime(new Date()),
                 config: {
@@ -434,7 +369,8 @@
                 }
             },
             item: {},
-            combobox: { schools: [], schoolYears: [], classes: [] },
+            combobox: { organizations: [], },
+
             // phân trang
             firstRow: 0,
             totalRow: 0,
@@ -478,7 +414,6 @@
                     $('.loader').delay(100).hide(0);
                 });
             },
-
             checkParams() {
                 this.filter.FilterItems = [];
                 Object.entries(this.params).forEach(([key, value]) => {
@@ -535,13 +470,10 @@
                 this.filter.CurentPage = 1;
                 this.onLoadData();
             },
-
-
             formatDateTime(date) {
                 let data = date != null ? moment(date).format('DD/MM/YYYY HH:mm:ss') : null;
                 return data;
             },
-
             formatDate(value) {
                 if (value != null) {
                     var dt = new Date(value);
@@ -571,7 +503,6 @@
                 this.object.form_tile = "Thông tin học sinh";
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
             },
-
             onSubmitFormAddEdit() {
                 if (!validateForm("#FormAddEdit"))
                     return true;
@@ -598,96 +529,18 @@
             },
 
             onLoadCombobox() {
-                axios.post('/api/v1/StudentSmas/PostSchool', null, this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login')) {
+                axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
-                    }
-                    if (response.data.succeeded) {
-                        this.combobox.schools = {
-                            ...response.data.data.schools
-                        };
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                    $('.loader').delay(100).hide(0);
+
+                    this.combobox.organizations = response.data.data;
                 }).catch(error => {
-                    $('.loader').delay(100).hide(0);
-                })
-
-                axios.post('/api/v1/StudentSmas/PostSchoolYears', null, this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login')) {
-                        window.location = window.location.href;
-                    }
-
-                    if (response.data.succeeded) {
-                        this.combobox.schoolYears = {
-                            ...response.data.data.schoolYears
-                        };
-
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                    $('.loader').delay(100).hide(0);
-                }).catch(error => {
-                    $('.loader').delay(100).hide(0);
-                })
-
-
-            },
-            onPostClass() {
-                axios.post('/api/v1/StudentSmas/PostClass', this.dtoClass, this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login')) {
-                        window.location = window.location.href;
-                    }
-
-                    if (response.data.succeeded) {
-                        this.combobox.classes = {
-                            ...response.data.data.classes
-                        };
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                    $('.loader').delay(100).hide(0);
-                }).catch(error => {
-                    $('.loader').delay(100).hide(0);
-                })
-            },
-
-            onLoadLocalStorage() {
-                const _schoolLevelCode = localStorage.getItem('schoolLevelCode');
-                if (_schoolLevelCode) {
-                    this.dtoClass.schoolLevelCode = _schoolLevelCode;
-                } else {
-                    this.dtoClass.schoolLevelCode = "";
-                }
-
-
-                const _schoolYearId = localStorage.getItem('schoolYearId');
-                if (_schoolYearId) {
-                    this.dtoClass.schoolYearId = _schoolYearId;
-                    this.filter.schoolYearId = _schoolYearId;
-                } else {
-                    this.dtoClass.schoolYearId = "";
-                    this.filter.schoolYearId = "";;
-                }
-
-
-                const _schoolyear = localStorage.getItem('schoolyear');
-                if (_schoolyear) {
-                    this.dtoClass.schoolyear = _schoolyear;
-                } else {
-                    this.dtoClass.schoolyear = "";
-                }
+                    console.log(error);
+                });
             },
         },
         mounted() {
-            this.onLoadLocalStorage();
-
             this.onLoadCombobox();
-            this.onPostClass();
             this.onLoadData();
 
         },
