@@ -55,7 +55,6 @@ public partial class SyncDeviceServerService
                                join _de in _dbContext.Device on _do.DeviceId equals _de.Id into KG
                                from de in KG.DefaultIfEmpty()
 
-
                                where
                                 (request.StartDate != null ? _do.LastModifiedDate.Date >= request.StartDate.Value.Date : true)
                                 && (request.EndDate != null ? _do.LastModifiedDate.Date <= request.EndDate.Value.Date : true)
