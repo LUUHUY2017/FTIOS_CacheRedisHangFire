@@ -116,7 +116,7 @@ public class DeviceController : ControllerBase
                 data = body
             };
 
-            var aa = await _eventBusAdapter.GetSendEndpointAsync(_configuration.GetValue<string>("DataArea") + EventBusConstants.Hanet_Device_Push_D2S);
+            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}_{EventBusConstants.HANET}{EventBusConstants.Hanet_Device_Push_D2S}");
             await aa.Send(data);
 
         }
@@ -129,13 +129,28 @@ public class DeviceController : ControllerBase
     [HttpPost("getAllUserFace")]
     public async Task<IActionResult> GetAllUserFace()
     {
-        var count = await _hANET_API_Service.GetCountUserByPlace(HanetParam.PlaceId);
+        //var count = await _hANET_API_Service.GetCountUserByPlace(HanetParam.PlaceId);
 
-        Console.WriteLine(count.ToString());
+        //Console.WriteLine(count.ToString());
+        var countData = 1;
+        var totalData = 0;
+        int page = 0;
+        while (countData > 0)
+        {
+            page++;
+            var top100Data = await _hANET_API_Service.UserByPlaceId(HanetParam.PlaceId, page);
+            foreach (var item in top100Data)
+            {
+                await _HANET_Device_Reponse_Service.AddUserData(item);
+            }
+            countData = top100Data.Count;
+            totalData += countData;
+        }
 
-        var top100Data = await _hANET_API_Service.UserByPlaceId(HanetParam.PlaceId, 1);
 
-        return Ok(top100Data);
+
+
+        return Ok(totalData);
     }
 
 }

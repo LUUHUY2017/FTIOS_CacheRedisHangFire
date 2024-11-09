@@ -501,7 +501,8 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    if (false)
+    var runMigration = configuration["RunMigration"];
+    if (runMigration == "True")
     {
         using (var scope = app.Services.CreateScope())
         {

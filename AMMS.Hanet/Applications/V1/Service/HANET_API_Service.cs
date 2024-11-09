@@ -1,4 +1,5 @@
 ﻿using AMMS.Hanet.Data;
+using AMMS.Hanet.Data.Response;
 using Newtonsoft.Json;
 using RestSharp;
 using Shared.Core.Loggers;
@@ -350,11 +351,12 @@ namespace AMMS.Hanet.Applications.V1.Service
 
                 if (result == null) return 0;
 
-                if (result.returnCode != Hanet_Response_Static.SUCCESSCode)
+                if (result.returnCode != Hanet_Response_Static.SUCCESSCode || result.data == null)
                     return 0;
+
                 int countData = 0;
 
-                countData = (int)result.data;
+                countData = int.Parse(result.data.ToString());
 
                 return countData;
             }
@@ -374,11 +376,13 @@ namespace AMMS.Hanet.Applications.V1.Service
         /// <param name="page"></param>
         /// <param name="pagesize"></param>
         /// <returns></returns>
-        public async Task<List<Hanet_User>> UserByPlaceId(string placeId, int page, int pagesize = 100)
+        public async Task<List<Hanet_User_Data>> UserByPlaceId(string placeId, int page, int pagesize = 50)
         {
-            Hanet_Response_Array result = null;
             try
             {
+                List<Hanet_User_Data> listData = new List<Hanet_User_Data>();
+                Hanet_Response_Array result = null;
+
                 var options = new RestClientOptions(ServerHanet)
                 {
                     MaxTimeout = -1,
@@ -386,8 +390,8 @@ namespace AMMS.Hanet.Applications.V1.Service
                 var client = new RestClient(options);
                 var request = new RestRequest("/person/getListByPlace", Method.Post);
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-                request.AddParameter("token", HanetParam.Token.access_token);
-                request.AddParameter("placeID", placeId);
+                request.AddParameter("token", HanetParamTest.Token.access_token);
+                request.AddParameter("placeID", HanetParamTest.PlaceId);
                 request.AddParameter("type", "0");
                 request.AddParameter("page", page);
                 request.AddParameter("size", pagesize);
@@ -397,32 +401,33 @@ namespace AMMS.Hanet.Applications.V1.Service
                 Console.WriteLine(strResult);
 
                 if (string.IsNullOrEmpty(strResult))
-                    return null;
+                    return listData;
 
                 result = JsonConvert.DeserializeObject<Hanet_Response_Array>(strResult);
 
-                if (result == null) return null;
+                if (result == null) return listData;
 
                 if (result.returnCode != Hanet_Response_Static.SUCCESSCode)
-                    return null;
-                List<Hanet_User> data = null;
+                    return listData;
                 foreach (var obj in result.data)
                 {
-                    var h_user = (Hanet_User)obj;
-                    data.Add(h_user);
+                    string json = JsonConvert.SerializeObject(obj);
+
+                    var h_user = JsonConvert.DeserializeObject<Hanet_User_Data>(json);
+                    if (h_user != null)
+                        listData.Add(h_user);
                 }
 
-                return data;
+                return listData;
             }
             catch (Exception ex)
             {
 
                 Logger.Error(ex);
-                return null;
+                return new List<Hanet_User_Data>();
             }
 
         }
-
 
         /// <summary>
         /// Chuyển ảnh thành stream content
@@ -493,5 +498,25 @@ namespace AMMS.Hanet.Applications.V1.Service
         public string? Url { get; set; }
         public string? departmentID { get; set; }
     }
+    public class HanetParamTest
+    {
+        public static string Host { get; set; } = "https://oauth.hanet.com/";
+        public static string PlaceId { get; set; } = "16588";
+        public static long TimeExpireTick { get; set; }
+        public DateTime TimeExpires
+        {
+            get
+            {
+                return new DateTime(TimeExpireTick);
+            }
+        }
+        public static AccessToken Token { get; set; } = new AccessToken()
+        {
+            refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUwMjQxOTY1NTE2ODA2ODE2NDMiLCJlbWFpbCI6InRyYW5raHVlaHV0QGdtYWlsLmNvbSIsImNsaWVudF9pZCI6IjljOGNmYmQyNTc2ODlhMmE1NDhlNTZlYWI1Njg4NTg1IiwidHlwZSI6ImF1dGhvcml6YXRpb25fY29kZSIsImlhdCI6MTczMTExODQ2MywiZXhwIjoxNzYyNjU0NDYzfQ.lzORDkrCWj95VujvKo03nCNwghbUYleMBGklyuYSLY8",
+            access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUwMjQxOTY1NTE2ODA2ODE2NDMiLCJlbWFpbCI6InRyYW5raHVlaHV0QGdtYWlsLmNvbSIsImNsaWVudF9pZCI6IjljOGNmYmQyNTc2ODlhMmE1NDhlNTZlYWI1Njg4NTg1IiwidHlwZSI6InJlZnJlc2hfdG9rZW4iLCJpYXQiOjE3MzExMTg0NjMsImV4cCI6MTc2MjY1NDQ2M30.iHnLrTWPaXBGdP9ndq0n9Gk1MC_JeYbduVrT2Xa0BcA",
+            expire = 1761709129,
+            token_type = "bearer"
+        };
 
+    }
 }
