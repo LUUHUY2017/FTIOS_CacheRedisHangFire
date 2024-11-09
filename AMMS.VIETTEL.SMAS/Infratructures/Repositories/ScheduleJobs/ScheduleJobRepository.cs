@@ -65,7 +65,7 @@ public class ScheduleJobRepository : IScheduleJobRepository
                                join _or in _db.Organization on _do.OrganizationId equals _or.Id into OT
                                from or in OT.DefaultIfEmpty()
                                where _do.Actived == active
-                               && (!string.IsNullOrWhiteSpace(request.OrganizationId) ? _do.OrganizationId == request.OrganizationId : true)
+                               && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
                                && (!string.IsNullOrWhiteSpace(request.Key) && request.ColumnTable == "ScheduleJobName" ? _do.ScheduleJobName.Contains(request.Key) : true)
                                && (!string.IsNullOrWhiteSpace(request.ScheduleNote) ? _do.ScheduleNote == request.ScheduleNote || _do.ScheduleNote == null : true)
                                select new ScheduleJobReportResponse()

@@ -54,13 +54,25 @@
                         </div>
 
                         <div class="col-md-2 d-flex align-items-end">
-                            <select class="form-select select" required data-placeholder="Vui lòng chọn thiết bị" id="FDevice">
+                            <select class="form-select select" data-placeholder="Vui lòng chọn thiết bị" id="FDevice">
                                 <option selected value="">Tất cả </option>
                                 <option v-for="option in combobox.devices" v-bind:value="option.id">
                                     {{ option.deviceName }} - {{option.serialNumber}}
                                 </option>
                             </select>
                         </div>
+
+
+                        @*   <div class="col-md-2">
+                        <select class="form-select select" required data-placeholder="Vui lòng chọn trường" id="FOrganization">
+                        <option selected value="">Tất cả </option>
+                        <option v-for="option in combobox.organizations" v-bind:value="option.id">
+                        {{ option.organizationName }}
+                        </option>
+                        </select>
+                        </div> *@
+
+
                         <div class="col-md-2 d-flex align-items-end">
                             <button type="button" v-on:click=onLoadData() class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
                         </div>

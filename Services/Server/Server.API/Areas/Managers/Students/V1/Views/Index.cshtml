@@ -64,6 +64,7 @@
                                     <th> Họ tên </th>
                                     <th> Năm sinh </th>
                                     <th> Lớp </th>
+                                    <th> Khuôn mặt </th>
                                     <th> Thời gian cập nhật  </th>
                                 </tr>
                                 <tr>
@@ -84,6 +85,13 @@
                                         <input type="text" class="form-control " v-model="params.className">
                                     </th>
                                     <th>
+                                        <select class="form-select"v-model="params.isFaceName" >
+                                            <option value="">Tất cả</option>
+                                            <option value="Có">Có</option>
+                                            <option value="Không">Không</option>
+                                        </select>
+                                    </th>
+                                    <th>
                                         <input type="datetime" class="form-control " disabled readonly id="createdDate">
                                     </th>
                                 </tr>
@@ -98,6 +106,10 @@
                                         <span>{{ formatDate(item.dateOfBirth) }}</span>
                                     </td>
                                     <td><span>{{item.className}}</span></td>
+                                    <td style=" white-space: nowrap;">
+                                        <span v-if="item.isFace" class='badge bg-primary bg-opacity-10 text-primary'>{{item.isFaceName}}</span>
+                                        <span v-else class='badge bg-warning bg-opacity-10 text-warning'>{{item.isFaceName}}</span>
+                                    </td>
                                     <td style=" white-space: nowrap;">
                                         <span>{{ formatDateTime(item.lastModifiedDate) }}</span>
                                     </td>
@@ -319,6 +331,7 @@
                 className: null,
                 classId: null,
                 status: null,
+                isFaceName: "",
             },
 
             

@@ -145,36 +145,36 @@ public class CronJobService : ICronJobService
             {
                 ExtraProperties extra = new ExtraProperties()
                 {
-                    IsLate = false,
-                    IsOffSoon = false,
-                    IsOffPeriod = false,
-                    LateTime = null,
-                    OffSoonTime = null,
-                    PeriodI = false,
-                    PeriodII = false,
-                    PeriodIII = false,
-                    PeriodIV = false,
-                    PeriodV = false,
-                    PeriodVI = false,
-                    AbsenceTime = item.EventTime
+                    isLate = false,
+                    isOffSoon = false,
+                    isOffPeriod = false,
+                    lateTime = null,
+                    offSoonTime = null,
+                    periodI = false,
+                    periodII = false,
+                    periodIII = false,
+                    periodIV = false,
+                    periodV = false,
+                    periodVI = false,
+                    absenceTime = item.EventTime
                 };
                 var el = new StudentAbsence()
                 {
-                    StudentCode = item.StudentCode,
-                    Value = item.ValueAbSent,
-                    ExtraProperties = extra
+                    studentCode = item.StudentCode,
+                    value = item.ValueAbSent,
+                    extraProperties = extra
                 };
                 studentAbs.Add(el);
             }
             var req = new SyncDataRequest()
             {
-                Id = Guid.NewGuid().ToString(),
-                SchoolCode = orgRes.OrganizationCode,
-                AbsenceDate = DateTime.Now,
-                Section = 0,
-                FormSendSMS = 1,
-                StudentCodeType = 2,
-                StudentAbsenceByDevices = studentAbs,
+                id = Guid.NewGuid().ToString(),
+                schoolCode = orgRes.OrganizationCode,
+                absenceDate = DateTime.Now,
+                section = 0,
+                formSendSMS = 1,
+                studentCodeType = 2,
+                studentAbsenceByDevices = studentAbs,
             };
 
             Logger.Warning("Requests:" + JsonConvert.SerializeObject(req));
