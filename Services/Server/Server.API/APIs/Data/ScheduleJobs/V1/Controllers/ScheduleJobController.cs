@@ -52,7 +52,7 @@ public class ScheduleJobController : AuthBaseAPIController
     [HttpPost("Gets")]
     public async Task<ActionResult> Filter(ScheduleJobFilterRequest request)
     {
-        //request.OrganizationId = GetOrganizationId();
+        request.OrganizationId = GetOrganizationId();
         var data = await _scheduleJobRepository.GetAlls(request);
 
         if (data.Any())
@@ -111,9 +111,9 @@ public class ScheduleJobController : AuthBaseAPIController
         if (retVal.Succeeded)
         {
             if (retVal.Data.ScheduleType == "DONGBOHOCSINH")
-                _ = _cronJobService.SyncStudentFromSmas(retVal.Data.Id);
+                await _cronJobService.SyncStudentFromSmas(retVal.Data.Id);
             if (retVal.Data.ScheduleType == "DONGBODIEMDANH")
-                _ = _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
+                await _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
         }
         return Ok();
     }

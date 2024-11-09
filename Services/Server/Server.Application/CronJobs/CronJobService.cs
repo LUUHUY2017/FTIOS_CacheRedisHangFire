@@ -39,7 +39,7 @@ public class CronJobService : ICronJobService
         foreach (var item in scheduleLists)
         {
             var timeSentHour = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
-            var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
+            var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Minutes : 0;
             if (item.ScheduleNote == "LAPLICHDONGBO")
             {
                 var newCronExpression = item.ScheduleSequential switch
@@ -94,10 +94,23 @@ public class CronJobService : ICronJobService
 
             string schoolCode = orgRes.OrganizationCode; // "20186511"
             var res = await _smartService.PostListStudents(schoolCode);
+
+            var logSchedule = new ScheduleJobLog()
+            {
+                Actived = true,
+                CreatedDate = DateTime.Now,
+                LastModifiedDate = DateTime.Now,
+                OrganizationId = orgRes.Id,
+                Logs = jobRes.ScheduleJobName,
+                ScheduleJobId = jobRes.Id,
+            };
+            int count = 0, i = 0;
             if (res.Any())
             {
+                count = res.Count();
                 foreach (var item in res)
                 {
+                    i = i + 1;
                     var el = new Student()
                     {
                         StudentCode = item.StudentCode,
@@ -105,13 +118,25 @@ public class CronJobService : ICronJobService
                         ClassName = item.ClassName,
                         DateOfBirth = item.BirthDay,
                         FullName = item.StudentName,
-
                         OrganizationId = orgRes.Id,
                         SchoolCode = orgRes.OrganizationCode,
+                        LastModifiedDate = DateTime.Now,
                     };
                     await _studentService.SaveFromService(el);
                 }
+
+                logSchedule.ScheduleJobStatus = true;
+                logSchedule.ScheduleLogNote = "Thành công";
+                logSchedule.Message = string.Format("Đã đồng bộ {0}/{1} học sinh từ SMAS", i, count);
             }
+            else
+            {
+                logSchedule.ScheduleJobStatus = false;
+                logSchedule.ScheduleLogNote = "Thành công";
+                logSchedule.Message = string.Format("Không có bản tin nào trả về");
+            }
+            await _dbContext.ScheduleJobLog.AddAsync(logSchedule);
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
