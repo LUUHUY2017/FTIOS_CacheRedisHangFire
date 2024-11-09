@@ -46,6 +46,7 @@ public partial class TimeAttendenceSyncService
                                where
                                 (request.StartDate != null ? _do.CreatedDate.Date >= request.StartDate.Value.Date : true)
                                 && (request.EndDate != null ? _do.CreatedDate.Date <= request.EndDate.Value.Date : true)
+                                && (!string.IsNullOrWhiteSpace(request.OrganizationId) ? st.OrganizationId == request.OrganizationId : true)
                                 && (!string.IsNullOrWhiteSpace(request.ClassId) ? st.ClassId == request.ClassId : true)
 
                                orderby _do.CreatedDate descending
