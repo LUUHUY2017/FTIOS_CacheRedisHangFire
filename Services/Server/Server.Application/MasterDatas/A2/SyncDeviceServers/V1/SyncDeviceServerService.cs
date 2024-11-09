@@ -59,6 +59,7 @@ public partial class SyncDeviceServerService
                                 (request.StartDate != null ? _do.LastModifiedDate.Date >= request.StartDate.Value.Date : true)
                                 && (request.EndDate != null ? _do.LastModifiedDate.Date <= request.EndDate.Value.Date : true)
 
+                                && (!string.IsNullOrWhiteSpace(request.OrganizationId) ? la.OrganizationId == request.OrganizationId : true)
                                 && (!string.IsNullOrWhiteSpace(request.ClassId) ? la.ClassId == request.ClassId : true)
 
                                orderby _do.LastModifiedDate descending
