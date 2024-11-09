@@ -62,4 +62,8 @@
 		<ProjectReference Include="..\Server.Core\Server.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Datas\MasterData\MySqlMigrations\" />
+	</ItemGroup>
+
 </Project>
