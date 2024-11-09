@@ -18,7 +18,7 @@ namespace Server.API.APIs.Data.Devices.V1.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-[AuthorizeMaster(Roles = RoleConst.SuperAdmin_Role)]
+[AuthorizeMaster]
 public class DeviceController : AuthBaseAPIController
 {
     private readonly DeviceService _deviceService;
