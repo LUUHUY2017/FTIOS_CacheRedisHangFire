@@ -15,8 +15,6 @@
     <Compile Remove="APIs\DataInOutCaches\**" />
     <Compile Remove="APIs\Data\**" />
     <Compile Remove="APIs\Oauths\**" />
-    <Compile Remove="APIs\Reports\VehicleInOuts\V1\Requests\**" />
-    <Compile Remove="APIs\Reports\VehicleInOuts\V1\Responses\**" />
     <Compile Remove="APIs\Test\**" />
     <Compile Remove="Areas\Managers\AutoNotiDevices\**" />
     <Compile Remove="Areas\Managers\AutoReportInOuts\**" />
@@ -35,8 +33,6 @@
     <Content Remove="APIs\DataInOutCaches\**" />
     <Content Remove="APIs\Data\**" />
     <Content Remove="APIs\Oauths\**" />
-    <Content Remove="APIs\Reports\VehicleInOuts\V1\Requests\**" />
-    <Content Remove="APIs\Reports\VehicleInOuts\V1\Responses\**" />
     <Content Remove="APIs\Test\**" />
     <Content Remove="Areas\Managers\AutoNotiDevices\**" />
     <Content Remove="Areas\Managers\AutoReportInOuts\**" />
@@ -55,8 +51,6 @@
     <EmbeddedResource Remove="APIs\DataInOutCaches\**" />
     <EmbeddedResource Remove="APIs\Data\**" />
     <EmbeddedResource Remove="APIs\Oauths\**" />
-    <EmbeddedResource Remove="APIs\Reports\VehicleInOuts\V1\Requests\**" />
-    <EmbeddedResource Remove="APIs\Reports\VehicleInOuts\V1\Responses\**" />
     <EmbeddedResource Remove="APIs\Test\**" />
     <EmbeddedResource Remove="Areas\Managers\AutoNotiDevices\**" />
     <EmbeddedResource Remove="Areas\Managers\AutoReportInOuts\**" />
@@ -75,8 +69,6 @@
     <None Remove="APIs\DataInOutCaches\**" />
     <None Remove="APIs\Data\**" />
     <None Remove="APIs\Oauths\**" />
-    <None Remove="APIs\Reports\VehicleInOuts\V1\Requests\**" />
-    <None Remove="APIs\Reports\VehicleInOuts\V1\Responses\**" />
     <None Remove="APIs\Test\**" />
     <None Remove="Areas\Managers\AutoNotiDevices\**" />
     <None Remove="Areas\Managers\AutoReportInOuts\**" />

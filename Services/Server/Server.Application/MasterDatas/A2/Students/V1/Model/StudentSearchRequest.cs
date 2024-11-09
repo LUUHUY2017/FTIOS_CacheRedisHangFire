@@ -5,6 +5,7 @@ public class StudentSearchRequest : BaseReportRequest
 {
     public string? ClassId { get; set; }
     public string? SchoolyearId { get; set; }
+    public string? OrganizationId { get; set; }
 }
 
 

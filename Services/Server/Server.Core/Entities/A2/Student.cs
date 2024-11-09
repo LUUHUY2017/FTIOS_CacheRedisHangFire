@@ -33,5 +33,5 @@ public class Student : EntityBase
     public string? SyncCodeClass { get; set; }
     public string? SchoolCode { get; set; }
 
-
+    //public Person? Person { get;set; }
 }

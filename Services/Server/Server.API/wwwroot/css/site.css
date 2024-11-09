@@ -295,6 +295,7 @@
     height: 230px;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC);
 }
+
 .div-image-capture {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC);
 }
@@ -316,6 +317,7 @@ video, img {
     margin-right: 11px;
     float: left;
 }
+
 .block-color {
     height: 20px;
     width: 20px;
@@ -334,16 +336,22 @@ video, img {
 }
 
 
-  .ROW_DANGER {
+.ROW_DANGER {
     background-color: #ff632a;
 }
+
 .ROW_WARN {
     background-color: #ffcf76;
 }
+
 .float-right.pagination-detail {
     float: right !important;
 }
 
 li.page-item {
     cursor: pointer;
+}
+
+.modal-body {
+    padding: 10px !important;
 }
