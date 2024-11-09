@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Server.Application.MasterDatas.A2.Students.V1;
-using Server.Application.MasterDatas.A2.Students.V1.Model;
 using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A2;
@@ -99,14 +98,16 @@ public class CronJobService : ICronJobService
             {
                 foreach (var item in res)
                 {
-                    var el = new DtoStudentRequest()
+                    var el = new Student()
                     {
                         StudentCode = item.StudentCode,
                         ClassId = item.ClassId,
                         ClassName = item.ClassName,
                         DateOfBirth = item.BirthDay,
                         FullName = item.StudentName,
+
                         OrganizationId = orgRes.Id,
+                        SchoolCode = orgRes.OrganizationCode,
                     };
                     await _studentService.SaveFromService(el);
                 }
