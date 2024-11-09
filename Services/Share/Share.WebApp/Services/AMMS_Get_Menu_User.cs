@@ -6,7 +6,7 @@ public class AMMS_Get_Menu_User
     public static string? Host = "";
     public static string? AccessToken = "";
 
-    public static List<MenuShowModel> GetMenuByUser(List<PageObject> pages, List<CategoryMenu> categories, List<string>? pageIds)
+    public static List<MenuShowModel> GetMenuByUser(List<PageObject> pages, List<CategoryMenu> categories, List<string>? pageIds, bool isSupeAdmin = false)
     {
         var menu = new List<MenuShowModel>();
         try
@@ -43,9 +43,10 @@ public class AMMS_Get_Menu_User
 
             if (pageIds != null && pageIds.Count > 0)
                 menu1 = menu1.Where(p => pageIds.Contains(p.Id)).ToList();
+            if (isSupeAdmin)
+                menu1 = menu1;
             else
-                menu1 = new List<MenuShowModel>() ;
-
+                menu1 = new List<MenuShowModel>();
 
             // Menu cấp 1
             var menu_level1 = menu1.Where(o => o.Level == 1).GroupBy(o => o.CategoryName).Select(o => new MenuShowModel()

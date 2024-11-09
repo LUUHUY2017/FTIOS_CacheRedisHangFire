@@ -111,9 +111,9 @@ public class ScheduleJobController : AuthBaseAPIController
         if (retVal.Succeeded)
         {
             if (retVal.Data.ScheduleType == "DONGBOHOCSINH")
-                await _cronJobService.SyncStudentFromSmas(retVal.Data.Id);
+                _ = _cronJobService.SyncStudentFromSmas(retVal.Data.Id);
             if (retVal.Data.ScheduleType == "DONGBODIEMDANH")
-                await _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
+                _ = _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
         }
         return Ok();
     }
