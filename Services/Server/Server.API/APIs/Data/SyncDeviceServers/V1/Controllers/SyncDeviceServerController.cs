@@ -57,6 +57,7 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
         {
             try
             {
+                request.OrganizationId = GetOrganizationId();
                 var datas = await _syncDeviceService.GetAlls(request);
                 return Ok(datas);
 
