@@ -152,6 +152,7 @@ public class UserController : Controller
             {
                 Id = Guid.NewGuid().ToString(),
                 FirstName = model.FirstName,
+                LastName = model.LastName,
                 UserName = model.Email,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
@@ -165,23 +166,6 @@ public class UserController : Controller
 
                 await _accountService.SendEmailConfirm(model.Email);
 
-                if (!string.IsNullOrEmpty(model.GroupRole))
-                {
-                    var groupRoleId = (await _context.RoleGroup.FirstOrDefaultAsync(x => x.Name == model.GroupRole))?.Id;
-                    if (groupRoleId == null)
-                    {
-                        var groupAdd = await _context.RoleGroup.AddAsync(new RoleGroup() {Name = model.GroupRole });
-                        await _context.SaveChangesAsync();
-                        groupRoleId = groupAdd.Entity.Id;
-                    } 
-
-                    await _context.RoleGroupUser.AddAsync(new RoleGroupUser()
-                    {
-                        UserId = user.Id,
-                        RoleGroupId = groupRoleId,
-                    });
-                    _context.SaveChanges();
-                }
                 return Ok(new Result<ApplicationUser>
                 {
                     Code = 0,
@@ -244,6 +228,7 @@ public class UserController : Controller
                 curent_user.EmailConfirmed = false;
             }
             curent_user.FirstName = model.FirstName;
+            curent_user.LastName = model.LastName;
             curent_user.UserName = model.Email;
             curent_user.Email = model.Email;
             curent_user.PhoneNumber = model.PhoneNumber;
