@@ -39,6 +39,24 @@ public class DeviceRepository : RepositoryBaseMasterData<Device>, IDeviceReposit
             throw new Exception(e.Message);
         }
     }
+
+    public async Task<List<DeviceResponse>> GetByOrgId(bool actived, string organizationId)
+    {
+        try
+        {
+            var _data = await (from o in _dbContext.Device
+                               where (actived != null ? o.Actived == actived : true)
+                                && ((!string.IsNullOrEmpty(organizationId) && organizationId != "0") ? organizationId == o.OrganizationId : true)
+                               select new DeviceResponse(o))
+                               .ToListAsync();
+            return _data;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
     public async Task<Result<Device>> UpdateAsyncV2(Device data)
     {
         string message = "";
