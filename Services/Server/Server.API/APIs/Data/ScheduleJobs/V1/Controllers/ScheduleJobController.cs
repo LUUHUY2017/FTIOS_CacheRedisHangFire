@@ -52,7 +52,7 @@ public class ScheduleJobController : AuthBaseAPIController
     [HttpPost("Gets")]
     public async Task<ActionResult> Filter(ScheduleJobFilterRequest request)
     {
-        request.OrganizationId = GetOrganizationId();
+        //request.OrganizationId = GetOrganizationId();
         var data = await _scheduleJobRepository.GetAlls(request);
 
         if (data.Any())
