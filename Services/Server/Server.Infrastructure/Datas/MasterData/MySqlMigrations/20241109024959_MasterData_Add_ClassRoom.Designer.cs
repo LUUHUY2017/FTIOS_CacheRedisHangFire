@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Infrastructure.Datas.MasterData;
 
@@ -10,9 +11,10 @@ using Server.Infrastructure.Datas.MasterData;
 namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 {
     [DbContext(typeof(MasterDataDbContext))]
-    partial class MasterDataDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241109024959_MasterData_Add_ClassRoom")]
+    partial class MasterData_Add_ClassRoom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1796,69 +1798,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.ToTable("Student");
                 });
 
-            modelBuilder.Entity("Server.Core.Entities.A2.StudentClassRoomYear", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<bool?>("Actived")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("ClassRoomId")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Logs")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("OrganizationId")
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Reason")
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("SchoolId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("SchoolYearId")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassRoomId");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.HasIndex("SchoolYearId");
-
-                    b.ToTable("StudentClassRoomYear");
-                });
-
             modelBuilder.Entity("Server.Core.Entities.A3.Images", b =>
                 {
                     b.Property<string>("Id")
@@ -2298,31 +2237,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasForeignKey("PersonTypeId");
 
                     b.Navigation("PersonType");
-                });
-
-            modelBuilder.Entity("Server.Core.Entities.A2.StudentClassRoomYear", b =>
-                {
-                    b.HasOne("Server.Core.Entities.A2.Organization", "ClassRoom")
-                        .WithMany()
-                        .HasForeignKey("ClassRoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Core.Entities.A2.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId");
-
-                    b.HasOne("Server.Core.Entities.A2.SchoolYear", "SchoolYear")
-                        .WithMany()
-                        .HasForeignKey("SchoolYearId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ClassRoom");
-
-                    b.Navigation("Organization");
-
-                    b.Navigation("SchoolYear");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.RoleGroup", b =>
