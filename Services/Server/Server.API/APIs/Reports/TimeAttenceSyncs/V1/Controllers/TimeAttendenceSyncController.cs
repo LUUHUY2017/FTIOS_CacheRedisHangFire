@@ -45,6 +45,7 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
     {
         try
         {
+            request.OrganizationId = GetOrganizationId();
             var data = await _timeService.GetAlls(request);
             return Ok(data);
         }

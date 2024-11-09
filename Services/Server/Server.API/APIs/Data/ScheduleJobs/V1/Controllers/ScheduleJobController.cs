@@ -3,7 +3,6 @@ using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.API.APIs.Data.ScheduleJobs.V1.Requests;
 using Server.Application.CronJobs;
 using Server.Application.MasterDatas.A2.ScheduleJobs.V1.Models;
 using Server.Core.Entities.A2;
@@ -53,6 +52,7 @@ public class ScheduleJobController : AuthBaseAPIController
     [HttpPost("Gets")]
     public async Task<ActionResult> Filter(ScheduleJobFilterRequest request)
     {
+        //request.OrganizationId = GetOrganizationId();
         var data = await _scheduleJobRepository.GetAlls(request);
 
         if (data.Any())

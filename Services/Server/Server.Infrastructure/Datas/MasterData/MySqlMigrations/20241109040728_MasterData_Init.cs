@@ -180,7 +180,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Emailconfiguration",
+                name: "EmailConfiguration",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
@@ -213,7 +213,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Emailconfiguration", x => x.Id);
+                    table.PrimaryKey("PK_EmailConfiguration", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -768,6 +768,38 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "SchoolYear",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Start = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    End = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Actived = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    Reason = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Logs = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OrganizationId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ReferenceId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SchoolYear", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "SendEmail",
                 columns: table => new
                 {
@@ -813,7 +845,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "SendEmailLog",
+                name: "SendEmailLogs",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
@@ -842,7 +874,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SendEmailLog", x => x.Id);
+                    table.PrimaryKey("PK_SendEmailLogs", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -1173,6 +1205,41 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ClassRoom",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedBy = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Actived = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    Reason = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Logs = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OrganizationId = table.Column<string>(type: "varchar(50)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ReferenceId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassRoom", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClassRoom_Organization_OrganizationId",
+                        column: x => x.OrganizationId,
+                        principalTable: "Organization",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Person",
                 columns: table => new
                 {
@@ -1249,8 +1316,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     RoleId = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    A0_RoleGroupId = table.Column<string>(type: "varchar(50)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedBy = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -1271,8 +1336,8 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 {
                     table.PrimaryKey("PK_RoleGroupDetail", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RoleGroupDetail_RoleGroup_A0_RoleGroupId",
-                        column: x => x.A0_RoleGroupId,
+                        name: "FK_RoleGroupDetail_RoleGroup_RoleGroupId",
+                        column: x => x.RoleGroupId,
                         principalTable: "RoleGroup",
                         principalColumn: "Id");
                 })
@@ -1287,8 +1352,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     RoleGroupId = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserId = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    A0_RoleGroupId = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedBy = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -1310,12 +1373,70 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 {
                     table.PrimaryKey("PK_RoleGroupUser", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RoleGroupUser_RoleGroup_A0_RoleGroupId",
-                        column: x => x.A0_RoleGroupId,
+                        name: "FK_RoleGroupUser_RoleGroup_RoleGroupId",
+                        column: x => x.RoleGroupId,
                         principalTable: "RoleGroup",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "StudentClassRoomYear",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SchoolId = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ClassRoomId = table.Column<string>(type: "varchar(50)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SchoolYearId = table.Column<string>(type: "varchar(50)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedBy = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Actived = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    Reason = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Logs = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OrganizationId = table.Column<string>(type: "varchar(50)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ReferenceId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentClassRoomYear", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentClassRoomYear_Organization_ClassRoomId",
+                        column: x => x.ClassRoomId,
+                        principalTable: "Organization",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentClassRoomYear_Organization_OrganizationId",
+                        column: x => x.OrganizationId,
+                        principalTable: "Organization",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_StudentClassRoomYear_SchoolYear_SchoolYearId",
+                        column: x => x.SchoolYearId,
+                        principalTable: "SchoolYear",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassRoom_OrganizationId",
+                table: "ClassRoom",
+                column: "OrganizationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Person_PersonTypeId",
@@ -1323,14 +1444,29 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 column: "PersonTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleGroupDetail_A0_RoleGroupId",
+                name: "IX_RoleGroupDetail_RoleGroupId",
                 table: "RoleGroupDetail",
-                column: "A0_RoleGroupId");
+                column: "RoleGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleGroupUser_A0_RoleGroupId",
+                name: "IX_RoleGroupUser_RoleGroupId",
                 table: "RoleGroupUser",
-                column: "A0_RoleGroupId");
+                column: "RoleGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentClassRoomYear_ClassRoomId",
+                table: "StudentClassRoomYear",
+                column: "ClassRoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentClassRoomYear_OrganizationId",
+                table: "StudentClassRoomYear",
+                column: "OrganizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentClassRoomYear_SchoolYearId",
+                table: "StudentClassRoomYear",
+                column: "SchoolYearId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -1342,10 +1478,13 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 name: "BusinessUnit");
 
             migrationBuilder.DropTable(
+                name: "ClassRoom");
+
+            migrationBuilder.DropTable(
                 name: "Device");
 
             migrationBuilder.DropTable(
-                name: "Emailconfiguration");
+                name: "EmailConfiguration");
 
             migrationBuilder.DropTable(
                 name: "Image");
@@ -1355,9 +1494,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
             migrationBuilder.DropTable(
                 name: "Notification");
-
-            migrationBuilder.DropTable(
-                name: "Organization");
 
             migrationBuilder.DropTable(
                 name: "Page");
@@ -1396,10 +1532,13 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 name: "SendEmail");
 
             migrationBuilder.DropTable(
-                name: "SendEmailLog");
+                name: "SendEmailLogs");
 
             migrationBuilder.DropTable(
                 name: "Student");
+
+            migrationBuilder.DropTable(
+                name: "StudentClassRoomYear");
 
             migrationBuilder.DropTable(
                 name: "TimeAttendenceDetail");
@@ -1421,6 +1560,12 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
             migrationBuilder.DropTable(
                 name: "RoleGroup");
+
+            migrationBuilder.DropTable(
+                name: "Organization");
+
+            migrationBuilder.DropTable(
+                name: "SchoolYear");
         }
     }
 }

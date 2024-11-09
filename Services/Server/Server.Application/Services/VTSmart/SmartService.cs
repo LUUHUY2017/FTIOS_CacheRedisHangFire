@@ -376,7 +376,7 @@ public sealed class SmartService
             //if (_accessToken != null)
             {
                 string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, schoolCode); //"20186511"
-                req.SecretKey = _secretKey;
+                req.secretKey = _secretKey;
                 var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/diem-danh-tich-hop-thiet-bi", urlServerName);
                 var parameter = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
                 using (HttpClient client = new HttpClient())

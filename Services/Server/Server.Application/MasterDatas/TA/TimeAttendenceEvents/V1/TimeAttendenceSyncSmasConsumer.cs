@@ -36,11 +36,11 @@ public class TimeAttendenceSyncSmasConsumer : IConsumer<SyncDataRequest>
             var datas = context.Message;
             Logger.Information("Consumer:" + datas);
 
-            var res = await _smartService.PostSyncAttendence2Smas(datas, datas.SchoolCode);
+            var res = await _smartService.PostSyncAttendence2Smas(datas, datas.schoolCode);
 
             if (res != null)
             {
-                var item = new TimeAttendenceSync() { Id = datas.Id, };
+                var item = new TimeAttendenceSync() { Id = datas.id, };
                 if (res.IsSuccess)
                 {
                     string response = JsonConvert.SerializeObject(res);

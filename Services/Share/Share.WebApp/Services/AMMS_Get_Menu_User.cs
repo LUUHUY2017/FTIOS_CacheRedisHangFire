@@ -43,8 +43,8 @@ public class AMMS_Get_Menu_User
 
             if (pageIds != null && pageIds.Count > 0)
                 menu1 = menu1.Where(p => pageIds.Contains(p.Id)).ToList();
-            else
-                menu1 = menu1;
+            //else
+            //    menu1 = menu1;
 
 
             // Menu cấp 1

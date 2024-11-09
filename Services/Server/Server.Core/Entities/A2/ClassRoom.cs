@@ -2,21 +2,20 @@
 
 namespace Server.Core.Entities.A2;
 
-public class SchoolYear: EntityBase
-{
-    /// <summary>
-    /// Tên năm học
-    /// </summary>
-    public string Name {  get; set; }
-    /// <summary>
-    /// Ngày bắt đầu năm học
-    /// </summary>
-    public DateTime Start { get; set; }
-    /// <summary>
-    /// Ngày kết thúc năm học
-    /// </summary>
-    public DateTime End { get; set; }
+public class ClassRoom : EntityBase
+{ 
+    ///// <summary>
+    ///// ID trường học
+    ///// </summary>
+    //public string SchoolId { get;set; }
 
+    public Organization? Organization { get; set; }
+
+
+    /// <summary>
+    /// Tên lớp học
+    /// </summary>
+    public string Name { get; set; }
 }
 
 ///// <summary>

@@ -418,8 +418,8 @@
                 axios.put('/api/v1/ScheduleJob/Edit', this.item, this.object.config).then(response => {
                     $('.loader').hide(0);
                     if (response.data.succeeded) {
-                        _Schedule.object.editAction = true; 
-                        _Schedule.item = response.data.data; 
+                        _Schedule.object.editAction = true;
+                        _Schedule.item = response.data.data;
                         alertify.success(response.data.message);
 
                         bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();

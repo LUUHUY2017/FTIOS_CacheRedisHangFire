@@ -11,8 +11,8 @@ using Server.Infrastructure.Datas.MasterData;
 namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 {
     [DbContext(typeof(MasterDataDbContext))]
-    [Migration("20241109025359_MasterData_Add_StudentClassRoomYear")]
-    partial class MasterData_Add_StudentClassRoomYear
+    [Migration("20241109040728_MasterData_Init")]
+    partial class MasterData_Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

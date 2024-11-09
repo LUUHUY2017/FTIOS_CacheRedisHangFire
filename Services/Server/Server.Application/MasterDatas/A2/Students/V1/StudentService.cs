@@ -64,7 +64,6 @@ public class StudentService
         try
         {
             var retval = await SyncToDevice(data);
-
             if (retval.Any())
             {
                 foreach (var item in retval)
@@ -92,20 +91,22 @@ public class StudentService
         try
         {
             var stu = _map.Map<Student>(request);
-            var res = await _studentRepository.SaveDataAsync(stu);
-            if (res.Succeeded)
-            {
-                var per = new Person()
-                {
-                    Id = res.Data.Id,
-                    Actived = true,
-                    PersonCode = request.StudentCode,
-                    FirstName = request.Name,
-                    LastName = request.FullName,
-                    CitizenId = request.IdentifyNumber,
-                };
-                var data = await _personRepository.SaveAsync(per);
-            }
+
+
+            //var res = await _studentRepository.SaveDataAsync(stu);
+            //if (res.Succeeded)
+            //{
+            //    var per = new Person()
+            //    {
+            //        Id = res.Data.Id,
+            //        Actived = true,
+            //        PersonCode = request.StudentCode,
+            //        FirstName = request.Name,
+            //        LastName = request.FullName,
+            //        CitizenId = request.IdentifyNumber,
+            //    };
+            //    var data = await _personRepository.SaveAsync(per);
+            //}
 
             try
             {
@@ -126,6 +127,7 @@ public class StudentService
                 string imageName = stu.Id + ".jpg";
                 string fileName = imageFullFolder + imageName;
 
+
                 if (!string.IsNullOrWhiteSpace(request.ImageBase64))
                 {
                     Image img = Common.Base64ToImage(request.ImageBase64);
@@ -142,6 +144,7 @@ public class StudentService
                         request.ImageBase64 = Common.ConvertFileImageToBase64(fileName);
                     }
                 }
+
                 await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64);
             }
             catch (Exception ex)
@@ -151,6 +154,8 @@ public class StudentService
 
             stu.ImageSrc = request.ImageBase64;
             var revt = await PushPersonByEventBusAsync(stu);
+
+
             return new Result<DtoStudentRequest>($"Cập nhật thành công", true);
         }
         catch (Exception e)
@@ -174,7 +179,7 @@ public class StudentService
         try
         {
             // orrgniaztionId
-            var _devis = _dbContext.Device.Where(o => o.Actived == true).ToList();
+            var _devis = _dbContext.Device.Where(o => o.Actived == true && stu.OrganizationId == o.OrganizationId).ToList();
             if (_devis.Any())
             {
                 foreach (var device in _devis)
@@ -282,7 +287,7 @@ public class StudentService
                          join _la in _dbContext.PersonFace on _do.Id equals _la.PersonId into K
                          from la in K.DefaultIfEmpty()
                          where _do.Actived == actived
-                         && ((!string.IsNullOrWhiteSpace(request.OrganizationId)) ? _do.OrganizationId == request.OrganizationId : true)
+                            && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
 
                          orderby _do.CreatedDate descending
                          select new DtoStudentResponse()
@@ -315,7 +320,9 @@ public class StudentService
                              Name = _do.Name,
                              SortOrderByClass = _do.SortOrderByClass,
                              GradeCode = _do.GradeCode,
-                             ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null
+                             ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null,
+                             IsFace = la != null ? true : false,
+                             IsFaceName = la != null ? "Có" : "Không",
                          });
 
             return _data;
@@ -359,6 +366,11 @@ public class StudentService
                 if (filter.Comparison == 0)
                     query = query.Where(p => p.Status.Contains(filter.Value.Trim()));
                 break;
+
+            case "isfacename":
+                if (!string.IsNullOrWhiteSpace(filter.Value))
+                    query = query.Where(p => p.IsFaceName.Contains(filter.Value.Trim()));
+                break;
             case "identifynumber":
                 if (filter.Comparison == 0)
                     query = query.Where(p => p.IdentifyNumber.Contains(filter.Value.Trim()));
@@ -375,13 +387,11 @@ public class StudentService
 
 
 
-    public async Task<Result<DtoStudentRequest>> SaveFromService(DtoStudentRequest request)
+    public async Task<Result<DtoStudentRequest>> SaveFromService(Student request)
     {
         try
         {
-            var stu = _map.Map<Student>(request);
-            await _studentRepository.SaveDataAsync(stu);
-
+            await _studentRepository.SaveDataAsync(request);
             var per = new Person()
             {
                 Id = request.Id,
