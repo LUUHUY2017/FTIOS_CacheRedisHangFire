@@ -10,6 +10,8 @@ public class SyncDeviceServerReportRes : PersonSynToDevice
 
     public string IPAddress { get; set; }
     public string DeviceName { get; set; }
+
+
 }
 
 

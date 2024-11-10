@@ -501,11 +501,15 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    if (false)
+    var runMigration = configuration["RunMigration"];
+    if (runMigration == "True")
     {
         using (var scope = app.Services.CreateScope())
         {
-            //await scope.ServiceProvider.GetRequiredService<MasterDataDbContext>().Database.MigrateAsync();
+            await scope.ServiceProvider.GetRequiredService<IdentityContext>().Database.MigrateAsync();
+            await scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>().Database.MigrateAsync();
+            await scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.MigrateAsync();
+            await scope.ServiceProvider.GetRequiredService<MasterDataDbContext>().Database.MigrateAsync();
 
             var _roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var roles = _roleManager.Roles.ToList();

@@ -400,8 +400,8 @@
                     }
                 }
                 else {
-                    console.log(this.token);
-                    axios.get('/api/v1/Organization/GetForUser',this.object.config).then(response => {
+                    //console.log(this.token);
+                    axios.get('/api/v1/Organization/Gets',this.object.config).then(response => {
                         if (response.request.responseURL.includes('Auth/Login')) {
                             window.location = window.location.href;
                         }

@@ -5,7 +5,6 @@
 
 <!-- Main content -->
 <div class="content-wrapper" id="webui">
-
     <!-- Inner content -->
     <div class="content-inner">
 
@@ -44,33 +43,6 @@
                                       placeholder="Vui lòng chọn thời gian...">
                             </datetime>
                         </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Trường học</label>
-                            <select id="schoolLevelCode" class="form-control select" v-model:value="dtoClass.schoolLevelCode">
-                                <option selected value="">Vui lòng chọn trường học </option>
-                                <option v-for="option in combobox.schools" v-bind:value="option.schoolLevelCode">
-                                    {{ option.schoolLevelName }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Năm học</label>
-                            <select id="schoolYearId" class="form-control select" v-model:value="dtoClass.schoolYearId">
-                                <option selected value="">Vui lòng chọn năm học </option>
-                                <option v-for="option in combobox.schoolYears" v-bind:value="option.schoolYearId">
-                                    {{ option.code }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Lớp</label>
-                            <select id="classId" class="form-control select">
-                                <option selected value="">Vui lòng chọn lớp </option>
-                                <option v-for="option in combobox.classes" v-bind:value="option.id">
-                                    {{ option.className }}
-                                </option>
-                            </select>
-                        </div>
                     </div>
                     <div class="row mb-3">
                         <div class="text-start">
@@ -81,13 +53,119 @@
 
                 </div>
             </div>
+
             <div class="card">
                 <div class="card-body">
-                    <bootstrap-table :columns="columns" :data="data" :options="optionTable.options"></bootstrap-table>
+                    <div id="table" class="table-responsive">
+                        <table class="table table-bordered table-striped  table-hover">
+                            <thead class="">
+                                <tr>
+                                    <th>Stt</th>
+                                    <th> Mã học sinh </th>
+                                    <th> Họ tên </th>
+                                    <th> Buổi điểm danh</th>
+                                    <th> Thời gian diểm danh  </th>
+                                    <th> Lớp </th>
+                                    <th> Trường </th>
+                                    <th> Thiết bị </th>
+                                    <th> Năm sinh </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <button type="button" class="btn btn-primary" v-on:click="onLoadData(true)"> <i class="fa fa-search"></i> </button>
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control" v-model="params.studentCode">
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control " v-model="params.studentName">
+                                    </th>
+                                    <th style=" white-space: nowrap;">
+                                        <select class="form-select" v-model="params.attendenceSection">
+                                            <option value="">Tất cả</option>
+                                            <option value="0">Sáng</option>
+                                            <option value="1">Chiều</option>
+                                            <option value="2">Tối</option>
+                                        </select>
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control " disabled>
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control " v-model="params.className">
+                                    </th>
+                                    <th style=" white-space: nowrap;">
+                                        <input type="text" class="form-control " v-model="params.organizationName">
+                                    </th> 
+                                    <th>
+                                        <input type="text" class="form-control " v-model="params.deviceId">
+                                    </th>
+                                   
+                                    <th>
+                                        <input type="datetime" class="form-control " disabled readonly id="createdDate">
+                                    </th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, index) in data">
+                                    <td><span>{{index  +1 }}</span></td>
+                                    <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
+                                    <td style=" white-space: nowrap;"><span>{{item.studentName}}</span></td>
+                                    <td style=" white-space: nowrap;">
+                                        <span v-if="item.attendenceSection ==0" class='badge bg-success  bg-opacity-10 text-success '>Sáng</span>
+                                        <span v-else-if="item.attendenceSection ==1" class='badge bg-primary bg-opacity-10 text-primary'>Chiều</span>
+                                        <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Tối</span>
+                                    </td>
+                                    <td style=" white-space: nowrap;">
+                                        <span>{{ formatDateTime(item.eventTime) }}</span>
+                                    </td>
+                                    <td><span>{{item.className}}</span></td>
+                                    <td><span>{{item.organizationName}}</span></td>
+                                    @* <td><span>{{item.deviceName}}</span></td> *@
+                                    <td><span>{{item.deviceId}}</span></td>
+                                    
+                                    <td style=" white-space: nowrap;">
+                                        <span>{{ formatDate(item.dateOfBirth) }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
+                    <div class="phan-trang " style="width: 100%;">
+                        <div class="fixed-table-pagination">
+                            <div class="row">
+                                <div style="float:left" class="col-md-8">
+                                    <div style=" margin-top: 10px !important; overflow:hidden" class=" pagination">
+                                        <ul id="pagingNumbers" class="pagination" style="margin: 0px !important;">  </ul>
+                                    </div>
+                                </div>
+
+                                <div style="float: right;text-align: right;" class="col-md-4 ">
+                                    <div style=" margin-top: 10px !important; " class=" pagination-detail">
+                                        <span class="pagination-info">
+                                            Showing {{firstRow}} to {{totalDataRowNext}} of {{totalRow}} rows
+                                        </span>
+                                        <span class="page-list">
+                                            <select v-model:value="filter.RowsPerPage" id="RowsPerPage" class=" " v-on:change="renderRowOnPage()">
+                                                <option value="10">10</option>
+                                                <option selected value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                                <option value="250">250</option>
+                                            </select>
+                                            rows per page
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 
                     <div class="row ">
                         <div class="text-danger">Lưu ý:</div>
-                        <div class="col-md-12" style=" justify-content: center;">
+                    @*     <div class="col-md-12" style=" justify-content: center;">
                             <ul style="list-style-type: none; padding-left: 0px;">
                                 <li class="list-color"><span class="block-color ROW_WHITE"> C </span> Có mặt </li>
                                 <li class="list-color"><span class="block-color ROW_SUCCESS">K </span> Nghỉ không phép </li>
@@ -95,12 +173,12 @@
                                 <li class="list-color" style="margin-left: 1px;"><span class="block-color  ROW_DANGER"> X </span> Trường hợp đặc biệt (Đi muộn, bỏ tiết, về sớm)</li>
                             </ul>
                         </div>
-
+ *@
                         <div class="col-md-12" style=" justify-content: center;">
                             <ul style="list-style-type: none; padding-left: 0px;">
-                                <li class="list-color"><span class="block-color ROW_WHITE"> 0 </span> Sáng  </li>
-                                <li class="list-color"><span class="block-color ROW_SUCCESS">1 </span> Chiều </li>
-                                <li class="list-color"><span class="block-color ROW_WARN ">2 </span> Tối </li>
+                                <li class="list-color"><span class="block-color bg-success"> 0 </span> Sáng  </li>
+                                <li class="list-color"><span class="block-color bg-primary">1 </span> Chiều </li>
+                                <li class="list-color"><span class="block-color bg-warning ">2 </span> Tối </li>
                             </ul>
                         </div>
                     </div>
@@ -156,40 +234,20 @@
 
 <script>
     $(document).ready(function () {
-        $('#schoolLevelCode').on("change", function () {
-            _bcX.dtoClass.schoolLevelCode = $(this).val() ?? null;
-
-            _bcX.combobox.classes = [];
-            _bcX.combobox.data = [];
-
-            _bcX.onPostClass();
-            _bcX.onLoadData();
-
-            localStorage.setItem('schoolLevelCode', $(this).val());
-
-        });
-
-        $('#schoolYearId').on("change", function () {
-            _bcX.filter.schoolYearId = $(this).val() ?? null;
-            _bcX.dtoClass.schoolYearId = $(this).val() ?? null;
-            _bcX.dtoClass.schoolyear = $(this).find(":selected").text()?.trim() ?? null;
-
-            _bcX.combobox.classes = [];
-            _bcX.combobox.data = [];
-
-            _bcX.onPostClass();
-            _bcX.onLoadData();
+        // $('#classId').on("change", function () {
+        //     _bcX.filter.classId = $(this).val() ?? null;
+        //     _bcX.combobox.data = [];
+        //     _bcX.onLoadData();
+        // });
 
 
-            localStorage.setItem('schoolYearId', $(this).val()) ?? null;
-            localStorage.setItem('schoolyear', $(this).find(":selected").text()?.trim());
+        $("ul.pagination").on("click", "li", function () {
+            var pageNumber = $(this).find("a").data('number');
+            if (pageNumber != undefined) {
+                _bcX.filter.CurentPage = pageNumber;
+                _bcX.onLoadData();
+            }
 
-        });
-
-        $('#classId').on("change", function () {
-            _bcX.filter.classId = $(this).val() ?? null;
-            _bcX.combobox.data = [];
-            _bcX.onLoadData();
         });
     });
 
@@ -200,140 +258,143 @@
         },
         data: {
             filter: {
-                export: 0,
                 classId: null,
                 schoolYearId: null,
 
                 startDate: formatDateTime(new Date()),
                 endDate: formatDateTime(new Date()),
+
+                RowsPerPage: 50,
+                CurentPage: 1,
+                Actived: "1",
+                FilterItems: [],
+            },
+
+            params: {
+                studentCode: null,
+                studentName: null,
+                deviceId: null,
+                dateOfBirth: null,
+                className: null,
+                organizationName: null,
+                attendenceSection: "",
             },
             data: [],
             name_file: "LICHSUDIEMDANH_" + new Date().getDate() + "_" + new Date().getTime(),
-            columns: [
-                {
-                    title: "Index",
-                    field: 'sothutu',
-                    sortable: true,
-                    formatter: (value, row, index) => {
-                        var stt = index + 1;
-                        return "<span class ='black'> " + stt + "  </span>";
-                    },
-                },
-                {
-                    title: "Student Code",
-                    field: 'studentCode',
-                    sortable: true,
-
-                },
-                {
-                    title: "Student Name",
-                    field: 'studentName',
-                    sortable: true,
-
-                },
-
-                {
-                    title: "Class",
-                    sortable: true,
-                    field: 'className'
-                },
-                {
-                    title: "DeviceIp",
-                    sortable: true,
-                    field: 'deviceIP'
-                },
-
-                {
-                    title: "Date",
-                    field: 'eventTime',
-                    sortable: true,
-                    formatter: (value, row, index) => {
-                        if (row.eventTime) {
-                            var eventTime = moment(row.eventTime).format('DD/MM/YYYY HH:mm:ss');
-                            return "<span class ='black'> " + eventTime + "  </span>";
-                        }
-                    },
-                },
-                {
-                    title: " Section",
-                    field: 'attendenceSection',
-                    sortable: true,
-                },
-                {
-                    title: "Value",
-                    field: 'valueAbSent',
-                    sortable: true,
-                },
-                // {
-                //     title: "DeviceInName",
-                //     field: 'deviceName',
-                //     sortable: true,
-                // },
-                // {
-                //     title: "DeviceOutName",
-                //     field: 'deviceOutName',
-                //     sortable: true,
-                // },
-
-                {
-                    title: "CreatedDate",
-                    field: 'createdDate',
-                    sortable: true,
-                    formatter: (value, row, index) => {
-                        if (row.createdDate) {
-                            var createdDate = moment(row.createdDate).format('DD/MM/YYYY HH:mm:ss');
-                            return "<span class ='black'> " + createdDate + "  </span>";
-                        }
-                    },
-                },
-            ],
             object: {
                 dateNow: formatDateTime(new Date()),
                 config: {
                     headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
                 }
             },
-            dtoStudent: {
-                classId: null,
-                schoolYearId: null,
-                key: "",
-            },
-            dtoClass: {
-                schoolLevelCode: null,
-                schoolYearId: null,
-                schoolyear: null,
-            },
-            optionTable: {
-                options: {
-                    search: true,
-                    pagination: true,
-                    showExtendedPagination: true,
-                    sortable: true,
-                    searchAlign: 'right',
-                    paginationHAlign: 'lefft',
-                    paginationDetailHAlign: 'right',
-                    pageSize: 25,
-                    pageList: [10, 25, 50, 100, 200],
-                },
-            },
             combobox: { schools: [], schoolYears: [], classes: [] },
+            // phân trang
+            firstRow: 0,
+            totalRow: 0,
+            totalDataRowNext: 0,
+            curentPage: 0,
+            rowsPerPage: 50,
         },
         methods: {
-            onLoadData() {
+            onLoadData(resetPage) {
                 $('.loader').show();
+                this.checkParams();
+                if (resetPage)
+                    this.filter.CurentPage = 1;
                 axios.post('/api/v1/TimeAttenceEvent/Post', this.filter, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
-
-                    this.data = response.data.data;
                     $('.loader').delay(100).hide(0);
+                    this.data = response.data.data.items;
+
+                    this.totalRow = parseInt(response.data.data.totalRow);
+                    this.firstRow = parseInt((parseInt(this.filter.CurentPage) - 1) * parseInt(this.filter.RowsPerPage) + 1);
+                    this.totalPage = parseInt(response.data.data.totalPage);
+
+                    this.totalDataRowNext = parseInt(parseInt(this.firstRow) + parseInt(response.data.data.totalDataRow) - 1);
+
+                    const pagingNumbers = $('#pagingNumbers');
+                    this.renderPagination(pagingNumbers, this.totalPage, this.filter.CurentPage);
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
                     console.log(error);
                 });
             },
+            checkParams() {
+                this.filter.FilterItems = [];
+                Object.entries(this.params).forEach(([key, value]) => {
+                    if (value !== null) {
+                        this.filter.FilterItems.push({
+                            propertyName: key,
+                            comparison: 0,
+                            value: value
+                        });
+                    }
+                });
+            },
+            renderPagination(pagingNumbers, totalPage, currentPage) {
+                pagingNumbers.empty(); // Clear previous content
 
+                if (currentPage > 6) {
+                    pagingNumbers.append(`<li class="page-item page-pre"><a class="page-link" data-number="1"> <i class="fa fa-step-backward" ></i> </a></li>`);
+                }
+
+                // Hiển thị nút quay về đầu trang
+                if (currentPage > 1) {
+                    pagingNumbers.append(`<li class="page-item page-pre"><a class="page-link" data-number="${currentPage - 1}"> <i class="fa fa-caret-left" ></i> </a></li>`);
+                    pagingNumbers.append(`<li class="page-item page-pre"><a class="page-link" data-number="1">1</a></li>`);
+                }
+
+                // Nếu trang hiện tại  >3 và tổng trang hơn 6 trang sẽ hiển thị ....
+                if (currentPage > 3 && totalPage > 6) {
+                    pagingNumbers.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+                }
+
+                //Hiển thị các trang sau trang hiện tại (tối đa 3 trang sau)
+                const endPage = Math.min(currentPage + 3, totalPage);
+                for (let i = currentPage; i <= endPage; i++) {
+                    pagingNumbers.append(`<li class="page-item ${currentPage == i ? 'active' : ''}"><a class="page-link" data-number="${i}"> ${i}</a></li>`);
+                }
+
+                // Chỉ hiển thị ba số trang cuối cùng nếu tổng số trang nhiều hơn 3
+                if (totalPage > 6 && currentPage + 3 < totalPage) {
+                    pagingNumbers.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+
+                    const startLast = Math.max(totalPage - 2, currentPage + 1);
+                    for (let i = startLast; i <= totalPage; i++) {
+                        pagingNumbers.append(`<li class="page-item ${currentPage == i ? 'active' : ''}"><a class="page-link" data-number="${i}">${i}</a></li>`);
+                    }
+                }
+
+                // trang next cuối
+                if (currentPage < totalPage) {
+                    pagingNumbers.append(`<li class="page-item page-next"><a class="page-link" data-number="${currentPage + 1}"> <i class="fa fa-caret-right" ></i> </a></li>`);
+                    pagingNumbers.append(`<li class="page-item page-next"><a class="page-link" data-number="${totalPage}"><i class="fa fa-step-forward" ></i></a></li>`);
+                }
+            },
+            renderRowOnPage() {
+                this.filter.CurentPage = 1;
+                this.onLoadData();
+            },
+            formatDateTime(date) {
+                let data = date != null ? moment(date).format('DD/MM/YYYY HH:mm:ss') : null;
+                return data;
+            },
+            formatDate(value) {
+                if (value != null) {
+                    var dt = new Date(value);
+                    var mth = dt.getMonth() + 1;
+                    var day = dt.getDate();
+                    if (mth < 10)
+                        mth = "0" + mth;
+                    if (day < 10)
+                        day = "0" + day;
+
+                    return day + '/' + mth + '/' + dt.getFullYear();
+                } else
+                    return null;
+            },
             onExport() {
                 $('.loader').show();
                 axios.post('/api/v1/TimeAttenceEvent/export', this.filter, this.object.config).then(response => {
@@ -370,79 +431,11 @@
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
                 })
-
-                axios.post('/api/v1/StudentSmas/PostSchoolYears', null, this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login')) {
-                        window.location = window.location.href;
-                    }
-
-                    if (response.data.succeeded) {
-                        this.combobox.schoolYears = {
-                            ...response.data.data.schoolYears
-                        };
-
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                    $('.loader').delay(100).hide(0);
-                }).catch(error => {
-                    $('.loader').delay(100).hide(0);
-                })
-
-
-            },
-            onPostClass() {
-                axios.post('/api/v1/StudentSmas/PostClass', this.dtoClass, this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login')) {
-                        window.location = window.location.href;
-                    }
-
-                    if (response.data.succeeded) {
-                        this.combobox.classes = {
-                            ...response.data.data.classes
-                        };
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                    $('.loader').delay(100).hide(0);
-                }).catch(error => {
-                    $('.loader').delay(100).hide(0);
-                })
-            },
-            onLoadLocalStorage() {
-                const _schoolLevelCode = localStorage.getItem('schoolLevelCode');
-                if (_schoolLevelCode) {
-                    this.dtoClass.schoolLevelCode = _schoolLevelCode;
-                } else {
-                    this.dtoClass.schoolLevelCode = "";
-                }
-
-
-                const _schoolYearId = localStorage.getItem('schoolYearId');
-                if (_schoolYearId) {
-                    this.dtoClass.schoolYearId = _schoolYearId;
-                    this.dtoStudent.schoolYearId = _schoolYearId;
-                } else {
-                    this.dtoClass.schoolYearId = "";
-                    this.dtoStudent.schoolYearId = "";;
-                }
-
-
-                const _schoolyear = localStorage.getItem('schoolyear');
-                if (_schoolyear) {
-                    this.dtoClass.schoolyear = _schoolyear;
-                } else {
-                    this.dtoClass.schoolyear = "";
-                }
             },
 
         },
         mounted() {
-            this.onLoadLocalStorage();
-            this.onLoadCombobox();
-            this.onPostClass();
+            // this.onLoadCombobox();
             this.onLoadData();
         },
     })

@@ -3,43 +3,43 @@
     #region Req
     public class SyncDataRequest
     {
-        public string? Id { get; set; }
-        public string? SecretKey { get; set; }
-        public string? SchoolCode { get; set; }
+        public string? id { get; set; }
+        public string? secretKey { get; set; }
+        public string? schoolCode { get; set; }
 
-        public DateTime? AbsenceDate { get; set; }
-        public int? Section { get; set; }
-        public int? FormSendSMS { get; set; }
+        public DateTime? absenceDate { get; set; }
+        public int? section { get; set; }
+        public int? formSendSMS { get; set; }
         /// <summary>
         /// Kiểu nộp học sinh:
         //1. Nộp theo mã SSO
-        //2. Nộp theo mã SMAS
+        //2. Nộp theo mã SMAS  - hiện tại
         /// </summary>
-        public int? StudentCodeType { get; set; }
-        public List<StudentAbsence>? StudentAbsenceByDevices { get; set; }
+        public int? studentCodeType { get; set; }
+        public List<StudentAbsence>? studentAbsenceByDevices { get; set; }
     }
     public class ExtraProperties
     {
-        public bool? IsLate { get; set; }
-        public bool? IsOffSoon { get; set; }
-        public bool? IsOffPeriod { get; set; }
-        public DateTime? LateTime { get; set; }
-        public DateTime? OffSoonTime { get; set; }
-        public bool? PeriodI { get; set; }
-        public bool? PeriodII { get; set; }
-        public bool? PeriodIII { get; set; }
-        public bool? PeriodIV { get; set; }
-        public bool? PeriodV { get; set; }
-        public bool? PeriodVI { get; set; }
-        public DateTime? AbsenceTime { get; set; }
+        public bool? isLate { get; set; }
+        public bool? isOffSoon { get; set; }
+        public bool? isOffPeriod { get; set; }
+        public DateTime? lateTime { get; set; }
+        public DateTime? offSoonTime { get; set; }
+        public bool? periodI { get; set; }
+        public bool? periodII { get; set; }
+        public bool? periodIII { get; set; }
+        public bool? periodIV { get; set; }
+        public bool? periodV { get; set; }
+        public bool? periodVI { get; set; }
+        public DateTime? absenceTime { get; set; }
 
     }
 
     public class StudentAbsence
     {
-        public string? StudentCode { get; set; }
-        public string? Value { get; set; }
-        public ExtraProperties? ExtraProperties { get; set; }
+        public string? studentCode { get; set; }
+        public string? value { get; set; }
+        public ExtraProperties? extraProperties { get; set; }
     }
 
     public class StudentSmasApiRequest

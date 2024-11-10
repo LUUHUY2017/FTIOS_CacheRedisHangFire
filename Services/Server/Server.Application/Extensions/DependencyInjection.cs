@@ -3,7 +3,6 @@ using AMMS.DeviceData.RabbitMq;
 using AMMS.Notification.Datas;
 using AMMS.Notification.Datas.Interfaces.SendEmails;
 using AMMS.Notification.Datas.Repositories.SendEmails;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using EntityFrameworkCore.UseRowNumberForPaging;
 using EventBus.Messages;
 using MassTransit;
@@ -48,6 +47,7 @@ using Server.Infrastructure.Repositories.A0.TimeConfigs;
 using Server.Infrastructure.Repositories.A2.Devices;
 using Server.Infrastructure.Repositories.A2.Organizations;
 using Server.Infrastructure.Repositories.A2.Persons;
+using Server.Infrastructure.Repositories.A2.ScheduleJobLogs;
 using Server.Infrastructure.Repositories.A2.ScheduleJobs;
 using Server.Infrastructure.Repositories.A2.ScheduleSendEmails;
 using Server.Infrastructure.Repositories.A2.SendEmails;
@@ -59,7 +59,6 @@ using Server.Infrastructure.Repositories.TA.TimeAttendenceSyncs;
 using Share.Core.Pagination;
 using Shared.Core.Caches.Redis;
 using Shared.Core.Emails.V1.Adapters;
-using Shared.Core.Emails.V1.Commons;
 using Shared.Core.Repositories;
 using Shared.Core.SignalRs;
 using System.Reflection;
@@ -211,7 +210,7 @@ public static class DependencyInjection
         ////ConJob chạy các dịch vụ tự động
         service.AddScoped<ICronJobService, CronJobService>();
 
-       // services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+        // services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
         service.AddScoped<SMTP_Email_Adpater>();
         service.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailSenderService>();
 
@@ -232,6 +231,7 @@ public static class DependencyInjection
         service.AddScoped<ISendEmailRepository, SendEmailRepository>();
         service.AddScoped<ISendEmailLogRepository, SendEmailLogRepository>();
         service.AddScoped<IScheduleJobRepository, ScheduleJobRepository>();
+        service.AddScoped<IScheduleJobLogRepository, ScheduleJobLogRepository>();
 
         //Cache
         service.AddScoped<ICacheService, CacheService>();

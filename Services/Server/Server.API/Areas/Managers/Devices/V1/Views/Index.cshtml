@@ -54,7 +54,7 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-lg-2 my-1">
+                            <div class="col-lg-2 my-1" hidden>
                                 <label class="form-label">Trường học</label>
                                 <select id="FilterOrganization" class="form-control select" data-dropdown-parent="#webui_device" v-model="filter.organizationId">
                                     <option v-for="option in combobox.schools" v-bind:value="option.id">

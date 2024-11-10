@@ -331,6 +331,9 @@
                     $('.loader').hide(0);
                     if (response.data.succeeded) {
                         _org.loadData();
+                        if (!this.object.editAction) { 
+                            this.loadNavSchool();
+                        }
 
                         bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
                         alertify.success(response.data.message);
@@ -342,6 +345,21 @@
                     $('.loader').hide(0);
                     console.log(error);
                 });
+            },
+
+            loadNavSchool() {
+                axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    if (response.data.succeeded) {
+                        localStorage.setItem('schools', JSON.stringify(response.data.data));
+                        _navbarHeader.comboboxNav.schoolNavs = response.data.data;
+                    }
+                }).catch(error => {
+                    console.warn(error);
+                });
+                
             },
         },
         mounted() {

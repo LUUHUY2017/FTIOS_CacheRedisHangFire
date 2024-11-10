@@ -1,5 +1,4 @@
 ﻿using AMMS.DeviceData.RabbitMq;
-using AMMS.Shared.Commons;
 using EventBus.Messages;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -129,21 +128,23 @@ public partial class TimeAttendenceEventService
 
             if (data.Any())
             {
-                var config = _dbContext.TimeConfig.Where(o => o.Actived == true).FirstOrDefault();
+                bool addEvent = false;
+                bool add = false;
 
-                if (config != null)
+                foreach (var info in data)
                 {
-                    bool addEvent = false;
-                    bool add = false;
 
-                    foreach (var info in data)
+                    Student student = null;
+                    Organization organization = null;
+                    bool isset = CheckStudents(info, ref student, ref organization);
+                    if (!isset)
+                        continue;
+
+
+                    var config = _dbContext.TimeConfig.Where(o => o.Actived == true && o.OrganizationId == student.OrganizationId).FirstOrDefault();
+
+                    if (config != null)
                     {
-                        Student student = null;
-                        Organization organization = null;
-                        bool isset = CheckStudents(info, ref student, ref organization);
-                        if (!isset)
-                            continue;
-
                         TimeSpan timeOfDay = info.TimeEvent.Value.TimeOfDay;
                         DateTime date = info.TimeEvent.Value.Date;
                         DateTime dateTime = info.TimeEvent.Value;
@@ -153,16 +154,16 @@ public partial class TimeAttendenceEventService
 
                         // Buổi sáng
                         int sectionTime = 0;
-                        // Đi muộn
-                        bool isLate = false;
+                        //// Đi muộn
+                        //bool isLate = false;
 
-                        // Về sớm
-                        bool isOffSoon = false;
-                        // Bỏ tiết
-                        bool isOffPeriod = false;
-                        // Đi muộn
-                        DateTime? lateTime = null;
-                        DateTime? offSoonTime = null;
+                        //// Về sớm
+                        //bool isOffSoon = false;
+                        //// Bỏ tiết
+                        //bool isOffPeriod = false;
+                        //// Đi muộn
+                        //DateTime? lateTime = null;
+                        //DateTime? offSoonTime = null;
 
                         // Nghỉ K: k phép, P: có phép, C: Có mặt, X: Đi muộn, bỏ tiết, về sớm
                         string valueAttendence = "C";
@@ -170,45 +171,60 @@ public partial class TimeAttendenceEventService
                         // Gửi SMS Kiểu gửi tin nhắn: 1: Gửi tin nhắn qua SMS và EduOne 2: Gửi thông báo qua EduOne 3: Gửi tin nhắn qua SMS
                         int? formSendSMS = null;
 
-                        if (hour >= 12)
+                        //if (hour >= 12)
+                        //{
+                        //    sectionTime = 1;
+                        //}
+                        //if (hour >= 18)
+                        //{
+                        //    sectionTime = 2;
+                        //}
+
+                        ///// Buổi sáng
+                        //if (sectionTime == 0 && timeOfDay >= config.MorningBreakTime)
+                        //{
+                        //    valueAttendence = "K";
+                        //    formSendSMS = 3;
+                        //}
+
+                        //if (sectionTime == 0 && timeOfDay >= config.MorningLateTime && timeOfDay < config.MorningBreakTime)
+                        //{
+                        //    valueAttendence = "X";
+                        //    isLate = true;
+                        //    formSendSMS = 3;
+                        //}
+
+                        //// Buổi chiều
+                        //if (sectionTime == 1 && timeOfDay >= config.AfternoonBreakTime)
+                        //{
+                        //    valueAttendence = "K";
+                        //    formSendSMS = 3;
+                        //}
+
+                        //if (sectionTime == 1 && timeOfDay >= config.AfternoonLateTime && timeOfDay < config.AfternoonBreakTime)
+                        //{
+                        //    valueAttendence = "X";
+                        //    isLate = true;
+                        //    formSendSMS = 3;
+                        //}
+
+                        if (timeOfDay >= config.MorningStartTime && timeOfDay < config.MorningEndTime)
+                        {
+                            sectionTime = 0;
+                            valueAttendence = "C";
+                        }
+
+                        else if (timeOfDay >= config.AfternoonStartTime && timeOfDay < config.AfternoonEndTime)
                         {
                             sectionTime = 1;
+                            valueAttendence = "C";
                         }
-                        if (hour >= 18)
+
+                        else if (timeOfDay >= config.EveningStartTime && timeOfDay < config.EveningEndTime)
                         {
                             sectionTime = 2;
+                            valueAttendence = "C";
                         }
-
-                        /// Buổi sáng
-                        if (sectionTime == 0 && timeOfDay >= config.MorningBreakTime)
-                        {
-                            valueAttendence = "K";
-                            formSendSMS = 3;
-                        }
-
-                        if (sectionTime == 0 && timeOfDay >= config.MorningLateTime && timeOfDay < config.MorningBreakTime)
-                        {
-                            valueAttendence = "X";
-                            isLate = true;
-                            formSendSMS = 3;
-                        }
-
-                        // Buổi chiều
-                        if (sectionTime == 1 && timeOfDay >= config.AfternoonBreakTime)
-                        {
-                            valueAttendence = "K";
-                            formSendSMS = 3;
-                        }
-
-                        if (sectionTime == 1 && timeOfDay >= config.AfternoonLateTime && timeOfDay < config.AfternoonBreakTime)
-                        {
-                            valueAttendence = "X";
-                            isLate = true;
-                            formSendSMS = 3;
-                        }
-
-                        // Buổi tối
-
 
                         var time = _dbContext.TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode
                         && o.EventTime.Value.Date == info.TimeEvent.Value.Date && o.AttendenceSection == sectionTime
@@ -234,82 +250,14 @@ public partial class TimeAttendenceEventService
                         time.ValueAbSent = valueAttendence;
                         time.AttendenceSection = sectionTime;
 
+                        time.SchoolCode = organization.OrganizationCode;
+                        time.OrganizationId = organization.Id;
+
 
                         if (addEvent)
                             _dbContext.TimeAttendenceEvent.Add(time);
                         else
                             _dbContext.TimeAttendenceEvent.Update(time);
-
-
-                        ExtraProperties extra = null;
-
-                        if (valueAttendence == "X" && valueAttendence == "C")
-                        {
-                            var history = _dbContext.TimeAttendenceDetail.FirstOrDefault(o => o.TA_TimeAttendenceEventId == time.Id);
-                            if (history == null)
-                            {
-                                history = new TimeAttendenceDetail();
-                                history.Actived = true;
-                                history.TA_TimeAttendenceEventId = time.Id;
-                                add = true;
-                            }
-
-                            history.IsLate = isLate;
-                            history.IsOffSoon = isOffSoon;
-                            history.IsOffPeriod = isOffPeriod;
-                            history.LateTime = lateTime;
-                            history.OffSoonTime = offSoonTime;
-                            history.PeriodI = false;
-                            history.PeriodII = false;
-                            history.PeriodIII = false;
-                            history.PeriodIV = false;
-                            history.PeriodIV = false;
-                            history.PeriodVI = false;
-                            history.AbsenceTime = dateTime;
-
-                            if (add)
-                                _dbContext.TimeAttendenceDetail.Add(history);
-                            else
-                                _dbContext.TimeAttendenceDetail.Update(history);
-
-                            CopyProperties.CopyPropertiesTo(history, extra);
-                        }
-
-                        var studentAbs = new List<StudentAbsence>()
-                        {
-                            new StudentAbsence
-                            {
-                                    StudentCode = student.StudentCode,
-                                    Value= valueAttendence,
-                                    ExtraProperties= extra
-                            }
-                        };
-
-                        var paramData = new SyncDataRequest()
-                        {
-                            Id = time.Id,
-                            SchoolCode = organization.OrganizationCode,
-
-
-                            AbsenceDate = dateTime,
-                            Section = sectionTime,
-                            FormSendSMS = 1,
-                            StudentAbsenceByDevices = studentAbs,
-                        };
-
-                        string paras = JsonConvert.SerializeObject(paramData);
-
-                        var timeSync = new TimeAttendenceSync()
-                        {
-                            Id = time.Id,
-                            TimeAttendenceEventId = time.Id,
-                            Actived = true,
-                            ParamRequests = paras
-                        };
-                        bool status = await SaveStatuSyncSmas(timeSync);
-
-
-                        await PushAttendence2SMAS(paramData);
                     }
                     await _dbContext.SaveChangesAsync();
                 }

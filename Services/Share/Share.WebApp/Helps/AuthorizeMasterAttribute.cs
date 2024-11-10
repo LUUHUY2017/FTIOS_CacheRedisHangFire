@@ -22,6 +22,7 @@ public class AuthorizeMasterAttribute : Attribute, IAuthorizationFilter, IAuthor
     public string? UserId { get; set; }
     public string? VHost { get; set; }
     public string? AccessToken { get; set; }
+    public bool isSupeAdmin { get; set; } = false;
 
 
     //public AuthorizeMasterAttribute()
@@ -55,6 +56,12 @@ public class AuthorizeMasterAttribute : Attribute, IAuthorizationFilter, IAuthor
                     //PageIds = jwtToken.Claims.Where(c => c.Type == "pageIds").Select(o => o.Value).ToList();
                     VHost = jwtToken.Issuer;
                     UserId = jwtToken.Subject;
+
+                    var roles = jwtToken.Claims.Where(c => c.Type == "role").Select(o => o.Value).ToList();
+                    if (roles.Any(o => o == "SuperAdmin"))
+                        isSupeAdmin = true;
+
+
                 }
                 catch (Exception ex) { }
 
@@ -94,7 +101,7 @@ public class AuthorizeMasterAttribute : Attribute, IAuthorizationFilter, IAuthor
                     var pages = PagesConst._Menu_MD_Left.ToList();
                     var categories = Category.ListCategory.ToList();
                     var items = AMMS_Client_Call_API.GetPageApiByUser(VHost, AccessToken, UserId);
-                    PagesConst.Menu_MD_Left = AMMS_Get_Menu_User.GetMenuByUser(pages, categories, items.PageId);
+                    PagesConst.Menu_MD_Left = AMMS_Get_Menu_User.GetMenuByUser(pages, categories, items.PageId, isSupeAdmin);
                 }
             }
         }

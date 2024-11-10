@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A2.Devices;
 using Server.Application.MasterDatas.A2.Devices.Models;
-using Server.Application.MasterDatas.A2.Devices.Models.Commons;
 using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.Devices.RequeResponsessts;
 using Server.Core.Interfaces.A2.Devices.Requests;
@@ -18,7 +17,7 @@ namespace Server.API.APIs.Data.Devices.V1.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-[AuthorizeMaster(Roles = RoleConst.SuperAdmin_Role)]
+[AuthorizeMaster]
 public class DeviceController : AuthBaseAPIController
 {
     private readonly DeviceService _deviceService;
@@ -50,6 +49,22 @@ public class DeviceController : AuthBaseAPIController
             return Ok(new Result<List<Device>>(null, "Lỗi:" + ex.Message, false));
         }
     }
+
+    [HttpGet("GetByOrgId")]
+    public async Task<IActionResult> GetByOrgId()
+    {
+        try
+        {
+            string orgId = GetOrganizationId();
+            var data = await _deviceService.GetByOrgId(true, orgId);
+            return Ok(new Result<List<DeviceResponse>>(data, "Thành công!", true));
+        }
+        catch (Exception ex)
+        {
+            return Ok(new Result<List<Device>>(null, "Lỗi:" + ex.Message, false));
+        }
+    }
+
 
     /// <summary>
     /// Lấy danh sách đang hoạt động theo DeviceModel

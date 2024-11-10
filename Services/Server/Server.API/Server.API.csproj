@@ -102,6 +102,8 @@
 
     <Compile Include="APIs\Data\MonitorDevices\V1\Controllers\MonitorDeviceController.cs" />
 
+    <Compile Include="APIs\Data\ScheduleJobs\V1\Controllers\ScheduleJobLogController.cs" />
+
     <Compile Include="APIs\Data\ScheduleJobs\V1\Controllers\ScheduleJobController.cs" />
 
     <Compile Include="APIs\Data\ScheduleJobs\V1\Requests\ScheduleJobLogFilter.cs" />

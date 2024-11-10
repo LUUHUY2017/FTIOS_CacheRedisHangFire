@@ -45,6 +45,11 @@ public interface IMasterDataDbContext
     public DbSet<ScheduleJob> ScheduleJob { get; set; }
     public DbSet<ScheduleJobLog> ScheduleJobLog { get; set; }
 
+
+    public DbSet<SchoolYear> SchoolYear { get; set; }
+    public DbSet<ClassRoom> ClassRoom { get; set; }
+    public DbSet<StudentClassRoomYear> StudentClassRoomYear { get; set; }
+
     #endregion
 
     #region A3

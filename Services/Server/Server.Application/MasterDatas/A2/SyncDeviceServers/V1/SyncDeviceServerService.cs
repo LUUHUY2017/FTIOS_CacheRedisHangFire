@@ -1,6 +1,5 @@
 ﻿using EventBus.Messages;
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Server.Core.Interfaces.A2.Persons;
 using Server.Core.Interfaces.A2.Students;
@@ -42,61 +41,122 @@ public partial class SyncDeviceServerService
         _dbContext = dbContext;
     }
 
-
-    public async Task<Result<List<SyncDeviceServerReportRes>>> GetAlls(SyncDeviceServerFilterReq request)
+    public async Task<IQueryable<SyncDeviceServerReportRes>> GetAlls(SyncDeviceServerFilterReq request)
     {
         try
         {
-            var _data = await (from _do in _dbContext.PersonSynToDevice
+            var _data = (from _do in _dbContext.PersonSynToDevice
 
-                               join _la in _dbContext.Student on _do.PersonId equals _la.Id into K
-                               from la in K.DefaultIfEmpty()
+                         join _la in _dbContext.Student on _do.PersonId equals _la.Id into K
+                         from la in K.DefaultIfEmpty()
 
-                               join _de in _dbContext.Device on _do.DeviceId equals _de.Id into KG
-                               from de in KG.DefaultIfEmpty()
+                         join _de in _dbContext.Device on _do.DeviceId equals _de.Id into KG
+                         from de in KG.DefaultIfEmpty()
+
+                         join _or in _dbContext.Organization on la.OrganizationId equals _or.Id into OG
+                         from or in OG.DefaultIfEmpty()
+
+                         where
+                          (request.StartDate != null ? _do.LastModifiedDate.Date >= request.StartDate.Value.Date : true)
+                          && (request.EndDate != null ? _do.LastModifiedDate.Date <= request.EndDate.Value.Date : true)
+                          && (!string.IsNullOrWhiteSpace(request.DeviceId) ? _do.DeviceId == request.DeviceId : true)
+                          && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? la.OrganizationId == request.OrganizationId : true)
+
+                         orderby _do.LastModifiedDate descending
+                         select new SyncDeviceServerReportRes()
+                         {
+                             Id = _do.Id,
+                             Actived = _do.Actived,
+                             CreatedDate = _do.CreatedDate,
+                             LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
+
+                             PersonId = _do.PersonId,
+                             StudentCode = la != null ? la.StudentCode : "",
+                             StudentName = la != null ? la.FullName : "",
+                             ClassName = la != null ? la.ClassName : "",
 
 
-                               where
-                                (request.StartDate != null ? _do.LastModifiedDate.Date >= request.StartDate.Value.Date : true)
-                                && (request.EndDate != null ? _do.LastModifiedDate.Date <= request.EndDate.Value.Date : true)
+                             DeviceId = _do.DeviceId,
+                             DeviceName = de != null ? de.DeviceName : "",
+                             IPAddress = de != null ? de.IPAddress : "",
 
-                                && (!string.IsNullOrWhiteSpace(request.ClassId) ? la.ClassId == request.ClassId : true)
+                             SynAction = _do.SynAction,
+                             SynCardMessage = _do.SynCardMessage,
+                             SynCardStatus = _do.SynCardStatus,
+                             SynFaceMessage = _do.SynFaceMessage,
+                             SynFaceStatus = _do.SynFaceStatus,
+                             SynFingerMessage = _do.SynFingerMessage,
+                             SynFingerStatus = _do.SynFingerStatus,
+                             SynMessage = _do.SynMessage,
+                             SynStatus = _do.SynStatus,
 
-                               orderby _do.LastModifiedDate descending
-                               select new SyncDeviceServerReportRes()
-                               {
-                                   Id = _do.Id,
-                                   Actived = _do.Actived,
-                                   CreatedDate = _do.CreatedDate,
-                                   LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
+                         });
 
-                                   PersonId = _do.PersonId,
-                                   StudentCode = la != null ? la.StudentCode : "",
-                                   StudentName = la != null ? la.FullName : "",
-                                   ClassName = la != null ? la.ClassName : "",
-
-                                   DeviceId = _do.DeviceId,
-                                   DeviceName = de != null ? de.DeviceName : "",
-                                   IPAddress = de != null ? de.IPAddress : "",
-
-                                   SynAction = _do.SynAction,
-                                   SynCardMessage = _do.SynCardMessage,
-                                   SynCardStatus = _do.SynCardStatus,
-                                   SynFaceMessage = _do.SynFaceMessage,
-                                   SynFaceStatus = _do.SynFaceStatus,
-                                   SynFingerMessage = _do.SynFingerMessage,
-                                   SynFingerStatus = _do.SynFingerStatus,
-                                   SynMessage = _do.SynMessage,
-                                   SynStatus = _do.SynStatus,
-
-                               }).ToListAsync();
-
-            return new Result<List<SyncDeviceServerReportRes>>(_data, "Thành công!", true);
+            return _data;
         }
         catch (Exception ex)
         {
-            return new Result<List<SyncDeviceServerReportRes>>("Lỗi: " + ex.ToString(), false);
+            return null;
         }
+    }
+    public async Task<IQueryable<SyncDeviceServerReportRes>> ApplyFilter(IQueryable<SyncDeviceServerReportRes> query, FilterItems filter)
+    {
+        switch (filter.PropertyName.ToLower())
+        {
+            case "studentname":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.StudentName.Contains(filter.Value.Trim()));
+                break;
+            case "studentcode":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
+                break;
+
+            case "devicename":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.DeviceName.Contains(filter.Value.Trim()));
+                break;
+
+            case "synaction":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.SynAction.Contains(filter.Value.Trim()));
+                break;
+
+            case "synstatus":
+                if (!string.IsNullOrWhiteSpace(filter.Value))
+                {
+                    var statusValue = filter.Value.ToLower();
+                    if (statusValue == "true")
+                        query = query.Where(p => p.SynStatus == true);
+                    else if (statusValue == "false")
+                        query = query.Where(p => p.SynStatus == false);
+                    else
+                        query = query.Where(p => p.SynStatus == null);
+                }
+                break;
+
+            case "organizationid":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.OrganizationId.Contains(filter.Value.Trim()));
+                break;
+            case "classname":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
+                break;
+
+            case "synmessage":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.SynMessage.Contains(filter.Value.Trim()));
+                break;
+
+            case "synfacemessage":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.SynFaceMessage.Contains(filter.Value.Trim()));
+                break;
+            default:
+                break;
+        }
+        return query;
     }
 
 

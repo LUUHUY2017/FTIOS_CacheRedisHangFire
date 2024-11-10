@@ -1,20 +1,12 @@
-﻿using AMMS.Notification.Commons;
-using AMMS.Notification.Workers.Emails;
-using DocumentFormat.OpenXml.Drawing;
-using Hangfire;
-using Hangfire.Storage;
+﻿using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Server.Application.MasterDatas.A2.Students.V1;
-using Server.Application.MasterDatas.A2.Students.V1.Model;
-using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A2;
-using Server.Core.Entities.TA;
 using Server.Infrastructure.Datas.MasterData;
-using Shared.Core.Emails.V1.Commons;
 using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
 
@@ -47,7 +39,7 @@ public class CronJobService : ICronJobService
         foreach (var item in scheduleLists)
         {
             var timeSentHour = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
-            var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
+            var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Minutes : 0;
             if (item.ScheduleNote == "LAPLICHDONGBO")
             {
                 var newCronExpression = item.ScheduleSequential switch
@@ -101,12 +93,25 @@ public class CronJobService : ICronJobService
                 return;
 
             string schoolCode = orgRes.OrganizationCode; // "20186511"
-            var res = await _smartService.PostListStudents( schoolCode);
+            var res = await _smartService.PostListStudents(schoolCode);
+
+            var logSchedule = new ScheduleJobLog()
+            {
+                Actived = true,
+                CreatedDate = DateTime.Now,
+                LastModifiedDate = DateTime.Now,
+                OrganizationId = orgRes.Id,
+                Logs = jobRes.ScheduleJobName,
+                ScheduleJobId = jobRes.Id,
+            };
+            int count = 0, i = 0;
             if (res.Any())
             {
+                count = res.Count();
                 foreach (var item in res)
                 {
-                    var el = new DtoStudentRequest()
+                    i = i + 1;
+                    var el = new Student()
                     {
                         StudentCode = item.StudentCode,
                         ClassId = item.ClassId,
@@ -114,10 +119,23 @@ public class CronJobService : ICronJobService
                         DateOfBirth = item.BirthDay,
                         FullName = item.StudentName,
                         OrganizationId = orgRes.Id,
+                        SchoolCode = orgRes.OrganizationCode,
                     };
-                await _studentService.SaveFromService(el);
+                    await _studentService.SaveFromService(el);
                 }
+
+                logSchedule.ScheduleJobStatus = true;
+                logSchedule.ScheduleLogNote = "Thành công";
+                logSchedule.Message = string.Format("Đã đồng bộ {0}/{1} học sinh từ SMAS", i, count);
             }
+            else
+            {
+                logSchedule.ScheduleJobStatus = false;
+                logSchedule.ScheduleLogNote = "Thành công";
+                logSchedule.Message = string.Format("Không có bản tin nào trả về");
+            }
+            await _dbContext.ScheduleJobLog.AddAsync(logSchedule);
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -142,27 +160,51 @@ public class CronJobService : ICronJobService
 
             // Lấy dữ liệu theo block gửi qua api
             var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.SchoolCode == orgRes.OrganizationCode && o.EventType != true).OrderBy(o => o.EventTime).Take(15).ToListAsync();
+            if (datas.Count == 0)
+                return;
+
+
             var studentAbs = new List<StudentAbsence>();
             foreach (var item in datas)
             {
+                ExtraProperties extra = new ExtraProperties()
+                {
+                    isLate = false,
+                    isOffSoon = false,
+                    isOffPeriod = false,
+                    lateTime = null,
+                    offSoonTime = null,
+                    periodI = false,
+                    periodII = false,
+                    periodIII = false,
+                    periodIV = false,
+                    periodV = false,
+                    periodVI = false,
+                    absenceTime = item.EventTime
+                };
                 var el = new StudentAbsence()
                 {
-                    StudentCode = item.StudentCode,
-                    Value = item.ValueAbSent
+                    studentCode = item.StudentCode,
+                    value = item.ValueAbSent,
+                    extraProperties = extra
                 };
                 studentAbs.Add(el);
             }
             var req = new SyncDataRequest()
             {
-                Id = Guid.NewGuid().ToString(),
-                SchoolCode = orgRes.OrganizationCode,
-                AbsenceDate = DateTime.Now,
-                Section = 0,
-                FormSendSMS = 1,
-                StudentCodeType = 1,
-                StudentAbsenceByDevices = studentAbs,
+                id = Guid.NewGuid().ToString(),
+                schoolCode = orgRes.OrganizationCode,
+                absenceDate = DateTime.Now,
+                section = 0,
+                formSendSMS = 1,
+                studentCodeType = 2,
+                studentAbsenceByDevices = studentAbs,
             };
+
+            Logger.Warning("Requests:" + JsonConvert.SerializeObject(req));
             var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
+            Logger.Warning("Response:" + JsonConvert.SerializeObject(res));
+
             if (res != null)
             {
                 if (res.IsSuccess)
