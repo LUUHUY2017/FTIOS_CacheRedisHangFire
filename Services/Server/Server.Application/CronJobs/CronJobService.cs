@@ -6,6 +6,7 @@ using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A2;
+using Server.Core.Entities.TA;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
@@ -44,6 +45,11 @@ public class CronJobService : ICronJobService
             {
                 var newCronExpression = item.ScheduleSequential switch
                 {
+                    "10s" => "*/10 * * * * *",
+                    "20s" => "*/20 * * * * *",
+                    "30s" => "*/30 * * * * *",
+                    "40s" => "*/40 * * * * *",
+                    "50s" => "*/50 * * * * *",
                     "Minutely" => "* * * * *",
                     "Hourly" => "0 * * * *",
                     "Daily" => $"{timeSentMinute} {timeSentHour} * * *",
@@ -159,7 +165,7 @@ public class CronJobService : ICronJobService
 
 
             // Lấy dữ liệu theo block gửi qua api
-            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.SchoolCode == orgRes.OrganizationCode && o.EventType != true).OrderBy(o => o.EventTime).Take(15).ToListAsync();
+            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.SchoolCode == orgRes.OrganizationCode && o.EventType != true).OrderBy(o => o.EventTime).Take(20).ToListAsync();
             if (datas.Count == 0)
                 return;
 
@@ -169,17 +175,6 @@ public class CronJobService : ICronJobService
             {
                 ExtraProperties extra = new ExtraProperties()
                 {
-                    isLate = false,
-                    isOffSoon = false,
-                    isOffPeriod = false,
-                    lateTime = null,
-                    offSoonTime = null,
-                    periodI = false,
-                    periodII = false,
-                    periodIII = false,
-                    periodIV = false,
-                    periodV = false,
-                    periodVI = false,
                     absenceTime = item.EventTime
                 };
                 var el = new StudentAbsence()
@@ -210,22 +205,34 @@ public class CronJobService : ICronJobService
                 if (res.IsSuccess)
                 {
                     datas.ForEach(o => { o.EventType = true; });
+
+                    try
+                    {
+                        var _listLog = new List<TimeAttendenceSync>();
+                        foreach (var item in res.Responses)
+                        {
+                            var el = datas.FirstOrDefault(o => o.StudentCode == item.studentCode && o.EventTime == item.extraProperties.absenceTime);
+                            if (el == null)
+                                continue;
+                            var log = new TimeAttendenceSync()
+                            {
+                                TimeAttendenceEventId = el.Id,
+                                SyncStatus = item.status,
+                                Message = item.message,
+                                CreatedDate = DateTime.Now,
+                                LastModifiedDate = DateTime.Now,
+                            };
+                            _listLog.Add(log);
+                        }
+
+                        await _dbContext.TimeAttendenceSync.AddRangeAsync(_listLog);
+                    }
+                    catch (Exception ext)
+                    {
+                        Logger.Error(ext);
+                    }
                     await _dbContext.SaveChangesAsync();
                 }
-                //var item = new TimeAttendenceSync() { Id = datas.Id, };
-                //if (res.IsSuccess)
-                //{
-                //    string response = JsonConvert.SerializeObject(res);
-                //    item.SyncStatus = res.Responses[0].status;
-                //    item.Message = res.Responses[0].message;
-                //    item.ParamResponses = response;
-                //}
-                //else
-                //{
-                //    item.SyncStatus = res.IsSuccess;
-                //    item.Message = res.Message;
-                //}
-                //await _timeAttendenceEventService.SaveStatuSyncSmas(item);
             }
         }
         catch (Exception ex)

@@ -20,17 +20,17 @@
     }
     public class ExtraProperties
     {
-        public bool? isLate { get; set; }
-        public bool? isOffSoon { get; set; }
-        public bool? isOffPeriod { get; set; }
+        public bool? isLate { get; set; } = false;
+        public bool? isOffSoon { get; set; } = false;
+        public bool? isOffPeriod { get; set; } = false;
         public DateTime? lateTime { get; set; }
         public DateTime? offSoonTime { get; set; }
-        public bool? periodI { get; set; }
-        public bool? periodII { get; set; }
-        public bool? periodIII { get; set; }
-        public bool? periodIV { get; set; }
-        public bool? periodV { get; set; }
-        public bool? periodVI { get; set; }
+        public bool? periodI { get; set; } = false;
+        public bool? periodII { get; set; } = false;
+        public bool? periodIII { get; set; } = false;
+        public bool? periodIV { get; set; } = false;
+        public bool? periodV { get; set; } = false;
+        public bool? periodVI { get; set; } = false;
         public DateTime? absenceTime { get; set; }
 
     }
