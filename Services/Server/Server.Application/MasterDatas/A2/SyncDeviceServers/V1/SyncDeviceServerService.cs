@@ -53,13 +53,14 @@ public partial class SyncDeviceServerService
                          join _de in _dbContext.Device on _do.DeviceId equals _de.Id into KG
                          from de in KG.DefaultIfEmpty()
 
+                         join _or in _dbContext.Organization on la.OrganizationId equals _or.Id into OG
+                         from or in OG.DefaultIfEmpty()
+
                          where
                           (request.StartDate != null ? _do.LastModifiedDate.Date >= request.StartDate.Value.Date : true)
                           && (request.EndDate != null ? _do.LastModifiedDate.Date <= request.EndDate.Value.Date : true)
-
                           && (!string.IsNullOrWhiteSpace(request.DeviceId) ? _do.DeviceId == request.DeviceId : true)
                           && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? la.OrganizationId == request.OrganizationId : true)
-                          && (!string.IsNullOrWhiteSpace(request.ClassId) ? la.ClassId == request.ClassId : true)
 
                          orderby _do.LastModifiedDate descending
                          select new SyncDeviceServerReportRes()
@@ -73,6 +74,7 @@ public partial class SyncDeviceServerService
                              StudentCode = la != null ? la.StudentCode : "",
                              StudentName = la != null ? la.FullName : "",
                              ClassName = la != null ? la.ClassName : "",
+
 
                              DeviceId = _do.DeviceId,
                              DeviceName = de != null ? de.DeviceName : "",
