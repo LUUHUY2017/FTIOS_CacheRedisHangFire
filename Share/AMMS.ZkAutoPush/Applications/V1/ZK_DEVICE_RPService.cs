@@ -128,7 +128,7 @@ public class ZK_DEVICE_RPService
                                     x.IsSuccessed = false;
                                 }
 
-                                await UpdateCommand(x, content);
+                                await UpdateCommand(x, elm);
                                 await _deviceCommandCacheService.Remove(data.SN, ID);
 
 
@@ -138,7 +138,7 @@ public class ZK_DEVICE_RPService
                                 RB_ServerResponse response = new RB_ServerResponse()
                                 {
                                     Action = x.Action,
-                                    Content = content,
+                                    Content = elm,
                                     Id = x.DataId,
                                     RequestId = x.DataId,
                                     IsSuccessed = x.IsSuccessed,
