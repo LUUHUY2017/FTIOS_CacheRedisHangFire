@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Ocsp;
 using Shared.Core.Loggers;
 using System.Security.Cryptography;
 using System.Text;
