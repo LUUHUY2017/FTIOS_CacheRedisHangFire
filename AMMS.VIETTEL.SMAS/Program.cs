@@ -168,7 +168,7 @@ services.AddEndpointsApiExplorer();
 services.AddAutoMapper(typeof(Program));
 //services.AddAddAutoMapperServices();
 
-//services.AddEventBusService(configuration);
+services.AddEventBusService(configuration);
 //services.AddCaheService(configuration);
 
 //ScopedServices

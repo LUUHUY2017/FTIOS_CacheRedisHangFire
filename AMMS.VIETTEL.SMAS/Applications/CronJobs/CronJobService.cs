@@ -16,19 +16,20 @@ public class CronJobService : ICronJobService
     private readonly SmartService _smartService;
     private readonly StudentService _studentService;
     private readonly IConfiguration _configuration;
-    private readonly ISignalRClientService _signalRService;
+    //private readonly ISignalRClientService _signalRService;
 
     public CronJobService(IViettelDbContext dbContext,
         SmartService smartService,
         StudentService studentService,
-        IConfiguration configuration,
-        ISignalRClientService signalRClientService)
+        IConfiguration configuration
+        //ISignalRClientService signalRClientService
+        )
     {
         _dbContext = dbContext;
         _smartService = smartService;
         _studentService = studentService;
         _configuration = configuration;
-        _signalRService = signalRClientService;
+        //_signalRService = signalRClientService;
         //var recurringJobs = JobStorage.Current.GetConnection().GetRecurringJobs();
     }
 

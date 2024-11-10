@@ -1,19 +1,10 @@
-﻿using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1;
-using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1.Models;
-using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
+﻿using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
 using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
-using AMMS.VIETTEL.SMAS.Cores.Interfaces.Organizations;
-using AMMS.VIETTEL.SMAS.Cores.Interfaces.Organizations.Requests;
+using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using AutoMapper;
-using IdentityServer4.Extensions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Server.Application.Services.VTSmart;
-using Server.Core.Entities.A2;
-using Server.Infrastructure.Datas.MasterData;
 using Share.WebApp.Controllers;
-using Shared.Core.Commons;
 
 namespace AMMS.VIETTEL.SMAS.APIControllers.Students.V1.Controllers;
 
@@ -25,8 +16,8 @@ namespace AMMS.VIETTEL.SMAS.APIControllers.Students.V1.Controllers;
 public class StudentController : AuthBaseAPIController
 {
     private readonly IMapper _mapper;
-    private readonly MasterDataDbContext _masterDb;
-    public StudentController(IMapper mapper, MasterDataDbContext masterDb)
+    private readonly ViettelDbContext _masterDb;
+    public StudentController(IMapper mapper, ViettelDbContext masterDb)
     {
         _mapper = mapper;
         _masterDb = masterDb;
@@ -56,7 +47,7 @@ public class StudentController : AuthBaseAPIController
         {
             var students = await _masterDb.Student.Where(o => o.SchoolCode == schoolCode).ToListAsync();
             if (students == null)
-                students = new List<Server.Core.Entities.A2.Student>();
+                students = new List<Student>();
 
             foreach (var s in datas.responses)
             {

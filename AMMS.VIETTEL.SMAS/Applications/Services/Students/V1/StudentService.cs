@@ -20,7 +20,7 @@ public class StudentService
 {
     private readonly IMapper _map;
     private readonly IEventBusAdapter _eventBusAdapter;
-    private readonly ISignalRClientService _signalRClientService;
+    //private readonly ISignalRClientService _signalRClientService;
     private readonly IConfiguration _configuration;
 
     private readonly IPersonRepository _personRepository;
@@ -33,7 +33,7 @@ public class StudentService
         IMapper map,
         IConfiguration configuration,
         IEventBusAdapter eventBusAdapter,
-        ISignalRClientService signalRClientService,
+        //ISignalRClientService signalRClientService,
         IPersonRepository personRepository,
         IStudentRepository studentRepository,
         IViettelDbContext dbContext
@@ -43,7 +43,7 @@ public class StudentService
         _map = map;
         _configuration = configuration;
         _eventBusAdapter = eventBusAdapter;
-        _signalRClientService = signalRClientService;
+        //_signalRClientService = signalRClientService;
 
         _personRepository = personRepository;
         _studentRepository = studentRepository;

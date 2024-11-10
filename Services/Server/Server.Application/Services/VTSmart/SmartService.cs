@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
 using Server.Application.Services.VTSmart.Responses;
@@ -16,11 +17,13 @@ public sealed class SmartService
 {
     private readonly UserManager<ApplicationUser> _userMgr;
     private readonly MasterDataDbContext _dbContext;
+    private readonly IConfiguration _configuration;
     public string UserId { get; set; }
 
     public SmartService(
         UserManager<ApplicationUser> userMgr,
-        MasterDataDbContext dbContext
+        MasterDataDbContext dbContext,
+        IConfiguration configuration
         )
     {
         _userMgr = userMgr;
@@ -104,8 +107,6 @@ public sealed class SmartService
         }
         return retval;
     }
-
-    //DEV TEST khi chưa có V2
     public async Task<AccessToken> GetToken(string id)
     {
         AccessToken accessToken = null;
@@ -320,23 +321,47 @@ public sealed class SmartService
 
 
     #region POST V2
-    public async Task<List<StudenSmasApiResponse>> PostListStudents( string schoolCode)
+
+    public async Task<AttendanceConfig> GetConfig()
+    {
+        AttendanceConfig retval = null;
+        try
+        {
+            retval = await _dbContext.AttendanceConfig.Where(o => o.Actived == true).FirstOrDefaultAsync();
+            if (retval == null)
+            {
+                retval = new AttendanceConfig()
+                {
+                    EndpointGateway = urlServerName,
+                    SecretKey = secretKey,
+                    Key = key,
+                    KeyIV = keyIV,
+                };
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+        return retval;
+    }
+
+
+    public async Task<List<StudenSmasApiResponse>> PostListStudents(string schoolCode)
     {
         List<StudenSmasApiResponse> retval = new List<StudenSmasApiResponse>();
         try
         {
-            //var accessToken = await GetToken(orgId);
-
-            //if (accessToken != null)
+            var accessToken = await GetConfig();
+            if (accessToken != null)
             {
-                string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, schoolCode); //  "20186511"
+                string _secretKey = GetSecretKeySMAS(accessToken.SecretKey.Trim(), accessToken.Key.Trim(), accessToken.KeyIV.Trim(), schoolCode); //  "20186511"
                 var req = new StudentSmasApiRequest()
                 {
                     secretKey = _secretKey,
                     schoolCode = schoolCode,
                 };
-
-                var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/lay-danh-sach-hoc-sinh-diem-danh-thiet-bi", urlServerName);
+                var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/lay-danh-sach-hoc-sinh-diem-danh-thiet-bi", accessToken.EndpointGateway);
                 var parameter = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
                 using (HttpClient client = new HttpClient())
                 {
@@ -372,12 +397,12 @@ public sealed class SmartService
         SyncDataResponse retval = null;
         try
         {
-            //var _accessToken = await GetToken(orgId);
-            //if (_accessToken != null)
+            var accessToken = await GetConfig();
+            if (accessToken != null)
             {
-                string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, schoolCode); //"20186511"
+                string _secretKey = GetSecretKeySMAS(accessToken.SecretKey.Trim(), accessToken.Key.Trim(), accessToken.KeyIV.Trim(), schoolCode); //"20186511"
                 req.secretKey = _secretKey;
-                var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/diem-danh-tich-hop-thiet-bi", urlServerName);
+                var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/diem-danh-tich-hop-thiet-bi", accessToken.EndpointGateway);
                 var parameter = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
                 using (HttpClient client = new HttpClient())
                 {

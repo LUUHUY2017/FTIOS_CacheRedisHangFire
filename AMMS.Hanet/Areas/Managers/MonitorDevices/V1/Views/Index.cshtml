@@ -297,117 +297,74 @@
         },
         data: {
             columns: [
+                 
                 {
-                    title: "Id",
-                    field: 'id',
-                    sortable: true,
-                },
-                {
-                    title: "name",
+                    title: "Tên máy",
                     field: 'name',
                     sortable: true,
                 },
                 {
-                    title: "ip_address",
+                    title: "Mã trường",
                     field: 'ip_address',
                     sortable: true,
                 },
+                
                 {
-                    title: "area_id",
-                    field: 'area_id',
-                    sortable: true,
-                },
-                {
-                    title: "create_time",
+                    title: "Ngày tạo",
                     field: 'create_time',
                     sortable: true,
                 },
+                
                 {
-                    title: "change_time",
-                    field: 'change_time',
+                    title: 'onlineStatus',
+                    field: 'onlineStatus',
                     sortable: true,
+                    formatter: (data) => {
+                        return `<span class='fw-bold' style="color: ${data === 'Online' ? 'green' : 'red'};">${data}</span>`;
+                    }
                 },
-                // {
-                //     title: "serialNumber",
-                //     field: 'serialNumber',
-                //     sortable: true,
-                // },
-                // {
-                //     title: 'onlineStatus',
-                //     field: 'onlineStatus',
-                //     sortable: true,
-                //     formatter: (data) => {
-                //         return `<span class='fw-bold' style="color: ${data === 'Online' ? 'green' : 'red'};">${data}</span>`;
-                //     }
-                // },
-                // {
-                //     title: "deviceName",
-                //     field: "deviceName",
-                //     sortable: true,
-                // },
-                // {
-                //     title: 'lastTimeOffline',
-                //     field: 'lastTimeOffline',
-                //     sortable: true,
-                //     formatter: function (value, row, index) {
-                //         if (value) {
-                //             const d = new Date(value);
-                //             return d.toLocaleDateString('vi-VN', {
-                //                 year: 'numeric',
-                //                 month: '2-digit',
-                //                 day: '2-digit',
-                //                 hour: '2-digit',
-                //                 minute: '2-digit',
-                //                 second: '2-digit'
-                //             });
-                //         } else {
-                //             return ""; // Trả về chuỗi rỗng
-                //         }
-                //     },
-                // },
-                // {
-                //     title: 'lastTimeCheckConnection',
-                //     field: 'lastTimeCheckConnection',
-                //     sortable: true,
-                //     formatter: function (value, row, index) {
-                //         if (value) {
-                //             const d = new Date(value);
-                //             return d.toLocaleDateString('vi-VN', {
-                //                 year: 'numeric',
-                //                 month: '2-digit',
-                //                 day: '2-digit',
-                //                 hour: '2-digit',
-                //                 minute: '2-digit',
-                //                 second: '2-digit'
-                //             });
-                //         } else {
-                //             return ""; // Trả về chuỗi rỗng
-                //         }
-                //     },
-                // },
-                // {
-                //     title: "wanIpAddress",
-                //     field: "wanIpAddress",
-                //     sortable: true,
-                //     formatter: (value, row) => {
-                //         return `<a href="http://${value}:${row.httpPort}" target="_blank">${value}</a>`;
-                //     }
-                // },
-                // {
-                //     title: 'ipAddress',
-                //     field: 'ipAddress',
-                //     sortable: true,
-                // },
-                // {
-                //     title: 'httpPort',
-                //     field: 'httpPort',
-                //     sortable: true,
-                // },
-                // {
-                //     title: 'httpsPort',
-                //     field: 'httpsPort',
-                //     sortable: true,
-                // },
+              
+                {
+                    title: 'lastTimeOffline',
+                    field: 'lastTimeOffline',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
+                {
+                    title: 'lastTimeCheckConnection',
+                    field: 'lastTimeCheckConnection',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
+                
                 // {
                 //     title: 'lastTimeUpdateData',
                 //     field: 'lastTimeUpdateData',

@@ -26,4 +26,20 @@
         public int? SortOrderByClass { get; set; }
         public string? GradeCode { get; set; }
     }
+
+    public class StudentResponse1
+    {
+        public List<StudentInfo> responses { get; set; }
+        public bool isSuccess { get; set; }
+        public string message { get; set; }
+    }
+
+    public class StudentInfo
+    {
+        public string studentCode { get; set; }
+        public string studentName { get; set; }
+        public string className { get; set; }
+        public string classId { get; set; }
+        public string birthDay { get; set; }
+    }
 }
