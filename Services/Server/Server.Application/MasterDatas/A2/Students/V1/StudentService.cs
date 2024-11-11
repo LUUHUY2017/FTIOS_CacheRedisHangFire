@@ -290,7 +290,8 @@ public class StudentService
                          where _do.Actived == actived
                             && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
 
-                         orderby _do.CreatedDate descending
+                         orderby _do.ClassName ascending, _do.FullName ascending
+
                          select new DtoStudentResponse()
                          {
                              Id = _do.Id,
@@ -298,6 +299,7 @@ public class StudentService
                              CreatedDate = _do.CreatedDate,
                              LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
                              StudentCode = _do.StudentCode,
+                             SyncCode = _do.SyncCode,
                              ReferenceId = _do.ReferenceId,
 
                              FullName = _do.FullName,
@@ -313,7 +315,6 @@ public class StudentService
                              EthnicCode = _do.EthnicCode,
                              PolicyTargetCode = _do.PolicyTargetCode,
                              PriorityEncourageCode = _do.PriorityEncourageCode,
-                             SyncCode = _do.SyncCode,
                              SyncCodeClass = _do.SyncCodeClass,
                              IdentifyNumber = _do.IdentifyNumber,
                              StudentClassId = _do.StudentClassId,
@@ -357,6 +358,10 @@ public class StudentService
                 if (filter.Comparison == 0)
                     query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
                 break;
+            case "synccode":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.SyncCode.Contains(filter.Value.Trim()));
+                break;
 
             case "gradecode":
                 if (filter.Comparison == 0)
@@ -384,7 +389,6 @@ public class StudentService
         }
         return query;
     }
-
     public async Task<Result<DtoStudentRequest>> SaveFromService(Student request)
     {
         try
@@ -409,7 +413,6 @@ public class StudentService
         }
 
     }
-
     /// <summary>
     /// Lưu thông tin học sinh vào AMMS
     /// </summary>

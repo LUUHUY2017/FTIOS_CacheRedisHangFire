@@ -65,6 +65,7 @@
                                     <th> Năm sinh </th>
                                     <th> Lớp </th>
                                     <th> Khuôn mặt </th>
+                                    <th> Mã SSO </th>
                                     <th> Thời gian cập nhật  </th>
                                 </tr>
                                 <tr>
@@ -92,6 +93,9 @@
                                         </select>
                                     </th>
                                     <th>
+                                        <input type="text" class="form-control " v-model="params.syncCode">
+                                    </th>
+                                    <th>
                                         <input type="datetime" class="form-control " disabled readonly id="createdDate">
                                     </th>
                                 </tr>
@@ -110,6 +114,7 @@
                                         <span v-if="item.isFace" class='badge bg-primary bg-opacity-10 text-primary'>{{item.isFaceName}}</span>
                                         <span v-else class='badge bg-warning bg-opacity-10 text-warning'>{{item.isFaceName}}</span>
                                     </td>
+                                    <td style=" white-space: nowrap;"><span>{{item.syncCode}}</span></td>
                                     <td style=" white-space: nowrap;">
                                         <span>{{ formatDateTime(item.lastModifiedDate) }}</span>
                                     </td>

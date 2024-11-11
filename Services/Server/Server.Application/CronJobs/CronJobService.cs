@@ -45,6 +45,7 @@ public class CronJobService : ICronJobService
             {
                 var newCronExpression = item.ScheduleSequential switch
                 {
+                    "5s" => "*/5 * * * * *",
                     "10s" => "*/10 * * * * *",
                     "20s" => "*/20 * * * * *",
                     "30s" => "*/30 * * * * *",

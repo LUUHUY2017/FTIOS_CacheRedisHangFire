@@ -85,7 +85,7 @@ public class ScheduleJobRepository : IScheduleJobRepository
                                    ScheduleType = _do.ScheduleType,
                                    OrganizationName = or != null ? or.OrganizationName : null,
 
-                               }).ToListAsync();
+                               }).OrderBy(o => o.ScheduleType).ToListAsync();
             return _data;
         }
         catch (Exception e)

@@ -35,9 +35,6 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
 
             _personRepository = personRepository;
             _studentRepository = studentRepository;
-
-
-
         }
 
         /// <summary>
