@@ -44,7 +44,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 var sn = rB_ServerRequest.SerialNumber.Trim();
                 if (sn == null)
                     return;
-                Logger.Warning("Data :" + rB_ServerRequest.RequestParam);
+                Logger.Warning("Data :" + rB_ServerRequest.SerialNumber + " " + rB_ServerRequest.Id);
                 IclockCommand command2 = null;
 
                 if (rB_ServerRequest.Action == ServerRequestAction.ActionAdd && rB_ServerRequest.RequestType == ServerRequestType.UserInfo)
@@ -53,7 +53,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
                     if (data == null)
                         return;
-                    await SaveUserInfo(data);
+                    // await SaveUserInfo(data);
 
                     command = IclockOperarion.CommandUploadUser(sn, data.PersonCode, data.FullName, "", "0", data.UserCard, rB_ServerRequest.Id);
                     //Đẩy thêm ảnh
