@@ -21,7 +21,7 @@ public partial class CronJobService : ICronJobService
         Is_CheckDeviceOnline = true;
         try
         {
-            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss dd/MM/yyy") + ": Check device online");
+            Logger.Warning(DateTime.Now.ToString("HH:mm:ss dd/MM/yyy") + ": Check device online");
 
 
             var terminals = await _dbContext.zk_terminal.ToListAsync();
@@ -82,6 +82,7 @@ public partial class CronJobService : ICronJobService
             //Đẩy trạng thái qua signal r
             try
             {
+                //Gửi qua sinalr
                 if (terminal_status != null && terminal_status.Count() > 0)
                 {
                     if (_signalRService != null && _signalRService.Connection != null && _signalRService.Connection.State == HubConnectionState.Connected)
@@ -90,9 +91,9 @@ public partial class CronJobService : ICronJobService
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Logger.Error(ex);
 
             }
 
