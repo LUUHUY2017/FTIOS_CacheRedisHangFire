@@ -105,5 +105,44 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Post
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("PostGeneral")]
+        public async Task<ActionResult> PostGeneral(StudentSearchRequest request)
+        {
+            try
+            {
+                request.OrganizationId = GetOrganizationId();
+                var items = await _studentService.GetAlls(request);
+                int totalAmount = await items.CountAsync();
+                int totalFace = await items.CountAsync(o => o.IsFace == true);
+                int totalCurrent = totalAmount - totalFace;
+
+                //#region Type
+                //var infos = items.GroupBy(o => o.OrganizationId).Select(g => new ObjectDataDashboard()
+                //{
+                //    Name = g.Key ?? "N/A",
+                //    Value = g.Count(o => o.IsFace == true),
+                //    Percent = g.Count(o => o.Actived == true),
+                //}).OrderBy(o => o.Name).ToList();
+                //#endregion
+
+                var retVal = new
+                {
+                    totalAmount = totalAmount,
+                    totalFace = totalFace,
+                    totalCurrent = totalCurrent,
+                };
+                return Ok(new Result<object>(retVal, "Thành công", true));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

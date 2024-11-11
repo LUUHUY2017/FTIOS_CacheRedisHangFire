@@ -301,6 +301,7 @@ public class StudentService
                              StudentCode = _do.StudentCode,
                              SyncCode = _do.SyncCode,
                              ReferenceId = _do.ReferenceId,
+                             OrganizationId = _do.OrganizationId,
 
                              FullName = _do.FullName,
                              DateOfBirth = _do.DateOfBirth,

@@ -37,14 +37,30 @@
                 <div class="card-body">
                     <form v-on:submit.prevent="onLoadData">
                         <div class="row mb-3">
-                            <div class="col-md-2">
+                            <div class="col-md-2 ">
+                                <label class="form-label">Trạng thái</label>
                                 <select class="form-select select" id="FActived">
                                     <option value="1">Hoạt động</option>
                                     <option value="0">Ngừng hoạt động</option>
                                 </select>
-                            </div>
+                            </div> 
                             <div class="col-md-2 d-flex align-items-end">
                                 <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+
+                            <div class="col-md-2 ">
+                                <label class="form-label">Tổng số học sinh</label>
+                                <input type="text" class="form-control fw-bold " readonly v-model:value="totalAmount">
+                            </div>
+                            <div class="col-md-2 ">
+                                <label class="form-label">Số có khuôn mặt</label>
+                                <input type="text" class="form-control fw-bold " readonly v-model:value="totalFace">
+                            </div>
+                            <div class="col-md-2 ">
+                                <label class="form-label">Số chưa có khuôn mặt</label>
+                                <input type="text" class="form-control fw-bold " readonly v-model:value="totalCurrent">
                             </div>
                         </div>
                     </form>
@@ -86,7 +102,7 @@
                                         <input type="text" class="form-control " v-model="params.className">
                                     </th>
                                     <th>
-                                        <select class="form-select"v-model="params.isFaceName" >
+                                        <select class="form-select" v-model="params.isFaceName">
                                             <option value="">Tất cả</option>
                                             <option value="Có">Có</option>
                                             <option value="Không">Không</option>
@@ -297,7 +313,7 @@
 
     $(document).ready(function () {
         $('#FActived').on("change", function () {
-            _stu.filter.actived = $(this).val()  ;
+            _stu.filter.actived = $(this).val();
             _stu.onLoadData();
         });
 
@@ -321,6 +337,9 @@
         },
         data: {
             data: [],
+            totalAmount: 0,
+            totalFace: 0,
+            totalCurrent: 0,
 
             filter: {
                 RowsPerPage: 50,
@@ -339,7 +358,7 @@
                 isFaceName: "",
             },
 
-            
+
             object: {
                 dateNow: formatDateTime(new Date()),
                 config: {
@@ -359,12 +378,16 @@
         },
         methods: {
             onLoadData(resetPage) {
+                this.onLoadDataDetail();
+                this.onLoadData_General();
+            },
+
+
+            onLoadDataDetail(resetPage) {
                 $('.loader').show();
                 this.checkParams();
                 if (resetPage)
                     this.filter.CurentPage = 1;
-
-
                 axios.post('/api/v1/Student/Post', this.filter, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
@@ -389,6 +412,22 @@
                     $('.loader').delay(100).hide(0);
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
+                });
+            },
+            onLoadData_General() {
+                this.checkParams();
+                axios.post('/api/v1/Student/PostGeneral', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    this.totalAmount = response.data.data.totalAmount;
+                    this.totalFace = response.data.data.totalFace;
+                    this.totalCurrent = response.data.data.totalCurrent;
+
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
                 });
             },
 
@@ -446,7 +485,7 @@
             },
             renderRowOnPage() {
                 this.filter.CurentPage = 1;
-                this.onLoadData();
+                this.onLoadDataDetail();
             },
             formatDateTime(date) {
                 let data = date != null ? moment(date).format('DD/MM/YYYY HH:mm:ss') : null;
@@ -494,7 +533,7 @@
 
                     $('.loader').hide(0);
                     if (response.data.succeeded) {
-                        _stu.onLoadData();
+                        _stu.onLoadDataDetail();
 
                         bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
                         alertify.success(response.data.message);
