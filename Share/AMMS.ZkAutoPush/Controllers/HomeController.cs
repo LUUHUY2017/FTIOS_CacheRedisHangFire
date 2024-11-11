@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shared.Core.Loggers;
+using Share.WebApp.Controllers;
+using Share.WebApp.Helps;
 
 namespace AMMS.ZkAutoPush.Controllers;
 
-
-public class HomeController : Controller
+[AuthorizeClient]
+public class HomeController : AuthBaseController
 {
     public IActionResult Index()
     {
