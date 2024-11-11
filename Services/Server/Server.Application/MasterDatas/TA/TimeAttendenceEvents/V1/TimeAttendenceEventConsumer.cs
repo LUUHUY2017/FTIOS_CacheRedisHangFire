@@ -11,17 +11,20 @@ public class TimeAttendenceEventConsumer : IConsumer<RB_DataResponse>
     private readonly IEventBusAdapter _eventBusAdapter;
     private readonly Shared.Core.SignalRs.ISignalRClientService _signalRClientService;
     private readonly TimeAttendenceEventService _timeAttendenceEventService;
+    private readonly StudentService _studentService;
 
 
     public TimeAttendenceEventConsumer(
         IEventBusAdapter eventBusAdapter
       , Shared.Core.SignalRs.ISignalRClientService signalRClientService,
-        TimeAttendenceEventService timeAttendenceEventService
+        TimeAttendenceEventService timeAttendenceEventService,
+        StudentService studentService
         )
     {
         _eventBusAdapter = eventBusAdapter;
         _signalRClientService = signalRClientService;
         _timeAttendenceEventService = timeAttendenceEventService;
+        _studentService = studentService;
     }
     public async Task Consume(ConsumeContext<RB_DataResponse> context)
     {
@@ -52,7 +55,14 @@ public class TimeAttendenceEventConsumer : IConsumer<RB_DataResponse>
                 }
             }
 
-
+            if (dataRes != null && dataRes.ReponseType == RB_DataResponseType.UserInfo)
+            {
+                var dataAte = JsonConvert.DeserializeObject<TA_PersonInfo>(dataRes.Content);
+                if (dataAte != null)
+                {
+                    await _studentService.SaveImagePerson(dataAte);
+                }
+            }
         }
         catch (Exception ex)
         {

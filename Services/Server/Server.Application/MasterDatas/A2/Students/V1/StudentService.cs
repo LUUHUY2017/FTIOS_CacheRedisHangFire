@@ -2,6 +2,7 @@
 using AutoMapper;
 using EventBus.Messages;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Server.Application.MasterDatas.A2.Students.V1.Model;
@@ -384,9 +385,6 @@ public class StudentService
         return query;
     }
 
-
-
-
     public async Task<Result<DtoStudentRequest>> SaveFromService(Student request)
     {
         try
@@ -411,4 +409,68 @@ public class StudentService
         }
 
     }
+
+    /// <summary>
+    /// Lưu thông tin học sinh vào AMMS
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<Result<DtoStudentRequest>> SaveImagePerson(TA_PersonInfo request)
+    {
+        try
+        {
+            var stu = await _dbContext.Student.FirstOrDefaultAsync(o => o.StudentCode == request.PersonCode);
+            if (stu == null)
+                return new Result<DtoStudentRequest>($"Không tìm thấy thông tin học sinh", false);
+
+            var per = await _dbContext.Person.FirstOrDefaultAsync(o => o.Id == stu.Id);
+            if (per == null)
+                return new Result<DtoStudentRequest>($"Không tìm thấy thông tin người", false);
+
+            try
+            {
+                DateTime dateStudent = DateTime.Now;
+                string dateString = stu.DateOfBirth;
+                string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
+                bool success = DateTime.TryParseExact(
+                    dateString,
+                    formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out dateStudent
+                );
+
+                var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
+                var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
+
+                string imageName = stu.Id + ".jpg";
+                string fileName = imageFullFolder + imageName;
+
+
+                if (!string.IsNullOrWhiteSpace(request.UserFace))
+                {
+                    Image img = Common.Base64ToImage(request.UserFace);
+                    if (File.Exists(fileName))
+                        File.Delete(fileName);
+                    //img.Save(fileName);
+                    Common.SaveJpeg1(fileName, img, 100);
+                }
+                await _personRepository.SaveImageAsync(stu.Id, request.UserFace);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+            var revt = await PushPersonByEventBusAsync(stu);
+            return new Result<DtoStudentRequest>($"Cập nhật thành công", true);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+            return new Result<DtoStudentRequest>($"Gửi email lỗi: {e.Message}", false);
+        }
+
+    }
+
+
 }
