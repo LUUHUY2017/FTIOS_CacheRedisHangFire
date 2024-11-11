@@ -46,68 +46,82 @@ namespace AMMS.Hanet.Applications.V1.Service
                     command_type = rB_ServerRequest.RequestType,
                     successed = false,
                 };
-
+                //Lưu thông tin người dùng
                 if (rB_ServerRequest.Action == ServerRequestAction.ActionAdd && rB_ServerRequest.RequestType == ServerRequestType.UserInfo)
                 {
                     TA_PersonInfo? data = JsonConvert.DeserializeObject<TA_PersonInfo>(rB_ServerRequest.RequestParam);
 
                     if (data == null)
-                        return;
-                    Hanet_User user = new Hanet_User()
                     {
-                        base64file = data.UserFace,
-                        name = data.FullName,
-                        aliasID = data.PersonCode,
-                        //placeID = rB_ServerRequest.SchoolId,
-                        placeID = HanetParam.PlaceId,
-                    };
-
-                    if (await _hanetAPIService.CheckUser(user))
+                        conmandlog.return_time = DateTime.Now;
+                        conmandlog.return_content = "Thông tin người dùng không hợp lệ";
+                        conmandlog.return_value = 0;
+                        conmandlog.successed = false;
+                    }
+                    else if (string.IsNullOrEmpty(data.UserFace))
                     {
-                        var result = await _hanetAPIService.UpdateFaceToHanet(user);
-                        if (result != null)
-                        {
-                            conmandlog.return_time = DateTime.Now;
-                            conmandlog.return_content = result.returnMessage;
-                            conmandlog.return_value = result.returnCode;
-                            if (result.returnCode == Hanet_Response_Static.SUCCESSCode)
-                                conmandlog.successed = true;
-                            else
-                                conmandlog.successed = false;
-
-
-                        }
-                        else
-                        {
-                            conmandlog.return_time = DateTime.Now;
-                            conmandlog.return_content = "Không kết nối được server hanet";
-                            conmandlog.return_value = null;
-                            conmandlog.successed = false;
-
-                        }
+                        conmandlog.return_time = DateTime.Now;
+                        conmandlog.return_content = "Không có thông tin khuôn mặt";
+                        conmandlog.return_value = 0;
+                        conmandlog.successed = false;
                     }
                     else
                     {
-
-                        var result = await _hanetAPIService.AddUserToHanet(user);
-                        if (result != null)
+                        Hanet_User user = new Hanet_User()
                         {
-                            conmandlog.return_time = DateTime.Now;
-                            conmandlog.return_content = result.returnMessage;
-                            conmandlog.return_value = result.returnCode;
-                            conmandlog.successed = true;
+                            base64file = data.UserFace,
+                            name = data.FullName,
+                            aliasID = data.PersonCode,
+                            placeID = HanetParam.PlaceId,
+                        };
 
+                        if (await _hanetAPIService.CheckUser(user))
+                        {
+                            var result = await _hanetAPIService.UpdateFaceToHanet(user);
+                            if (result != null)
+                            {
+                                conmandlog.return_time = DateTime.Now;
+                                conmandlog.return_content = result.returnMessage;
+                                conmandlog.return_value = result.returnCode;
+                                if (result.returnCode == Hanet_Response_Static.SUCCESSCode)
+                                    conmandlog.successed = true;
+                                else
+                                    conmandlog.successed = false;
+                            }
+                            else
+                            {
+                                conmandlog.return_time = DateTime.Now;
+                                conmandlog.return_content = "Không kết nối được server hanet";
+                                conmandlog.return_value = null;
+                                conmandlog.successed = false;
+
+                            }
                         }
                         else
                         {
-                            conmandlog.return_time = DateTime.Now;
-                            conmandlog.return_content = "Không kết nối được server hanet";
-                            conmandlog.return_value = null;
-                            conmandlog.successed = false;
 
+                            var result = await _hanetAPIService.AddUserToHanet(user);
+                            if (result != null)
+                            {
+                                conmandlog.return_time = DateTime.Now;
+                                conmandlog.return_content = result.returnMessage;
+                                conmandlog.return_value = result.returnCode;
+                                if (result.returnCode == Hanet_Response_Static.SUCCESSCode)
+                                    conmandlog.successed = true;
+                                else
+                                    conmandlog.successed = false;
+                            }
+                            else
+                            {
+                                conmandlog.return_time = DateTime.Now;
+                                conmandlog.return_content = "Không kết nối được server hanet";
+                                conmandlog.return_value = null;
+                                conmandlog.successed = false;
+                            }
                         }
                     }
                     await AddCommand(conmandlog);
+
                 }
                 else if (rB_ServerRequest.Action == ServerRequestAction.ActionDelete && rB_ServerRequest.RequestType == ServerRequestType.UserInfo)
                 {
@@ -217,7 +231,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                 Logger.Error(e.Message);
             }
         }
-       
+
         #endregion
         /// <summary>
         /// Lưu thông tin lệnh

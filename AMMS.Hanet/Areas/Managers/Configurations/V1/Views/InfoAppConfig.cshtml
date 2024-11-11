@@ -21,15 +21,6 @@
                                         <div class="valid-feedback"> </div>
                                     </div>
                                 </div>
-                                <!--Plate Id-->
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-2">PlaceId </label>
-                                    <div class="col-lg-10">
-                                        <input type="text" class="form-control" required v-model="item.placeId">
-                                        <div class="invalid-feedback">Vui lòng nhập PlaceId</div>
-                                        <div class="valid-feedback"> </div>
-                                    </div>
-                                </div>
                                 <!--Client secret-->
                                 <div class="row mb-3">
                                     <label class="col-form-label text-start col-lg-2">Client secret </label>
@@ -57,7 +48,15 @@
                                         <div class="valid-feedback"> </div>
                                     </div>
                                 </div>
-
+                                <!--Place Id-->
+                                <div class="row mb-3">
+                                    <label class="col-form-label text-start col-lg-2">PlaceId </label>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" required v-model="item.placeId">
+                                        <div class="invalid-feedback">Vui lòng nhập PlaceId</div>
+                                        <div class="valid-feedback"> </div>
+                                    </div>
+                                </div>
                                 <div class="row mb-3">
                                     <div class="col-lg-12">
                                         <button type="button" class="btn btn-primary" v-on:click="onSaveData()">Lưu dữ liệu</button>
