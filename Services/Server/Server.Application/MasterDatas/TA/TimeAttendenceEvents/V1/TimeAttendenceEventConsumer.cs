@@ -64,7 +64,7 @@ public class TimeAttendenceEventConsumer : IConsumer<RB_DataResponse>
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            Logger.Warning(ex.Message);
         }
     }
 }

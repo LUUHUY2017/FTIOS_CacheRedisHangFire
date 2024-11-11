@@ -419,7 +419,10 @@ public class StudentService
     {
         try
         {
-            var stu = await _dbContext.Student.FirstOrDefaultAsync(o => o.StudentCode == request.PersonCode);
+            if (string.IsNullOrWhiteSpace(request.PersonCode))
+                return new Result<DtoStudentRequest>($"Phải có mã học sinh", false);
+
+            var stu = await _dbContext.Student.FirstOrDefaultAsync(o => o.SyncCode == request.PersonCode.ToString());
             if (stu == null)
                 return new Result<DtoStudentRequest>($"Không tìm thấy thông tin học sinh", false);
 
