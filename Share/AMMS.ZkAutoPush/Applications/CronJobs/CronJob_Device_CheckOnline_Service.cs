@@ -82,6 +82,8 @@ public partial class CronJobService : ICronJobService
             //Đẩy trạng thái qua signal r
             try
             {
+                Logger.Warning(DateTime.Now.ToString("HH:mm:ss dd/MM/yyy") + ": Gửi qua sinalr");
+
                 //Gửi qua sinalr
                 if (terminal_status != null && terminal_status.Count() > 0)
                 {
