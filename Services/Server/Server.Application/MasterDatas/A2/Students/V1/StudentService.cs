@@ -251,7 +251,7 @@ public class StudentService
         bool statusSync = false;
         try
         {
-            var _devis = _dbContext.PersonSynToDevice.FirstOrDefault(o => o.Id == request.Id);
+            var _devis = await _dbContext.PersonSynToDevice.FirstOrDefaultAsync(o => o.Id == request.Id);
             if (_devis != null)
             {
                 _devis.SynStatus = request.IsSuccessed;
