@@ -290,7 +290,7 @@ public class StudentService
                          where _do.Actived == actived
                             && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
 
-                         orderby _do.ClassName ascending, _do.FullName ascending
+                         orderby _do.ClassName ascending, _do.Name ascending
 
                          select new DtoStudentResponse()
                          {
@@ -304,6 +304,7 @@ public class StudentService
                              OrganizationId = _do.OrganizationId,
 
                              FullName = _do.FullName,
+                             Name = _do.Name,
                              DateOfBirth = _do.DateOfBirth,
                              GenderCode = _do.GenderCode,
                              ImageSrc = _do.ImageSrc,
@@ -320,7 +321,6 @@ public class StudentService
                              IdentifyNumber = _do.IdentifyNumber,
                              StudentClassId = _do.StudentClassId,
                              SortOrder = _do.SortOrder,
-                             Name = _do.Name,
                              SortOrderByClass = _do.SortOrderByClass,
                              GradeCode = _do.GradeCode,
                              ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null,

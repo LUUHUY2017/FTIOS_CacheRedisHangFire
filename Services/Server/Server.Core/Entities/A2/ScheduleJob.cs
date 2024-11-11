@@ -33,11 +33,21 @@ public class ScheduleJob : EntityBase
 public class ListScheduleCategory
 {
     public static ObjectString Minutely = new ObjectString() { Id = "Minutely", Name = "Mỗi phút" };
+    public static ObjectString _5Minutely = new ObjectString() { Id = "5M", Name = "Mỗi 5 phút" };
+    public static ObjectString _10Minutely = new ObjectString() { Id = "10M", Name = "Mỗi 10 phút" };
+    public static ObjectString _20Minutely = new ObjectString() { Id = "20M", Name = "Mỗi 20 phút" };
+    public static ObjectString _30Minutely = new ObjectString() { Id = "30M", Name = "Mỗi 30 phút" };
+    public static ObjectString _40Minutely = new ObjectString() { Id = "40M", Name = "Mỗi 40 phút" };
+    public static ObjectString _50Minutely = new ObjectString() { Id = "50M", Name = "Mỗi 50 phút" };
+
+
+
     public static ObjectString Hourly = new ObjectString() { Id = "Hourly", Name = "Hàng giờ" };
     public static ObjectString Daily = new ObjectString() { Id = "Daily", Name = "Hàng ngày", Type = "1" };
     public static ObjectString Weekly = new ObjectString() { Id = "Weekly", Name = "Hàng tuần", Type = "1" };
     public static ObjectString Monthly = new ObjectString() { Id = "Monthly", Name = "Hàng tháng", Type = "1" };
     public static ObjectString Yearly = new ObjectString() { Id = "Yearly", Name = "Hàng năm", Type = "1" };
+
 
     public static ObjectString _5seconds = new ObjectString() { Id = "5s", Name = "Mỗi 5 giây" };
     public static ObjectString _10seconds = new ObjectString() { Id = "10s", Name = "Mỗi 10 giây" };
@@ -68,13 +78,20 @@ public class ListScheduleCategory
         get
         {
             var _data = new List<ObjectString>();
-            _data.Add(_50seconds);
+
+            _data.Add(_5Minutely);
+            _data.Add(_10Minutely);
+            _data.Add(_20Minutely);
+            _data.Add(_30Minutely);
+            _data.Add(_40Minutely);
+            _data.Add(_50Minutely);
+
+            _data.Add(_5seconds);
             _data.Add(_10seconds);
             _data.Add(_20seconds);
             _data.Add(_30seconds);
             _data.Add(_40seconds);
             _data.Add(_50seconds);
-            _data.Add(Minutely);
 
             return _data;
         }

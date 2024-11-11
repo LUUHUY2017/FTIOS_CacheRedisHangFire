@@ -35,32 +35,32 @@
         <div class="content">
             <div class="card">
                 <div class="card-body">
-                    <form v-on:submit.prevent="onLoadData">
+                    <form v-on:submit.prevent="onLoadData(true)">
                         <div class="row mb-3">
-                            <div class="col-md-2 ">
+                            <div class="col-md-2 mb-3 ">
                                 <label class="form-label">Trạng thái</label>
                                 <select class="form-select select" id="FActived">
                                     <option value="1">Hoạt động</option>
                                     <option value="0">Ngừng hoạt động</option>
                                 </select>
-                            </div> 
+                            </div>
                             <div class="col-md-2 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                                <button type="submit" class="btn btn-primary mb-3" style="margin-right: 5px;">Tìm kiếm</button>
                             </div>
                             <div class="col-md-1">
                             </div>
 
                             <div class="col-md-2 ">
                                 <label class="form-label">Tổng số học sinh</label>
-                                <input type="text" class="form-control fw-bold " readonly v-model:value="totalAmount">
+                                <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalAmount">
                             </div>
                             <div class="col-md-2 ">
-                                <label class="form-label">Số có khuôn mặt</label>
-                                <input type="text" class="form-control fw-bold " readonly v-model:value="totalFace">
+                                <label class="form-label">Tổng có khuôn mặt</label>
+                                <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalFace">
                             </div>
                             <div class="col-md-2 ">
-                                <label class="form-label">Số chưa có khuôn mặt</label>
-                                <input type="text" class="form-control fw-bold " readonly v-model:value="totalCurrent">
+                                <label class="form-label">Tổng chưa có khuôn mặt</label>
+                                <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="totalCurrent">
                             </div>
                         </div>
                     </form>
@@ -378,7 +378,7 @@
         },
         methods: {
             onLoadData(resetPage) {
-                this.onLoadDataDetail();
+                this.onLoadDataDetail(resetPage);
                 this.onLoadData_General();
             },
 
