@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
     [ApiVersion("1.0")]
 
     [Authorize("Bearer")]
-    //[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+    [AuthorizeMaster]
     public class SyncDeviceServerController : AuthBaseAPIController
     {
         private readonly IMapper _mapper;
@@ -53,7 +54,6 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
         /// <returns></returns>
 
         [HttpPost("Post")]
-        [AllowAnonymous]
         public async Task<IActionResult> Post(SyncDeviceServerFilterReq request)
         {
             try
@@ -102,7 +102,6 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
 
 
         [HttpPost("PostSyncItem")]
-        [AllowAnonymous]
         public async Task<IActionResult> PostSyncItem(SyncStudentDeviceReq request)
         {
             try
@@ -120,7 +119,7 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
 
                 Student student = retval.Data;
                 student.ImageSrc = imgSrc;
-                var datas = await _studentService.PushPersonByEventBusAsync(student);
+                var datas = await _studentService.PushStudentsByEventBusAsync(student);
                 return Ok(datas);
             }
             catch (Exception ex)

@@ -134,7 +134,7 @@ public class DeviceAdminService
             modelDel.DeviceParam = null;
             modelDel.Actived = true;
             var relval = await _deviceRepository.UpdateAsync(modelDel);
-           
+
             return relval;
         }
         catch (Exception ex)
@@ -174,6 +174,19 @@ public class DeviceAdminService
         catch (Exception ex)
         {
             return new Result<Device>(null, $"Lỗi: {ex.Message}", false);
+        }
+    }
+
+    public async Task<Result<Device>> GetByIdAsync(string id)
+    {
+        try
+        {
+            var modelDel = await _deviceRepository.GetByIdAsync(id);
+            return modelDel;
+        }
+        catch (Exception ex)
+        {
+            return new Result<Device>($"Lỗi: {ex.Message}", false);
         }
     }
 }

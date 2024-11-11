@@ -10,6 +10,8 @@ using Share.Core.Pagination;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 using AMMS.Share.WebApp.Helps;
+using Server.Application.MasterDatas.A2.Students.V1;
+using Server.Core.Interfaces.A2.SyncDeviceServers.Requests;
 
 namespace Server.API.APIs.Data.Devices.V1.Controllers;
 
@@ -20,15 +22,17 @@ namespace Server.API.APIs.Data.Devices.V1.Controllers;
 [AuthorizeMaster]
 public class DeviceAdminController : AuthBaseAPIController
 {
-    private readonly DeviceAdminService _deviceAdminService;
     private readonly IMapper _mapper;
     private readonly IUriService _uriService;
+    private readonly DeviceAdminService _deviceAdminService;
+    private readonly StudentService _studentService;
 
-    public DeviceAdminController(DeviceAdminService deviceAdminService, IMapper mapper, IUriService uriService)
+    public DeviceAdminController(DeviceAdminService deviceAdminService, StudentService studentService, IMapper mapper, IUriService uriService)
     {
         _deviceAdminService = deviceAdminService;
         _mapper = mapper;
         _uriService = uriService;
+        _studentService = studentService;
     }
 
     /// <summary>
@@ -91,4 +95,23 @@ public class DeviceAdminController : AuthBaseAPIController
     {
         return Ok(await _deviceAdminService.InActive(request));
     }
+
+    [HttpPost("PostSyncItem")]
+    public async Task<IActionResult> PostSyncItem(DeviceResponse request)
+    {
+        try
+        {
+            var dev = await _deviceAdminService.GetByIdAsync(request.Id);
+            if (!dev.Succeeded)
+                return Ok(new Result<object>(dev.Message, false));
+
+            var datas = await _studentService.PushStudentsByEventBusAsync(dev.Data);
+            return Ok(new Result<object>("Thành công", true));
+        }
+        catch (Exception ex)
+        {
+            return Ok(new Result<object>("Lỗi:" + ex.Message, false));
+        }
+    }
+
 }

@@ -255,11 +255,12 @@
 
                         if (row.actived) {
                             ele += `<a href="javascript: " class="btn btn-sm btn-warning edit" title="Cập nhật đăng ký "><i class="fa fa-pencil" > </i> </a> &nbsp `;
+                            ele += `<a href="javascript: " class="btn btn-sm btn-info syncDevice" title="Đồng bộ học sinh "><i class="fa fa-refresh" > </i> </a> &nbsp `;
                             ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset inactive " title="Ngừng hoạt động "> <i class="fa fa-minus-circle" ></i> </a> &nbsp; `;
 
                         }
                         if (!row.actived) {
-                            ele += ` <a href="javascript:" class="btn btn-danger btn-sm delete-asset active" title="Kích hoạt "> <i class="fa fa-plus-square" ></i> </a> &nbsp; `;
+                            ele += ` <a href="javascript:" class="btn btn-success btn-sm delete-asset active" title="Kích hoạt "> <i class="fa fa-plus-square" ></i> </a> &nbsp; `;
                             ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset delete " title="Xóa "> <i class="fa fa-trash" ></i> </a> &nbsp; `;
                         }
                         ele += ` </div>`;
@@ -325,6 +326,12 @@
                                     console.log(error);
                                     alert("Lỗi: " + error.response.data.message);
                                 });
+                            }, function () { });
+                        },
+                        'click .syncDevice': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn đồng bộ tất cả học sinh trong trường xuống thiết bị này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                _deviceAdmin.onSubmitSync(row);
                             }, function () { });
                         },
                     }
@@ -550,6 +557,22 @@
                 }).catch(error => {
                     $('.loader').hide(0);
 
+                });
+            },
+
+            onSubmitSync(item) {
+                axios.post('/api/v1/deviceAdmin/PostSyncItem', item, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    if (response.data.succeeded) {
+                        alertify.success(response.data.message);
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
                 });
             },
             onAddDevice(row) {
