@@ -369,6 +369,7 @@ public sealed class SmartService
                     //client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _accessToken.access_token);
 
                     var result = await client.PostAsync(api, parameter);
+                    Logger.Warning("Lỗi: " + JsonConvert.SerializeObject(result));
                     if (result.IsSuccessStatusCode)
                     {
                         var data = await result.Content.ReadAsStringAsync();
@@ -379,6 +380,7 @@ public sealed class SmartService
                         }
                         else
                         {
+                            Logger.Warning(res.Message);
                             throw new InvalidOperationException(res.Message);
                         }
                     }
@@ -387,7 +389,7 @@ public sealed class SmartService
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            Logger.Warning("Lỗi: " + ex.Message.ToString());
             throw new Exception("Error occurred while fetching student data.", ex);
         }
         return retval;

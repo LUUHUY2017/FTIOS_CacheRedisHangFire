@@ -31,7 +31,6 @@ public class TimeAttendenceEventConsumer : IConsumer<RB_DataResponse>
         try
         {
             List<TA_AttendenceHistory> list = new List<TA_AttendenceHistory>();
-            List<TA_AttendenceImage> listImage = new List<TA_AttendenceImage>();
             var dataRes = context.Message;
             //Logger.Information("Consumer:" + dataRes);
 
@@ -50,8 +49,7 @@ public class TimeAttendenceEventConsumer : IConsumer<RB_DataResponse>
                 var dataAte = JsonConvert.DeserializeObject<TA_AttendenceImage>(dataRes.Content);
                 if (dataAte != null)
                 {
-                    listImage.Add(dataAte);
-                    await _timeAttendenceEventService.ProcessAttendenceImage(listImage);
+                    await _timeAttendenceEventService.ProcessAttendenceImage(dataAte.ImageBase64, dataAte.AttendenceHistoryId);
                 }
             }
 
