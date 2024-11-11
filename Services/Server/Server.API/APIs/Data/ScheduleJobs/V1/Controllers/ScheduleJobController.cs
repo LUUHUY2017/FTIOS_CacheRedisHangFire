@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,7 @@ namespace Server.API.APIs.Data.ScheduleJobs.V1.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
 [Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[AuthorizeMaster]
 public class ScheduleJobController : AuthBaseAPIController
 {
     private readonly IMediator _mediator;

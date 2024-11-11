@@ -533,7 +533,7 @@
 
                     $('.loader').hide(0);
                     if (response.data.succeeded) {
-                        _stu.onLoadDataDetail();
+                        _stu.onLoadData();
 
                         bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
                         alertify.success(response.data.message);

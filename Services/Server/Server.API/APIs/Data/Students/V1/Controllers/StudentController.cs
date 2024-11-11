@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +17,13 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     [Authorize("Bearer")]
-    //[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+    [AuthorizeMaster]
     public class StudentController : AuthBaseAPIController
     {
         private readonly IMapper _mapper;
         private readonly SmartService _smartService;
         private readonly StudentService _studentService;
+
         private readonly IPersonRepository _personRepository;
         private readonly IStudentRepository _studentRepository;
 
@@ -57,7 +59,6 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
         /// <returns></returns>
 
         [HttpPost("Post")]
-        [AllowAnonymous]
         public async Task<IActionResult> Post(StudentSearchRequest request)
         {
             try

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using ClosedXML.Report;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,7 @@ namespace Server.API.APIs.Reports.TimeAttenceEvents.V1.Controllers;
 [ApiVersion("1.0")]
 
 [Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[AuthorizeMaster]
 public class TimeAttenceEventController : AuthBaseAPIController
 {
     private readonly IMediator _mediator;
