@@ -51,7 +51,15 @@ public class CronJobService : ICronJobService
                     "30s" => "*/30 * * * * *",
                     "40s" => "*/40 * * * * *",
                     "50s" => "*/50 * * * * *",
+
                     "Minutely" => "* * * * *",
+                    "5M" => "*/5 * * * *",
+                    "10M" => "*/10 * * * *",
+                    "20M" => "*/20 * * * *",
+                    "30M" => "*/30 * * * *",
+                    "40M" => "*/40 * * * *",
+                    "50M" => "*/50 * * * *",
+
                     "Hourly" => "0 * * * *",
                     "Daily" => $"{timeSentMinute} {timeSentHour} * * *",
                     "Weekly" => $"{timeSentMinute} {timeSentHour} * * 0",
@@ -118,6 +126,9 @@ public class CronJobService : ICronJobService
                 foreach (var item in res)
                 {
                     i = i + 1;
+
+                    string lastName = !string.IsNullOrWhiteSpace(item.StudentName) ? item.StudentName.Split(' ').Last() : "";
+
                     var el = new Student()
                     {
                         SyncCode = item.SyncCode,
@@ -126,6 +137,7 @@ public class CronJobService : ICronJobService
                         ClassName = item.ClassName,
                         DateOfBirth = item.BirthDay,
                         FullName = item.StudentName,
+                        Name = lastName,
                         OrganizationId = orgRes.Id,
                         SchoolCode = orgRes.OrganizationCode,
                     };
