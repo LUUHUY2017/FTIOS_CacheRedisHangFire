@@ -34,12 +34,18 @@ public class ListScheduleCategory
 {
     public static List<ObjectString> Sequentials = new List<ObjectString>()
       {
+
                new ObjectString() { Id = "Minutely", Name = "Mỗi phút" },
                new ObjectString() { Id = "Hourly", Name = "Hàng giờ" },
                new ObjectString() { Id = "Daily", Name = "Hàng ngày" },
                new ObjectString() { Id = "Weekly", Name = "Hàng tuần" },
                new ObjectString() { Id = "Monthly", Name = "Hàng tháng" },
                new ObjectString() { Id = "Yearly", Name = "Hàng năm" },
+               new ObjectString() { Id = "10s", Name = "Mỗi 10 giây" },
+               new ObjectString() { Id = "20s", Name = "Mỗi 20 giấy" },
+               new ObjectString() { Id = "30s", Name = "Mỗi 30 giây" },
+               new ObjectString() { Id = "40s", Name = "Mỗi 40 giây" },
+               new ObjectString() { Id = "50s", Name = "Mỗi 50 giây" },
       };
 
     /// <summary>

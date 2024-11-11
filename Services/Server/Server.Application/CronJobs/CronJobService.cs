@@ -6,6 +6,7 @@ using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A2;
+using Server.Core.Entities.TA;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
@@ -39,11 +40,16 @@ public class CronJobService : ICronJobService
         foreach (var item in scheduleLists)
         {
             var timeSentHour = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
-            var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
+            var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Minutes : 0;
             if (item.ScheduleNote == "LAPLICHDONGBO")
             {
                 var newCronExpression = item.ScheduleSequential switch
                 {
+                    "10s" => "*/10 * * * * *",
+                    "20s" => "*/20 * * * * *",
+                    "30s" => "*/30 * * * * *",
+                    "40s" => "*/40 * * * * *",
+                    "50s" => "*/50 * * * * *",
                     "Minutely" => "* * * * *",
                     "Hourly" => "0 * * * *",
                     "Daily" => $"{timeSentMinute} {timeSentHour} * * *",
@@ -94,24 +100,49 @@ public class CronJobService : ICronJobService
 
             string schoolCode = orgRes.OrganizationCode; // "20186511"
             var res = await _smartService.PostListStudents(schoolCode);
+
+            var logSchedule = new ScheduleJobLog()
+            {
+                Actived = true,
+                CreatedDate = DateTime.Now,
+                LastModifiedDate = DateTime.Now,
+                OrganizationId = orgRes.Id,
+                Logs = jobRes.ScheduleJobName,
+                ScheduleJobId = jobRes.Id,
+            };
+            int count = 0, i = 0;
             if (res.Any())
             {
+                count = res.Count();
                 foreach (var item in res)
                 {
+                    i = i + 1;
                     var el = new Student()
                     {
+                        SyncCode = item.SyncCode,
                         StudentCode = item.StudentCode,
                         ClassId = item.ClassId,
                         ClassName = item.ClassName,
                         DateOfBirth = item.BirthDay,
                         FullName = item.StudentName,
-
                         OrganizationId = orgRes.Id,
                         SchoolCode = orgRes.OrganizationCode,
                     };
                     await _studentService.SaveFromService(el);
                 }
+
+                logSchedule.ScheduleJobStatus = true;
+                logSchedule.ScheduleLogNote = "Thành công";
+                logSchedule.Message = string.Format("Đã đồng bộ {0}/{1} học sinh từ SMAS", i, count);
             }
+            else
+            {
+                logSchedule.ScheduleJobStatus = false;
+                logSchedule.ScheduleLogNote = "Thành công";
+                logSchedule.Message = string.Format("Không có bản tin nào trả về");
+            }
+            await _dbContext.ScheduleJobLog.AddAsync(logSchedule);
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -135,7 +166,7 @@ public class CronJobService : ICronJobService
 
 
             // Lấy dữ liệu theo block gửi qua api
-            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.SchoolCode == orgRes.OrganizationCode && o.EventType != true).OrderBy(o => o.EventTime).Take(15).ToListAsync();
+            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.SchoolCode == orgRes.OrganizationCode && o.EventType != true).OrderBy(o => o.EventTime).Take(20).ToListAsync();
             if (datas.Count == 0)
                 return;
 
@@ -145,17 +176,6 @@ public class CronJobService : ICronJobService
             {
                 ExtraProperties extra = new ExtraProperties()
                 {
-                    isLate = false,
-                    isOffSoon = false,
-                    isOffPeriod = false,
-                    lateTime = null,
-                    offSoonTime = null,
-                    periodI = false,
-                    periodII = false,
-                    periodIII = false,
-                    periodIV = false,
-                    periodV = false,
-                    periodVI = false,
                     absenceTime = item.EventTime
                 };
                 var el = new StudentAbsence()
@@ -186,22 +206,34 @@ public class CronJobService : ICronJobService
                 if (res.IsSuccess)
                 {
                     datas.ForEach(o => { o.EventType = true; });
+
+                    try
+                    {
+                        var _listLog = new List<TimeAttendenceSync>();
+                        foreach (var item in res.Responses)
+                        {
+                            var el = datas.FirstOrDefault(o => o.StudentCode == item.studentCode && o.EventTime == item.extraProperties.absenceTime);
+                            if (el == null)
+                                continue;
+                            var log = new TimeAttendenceSync()
+                            {
+                                TimeAttendenceEventId = el.Id,
+                                SyncStatus = item.status,
+                                Message = item.message,
+                                CreatedDate = DateTime.Now,
+                                LastModifiedDate = DateTime.Now,
+                            };
+                            _listLog.Add(log);
+                        }
+
+                        await _dbContext.TimeAttendenceSync.AddRangeAsync(_listLog);
+                    }
+                    catch (Exception ext)
+                    {
+                        Logger.Error(ext);
+                    }
                     await _dbContext.SaveChangesAsync();
                 }
-                //var item = new TimeAttendenceSync() { Id = datas.Id, };
-                //if (res.IsSuccess)
-                //{
-                //    string response = JsonConvert.SerializeObject(res);
-                //    item.SyncStatus = res.Responses[0].status;
-                //    item.Message = res.Responses[0].message;
-                //    item.ParamResponses = response;
-                //}
-                //else
-                //{
-                //    item.SyncStatus = res.IsSuccess;
-                //    item.Message = res.Message;
-                //}
-                //await _timeAttendenceEventService.SaveStatuSyncSmas(item);
             }
         }
         catch (Exception ex)

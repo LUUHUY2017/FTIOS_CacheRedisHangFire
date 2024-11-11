@@ -1,78 +1,133 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
+﻿using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
 using Server.Core.Interfaces.TimeAttendenceEvents.Responses;
 using Shared.Core.Commons;
 
 namespace Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 public partial class TimeAttendenceEventService
 {
-    public async Task<Result<List<AttendenceEventReportRes>>> GetAlls(AttendenceReportFilterReq request)
+    public async Task<IQueryable<AttendenceEventReportRes>> GetAlls(AttendenceReportFilterReq request)
     {
         try
         {
-            var _data = await (from _do in _dbContext.TimeAttendenceEvent
-                               join _la in _dbContext.Student on _do.StudentCode equals _la.StudentCode into K
-                               from la in K.DefaultIfEmpty()
+            var _data = (from _do in _dbContext.TimeAttendenceEvent
+                         join _la in _dbContext.Student on _do.StudentCode equals _la.StudentCode into K
+                         from la in K.DefaultIfEmpty()
 
-                               where
-                                (request.StartDate != null ? _do.CreatedDate.Date >= request.StartDate.Value.Date : true)
-                                && (request.EndDate != null ? _do.CreatedDate.Date <= request.EndDate.Value.Date : true)
-                                  && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? la.OrganizationId == request.OrganizationId : true)
-                                && (!string.IsNullOrWhiteSpace(request.ClassId) ? la.ClassId == request.ClassId : true)
-                               orderby _do.CreatedDate descending
-                               select new AttendenceEventReportRes()
-                               {
-                                   Id = _do.Id,
-                                   Actived = _do.Actived,
-                                   CreatedDate = _do.CreatedDate,
-                                   LastModifiedDate = _do.LastModifiedDate,
+                         join _dv in _dbContext.Device on _do.DeviceId equals _dv.Id into KD
+                         from dv in KD.DefaultIfEmpty()
 
-                                   StudentCode = _do.StudentCode,
-                                   StudentName = la != null ? la.FullName : "",
-                                   ClassName = la != null ? la.ClassName : "",
+                         join _or in _dbContext.Organization on la.OrganizationId equals _or.Id into OG
+                         from or in OG.DefaultIfEmpty()
 
+                         where
+                          (request.StartDate != null ? _do.CreatedDate.Date >= request.StartDate.Value.Date : true)
+                          && (request.EndDate != null ? _do.CreatedDate.Date <= request.EndDate.Value.Date : true)
+                            && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? la.OrganizationId == request.OrganizationId : true)
+                          && (!string.IsNullOrWhiteSpace(request.ClassId) ? la.ClassId == request.ClassId : true)
+                         orderby _do.CreatedDate descending
+                         select new AttendenceEventReportRes()
+                         {
+                             Id = _do.Id,
+                             Actived = _do.Actived,
+                             CreatedDate = _do.CreatedDate,
+                             LastModifiedDate = _do.LastModifiedDate,
 
-                                   CreatedBy = _do.CreatedBy,
-                                   Description = _do.Description,
-                                   DeviceId = _do.DeviceId,
-                                   DeviceIP = _do.DeviceIP,
+                             StudentCode = _do.StudentCode,
+                             StudentName = la != null ? la.FullName : "",
+                             ClassName = la != null ? la.ClassName : "",
+                             DateOfBirth = la != null ? la.DateOfBirth : "",
 
-                                   EnrollNumber = _do.EnrollNumber,
-                                   EventTime = _do.EventTime,
-                                   EventType = _do.EventType,
-                                   FormSendSMS = _do.FormSendSMS,
+                             DeviceId = _do.DeviceId,
+                             DeviceIP = _do.DeviceIP,
+                             DeviceName = dv != null ? dv.DeviceName : "",
 
-                                   GetMode = _do.GetMode,
-                                   InOutMode = _do.InOutMode,
-                                   LastModifiedBy = _do.LastModifiedBy,
-                                   Logs = _do.Logs,
-                                   OrganizationId = _do.OrganizationId,
-                                   PersonId = _do.PersonId,
-                                   Reason = _do.Reason,
-                                   ReferenceId = _do.ReferenceId,
+                             OrganizationId = la != null ? la.OrganizationId : null,
 
-                                   AbsenceDate = _do.AbsenceDate,
-                                   AttendenceSection = _do.AttendenceSection,
+                             OrganizationCode = or != null ? or.OrganizationCode : "",
+                             OrganizationName = or != null ? or.OrganizationName : "",
 
-                                   ClassCode = _do.ClassCode,
-                                   SchoolCode = _do.SchoolCode,
-                                   SchoolYearCode = _do.SchoolYearCode,
-                                   ShiftCode = _do.ShiftCode,
+                             CreatedBy = _do.CreatedBy,
+                             Description = _do.Description,
 
-                                   TAMessage = _do.TAMessage,
-                                   ValueAbSent = _do.ValueAbSent
+                             EnrollNumber = _do.EnrollNumber,
+                             EventTime = _do.EventTime,
+                             EventType = _do.EventType,
+                             FormSendSMS = _do.FormSendSMS,
 
-                               }).ToListAsync();
+                             GetMode = _do.GetMode,
+                             InOutMode = _do.InOutMode,
+                             LastModifiedBy = _do.LastModifiedBy,
+                             Logs = _do.Logs,
+                             PersonId = _do.PersonId,
+                             Reason = _do.Reason,
+                             ReferenceId = _do.ReferenceId,
 
-            return new Result<List<AttendenceEventReportRes>>(_data, "Thành công!", true);
+                             AbsenceDate = _do.AbsenceDate,
+                             AttendenceSection = _do.AttendenceSection,
+
+                             ClassCode = _do.ClassCode,
+                             SchoolCode = _do.SchoolCode,
+                             SchoolYearCode = _do.SchoolYearCode,
+                             ShiftCode = _do.ShiftCode,
+
+                             TAMessage = _do.TAMessage,
+                             ValueAbSent = _do.ValueAbSent
+                         });
+
+            return _data;
         }
         catch (Exception ex)
         {
-            return new Result<List<AttendenceEventReportRes>>("Lỗi: " + ex.ToString(), false);
+            return null;
         }
     }
 
+    public async Task<IQueryable<AttendenceEventReportRes>> ApplyFilter(IQueryable<AttendenceEventReportRes> query, FilterItems filter)
+    {
+        switch (filter.PropertyName.ToLower())
+        {
+            case "studentname":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.StudentName.Contains(filter.Value.Trim()));
+                break;
+            case "studentcode":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
+                break;
 
+            case "devicename":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.DeviceName.Contains(filter.Value.Trim()));
+                break;
+
+
+            case "attendencesection":
+                if (!string.IsNullOrWhiteSpace(filter.Value))
+                {
+                    int section = int.Parse(filter.Value);
+                    query = query.Where(p => p.AttendenceSection == section);
+                }
+                break;
+
+            case "classname":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
+                break;
+            case "organizationname":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.OrganizationName.Contains(filter.Value.Trim()));
+                break;
+
+            case "deviceid":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.DeviceId.Contains(filter.Value.Trim()));
+                break;
+
+            default:
+                break;
+        }
+        return query;
+    }
 
 
 }

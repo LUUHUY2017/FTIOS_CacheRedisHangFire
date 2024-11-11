@@ -167,7 +167,7 @@ public class IclockController : ControllerBase
     public async Task<string> getrequest(string sn)
     {
         Logger.Warning($"getrequest: method: {Request.Method}, sn: {sn}");
-
+        //Kiểm tra trạng thái thiết bị
         try
         {
             var thietBiUpdate = await _deviceCacheService.Get(sn);
