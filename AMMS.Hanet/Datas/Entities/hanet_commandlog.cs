@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AMMS.Hanet.Datas.Entities
 {
-    [Table("commandlog", Schema = "Hanet")]
+    [Table("hanet_commandlog", Schema = "Hanet")]
 
     public class hanet_commandlog
     {

@@ -28,7 +28,7 @@ IConfiguration configuration = builder.Configuration;
 IConfigurationRoot configRoot = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
 
 services.AddOptions(); //Kích hoạt Options
-services.AddVersion();// Versioning
+//services.AddVersion();// Versioning
 
 services.AddCors(options =>
 {

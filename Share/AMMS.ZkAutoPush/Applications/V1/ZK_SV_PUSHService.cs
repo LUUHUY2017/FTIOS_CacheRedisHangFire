@@ -41,7 +41,6 @@ namespace AMMS.ZkAutoPush.Applications.V1
             {
                 IclockCommand command = null;
 
-                //var thietbi = ListTerminal.FirstOrDefault(x => x.sn == rB_ServerRequest.SerialNumber);
                 var sn = rB_ServerRequest.SerialNumber.Trim();
                 if (sn == null)
                     return;
@@ -60,8 +59,6 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     //Đẩy thêm ảnh
                     if (!string.IsNullOrEmpty(data.UserFace))
                     {
-                        //if (rB_ServerRequest.SerialNumber == "PYA8241500003")
-                        //{
                         data.UserFace = ConvertBase64ToPngBase64(data.UserFace);
                         command2 = IclockOperarion.CommandUploadUserFaceV3(sn, data.PersonCode, data.UserFace);
 
@@ -69,9 +66,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                         {
                             command2.DataId = Guid.NewGuid().ToString();
                             command2.ParentId = rB_ServerRequest.Id;
-
                             await AddCommand(rB_ServerRequest, command);
-
                         }
                     }
                 }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AMMS.Hanet.Datas.Entities
 {
-    [Table("transaction", Schema = "Hanet")]
+    [Table("hanet_transaction", Schema = "Hanet")]
 
     public class hanet_transaction
     {

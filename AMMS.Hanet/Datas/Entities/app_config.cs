@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AMMS.Hanet.Datas.Entities;
 
-[Table("app_config", Schema = "Hanet")]
+[Table("hanet_app_config", Schema = "Hanet")]
 
 public class app_config
 {

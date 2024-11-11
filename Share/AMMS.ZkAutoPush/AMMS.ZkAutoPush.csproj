@@ -7,6 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Datas\Migrations\MsSQL\**" />
+	  <Content Remove="Datas\Migrations\MsSQL\**" />
+	  <EmbeddedResource Remove="Datas\Migrations\MsSQL\**" />
+	  <None Remove="Datas\Migrations\MsSQL\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Hangfire" Version="1.8.14" />
 		<PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
@@ -54,7 +61,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Datas\Migrations\MySQL\" />
-		<Folder Include="Datas\Migrations\MsSQL\" />
 	</ItemGroup>
 
 	<ItemGroup>
