@@ -119,6 +119,7 @@ public class CronJobService : ICronJobService
                     i = i + 1;
                     var el = new Student()
                     {
+                        SyncCode = item.SyncCode,
                         StudentCode = item.StudentCode,
                         ClassId = item.ClassId,
                         ClassName = item.ClassName,

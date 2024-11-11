@@ -66,12 +66,14 @@ public class StudentRepository : RepositoryBaseMasterData<Student>, IStudentRepo
                 _order.ReferenceId = data.Id;
                 _order.LastModifiedDate = DateTime.Now;
 
+                _order.StudentCode = data.StudentCode;
+                _order.FullName = data.FullName;
+                _order.Name = data.Name;
+                _order.SyncCode = data.SyncCode;
+
                 _order.ClassId = data.ClassId;
                 _order.ClassName = data.ClassName;
                 _order.OrganizationId = data.OrganizationId;
-                _order.StudentCode = data.StudentCode;
-                _order.Name = data.Name;
-                _order.FullName = data.FullName;
                 _order.DateOfBirth = data.DateOfBirth;
                 _order.GenderCode = data.GenderCode;
                 _order.GradeCode = data.GradeCode;
