@@ -8,6 +8,7 @@ public interface ITATimeAttendenceSyncRepository
     Task<Result<TimeAttendenceSync>> CreateAsync(TimeAttendenceSync data);
     Task<Result<TimeAttendenceSync>> UpdateAsync(TimeAttendenceSync data);
     Task<Result<TimeAttendenceSync>> UpdateStatusAsync(TimeAttendenceSync data);
+    Task<Result<TimeAttendenceSync>> UpdateImageAttendence(string base64, string id);
     Task<Result<int>> DeleteAsync(string id);
 }
 

@@ -7,7 +7,8 @@ public class AttendenceSyncReportRes : TimeAttendenceSync
     public string StudentCode { get; set; }
     public string StudentName { get; set; }
     public string ClassName { get; set; }
-    public string SchoolName { get; set; }
+    public string OrganizationCode { get; set; }
+    public string OrganizationName { get; set; }
 
     public DateTime? AbsenceDate { get; set; }
     public int? AttendenceSection { get; set; }

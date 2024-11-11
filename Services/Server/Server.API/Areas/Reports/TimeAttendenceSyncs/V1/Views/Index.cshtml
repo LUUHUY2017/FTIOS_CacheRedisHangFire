@@ -55,7 +55,117 @@
             </div>
             <div class="card">
                 <div class="card-body">
-                    <bootstrap-table :columns="columns" :data="data" :options="optionTable.options"></bootstrap-table>
+                    <div id="table" class="table-responsive">
+                        <table class="table table-bordered table-striped  table-hover">
+                            <thead class="">
+                                <tr>
+                                    <th>Stt</th>
+                                    <th> Mã học sinh </th>
+                                    <th> Họ tên </th>
+                                    <th> Buổi điểm danh</th>
+                                    <th> Trạng thái </th>
+                                    <th> Thời gian diểm danh  </th>
+                                    <th> Lớp </th>
+                                    <th> Trường </th>
+                                    <th> Thông báo </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <button type="button" class="btn btn-primary" v-on:click="onLoadData(true)"> <i class="fa fa-search"></i> </button>
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control" v-model="params.studentCode">
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control " v-model="params.studentName">
+                                    </th>
+                                    <th style=" white-space: nowrap;">
+                                        <select class="form-select" v-model="params.attendenceSection">
+                                            <option value="">Tất cả</option>
+                                            <option value="0">Sáng</option>
+                                            <option value="1">Chiều</option>
+                                            <option value="2">Tối</option>
+                                        </select>
+                                    </th>
+                                    <th>
+                                        <select class="form-select" v-model="params.syncStatus">
+                                            <option selected value="">Tất cả</option>
+                                            <option value="True">Thành công</option>
+                                            <option value="False">Lỗi</option>
+                                            <option value="None">Đang chờ</option>
+                                        </select>
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control " disabled>
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control " v-model="params.className">
+                                    </th>
+                                    <th style=" white-space: nowrap;">
+                                        <input type="text" class="form-control " v-model="params.organizationName">
+                                    </th>
+                                   
+                                    <th style=" white-space: nowrap;">
+                                        <input type="text" class="form-control " v-model="params.message">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, index) in data">
+                                    <td><span>{{index  +1 }}</span></td>
+                                    <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
+                                    <td style=" white-space: nowrap;"><span>{{item.studentName}}</span></td>
+                                    <td style=" white-space: nowrap;">
+                                        <span v-if="item.attendenceSection ==0" class='badge bg-success  bg-opacity-10 text-success '>Sáng</span>
+                                        <span v-else-if="item.attendenceSection ==1" class='badge bg-primary bg-opacity-10 text-primary'>Chiều</span>
+                                        <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Tối</span>
+                                    </td>
+                                    <td style=" white-space: nowrap;">
+                                        <span v-if="item.syncStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
+                                        <span v-else-if="item.syncStatus ==false" class='badge bg-danger bg-opacity-10 text-danger'>Không thành công</span>
+                                        <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
+                                    </td>
+                                    <td style=" white-space: nowrap;">
+                                        <span>{{ formatDateTime(item.absenceDate) }}</span>
+                                    </td>
+                                    <td><span>{{item.className}}</span></td>
+                                    <td><span>{{item.organizationName}}</span></td>
+                                   
+                                    <td><span>{{item.message}}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="phan-trang " style="width: 100%;">
+                        <div class="fixed-table-pagination">
+                            <div class="row">
+                                <div style="float:left" class="col-md-8">
+                                    <div style=" margin-top: 10px !important; overflow:hidden" class=" pagination">
+                                        <ul id="pagingNumbers" class="pagination" style="margin: 0px !important;">  </ul>
+                                    </div>
+                                </div>
+
+                                <div style="float: right;text-align: right;" class="col-md-4 ">
+                                    <div style=" margin-top: 10px !important; " class=" pagination-detail">
+                                        <span class="pagination-info">
+                                            Showing {{firstRow}} to {{totalDataRowNext}} of {{totalRow}} rows
+                                        </span>
+                                        <span class="page-list">
+                                            <select v-model:value="filter.RowsPerPage" id="RowsPerPage" class=" " v-on:change="renderRowOnPage()">
+                                                <option value="10">10</option>
+                                                <option selected value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                                <option value="250">250</option>
+                                            </select>
+                                            rows per page
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -91,11 +201,14 @@
 <script>
     $(document).ready(function () {
 
-        // $('#classId').on("change", function () {
-        //     _bcCX.filter.classId = $(this).val() ?? null;
-        //     _bcCX.combobox.data = [];
-        //     _bcCX.onLoadData();
-        // });
+        $("ul.pagination").on("click", "li", function () {
+            var pageNumber = $(this).find("a").data('number');
+            if (pageNumber != undefined) {
+                _bcCX.filter.CurentPage = pageNumber;
+                _bcCX.onLoadData();
+            }
+
+        });
     });
 
     var _bcCX = new Vue({
@@ -111,116 +224,142 @@
 
                 startDate: formatDateTime(new Date()),
                 endDate: formatDateTime(new Date()),
+
+
+                RowsPerPage: 50,
+                CurentPage: 1,
+                Actived: "1",
+                FilterItems: [],
             },
+            params: {
+                studentCode: null,
+                studentName: null,
+                deviceId: null,
+                dateOfBirth: null,
+                className: null,
+                organizationName: null,
+                attendenceSection: "",
+                syncStatus: "",
+            },
+
             data: [],
             name_file: "LICHSUDIEMDANH_" + new Date().getDate() + "_" + new Date().getTime(),
-            columns: [
-                {
-                    title: "Thứ tự",
-                    field: 'sothutu',
-                    sortable: true,
-                    formatter: (value, row, index) => {
-                        var stt = index + 1;
-                        return "<span class ='black'> " + stt + "  </span>";
-                    },
-                },
-                {
-                    title: "Mã học sinh",
-                    field: 'studentCode',
-                    sortable: true,
-                },
-                {
-                    title: "Học sinh",
-                    field: 'studentName',
-                    sortable: true,
-
-                },
-                {
-                    title: "Lớp",
-                    sortable: true,
-                    field: 'className'
-                },
-                {
-                    title: 'Trạng thái',
-                    sortable: true,
-                    field: 'syncStatus',
-                    formatter: (value, row, index) => {
-                        if (row.syncStatus == null)
-                            return "<span class='badge bg-warning bg-opacity-10 text-info'>" + "Đang chờ" + "</span>";
-                        if (row.syncStatus) {
-                            return "<span class='badge bg-primary bg-opacity-10 text-primary'>" + "Thành công" + "</span>";
-                        } else {
-                            return "<span class='badge bg-warning bg-opacity-10 text-warning'>" + "Lỗi" + "</span>";
-                        }
-                    },
-                },
-                {
-                    title: "Thời gian điểm danh",
-                    field: 'absenceDate',
-                    sortable: true,
-                    formatter: (value, row, index) => {
-                        if (row.absenceDate) {
-                            var absenceDate = moment(row.absenceDate).format('DD/MM/YYYY HH:mm:ss');
-                            return "<span class ='black'> " + absenceDate + "  </span>";
-                        }
-                    },
-                },
-                {
-                    title: "Thời gian tạo",
-                    field: 'createdDate',
-                    sortable: true,
-                    formatter: (value, row, index) => {
-                        if (row.createdDate) {
-                            var createdDate = moment(row.createdDate).format('DD/MM/YYYY HH:mm:ss');
-                            return "<span class ='black'> " + createdDate + "  </span>";
-                        }
-                    },
-                },
-                {
-                    title: " Thông báo",
-                    field: 'message',
-                    sortable: true,
-                },
-
-               
-            ],
+      
             object: {
                 dateNow: formatDateTime(new Date()),
                 config: {
                     headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
                 }
             },
-            optionTable: {
-                options: {
-                    search: true,
-                    pagination: true,
-                    showExtendedPagination: true,
-                    sortable: true,
-                    searchAlign: 'right',
-                    paginationHAlign: 'lefft',
-                    paginationDetailHAlign: 'right',
-                    pageSize: 25,
-                    pageList: [10, 25, 50, 100, 200],
-                },
-            },
             combobox: { schools: [], schoolYears: [], classes: [] },
+
+            // phân trang
+            firstRow: 0,
+            totalRow: 0,
+            totalDataRowNext: 0,
+            curentPage: 0,
+            rowsPerPage: 50,
         },
         methods: {
-            onLoadData() {
+            onLoadData(resetPage) {
                 $('.loader').show();
+                this.checkParams();
+                if (resetPage)
+                    this.filter.CurentPage = 1;
                 axios.post('/api/v1/TimeAttendenceSync/Post', this.filter, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
-
-                    this.data = response.data.data;
                     $('.loader').delay(100).hide(0);
+                    this.data = response.data.data.items;
+
+                    this.totalRow = parseInt(response.data.data.totalRow);
+                    this.firstRow = parseInt((parseInt(this.filter.CurentPage) - 1) * parseInt(this.filter.RowsPerPage) + 1);
+                    this.totalPage = parseInt(response.data.data.totalPage);
+
+                    this.totalDataRowNext = parseInt(parseInt(this.firstRow) + parseInt(response.data.data.totalDataRow) - 1);
+
+                    const pagingNumbers = $('#pagingNumbers');
+                    this.renderPagination(pagingNumbers, this.totalPage, this.filter.CurentPage);
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
                     console.log(error);
                 });
             },
+            checkParams() {
+                this.filter.FilterItems = [];
+                Object.entries(this.params).forEach(([key, value]) => {
+                    if (value !== null) {
+                        this.filter.FilterItems.push({
+                            propertyName: key,
+                            comparison: 0,
+                            value: value
+                        });
+                    }
+                });
+            },
+            renderPagination(pagingNumbers, totalPage, currentPage) {
+                pagingNumbers.empty(); // Clear previous content
 
+                if (currentPage > 6) {
+                    pagingNumbers.append(`<li class="page-item page-pre"><a class="page-link" data-number="1"> <i class="fa fa-step-backward" ></i> </a></li>`);
+                }
+
+                // Hiển thị nút quay về đầu trang
+                if (currentPage > 1) {
+                    pagingNumbers.append(`<li class="page-item page-pre"><a class="page-link" data-number="${currentPage - 1}"> <i class="fa fa-caret-left" ></i> </a></li>`);
+                    pagingNumbers.append(`<li class="page-item page-pre"><a class="page-link" data-number="1">1</a></li>`);
+                }
+
+                // Nếu trang hiện tại  >3 và tổng trang hơn 6 trang sẽ hiển thị ....
+                if (currentPage > 3 && totalPage > 6) {
+                    pagingNumbers.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+                }
+
+                //Hiển thị các trang sau trang hiện tại (tối đa 3 trang sau)
+                const endPage = Math.min(currentPage + 3, totalPage);
+                for (let i = currentPage; i <= endPage; i++) {
+                    pagingNumbers.append(`<li class="page-item ${currentPage == i ? 'active' : ''}"><a class="page-link" data-number="${i}"> ${i}</a></li>`);
+                }
+
+                // Chỉ hiển thị ba số trang cuối cùng nếu tổng số trang nhiều hơn 3
+                if (totalPage > 6 && currentPage + 3 < totalPage) {
+                    pagingNumbers.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+
+                    const startLast = Math.max(totalPage - 2, currentPage + 1);
+                    for (let i = startLast; i <= totalPage; i++) {
+                        pagingNumbers.append(`<li class="page-item ${currentPage == i ? 'active' : ''}"><a class="page-link" data-number="${i}">${i}</a></li>`);
+                    }
+                }
+
+                // trang next cuối
+                if (currentPage < totalPage) {
+                    pagingNumbers.append(`<li class="page-item page-next"><a class="page-link" data-number="${currentPage + 1}"> <i class="fa fa-caret-right" ></i> </a></li>`);
+                    pagingNumbers.append(`<li class="page-item page-next"><a class="page-link" data-number="${totalPage}"><i class="fa fa-step-forward" ></i></a></li>`);
+                }
+            },
+            renderRowOnPage() {
+                this.filter.CurentPage = 1;
+                this.onLoadData();
+            },
+            formatDateTime(date) {
+                let data = date != null ? moment(date).format('DD/MM/YYYY HH:mm:ss') : null;
+                return data;
+            },
+            formatDate(value) {
+                if (value != null) {
+                    var dt = new Date(value);
+                    var mth = dt.getMonth() + 1;
+                    var day = dt.getDate();
+                    if (mth < 10)
+                        mth = "0" + mth;
+                    if (day < 10)
+                        day = "0" + day;
+
+                    return day + '/' + mth + '/' + dt.getFullYear();
+                } else
+                    return null;
+            },
             onExport() {
                 $('.loader').show();
                 axios.post('/api/v1/TimeAttendenceSync/export', this.filter, this.object.config).then(response => {

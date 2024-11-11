@@ -2,7 +2,6 @@
 using EventBus.Messages;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A2;
 using Server.Core.Entities.TA;
@@ -298,14 +297,13 @@ public partial class TimeAttendenceEventService
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    public async Task<string> ProcessAttendenceImage(List<TA_AttendenceImage> data)
+    public async Task<string> ProcessAttendenceImage(string base64, string id)
     {
         try
         {
-            Logger.Information($"list: {JsonConvert.SerializeObject(data)} ");
-
-            if (data.Any())
+            if (base64 != null)
             {
+                await _timeAttendenceSyncRepository.UpdateImageAttendence(base64, id);
             }
         }
         catch (Exception e)
