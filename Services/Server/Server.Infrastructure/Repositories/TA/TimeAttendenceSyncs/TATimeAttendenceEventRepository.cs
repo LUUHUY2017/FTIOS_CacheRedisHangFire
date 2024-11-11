@@ -1,4 +1,5 @@
 ﻿using AMMS.Shared.Commons;
+using Server.Core.Entities.A3;
 using Server.Core.Entities.TA;
 using Server.Core.Interfaces.TA.TimeAttendenceSyncs;
 using Server.Infrastructure.Datas.MasterData;
@@ -94,6 +95,32 @@ public class TATimeAttendenceSyncRepository : ITATimeAttendenceSyncRepository
             return new Result<TimeAttendenceSync>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
+
+    public async Task<Result<TimeAttendenceSync>> UpdateImageAttendence(string base64, string id)
+    {
+        string message = "";
+        try
+        {
+            var _order = _db.Image.FirstOrDefault(o => o.ReferenceId == id);
+            if (_order != null)
+            {
+                message = "Cập nhật thành công";
+            }
+            else
+            {
+                _order = new Images();
+                message = "Thêm mới thành công";
+            }
+            var retVal = await _db.SaveChangesAsync();
+
+            return new Result<TimeAttendenceSync>(message, true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<TimeAttendenceSync>("Lỗi: " + ex.ToString(), false);
+        }
+    }
+
     public async Task<Result<int>> DeleteAsync(string id)
     {
         try
