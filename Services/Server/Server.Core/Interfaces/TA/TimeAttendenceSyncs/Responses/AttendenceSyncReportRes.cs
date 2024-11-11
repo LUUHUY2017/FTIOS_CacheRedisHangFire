@@ -11,6 +11,7 @@ public class AttendenceSyncReportRes : TimeAttendenceSync
     public string OrganizationName { get; set; }
 
     public DateTime? AbsenceDate { get; set; }
+    public DateTime? EventTime { get; set; }
     public int? AttendenceSection { get; set; }
 }
 

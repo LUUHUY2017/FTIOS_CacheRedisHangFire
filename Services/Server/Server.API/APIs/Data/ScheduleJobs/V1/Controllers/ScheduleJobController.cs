@@ -60,7 +60,7 @@ public class ScheduleJobController : AuthBaseAPIController
             foreach (var item in data)
             {
                 item.ScheduleTypeName = ListScheduleCategory.ScheduleTypes.FirstOrDefault(o => o.Id == item.ScheduleType)?.Name;
-                item.ScheduleSequentialName = ListScheduleCategory.Sequentials.FirstOrDefault(o => o.Id == item.ScheduleSequential)?.Name;
+                item.ScheduleSequentialName = ListScheduleCategory.SequentialTypes.FirstOrDefault(o => o.Id == item.ScheduleSequential)?.Name;
             }
         }
         return Ok(new { items = data });
@@ -164,7 +164,8 @@ public class ScheduleJobController : AuthBaseAPIController
     [HttpGet("ScheduleOptions")]
     public async Task<ActionResult> ScheduleOptions()
     {
-        var sequentials = ListScheduleCategory.Sequentials.ToList();
+        var sequentials = ListScheduleCategory.SequentialTypes.ToList();
+        var sequentialMaxTypes = ListScheduleCategory.SequentialMaxTypes.ToList();
         var scheduleTypes = ListScheduleCategory.ScheduleTypes.ToList();
         return Ok(new
         {

@@ -32,22 +32,64 @@ public class ScheduleJob : EntityBase
 
 public class ListScheduleCategory
 {
-    public static List<ObjectString> Sequentials = new List<ObjectString>()
-      {
+    public static ObjectString Minutely = new ObjectString() { Id = "Minutely", Name = "Mỗi phút" };
+    public static ObjectString Hourly = new ObjectString() { Id = "Hourly", Name = "Hàng giờ" };
+    public static ObjectString Daily = new ObjectString() { Id = "Daily", Name = "Hàng ngày", Type = "1" };
+    public static ObjectString Weekly = new ObjectString() { Id = "Weekly", Name = "Hàng tuần", Type = "1" };
+    public static ObjectString Monthly = new ObjectString() { Id = "Monthly", Name = "Hàng tháng", Type = "1" };
+    public static ObjectString Yearly = new ObjectString() { Id = "Yearly", Name = "Hàng năm", Type = "1" };
 
-               new ObjectString() { Id = "Minutely", Name = "Mỗi phút" },
-               new ObjectString() { Id = "Hourly", Name = "Hàng giờ" },
-               new ObjectString() { Id = "Daily", Name = "Hàng ngày" },
-               new ObjectString() { Id = "Weekly", Name = "Hàng tuần" },
-               new ObjectString() { Id = "Monthly", Name = "Hàng tháng" },
-               new ObjectString() { Id = "Yearly", Name = "Hàng năm" },
-               new ObjectString() { Id = "10s", Name = "Mỗi 10 giây" },
-               new ObjectString() { Id = "20s", Name = "Mỗi 20 giấy" },
-               new ObjectString() { Id = "30s", Name = "Mỗi 30 giây" },
-               new ObjectString() { Id = "40s", Name = "Mỗi 40 giây" },
-               new ObjectString() { Id = "50s", Name = "Mỗi 50 giây" },
-      };
+    public static ObjectString _5seconds = new ObjectString() { Id = "5s", Name = "Mỗi 5 giây" };
+    public static ObjectString _10seconds = new ObjectString() { Id = "10s", Name = "Mỗi 10 giây" };
+    public static ObjectString _20seconds = new ObjectString() { Id = "20s", Name = "Mỗi 20 giây" };
+    public static ObjectString _30seconds = new ObjectString() { Id = "30s", Name = "Mỗi 30 giây" };
+    public static ObjectString _40seconds = new ObjectString() { Id = "40s", Name = "Mỗi 40 giây" };
+    public static ObjectString _50seconds = new ObjectString() { Id = "50s", Name = "Mỗi 50 giây" };
 
+    public static List<ObjectString> SequentialMaxTypes
+    {
+        get
+        {
+            var _data = new List<ObjectString>();
+            _data.Add(Minutely);
+            _data.Add(Hourly);
+            _data.Add(Daily);
+            _data.Add(Weekly);
+            _data.Add(Monthly);
+            _data.Add(Yearly);
+
+            return _data;
+        }
+    }
+
+
+    public static List<ObjectString> SequentialMinTypes
+    {
+        get
+        {
+            var _data = new List<ObjectString>();
+            _data.Add(_50seconds);
+            _data.Add(_10seconds);
+            _data.Add(_20seconds);
+            _data.Add(_30seconds);
+            _data.Add(_40seconds);
+            _data.Add(_50seconds);
+            _data.Add(Minutely);
+
+            return _data;
+        }
+    }
+    public static List<ObjectString> SequentialTypes
+    {
+        get
+        {
+            var _data = new List<ObjectString>();
+            _data.AddRange(SequentialMaxTypes);
+            _data.AddRange(SequentialMinTypes);
+            _data = _data.Distinct().ToList();
+            return _data;
+        }
+    }
     /// <summary>
     /// Loại lập lịch
     /// </summary>

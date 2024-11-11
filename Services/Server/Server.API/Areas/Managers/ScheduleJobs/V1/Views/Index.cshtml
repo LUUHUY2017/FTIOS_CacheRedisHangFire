@@ -81,7 +81,7 @@
 
     <!-- Modal -->
     <div class="modal hide  fade" id="ModelAddEdit" role="dialog" aria-hidden="true">
-        <div id="waitDialog" class="modal-dialog modal-xl">
+        <div id="waitDialog" class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}} @ViewData["Title"]</h5>
@@ -93,8 +93,8 @@
                             <p>Thông tin</p>
                             <form class="needs-validation" novalidate id="FormAddEdit">
                                 <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
+                                    <div class="col-md-10">
+                                        <div class="form-group row mb-2  ">
                                             <label class="col-form-label col-md-3">Trường học<span class="text-danger">*</span></label>
                                             <div class="col-md-9">
                                                 <select data-dropdown-parent="#ModelAddEdit" required data-placeholder="Vui lòng chọn trường" id="organizationId" class="form-control select">
@@ -106,12 +106,7 @@
                                                 <div class="valid-feedback"> </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-2  ">
                                             <label class="col-form-label col-lg-3">Tên lịch gửi<span class="text-danger">*</span></label>
                                             <div class="col-lg-9">
                                                 <input type="text" class="form-control" required placeholder="Vui lòng nhập tên lịch " v-model="item.scheduleJobName">
@@ -119,10 +114,7 @@
                                                 <div class="valid-feedback"></div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-2">
                                             <label class="col-form-label col-md-3">Đồng bộ<span class="text-danger">*</span></label>
                                             <div class="col-md-9">
                                                 <select data-dropdown-parent="#ModelAddEdit" required data-placeholder="Vui lòng chọn đồng bộ" id="scheduleType" class="form-control select">
@@ -134,23 +126,7 @@
                                                 <div class="valid-feedback"> </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-md-3">Thời gian chạy đồng bộ</label>
-                                            <div class="col-md-9">
-                                                <input type="time" id="scheduleTime" required v-model:value="item.scheduleTime" class="form-control" />
-                                                <div class="invalid-feedback">Vui lòng nhập thời gian</div>
-                                                <div class="valid-feedback"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-2">
                                             <label class="col-form-label col-md-3">Tuần suất <span class="text-danger">*</span></label>
                                             <div class="col-md-9">
                                                 <select data-dropdown-parent="#ModelAddEdit" data-placeholder="Vui lòng chọn tuần suất " required id="scheduleSequential" class="form-control select">
@@ -163,12 +139,15 @@
                                                 <div class="valid-feedback"> </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="row mb-4">
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-2" v-if="object.isShow">
+                                            <label class="col-form-label col-md-3">Thời gian chạy đồng bộ</label>
+                                            <div class="col-md-9">
+                                                <input type="time" id="scheduleTime" v-model:value="item.scheduleTime" class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row mb-2">
                                             <label class="col-form-label col-md-3">Hoạt động</label>
                                             <div class="col-lg-9">
                                                 <div class="form-check-horizontal">
@@ -178,8 +157,13 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
+
                                 </div>
+                             
+
+                               
 
                                 <div class="row mb-3">
                                     <div class="text-end">
@@ -220,7 +204,13 @@
 <script>
     $(document).ready(function () {
         $('#scheduleSequential').on("change", function () {
-            _Schedule.item.scheduleSequential = $(this).val();
+            _Schedule.item.scheduleSequential = $(this).val() ?? null;
+            const seq = _Schedule.combobox.sequentials.find(o => o.id === $(this).val());
+            console.warn(seq);
+            _Schedule.object.isShow = (seq != null && seq.type == "1");
+            console.warn(_Schedule.object.isShow);
+
+
         });
         $('#scheduleType').on("change", function () {
             _Schedule.item.scheduleType = $(this).val();
@@ -240,7 +230,6 @@
         $('#FcolumnTable').on("change", function () {
             _Schedule.filter.columnTable = $(this).val();
         });
-
     });
 
 
@@ -431,6 +420,7 @@
             object: {
                 dateNow: formatDateTime(new Date()),
                 editAction: false,
+                isShow: false,
                 config: {
                     headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
                 }
@@ -461,7 +451,8 @@
             onResetForm() {
                 this.item = {
                     actived: true,
-                    scheduleNote: "LAPLICHDONGBO"
+                    scheduleNote: "LAPLICHDONGBO",
+                    scheduleTime: "00:00:00",
                 };
                 resetFormJs();
 

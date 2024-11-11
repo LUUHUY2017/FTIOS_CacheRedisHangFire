@@ -115,13 +115,11 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
                     return Ok(new Result<object>("Không tìm thấy học sinh", false));
 
                 if (resImg.Succeeded)
-                {
                     imgSrc = resImg.Data.FaceData;
-                }
+
 
                 Student student = retval.Data;
                 student.ImageSrc = imgSrc;
-
                 var datas = await _studentService.PushPersonByEventBusAsync(student);
                 return Ok(datas);
             }
