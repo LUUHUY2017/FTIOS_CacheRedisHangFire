@@ -17,9 +17,9 @@
                         if (tab == "cauhinhthoigian")
                             tab_cauhinhthoigian = "active";
 
-                        string tab_thoigiandiemdanh = "";
-                        if (tab == "thoigiandiemdanh")
-                            tab_thoigiandiemdanh = "active";
+                        // string tab_thoigiandiemdanh = "";
+                        // if (tab == "thoigiandiemdanh")
+                        //     tab_thoigiandiemdanh = "active";
                         // <li class="nav-item">
                         //     <a href="@Url.Action("index", new { tab="thoigiandiemdanh" })" class="nav-link @tab_thoigiandiemdanh">
                         //         <i class="ph-house m-2"></i>
@@ -43,12 +43,12 @@
                                 Thời gian điểm danh
                             </a>
                         </li>
-                        <li class="nav-item">
+                       @*  <li class="nav-item">
                             <a href="@Url.Action("index", new { tab="thoigiandiemdanh" })" class="nav-link @tab_thoigiandiemdanh">
                                 <i class="ph-house m-2"></i>
                                 Thời gian điểm danh
                             </a>
-                        </li>
+                        </li> *@
                     </ul>
 
                     <div class="tab-content">
@@ -56,19 +56,19 @@
                             @if (tab == "cauhinhthoigian")
                             {
                                 <div class="accordion" id="tab_cauhinhthoigian">
-                                    @await Html.PartialAsync("/Areas/Managers/Configurations/V1/Views/TimeConfig.cshtml")
+                                    @await Html.PartialAsync("/Areas/Managers/Configurations/V1/Views/AttendanceTimeConfig.cshtml")
                                 </div>
                             }
                         </div>
 
-                        <div class="tab-pane fade mt-1 show @tab_thoigiandiemdanh" role="tabpanel">
+                        @* <div class="tab-pane fade mt-1 show @tab_thoigiandiemdanh" role="tabpanel">
                             @if (tab == "thoigiandiemdanh")
                             {
                                 <div class="accordion" id="tab_thoigiandiemdanh">
                                     @await Html.PartialAsync("/Areas/Managers/Configurations/V1/Views/AttendanceTimeConfig.cshtml")
                                 </div>
                             }
-                        </div>
+                        </div> *@
                     </div>
 
                 </div>

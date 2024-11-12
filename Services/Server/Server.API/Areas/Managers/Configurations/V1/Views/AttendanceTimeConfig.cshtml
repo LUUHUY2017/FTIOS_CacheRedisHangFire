@@ -5,11 +5,11 @@
 
         <div class="content">
 
-            <div class="card" hidden>
+            <div class="card">
                <div class="card-body">
                     <form v-on:submit.prevent="loadData">
                         <div class="row mb-3">
-                            <div class="col-lg-3">
+                            <div class="col-lg-3" hidden>
                                 <label class="form-label">Trường học</label>
                                 <select id="FilterOrgainization" class="form-control select" data-dropdown-parent="#webui_attendanceTimeConfig" data-placeholder="Vui lòng chọn trường" v-model:value="filter.organizationId">
                                     <option v-for="option in combobox.schools" v-bind:value="option.id">
@@ -17,9 +17,25 @@
                                     </option>
                                 </select>
                             </div>
-                            @*  <div class="col-lg-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
-                            </div>  *@
+                            <div class="col-lg-3">
+                                <label class="form-label">Trạng thái</label>
+                                <select class="form-select" v-model:value="filter.actived">
+                                    <option :value="true">Hoạt động</option>
+                                    <option :value="false">Ngừng hoạt động</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="form-label">Loại buổi</label>
+                                <select class="form-select" v-model:value="filter.type">
+                                    <option value="">Tất cả</option>
+                                    <option v-for="option in combobox.types" v-bind:value="option.id">
+                                        {{ option.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            </div> 
 
                         </div>
                     </form>
@@ -67,18 +83,6 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label class="col-form-label text-start col-lg-4">Loại buổi <span class="text-danger">*</span></label>
-                                <div class="col-lg-7">
-                                    <select id="OrgainizationEdit" class="form-select" required data-dropdown-parent="#ModelAddEdit" data-placeholder="Vui lòng chọn buổi điểm danh" v-model:value="item.type">
-                                        <option v-for="option in combobox.types" v-bind:value="option.id">
-                                            {{ option.name }}
-                                        </option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn trường</div>
-                                    <div class="valid-feedback">Valid feedback</div>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
                                 <label class="col-form-label text-start col-lg-4">Thời gian bắt đầu <span class="text-danger">*</span></label>
                                 <div class="col-lg-7">
                                     <input type="time" class="form-control" required v-model="item.startTime" step="1">
@@ -94,7 +98,18 @@
                                     <div class="valid-feedback">Valid feedback</div>
                                 </div>
                             </div>
-                            
+                            <div class="row mb-3">
+                                <label class="col-form-label text-start col-lg-4">Loại buổi <span class="text-danger">*</span></label>
+                                <div class="col-lg-7">
+                                    <select id="OrgainizationEdit" class="form-select" required data-dropdown-parent="#ModelAddEdit" data-placeholder="Vui lòng chọn buổi điểm danh" v-model:value="item.type">
+                                        <option v-for="option in combobox.types" v-bind:value="option.id">
+                                            {{ option.name }}
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback">Vui lòng chọn trường</div>
+                                    <div class="valid-feedback">Valid feedback</div>
+                                </div>
+                            </div>
                             <div class="row my-3">
                                 <div class="text-start">
                                     <button type="button" class="btn btn-primary" v-on:click="onSaveData()">Lưu dữ liệu</button>
@@ -136,9 +151,17 @@
                     formatter: (value, row, index) => {
                         var ele = `<div style="white-space: nowrap;">`;
                         //ele += `<a href = "javascript:" class= "btn btn-sm btn-info reAsync" title = "Đồng bộ " > <i class="fa fa-repeat" > </i> </a > &nbsp;`;
-                        ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit"  title = "Update " > <i class="fa fa-pencil" > </i><span class="sr-only">Update</span > </a > &nbsp;`;
-                        ele += `<a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i> <span class="sr-only">Inactive</span></a>&nbsp;`;
+                        
+                        if (row.actived) {
+                            ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit"  title = "Update " > <i class="fa fa-pencil" > </i><span class="sr-only">Update</span > </a > &nbsp;`;
+                            ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset inactive " title="Ngừng hoạt động "> <i class="fa fa-minus-circle" ></i> </a> &nbsp; `;
+                        }
+                        if (!row.actived) {
+                            ele += ` <a href="javascript:" class="btn btn-success btn-sm delete-asset active" title="Kích hoạt "> <i class="fa fa-plus-square" ></i> </a> &nbsp; `;
+                            ele += `<a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i> <span class="sr-only">Inactive</span></a>&nbsp;`;
+                        }
                         ele += ` </div>`;
+
                         return ele;
                     },
                     events: {
@@ -165,27 +188,44 @@
                                     //alertify.error('Cancel')
                                 });
                         },
-                        // 'click .reAsync': function (e, value, row) {
-                        //     $('.loader').show();
-                        //     axios.post('/api/v1/AttendanceConfig/SchoolAsync', row, _attendanceTimeConfig.object.bearerAuthorization).then(response => {
-                        //         if (response.request.responseURL.includes('~/Account/Login')) {
-                        //             window.location = window.location.href;
-                        //         }
+                        'click .inactive': function (e, value, row) {
+                            var question = "Bạn có chắc chắn kích hoạt thiết bị này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/AttendanceTimeConfig/active', { id: row.id, reason: "" }, _attendanceTimeConfig.object.bearerAuthorization).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _attendanceTimeConfig.data = [];
+                                        _attendanceTimeConfig.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
 
-                        //         if (response.data.succeeded) {
-                        //             alertify.success("Thành công");
-                        //             _attendanceTimeConfig.loadData();
-                        //         }
-                        //         else {
-                        //             alertify.notify(response.data.message, 'error', 6, function () { });
-                        //         }
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+                        'click .active': function (e, value, row) {
+                            var question = "Bạn có chắc chắn hủy kích hoạt thiết bị này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/AttendanceTimeConfig/inactive', { id: row.id, reason: "" }, _attendanceTimeConfig.object.bearerAuthorization).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _attendanceTimeConfig.data = [];
+                                        _attendanceTimeConfig.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
 
-                        //         $('.loader').delay(100).hide(0);
-                        //     }).catch(error => {
-                        //         console.log(error);
-                        //         $('.loader').delay(100).hide(0);
-                        //     });
-                        // },
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
                     }
                 },
                 {
@@ -244,6 +284,8 @@
             },
             filter: {
                 organizationId: "0",
+                actived: true,
+                type: "",
             },
             checkAsyncButton: false,
             combobox: { schools: [], schoolsEdit: [], types: [],},
@@ -277,6 +319,12 @@
                 //console.log(this.item);
                 if (!validateForm("#FormAddEdit"))
                     return true;
+
+                // So sánh thời gian bắt đầu và thời gian kết thúc
+                if (this.item.startTime > this.item.endTime) {
+                    alertify.warning("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc!");
+                    return;
+                }
                 //this.item.organizationId = this.filter.organizationId;
                 this.item.startTime = this.item.startTime === "" ? null : this.item.startTime;
                 this.item.endTime = this.item.endTime === "" ? null : this.item.endTime;

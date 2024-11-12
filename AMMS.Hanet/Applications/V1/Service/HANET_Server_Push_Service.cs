@@ -73,6 +73,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                             name = data.FullName,
                             aliasID = data.PersonCode,
                             placeID = HanetParam.PlaceId,
+                            departmentID = data.SerialNumber,
                         };
 
                         if (await _hanetAPIService.CheckUser(user))
@@ -224,13 +225,13 @@ namespace AMMS.Hanet.Applications.V1.Service
 
                 var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}");
                 await aa.Send(response);
-
             }
             catch (Exception e)
             {
-                Logger.Error(e.Message);
+                Logger.Error(e);
             }
         }
+ 
 
         #endregion
         /// <summary>

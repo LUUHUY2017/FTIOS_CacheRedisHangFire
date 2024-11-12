@@ -138,7 +138,7 @@ public class DeviceController : ControllerBase
         while (countData > 0)
         {
             page++;
-            var top100Data = await _hANET_API_Service.UserByPlaceId(HanetParam.PlaceId, page);
+            var top100Data = await _hANET_API_Service.UserByPlaceId(page);
             foreach (var item in top100Data)
             {
                 if (item.departmentID != "8235")
@@ -152,6 +152,55 @@ public class DeviceController : ControllerBase
 
 
         return Ok(totalData);
+    }
+    /// <summary>
+    /// Lấy dữ liệu chấm công theo thời gian
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("getCheckInByTime")]
+    public async Task<IActionResult> GetAllUserFace(DateTime startDate, DateTime endDate)
+    {
+        int page = 0;
+
+        var top100Data = await _hANET_API_Service.GetCheckinByTime(startDate, endDate, page, 50);
+
+        foreach (var item in top100Data)
+        {
+            var data = await _HANET_Device_Reponse_Service.AddTransactionHistoryLog(item);
+
+            if (data != null && item != null)
+            {
+                double ticks = item.checkinTime.Value;
+                TimeSpan time = TimeSpan.FromMilliseconds(ticks);
+                DateTime date = new DateTime(1970, 1, 1) + time;
+
+                TA_AttendenceHistory tA_AttendenceHistory = new TA_AttendenceHistory()
+                {
+                    Id = data.id,
+                    DeviceId = data.deviceID,
+                    PersonCode = item.aliasID,
+                    //PersonId = taData.PersonId,
+                    SerialNumber = item.deviceName,
+                    TimeEvent = date,
+                    Type = (int)TA_AttendenceType.Face,
+                };
+
+                RB_DataResponse rB_Response = new RB_DataResponse()
+                {
+                    Id = tA_AttendenceHistory.Id,
+                    Content = JsonConvert.SerializeObject(tA_AttendenceHistory),
+                    ReponseType = RB_DataResponseType.AttendenceHistory,
+                };
+
+                var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
+
+                await aa.Send(rB_Response);
+
+            }
+
+        }
+
+        return Ok(top100Data);
     }
 
 }

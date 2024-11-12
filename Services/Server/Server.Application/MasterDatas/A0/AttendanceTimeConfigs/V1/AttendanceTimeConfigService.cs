@@ -12,7 +12,7 @@ namespace Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
 public class AttendanceTimeConfigService
 {
     public string? UserId { get; set; }
-    private readonly IAttendanceTimeConfigRepository _AttendanceTimeConfigRepository;
+    private readonly IAttendanceTimeConfigRepository _attendanceTimeConfigRepository;
     private readonly IMapper _mapper;
     private readonly IMasterDataDbContext _dBContext;
     private readonly OrganizationService _organizationService;
@@ -23,7 +23,7 @@ public class AttendanceTimeConfigService
         OrganizationService organizationService
         )
     {
-        _AttendanceTimeConfigRepository = AttendanceTimeConfigRepository;
+        _attendanceTimeConfigRepository = AttendanceTimeConfigRepository;
         _mapper = mapper;
         _dBContext = dBContext;
         _organizationService = organizationService;
@@ -36,12 +36,12 @@ public class AttendanceTimeConfigService
             if (string.IsNullOrEmpty(request.Id))
             {
                 var dataAdd = _mapper.Map<AttendanceTimeConfig>(request);
-                var retVal = await _AttendanceTimeConfigRepository.AddAsync(dataAdd);
+                var retVal = await _attendanceTimeConfigRepository.AddAsync(dataAdd);
                 return retVal;
             }
             else
             {
-                var data = await _AttendanceTimeConfigRepository.GetByIdAsync(request.Id);
+                var data = await _attendanceTimeConfigRepository.GetByIdAsync(request.Id);
                 var dataUpdate = data.Data;
                 dataUpdate.OrganizationId = request.OrganizationId;
                 //dataUpdate.OrganizationName = request.OrganizationName;
@@ -50,7 +50,7 @@ public class AttendanceTimeConfigService
                 dataUpdate.StartTime = request.StartTime;
                 dataUpdate.EndTime = request.EndTime;
                 dataUpdate.Note = request.Note;
-                var retVal = await _AttendanceTimeConfigRepository.UpdateAsync(dataUpdate);
+                var retVal = await _attendanceTimeConfigRepository.UpdateAsync(dataUpdate);
                 return retVal;
             }
         }
@@ -64,8 +64,8 @@ public class AttendanceTimeConfigService
     {
         try
         {
-            var item = await _AttendanceTimeConfigRepository.GetByIdAsync(request.Id);
-            var retVal = await _AttendanceTimeConfigRepository.DeleteAsync(request);
+            var item = await _attendanceTimeConfigRepository.GetByIdAsync(request.Id);
+            var retVal = await _attendanceTimeConfigRepository.DeleteAsync(request);
             //var itemMap = _mapper.Map<AttendanceTimeConfigResponse>(item.Data);
 
             return retVal;
@@ -80,7 +80,7 @@ public class AttendanceTimeConfigService
     {
         try
         {
-            var retVal = await _AttendanceTimeConfigRepository.GetAllAsync();
+            var retVal = await _attendanceTimeConfigRepository.GetAllAsync();
 
             var listMap = _mapper.Map<List<AttendanceTimeConfigResponse>>(retVal);
             return new Result<List<AttendanceTimeConfigResponse>>(listMap, "Thành công", true);
@@ -98,13 +98,14 @@ public class AttendanceTimeConfigService
             _organizationService.UserId = UserId;
 
             var retVal = await (from tc in _dBContext.AttendanceTimeConfig
-                                join o in _dBContext.Organization on tc.OrganizationId equals o.Id
-                                where o.Actived == true
-                                  && !string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0" ? tc.OrganizationId == filter.OrganizationId : true
-                                //&& ((filter.SiteId != 0) ? siteIds.Contains(device.SiteId) : true)
-                                //&& ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "serial_number") ? device.SerialNumber.ToLower().Contains(filter.Key.ToLower()) : true)
-                                //&& ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "device_name") ? device.DeviceName.ToLower().Contains(filter.Key.ToLower()) : true)
-
+                                join o in _dBContext.Organization
+                                on tc.OrganizationId equals o.Id into orgGroup
+                                from o in orgGroup.DefaultIfEmpty() // LEFT JOIN
+                                where ((tc.Actived == filter.Actived)
+                                  && ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? tc.OrganizationId == filter.OrganizationId : true)
+                                  && ((!string.IsNullOrEmpty(filter.Type)) ? tc.Type == filter.Type : true)
+                                 )
+                                orderby tc.Type
                                 select new AttendanceTimeConfigResponse(tc, o)
                     )
                     .ToListAsync();
@@ -123,7 +124,7 @@ public class AttendanceTimeConfigService
     {
         try
         {
-            var retVal = await _AttendanceTimeConfigRepository.GetByFirstAsync(x => x.Actived == true && x.OrganizationId == orgId);
+            var retVal = await _attendanceTimeConfigRepository.GetByFirstAsync(x => x.Actived == true && x.OrganizationId == orgId);
 
             var itemMap = _mapper.Map<AttendanceTimeConfigResponse>(retVal.Data);
             return new Result<AttendanceTimeConfigResponse>(itemMap, "Thành công", true);
@@ -131,6 +132,41 @@ public class AttendanceTimeConfigService
         catch (Exception ex)
         {
             return new Result<AttendanceTimeConfigResponse>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
+    public async Task<Result<AttendanceTimeConfig>> Active(ActiveRequest request)
+    {
+        try
+        {
+            var modelDel = await _attendanceTimeConfigRepository.GetByIdAsync(request.Id);
+            if (modelDel == null)
+                return new Result<AttendanceTimeConfig>(null, "Không tìm thấy dữ liệu!", false);
+
+            var response = await _attendanceTimeConfigRepository.ActiveAsync(request);
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            return new Result<AttendanceTimeConfig>(null, $"Lỗi: {ex.Message}", false);
+        }
+    }
+    public async Task<Result<AttendanceTimeConfig>> InActive(InactiveRequest request)
+    {
+        try
+        {
+            var modelDel = await _attendanceTimeConfigRepository.GetByIdAsync(request.Id);
+            if (modelDel == null)
+                return new Result<AttendanceTimeConfig>(null, "Không tìm thấy dữ liệu!", false);
+
+            var response = await _attendanceTimeConfigRepository.InactiveAsync(request);
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            return new Result<AttendanceTimeConfig>(null, $"Lỗi: {ex.Message}", false);
         }
     }
 
