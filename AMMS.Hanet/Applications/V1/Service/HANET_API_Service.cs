@@ -1,5 +1,6 @@
 ﻿using AMMS.Hanet.Data;
 using AMMS.Hanet.Data.Response;
+using Microsoft.Build.Framework;
 using Newtonsoft.Json;
 using RestSharp;
 using Shared.Core.Loggers;
@@ -90,7 +91,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                 RestResponse response = await client.ExecuteAsync(request);
 
                 var strResult = response.Content;
-                Console.WriteLine(strResult);
+                Logger.Warning(strResult);
 
                 if (string.IsNullOrEmpty(strResult))
                     return false;
@@ -159,52 +160,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                 RestResponse response = await client.ExecuteAsync(request);
 
                 var strResult = response.Content;
-                Console.WriteLine(strResult);
-
-                if (string.IsNullOrEmpty(strResult))
-                    return null;
-
-                result = JsonConvert.DeserializeObject<Hanet_Response>(strResult);
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-
-                Logger.Error(ex);
-                return null;
-            }
-
-        }
-
-        /// <summary>
-        /// Đẩy thông tin user lên  với ảnh dạng url
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public async Task<Hanet_Response> AddUserToHanetUrl(Hanet_User user)
-        {
-            Hanet_Response result = null;
-            try
-            {
-                var client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Post, "https://partner.hanet.ai/person/registerByUrl");
-
-                var content = new MultipartFormDataContent
-                {
-                    { new StringContent(HanetParam.Token.access_token), "token" },
-                    { new StringContent(user.name), "name" },
-                    { new StringContent(user.Url), "url"  },
-                    { new StringContent(user.aliasID), "aliasID" },
-                    { new StringContent(user.placeID), "placeID" },
-                    { new StringContent("H"), "title" }
-                };
-                request.Content = content;
-                var response = await client.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-
-                var strResult = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(strResult);
+                Logger.Warning(strResult);
 
                 if (string.IsNullOrEmpty(strResult))
                     return null;
@@ -256,7 +212,7 @@ namespace AMMS.Hanet.Applications.V1.Service
 
 
                 RestResponse response = await client.ExecuteAsync(request);
-                Console.WriteLine(response.Content);
+                Logger.Warning(response.Content);
 
                 if (string.IsNullOrEmpty(response.Content))
                     return null;
@@ -376,7 +332,7 @@ namespace AMMS.Hanet.Applications.V1.Service
         /// <param name="page"></param>
         /// <param name="pagesize"></param>
         /// <returns></returns>
-        public async Task<List<Hanet_User_Data>> UserByPlaceId(string placeId, int page, int pagesize = 50)
+        public async Task<List<Hanet_User_Data>> UserByPlaceId(  int page, int pagesize = 50)
         {
             try
             {
@@ -398,7 +354,6 @@ namespace AMMS.Hanet.Applications.V1.Service
                 RestResponse response = await client.ExecuteAsync(request);
 
                 var strResult = response.Content;
-                Console.WriteLine(strResult);
 
                 if (string.IsNullOrEmpty(strResult))
                     return listData;
@@ -425,6 +380,70 @@ namespace AMMS.Hanet.Applications.V1.Service
 
                 Logger.Error(ex);
                 return new List<Hanet_User_Data>();
+            }
+
+        }
+        /// <summary>
+        /// Lấy checkin theo thời gian
+        /// </summary>
+        /// <param name="placeId"></param>
+        /// <param name="page"></param>
+        /// <param name="pagesize"></param>
+        /// <returns></returns>
+        public async Task<List<Hanet_Checkin_Data_History>> GetCheckinByTime(DateTime startDate, DateTime endDate, int page, int pagesize = 50)
+        {
+            try
+            {
+                List<Hanet_Checkin_Data_History> listData = new List<Hanet_Checkin_Data_History>();
+                Hanet_Response_Array result = null;
+
+                long fromDate = new DateTimeOffset(startDate).ToUnixTimeMilliseconds(); 
+                long toDate = new DateTimeOffset(endDate).ToUnixTimeMilliseconds();
+
+
+                var options = new RestClientOptions(ServerHanet)
+                {
+                    MaxTimeout = -1,
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("/person/getCheckinByPlaceIdInTimestamp", Method.Post);
+                request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+                request.AddParameter("token", HanetParam.Token.access_token);
+                request.AddParameter("placeID", HanetParam.PlaceId);
+                request.AddParameter("page", page);
+                request.AddParameter("size", pagesize);
+                request.AddParameter("from", fromDate);
+                request.AddParameter("to", toDate);
+                request.AddParameter("type", "0");
+                RestResponse response = await client.ExecuteAsync(request);
+
+                var strResult = response.Content;
+
+                if (string.IsNullOrEmpty(strResult))
+                    return listData;
+
+                result = JsonConvert.DeserializeObject<Hanet_Response_Array>(strResult);
+
+                if (result == null) return listData;
+
+                if (result.returnCode != Hanet_Response_Static.SUCCESSCode)
+                    return listData;
+                foreach (var obj in result.data)
+                {
+                    string json = JsonConvert.SerializeObject(obj);
+
+                    var h_user = JsonConvert.DeserializeObject<Hanet_Checkin_Data_History>(json);
+                    if (h_user != null)
+                        listData.Add(h_user);
+                }
+
+                return listData;
+            }
+            catch (Exception ex)
+            {
+
+                Logger.Error(ex);
+                return new List<Hanet_Checkin_Data_History>();
             }
 
         }

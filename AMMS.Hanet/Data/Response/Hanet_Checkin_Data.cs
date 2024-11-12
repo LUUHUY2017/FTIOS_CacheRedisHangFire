@@ -78,4 +78,62 @@
         /// </summary>
         public double? time { get; set; }
     }
+
+    public class Hanet_Checkin_Data_History
+    {
+        /// <summary>
+        ///  id định danh của một FaceID
+        /// </summary>
+        public string? personID { get; set; }
+        /// <summary>
+        /// tên của FaceID
+        /// </summary>
+        public string? personName { get; set; }
+
+        /// <summary>
+        /// là id định danh của một FaceID.
+        /// </summary>
+        public string? aliasID { get; set; }
+        /// <summary>
+        /// type là "log" để xác định loại dữ liệu là dữ liệu chấm công
+        /// </summary>
+        public int? type { get; set; }
+        /// <summary>
+        /// Date format: YYYY-MM-DD 
+        /// </summary>
+        public DateTime? date { get; set; }
+        /// <summary>
+        /// link checkin của FaceID.
+        /// </summary>
+        public string? avatar { get; set; }
+        /// <summary>
+        /// là id của device
+        /// </summary>
+        public string? deviceID { get; set; }
+        /// <summary>
+        /// là tên của device
+        /// </summary>
+        public string? deviceName { get; set; }
+        /// <summary>
+        ///  Data
+        /// </summary>
+        public string? data { get; set; }
+        /// <summary>
+        /// chức danh của FaceID
+        /// </summary>
+        public string? title { get; set; }
+        /// <summary>
+        /// là ID của địa điểm mà camera đang dùng
+        /// </summary>
+        public int? placeID { get; set; }
+        /// <summary>
+        ///  là tên địa điểm.
+        /// </summary>
+        public string? place { get; set; }
+        /// <summary>
+        ///  Timestamp tại thời điểm camera checkin.
+        /// </summary>
+        public double? checkinTime { get; set; }
+    }
+
 }
