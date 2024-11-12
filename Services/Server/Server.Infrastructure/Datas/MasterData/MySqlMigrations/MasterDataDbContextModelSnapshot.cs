@@ -143,6 +143,9 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.Property<string>("Logs")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Note")
                         .HasColumnType("longtext");
 
@@ -156,11 +159,11 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.Property<string>("ReferenceId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("RollCallName")
-                        .HasColumnType("longtext");
-
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time(6)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

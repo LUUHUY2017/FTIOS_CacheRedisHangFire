@@ -8,7 +8,8 @@ public class AttendanceTimeConfigResponse
     public string? Id { get; set; }
     public string? OrganizationId { get; set; } = "";
     public string? OrganizationName { get; set; }
-    public string? RollCallName { get; set; }
+    public string? Name { get; set; }
+    public string? Type { get; set; }
 
     public TimeSpan? StartTime { get; set; }
     public TimeSpan? EndTime { get; set; }
@@ -18,7 +19,8 @@ public class AttendanceTimeConfigResponse
     public AttendanceTimeConfigResponse(AttendanceTimeConfig tc, Organization o)
     {
         Id = tc?.Id;
-        RollCallName = tc?.RollCallName;
+        Name = tc?.Name;
+        Type = tc?.Type;
         StartTime = tc?.StartTime;
         EndTime = tc?.EndTime;
         Note = tc?.Note;

@@ -49,7 +49,7 @@
                             <div class="row mb-3">
                                 <label class="col-form-label text-start col-lg-4">Trường học <span class="text-danger">*</span></label>
                                 <div class="col-lg-7">
-                                    <select id="OrgainizationEdit" class="form-control select col-lg-8" required data-dropdown-parent="#ModelAddEdit" data-placeholder="Vui lòng chọn trường" v-model:value="item.organizationId">
+                                    <select id="OrgainizationEdit" class="form-control select" required data-dropdown-parent="#ModelAddEdit" data-placeholder="Vui lòng chọn trường" v-model:value="item.organizationId">
                                         <option v-for="option in combobox.schoolsEdit" v-bind:value="option.id">
                                             {{ option.organizationName }}
                                         </option>
@@ -61,8 +61,20 @@
                             <div class="row mb-3">
                                 <label class="col-form-label text-start col-lg-4">Tên buổi điểm danh<span class="text-danger">*</span></label>
                                 <div class="col-lg-7">
-                                    <input type="text" class="form-control" required v-model="item.rollCallName">
+                                    <input type="text" class="form-control" required v-model="item.name">
                                     <div class="invalid-feedback">Vui lòng nhập tên buổi điểm danh</div>
+                                    <div class="valid-feedback">Valid feedback</div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label text-start col-lg-4">Loại buổi <span class="text-danger">*</span></label>
+                                <div class="col-lg-7">
+                                    <select id="OrgainizationEdit" class="form-select" required data-dropdown-parent="#ModelAddEdit" data-placeholder="Vui lòng chọn buổi điểm danh" v-model:value="item.type">
+                                        <option v-for="option in combobox.types" v-bind:value="option.id">
+                                            {{ option.name }}
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback">Vui lòng chọn trường</div>
                                     <div class="valid-feedback">Valid feedback</div>
                                 </div>
                             </div>
@@ -177,14 +189,23 @@
                     }
                 },
                 {
-                    title: `Tên buổi điểm danh`,
-                    field: 'rollCallName',
-                    sortable: true,
-                },
-                {
                     title: `Tên trường`,
                     field: 'organizationName',
                     sortable: true,
+                },
+                {
+                    title: `Tên buổi điểm danh`,
+                    field: 'name',
+                    sortable: true,
+                },
+                {
+                    title: `Loại buổi`,
+                    field: 'type',
+                    sortable: true,
+                    formatter: (value) => {
+                        const type = _attendanceTimeConfig.combobox.types.find(item => item.id === value);
+                        return type ? type.name : ''; // Trả về tên nếu tìm thấy, nếu không trả về chuỗi rỗng
+                    },
                 },
                 {
                     title: `Thời gian bắt đầu`,
@@ -225,7 +246,7 @@
                 organizationId: "0",
             },
             checkAsyncButton: false,
-            combobox: { schools: [], schoolsEdit: [],},
+            combobox: { schools: [], schoolsEdit: [], types: [],},
         },
         methods: {
             loadData() {
@@ -328,6 +349,21 @@
                     this.loadData();
                 }).catch(error => {
                     console.warn(error);
+                });
+
+                axios.get('/api/v1/AttendanceTimeConfig/GetTypes', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    if (response.data.succeeded) {
+                        this.combobox.types = [...response.data.data];
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    console.log(error);
                 });
             },
         },

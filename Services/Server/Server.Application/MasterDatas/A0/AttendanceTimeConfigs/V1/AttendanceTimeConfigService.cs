@@ -45,7 +45,8 @@ public class AttendanceTimeConfigService
                 var dataUpdate = data.Data;
                 dataUpdate.OrganizationId = request.OrganizationId;
                 //dataUpdate.OrganizationName = request.OrganizationName;
-                dataUpdate.RollCallName = request.RollCallName;
+                dataUpdate.Name = request.Name;
+                dataUpdate.Type = request.Type;
                 dataUpdate.StartTime = request.StartTime;
                 dataUpdate.EndTime = request.EndTime;
                 dataUpdate.Note = request.Note;
