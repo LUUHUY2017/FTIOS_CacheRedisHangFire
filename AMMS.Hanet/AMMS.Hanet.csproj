@@ -13,6 +13,10 @@
 	  <EmbeddedResource Remove="Data\Consume\**" />
 	  <None Remove="Data\Consume\**" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="Areas\Managers\TerminalCommandLogs\Index.cshtml" />
+	</ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
@@ -70,10 +74,12 @@
 
 	<ItemGroup>
 	  <Folder Include="Applications\CronJobs\Devices\" />
+	  <Folder Include="Applications\TerminalCommandLogs\V1\Mappers\" />
 	  <Folder Include="Datas\Migrations\MsSQL\" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <None Include="Areas\Managers\MonitorDevices\V1\Views\Index.cshtml" />
+	  <None Include="Areas\Managers\TerminalCommandLogs\Index.cshtml" />
 	</ItemGroup>
 </Project>
