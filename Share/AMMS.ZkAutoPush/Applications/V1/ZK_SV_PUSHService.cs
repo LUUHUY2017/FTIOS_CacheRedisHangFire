@@ -130,16 +130,25 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 command.DataId = rB_ServerRequest.Id;
                 command.Action = rB_ServerRequest.Action;
                 command.SerialNumber = sn;
+                //Lưu vào CSDL
                 if (command.DataId != null)
                 {
                     await AddCommand(rB_ServerRequest, command);
                 }
 
-                await _deviceCommandCacheService.Set(command);
-                //Thêm lệnh ảnh nếu có
-                if (command2 != null)
+                //Kiểm tra thiết bị có online
+                var device = await _deviceCacheService.Get(sn);
+                
+                //nếu thiết bị online
+                if (device.online_status == true)
                 {
-                    await _deviceCommandCacheService.Set(command2);
+                    //Thêm lệnh vào caches
+                    await _deviceCommandCacheService.Save(command);
+                    //Thêm lệnh ảnh nếu có
+                    if (command2 != null)
+                    {
+                        await _deviceCommandCacheService.Save(command2);
+                    }
                 }
             }
             catch (Exception e)

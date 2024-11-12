@@ -96,10 +96,7 @@ public partial class CronJobService : ICronJobService
             catch (Exception ex)
             {
                 Logger.Error(ex);
-
             }
-
-
         }
         catch (Exception e)
         {

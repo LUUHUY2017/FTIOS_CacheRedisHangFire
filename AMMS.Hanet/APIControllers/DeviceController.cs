@@ -160,47 +160,53 @@ public class DeviceController : ControllerBase
     [HttpGet("getCheckInByTime")]
     public async Task<IActionResult> GetAllUserFace(DateTime startDate, DateTime endDate)
     {
+        var countData = 1;
+        var totalData = 0;
         int page = 0;
-
-        var top100Data = await _hANET_API_Service.GetCheckinByTime(startDate, endDate, page, 50);
-
-        foreach (var item in top100Data)
+        while (countData > 0)
         {
-            var data = await _HANET_Device_Reponse_Service.AddTransactionHistoryLog(item);
+            page++;
 
-            if (data != null && item != null)
+            var top100Data = await _hANET_API_Service.GetCheckinByTime(startDate, endDate, page, 50);
+
+            foreach (var item in top100Data)
             {
-                double ticks = item.checkinTime.Value;
-                TimeSpan time = TimeSpan.FromMilliseconds(ticks);
-                DateTime date = new DateTime(1970, 1, 1) + time;
+                var data = await _HANET_Device_Reponse_Service.AddTransactionHistoryLog(item);
 
-                TA_AttendenceHistory tA_AttendenceHistory = new TA_AttendenceHistory()
+                if (data != null && item != null)
                 {
-                    Id = data.id,
-                    DeviceId = data.deviceID,
-                    PersonCode = item.aliasID,
-                    //PersonId = taData.PersonId,
-                    SerialNumber = item.deviceName,
-                    TimeEvent = date,
-                    Type = (int)TA_AttendenceType.Face,
-                };
+                    double ticks = item.checkinTime.Value;
+                    TimeSpan time = TimeSpan.FromMilliseconds(ticks);
+                    DateTime date = new DateTime(1970, 1, 1) + time;
 
-                RB_DataResponse rB_Response = new RB_DataResponse()
-                {
-                    Id = tA_AttendenceHistory.Id,
-                    Content = JsonConvert.SerializeObject(tA_AttendenceHistory),
-                    ReponseType = RB_DataResponseType.AttendenceHistory,
-                };
+                    TA_AttendenceHistory tA_AttendenceHistory = new TA_AttendenceHistory()
+                    {
+                        Id = data.id,
+                        DeviceId = data.deviceID,
+                        PersonCode = item.aliasID,
+                        SerialNumber = item.deviceName,
+                        TimeEvent = date,
+                        Type = (int)TA_AttendenceType.Face,
+                    };
 
-                var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
+                    RB_DataResponse rB_Response = new RB_DataResponse()
+                    {
+                        Id = tA_AttendenceHistory.Id,
+                        Content = JsonConvert.SerializeObject(tA_AttendenceHistory),
+                        ReponseType = RB_DataResponseType.AttendenceHistory,
+                    };
 
-                await aa.Send(rB_Response);
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
 
+                    await aa.Send(rB_Response);
+
+                }
             }
+            countData = top100Data.Count;
+            totalData += countData;
 
         }
-
-        return Ok(top100Data);
+        return Ok(totalData);
     }
 
 }
