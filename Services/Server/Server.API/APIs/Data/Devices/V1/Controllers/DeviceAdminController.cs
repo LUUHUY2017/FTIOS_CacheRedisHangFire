@@ -1,17 +1,15 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Application.MasterDatas.A2.Devices.Models;
 using Server.Application.MasterDatas.A2.Devices;
-using Server.Core.Entities.A2;
+using Server.Application.MasterDatas.A2.Devices.Models;
+using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Core.Interfaces.A2.Devices.RequeResponsessts;
 using Server.Core.Interfaces.A2.Devices.Requests;
 using Share.Core.Pagination;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
-using AMMS.Share.WebApp.Helps;
-using Server.Application.MasterDatas.A2.Students.V1;
-using Server.Core.Interfaces.A2.SyncDeviceServers.Requests;
 
 namespace Server.API.APIs.Data.Devices.V1.Controllers;
 

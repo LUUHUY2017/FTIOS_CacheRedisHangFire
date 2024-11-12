@@ -3,10 +3,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Server.Application.MasterDatas.A2.Devices;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 using Server.Application.Services.VTSmart;
-using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.Persons;
 using Server.Core.Interfaces.A2.Students;
 using Server.Core.Interfaces.A2.SyncDeviceServers.Requests;
@@ -29,11 +29,13 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
 
         private readonly StudentService _studentService;
         private readonly SyncDeviceServerService _syncDeviceService;
+        private readonly DeviceAdminService _deviceAdminService;
         private readonly IPersonRepository _personRepository;
 
 
         public SyncDeviceServerController(
             SyncDeviceServerService syncDeviceService,
+            DeviceAdminService deviceAdminService,
             StudentService studentService, IMapper mapper,
             IPersonRepository personRepository,
             IStudentRepository studentRepository)
@@ -43,6 +45,7 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
             _studentRepository = studentRepository;
 
             _syncDeviceService = syncDeviceService;
+            _deviceAdminService = deviceAdminService;
             _studentService = studentService;
         }
 
@@ -147,20 +150,16 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
         {
             try
             {
-                string imgSrc = "";
-                var retval = await _studentRepository.GetByIdAsync(request.PersonId);
-                var resImg = await _personRepository.GetFacePersonById(request.PersonId);
-
-                if (!retval.Succeeded)
+                var retval1 = await _studentRepository.GetByIdAsync(request.PersonId);
+                if (!retval1.Succeeded)
                     return Ok(new Result<object>("Không tìm thấy học sinh", false));
 
-                if (resImg.Succeeded)
-                    imgSrc = resImg.Data.FaceData;
+                var retval2 = await _deviceAdminService.GetByIdAsync(request.DeviceId);
+                if (!retval2.Succeeded)
+                    return Ok(new Result<object>("Không tìm thấy thiết bị", false));
 
+                var datas = await _studentService.PushStudentByEventBusAsync(retval2.Data, retval1.Data);
 
-                Student student = retval.Data;
-                student.ImageSrc = imgSrc;
-                var datas = await _studentService.PushStudentsByEventBusAsync(student);
                 return Ok(datas);
             }
             catch (Exception ex)

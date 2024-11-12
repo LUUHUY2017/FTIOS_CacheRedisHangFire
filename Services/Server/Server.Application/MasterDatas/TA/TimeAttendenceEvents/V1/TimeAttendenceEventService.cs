@@ -9,8 +9,10 @@ using Server.Core.Interfaces.A2.Persons;
 using Server.Core.Interfaces.A2.Students;
 using Server.Core.Interfaces.TA.TimeAttendenceSyncs;
 using Server.Infrastructure.Datas.MasterData;
+using Shared.Core.Commons;
 using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
+using System.Drawing;
 
 namespace Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 public partial class TimeAttendenceEventService
@@ -121,7 +123,7 @@ public partial class TimeAttendenceEventService
 
 
                 var config = await _dbContext.AttendanceTimeConfig.Where(o => o.Actived == true && o.OrganizationId == student.OrganizationId
-                          && timeOfDay >= o.StartTime && timeOfDay <= o.EndTime).FirstOrDefaultAsync();
+                          && timeOfDay >= o.StartTime && timeOfDay <= o.EndTime).OrderByDescending(o => o.LastModifiedDate).FirstOrDefaultAsync();
                 if (config != null)
                 {
                     int sectionTime = Convert.ToInt32(config.Type);
@@ -393,8 +395,20 @@ public partial class TimeAttendenceEventService
     {
         try
         {
-            if (base64 != null)
+            if (!string.IsNullOrWhiteSpace(base64))
             {
+                var imageFolder = Common.GetImagesPathFolder("images\\attendences\\");
+                var imageFullFolder = Common.GetImagesFullFolder("images\\attendences\\");
+
+                string imageName = id + ".jpg";
+                string fileName = imageFullFolder + imageName;
+
+                Image img = Common.Base64ToImage(base64);
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+                //img.Save(fileName);
+
+                Common.SaveJpeg1(fileName, img, 75);
                 await _timeAttendenceSyncRepository.UpdateImageAttendence(base64, id);
             }
         }

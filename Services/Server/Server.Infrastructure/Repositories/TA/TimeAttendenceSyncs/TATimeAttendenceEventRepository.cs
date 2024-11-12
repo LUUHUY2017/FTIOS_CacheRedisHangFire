@@ -102,17 +102,17 @@ public class TATimeAttendenceSyncRepository : ITATimeAttendenceSyncRepository
         try
         {
             var _order = _db.Image.FirstOrDefault(o => o.ReferenceId == id);
-            if (_order != null)
+            if (_order == null)
             {
-                message = "Cập nhật thành công";
+                _order = new Images()
+                {
+                    Actived = true,
+                    CreatedDate = DateTime.Now,
+                    ReferenceId = id,
+                };
+                await _db.Image.AddAsync(_order);
+                await _db.SaveChangesAsync();
             }
-            else
-            {
-                _order = new Images();
-                message = "Thêm mới thành công";
-            }
-            var retVal = await _db.SaveChangesAsync();
-
             return new Result<TimeAttendenceSync>(message, true);
         }
         catch (Exception ex)

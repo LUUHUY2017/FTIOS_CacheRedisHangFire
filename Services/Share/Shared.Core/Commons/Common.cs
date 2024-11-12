@@ -162,6 +162,7 @@ public class Common
         }
     }
 
+
     public static string GetImageDateFullFolder(DateTime date, string folderName)
     {
         try
@@ -189,6 +190,31 @@ public class Common
     }
 
 
+    public static string GetImagesFullFolder(string folderName)
+    {
+        try
+        {
+            var dataFollder = string.Format("{0}{1}", GetCurentFolder(), folderName);
+            dataFollder = CheckFolder(dataFollder);
+            return dataFollder;
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+    }
+    public static string GetImagesPathFolder(string folderName)
+    {
+        try
+        {
+            var dataFollder = string.Format("{0}", folderName);
+            return dataFollder;
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+    }
 
 
 

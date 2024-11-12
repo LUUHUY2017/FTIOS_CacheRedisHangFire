@@ -9,6 +9,7 @@ using System.Drawing.Imaging;
 using System.Drawing;
 using System.Net;
 using Newtonsoft.Json.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace AMMS.Hanet.Applications.V1.Service
 {
@@ -209,11 +210,16 @@ namespace AMMS.Hanet.Applications.V1.Service
         {
             try
             {
+
+
                 hanet_transaction hanet_Transaction = new hanet_transaction()
                 {
                     id = data.id,
                     content = reponse.data,
-                    deviceID = data.deviceID
+                    deviceID = data.deviceID,
+                    time = data.time,
+                    transaction_type = TransactionRealTime,
+                    created_time = DateTime.Now,
                 };
                 _deviceAutoPushDbContext.Add(hanet_Transaction);
                 _deviceAutoPushDbContext.SaveChanges();
@@ -224,5 +230,44 @@ namespace AMMS.Hanet.Applications.V1.Service
                 Logger.Error(ex.Message);
             }
         }
+        /// <summary>
+        /// Realtime
+        /// </summary>
+        public const string TransactionRealTime = "Realtime";
+
+        /// <summary>
+        /// History
+        /// </summary>
+        public const string TransactionHistory = "History";
+
+
+        public async Task<hanet_transaction> AddTransactionHistoryLog(Hanet_Checkin_Data_History data)
+        {
+            try
+            {
+                var check = await _deviceAutoPushDbContext.hanet_transaction.FirstOrDefaultAsync(x => x.deviceID == data.deviceID && x.time == data.checkinTime);
+                if (check != null)
+                    return check;
+
+                hanet_transaction hanet_Transaction = new hanet_transaction()
+                {
+                    id = Guid.NewGuid().ToString(),
+                    content = JsonConvert.SerializeObject(data),
+                    deviceID = data.deviceID,
+                    time = data.checkinTime,
+                    transaction_type = TransactionRealTime,
+                    created_time = DateTime.Now,
+                };
+                _deviceAutoPushDbContext.Add(hanet_Transaction);
+                _deviceAutoPushDbContext.SaveChanges();
+                return hanet_Transaction;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+                return null;
+            }
+        }
+
     }
 }
