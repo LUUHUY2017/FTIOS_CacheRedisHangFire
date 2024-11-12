@@ -1,9 +1,9 @@
 ﻿using Server.Core.Entities.A0;
 using Server.Core.Entities.A2;
 
-namespace Server.Application.MasterDatas.A0.RollCallTimeConfigs.V1.Models;
+namespace Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1.Models;
 
-public class RollCallTimeConfigResponse
+public class AttendanceTimeConfigResponse
 {
     public string? Id { get; set; }
     public string? OrganizationId { get; set; } = "";
@@ -15,7 +15,7 @@ public class RollCallTimeConfigResponse
 
     public string? Note { get; set; }
 
-    public RollCallTimeConfigResponse(RollCallTimeConfig tc, Organization o)
+    public AttendanceTimeConfigResponse(AttendanceTimeConfig tc, Organization o)
     {
         Id = tc?.Id;
         RollCallName = tc?.RollCallName;

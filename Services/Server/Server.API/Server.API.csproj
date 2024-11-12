@@ -102,7 +102,7 @@
 
     <Compile Include="APIs\Data\MonitorDevices\V1\Controllers\MonitorDeviceController.cs" />
 
-    <Compile Include="APIs\Data\RollCallTimeConfigs\V1\Controllers\RollCallTimeConfigController.cs" />
+    <Compile Include="APIs\Data\AttendanceTimeConfigs\V1\Controllers\AttendanceTimeConfigController.cs" />
 
     <Compile Include="APIs\Data\ScheduleJobs\V1\Controllers\ScheduleJobLogController.cs" />
 

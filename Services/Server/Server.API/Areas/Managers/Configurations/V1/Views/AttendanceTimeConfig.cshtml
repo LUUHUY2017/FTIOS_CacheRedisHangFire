@@ -1,5 +1,5 @@
 ﻿
-<div class="content-wrapper" id="webui_rollCallTimeConfig">
+<div class="content-wrapper" id="webui_attendanceTimeConfig">
     <div class="content-inner">
         <!-- Content area -->
 
@@ -11,7 +11,7 @@
                         <div class="row mb-3">
                             <div class="col-lg-3">
                                 <label class="form-label">Trường học</label>
-                                <select id="FilterOrgainization" class="form-control select" data-dropdown-parent="#webui_rollCallTimeConfig" data-placeholder="Vui lòng chọn trường" v-model:value="filter.organizationId">
+                                <select id="FilterOrgainization" class="form-control select" data-dropdown-parent="#webui_attendanceTimeConfig" data-placeholder="Vui lòng chọn trường" v-model:value="filter.organizationId">
                                     <option v-for="option in combobox.schools" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>
@@ -100,18 +100,18 @@
 <script>
     $(document).ready(function () {
         $('#FilterOrgainization').on("change", function () {
-            _rollCallTimeConfig.filter.organizationId = $(this).val();
-            _rollCallTimeConfig.loadData();
+            _attendanceTimeConfig.filter.organizationId = $(this).val();
+            _attendanceTimeConfig.loadData();
         });
         $('#OrgainizationEdit').on("change", function () {
-            _rollCallTimeConfig.item.organizationId = $(this).val();
-            _rollCallTimeConfig.item.organizationName = $('#OrgainizationEdit option:selected').text();
+            _attendanceTimeConfig.item.organizationId = $(this).val();
+            _attendanceTimeConfig.item.organizationName = $('#OrgainizationEdit option:selected').text();
             console.log($(this).val());
             console.log($('#OrgainizationEdit option:selected').text());
         });
     });
-    var _rollCallTimeConfig = new Vue({
-        el: '#webui_rollCallTimeConfig',
+    var _attendanceTimeConfig = new Vue({
+        el: '#webui_attendanceTimeConfig',
         components: {
             'BootstrapTable': BootstrapTable
         },
@@ -131,17 +131,17 @@
                     },
                     events: {
                         'click .edit': function (e, value, row) {
-                            _rollCallTimeConfig.onPopupModelEdit(row, true);
+                            _attendanceTimeConfig.onPopupModelEdit(row, true);
                         },
                         'click .delete': function (e, value, row) {
                             var question = "Bạn có chắc chắn muốn xóa dòng này khỏi cơ sở dữ liệu không? sau khi xóa không khôi phục lại được!";
                             var content = "Nhập nội dung xóa (không quá 250 kí tự)";
                             alertify.prompt(question, content, ''
                                 , function (evt, value) {
-                                    axios.post('/api/v1/RollCallTimeConfig/Delete', { id: row.id + '', reason: value }, _rollCallTimeConfig.object.bearerAuthorization).then(response => {
+                                    axios.post('/api/v1/AttendanceTimeConfig/Delete', { id: row.id + '', reason: value }, _attendanceTimeConfig.object.bearerAuthorization).then(response => {
                                         if (response.data.succeeded) {
                                             alertify.success(response.data.message);
-                                            _rollCallTimeConfig.loadData();
+                                            _attendanceTimeConfig.loadData();
                                         }
                                         else {
                                             alertify.warning(response.data.message);
@@ -155,14 +155,14 @@
                         },
                         // 'click .reAsync': function (e, value, row) {
                         //     $('.loader').show();
-                        //     axios.post('/api/v1/AttendanceConfig/SchoolAsync', row, _rollCallTimeConfig.object.bearerAuthorization).then(response => {
+                        //     axios.post('/api/v1/AttendanceConfig/SchoolAsync', row, _attendanceTimeConfig.object.bearerAuthorization).then(response => {
                         //         if (response.request.responseURL.includes('~/Account/Login')) {
                         //             window.location = window.location.href;
                         //         }
 
                         //         if (response.data.succeeded) {
                         //             alertify.success("Thành công");
-                        //             _rollCallTimeConfig.loadData();
+                        //             _attendanceTimeConfig.loadData();
                         //         }
                         //         else {
                         //             alertify.notify(response.data.message, 'error', 6, function () { });
@@ -230,7 +230,7 @@
         methods: {
             loadData() {
                 $('.loader').show();
-                axios.post('/api/v1/RollCallTimeConfig/GetsFilter', this.filter, this.object.bearerAuthorization).then(response => {
+                axios.post('/api/v1/AttendanceTimeConfig/GetsFilter', this.filter, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
@@ -260,7 +260,7 @@
                 this.item.startTime = this.item.startTime === "" ? null : this.item.startTime;
                 this.item.endTime = this.item.endTime === "" ? null : this.item.endTime;
                 $('.loader').show();
-                axios.post('/api/v1/RollCallTimeConfig/AddOrEdit', this.item, this.object.bearerAuthorization).then(response => {
+                axios.post('/api/v1/AttendanceTimeConfig/AddOrEdit', this.item, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }

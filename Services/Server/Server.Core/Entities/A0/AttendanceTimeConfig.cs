@@ -2,7 +2,7 @@
 
 namespace Server.Core.Entities.A0;
 
-public class RollCallTimeConfig : EntityBase
+public class AttendanceTimeConfig : EntityBase
 {
     public string? RollCallName { get; set; }
     public TimeSpan? StartTime { get; set; }

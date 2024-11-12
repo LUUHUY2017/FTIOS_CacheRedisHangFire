@@ -1,6 +1,6 @@
-﻿namespace Server.Application.MasterDatas.A0.RollCallTimeConfigs.V1.Models;
+﻿namespace Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1.Models;
 
-public class RollCallTimeConfigRequest
+public class AttendanceTimeConfigRequest
 {
     public string? Id { get; set; }
     public string? OrganizationId { get; set; } = "";

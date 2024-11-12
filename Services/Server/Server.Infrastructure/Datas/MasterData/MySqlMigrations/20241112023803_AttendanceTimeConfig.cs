@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 {
-    public partial class AddRollCallTime : Migration
+    public partial class AttendanceTimeConfig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "RollCallTimeConfig",
+                name: "AttendanceTimeConfig",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
@@ -39,7 +39,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RollCallTimeConfig", x => x.Id);
+                    table.PrimaryKey("PK_AttendanceTimeConfig", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
         }
@@ -47,7 +47,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "RollCallTimeConfig");
+                name: "AttendanceTimeConfig");
         }
     }
 }

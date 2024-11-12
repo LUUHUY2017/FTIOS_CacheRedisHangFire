@@ -1,6 +1,6 @@
-﻿namespace Server.Application.MasterDatas.A0.RollCallTimeConfigs.V1.Models;
+﻿namespace Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1.Models;
 
-public class RollCallTimeConfigFilter
+public class AttendanceTimeConfigFilter
 {
     public string? OrganizationId { get; set; } = string.Empty;
     public string? Key { get; set; } = string.Empty;

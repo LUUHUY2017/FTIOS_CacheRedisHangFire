@@ -2,24 +2,24 @@
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Application.MasterDatas.A0.RollCallTimeConfigs.V1;
-using Server.Application.MasterDatas.A0.RollCallTimeConfigs.V1.Models;
+using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
+using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1.Models;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
-namespace Server.API.APIs.Data.RollCallTimeConfigs.V1.Controllers;
+namespace Server.API.APIs.Data.AttendanceTimeConfigs.V1.Controllers;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
 [Authorize("Bearer")]
 [AuthorizeMaster]
-public class RollCallTimeConfigController : AuthBaseAPIController
+public class AttendanceTimeConfigController : AuthBaseAPIController
 {
-    private readonly RollCallTimeConfigService _rollCallTimeConfigService;
-    public RollCallTimeConfigController(RollCallTimeConfigService rollCallTimeConfigService)
+    private readonly AttendanceTimeConfigService _attendanceTimeConfigService;
+    public AttendanceTimeConfigController(AttendanceTimeConfigService attendanceTimeConfigService)
     {
-        _rollCallTimeConfigService = rollCallTimeConfigService;
+        _attendanceTimeConfigService = attendanceTimeConfigService;
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public class RollCallTimeConfigController : AuthBaseAPIController
     [HttpGet("Gets")]
     public async Task<IActionResult> Gets()
     {
-        var data = await _rollCallTimeConfigService.Gets();
+        var data = await _attendanceTimeConfigService.Gets();
         return Ok(data);
     }
 
@@ -39,10 +39,10 @@ public class RollCallTimeConfigController : AuthBaseAPIController
     /// </summary>
     /// <returns></returns>
     [HttpPost("GetsFilter")]
-    public async Task<IActionResult> GetsFilter(RollCallTimeConfigFilter filter)
+    public async Task<IActionResult> GetsFilter(AttendanceTimeConfigFilter filter)
     {
-        _rollCallTimeConfigService.UserId = User.GetSubjectId();
-        var data = await _rollCallTimeConfigService.GetsFilter(filter);
+        _attendanceTimeConfigService.UserId = User.GetSubjectId();
+        var data = await _attendanceTimeConfigService.GetsFilter(filter);
         return Ok(data);
     }
 
@@ -54,7 +54,7 @@ public class RollCallTimeConfigController : AuthBaseAPIController
     [HttpGet("GetFirstOrDefault")]
     public async Task<IActionResult> GetFirstOrDefault(string? orgId)
     {
-        var data = await _rollCallTimeConfigService.GetFirstOrDefault(orgId);
+        var data = await _attendanceTimeConfigService.GetFirstOrDefault(orgId);
         return Ok(data);
     }
 
@@ -64,9 +64,9 @@ public class RollCallTimeConfigController : AuthBaseAPIController
     /// </summary>
     /// <returns></returns>
     [HttpPost("AddOrEdit")]
-    public async Task<IActionResult> AddOrEdit(RollCallTimeConfigRequest model)
+    public async Task<IActionResult> AddOrEdit(AttendanceTimeConfigRequest model)
     {
-        return Ok(await _rollCallTimeConfigService.SaveAsync(model));
+        return Ok(await _attendanceTimeConfigService.SaveAsync(model));
     }
 
     /// <summary>
@@ -76,6 +76,6 @@ public class RollCallTimeConfigController : AuthBaseAPIController
     [HttpPost("Delete")]
     public async Task<IActionResult> Delete(DeleteRequest request)
     {
-        return Ok(await _rollCallTimeConfigService.DeleteAsync(request));
+        return Ok(await _attendanceTimeConfigService.DeleteAsync(request));
     }
 }

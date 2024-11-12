@@ -73,7 +73,7 @@ public class OrganizationService
     {
         try
         {
-            var retVal = await _organizationRepository.GetAllAsync();
+            var retVal = await _organizationRepository.GetAllAsync(x => x.Actived == true);
 
             var listMap = _mapper.Map<List<OrganizationResponse>>(retVal);
             return new Result<List<OrganizationResponse>>(listMap, "Thành công", true);
@@ -88,7 +88,7 @@ public class OrganizationService
     {
         try
         {
-            var retVal = await _organizationRepository.GetAllAsync();
+            var retVal = await _organizationRepository.GetAllAsync(x => x.Actived == true);
             var userOrg = (await _userManager.FindByIdAsync(UserId))?.OrganizationId;
 
             if (userOrg != "" && userOrg != null && userOrg != "0")
