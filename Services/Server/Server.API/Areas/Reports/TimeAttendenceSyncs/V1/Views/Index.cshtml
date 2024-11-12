@@ -121,9 +121,9 @@
                                         <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Tối</span>
                                     </td>
                                     <td style=" white-space: nowrap;">
-                                        <span v-if="item.syncStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
-                                        <span v-else-if="item.syncStatus ==false" class='badge bg-danger bg-opacity-10 text-danger'>Không thành công</span>
-                                        <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
+                                        <span style="cursor:pointer" v-if="item.syncStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
+                                        <span style="cursor:pointer" v-else-if="item.syncStatus ==false" v-on:click="onSubmitSync(item)" class='badge bg-danger bg-opacity-10 text-danger'>Không thành công</span>
+                                        <span style="cursor:pointer" v-else class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
                                     </td>
                                     <td style=" white-space: nowrap;">
                                         <span>{{ formatDateTime(item.eventTime) }}</span>
@@ -378,7 +378,22 @@
                 this.value = row;
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('XemChiTiet')).show();
             },
-
+            onSubmitSync(item) {
+                $('.loader').show();
+                axios.post('/api/v1/TimeAttendenceSync/PostSyncItem', item, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+                    $('.loader').hide(0);
+                    if (response.data.succeeded) {
+                        this.onLoadData();
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+                });
+            },
 
             onLoadCombobox() {
                 axios.post('/api/v1/StudentSmas/PostSchool', null, this.object.config).then(response => {
