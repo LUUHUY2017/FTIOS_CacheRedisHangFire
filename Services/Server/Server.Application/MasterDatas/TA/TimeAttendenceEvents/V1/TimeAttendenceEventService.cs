@@ -2,14 +2,12 @@
 using EventBus.Messages;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
-using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A2;
 using Server.Core.Entities.TA;
 using Server.Core.Interfaces.A2.Persons;
 using Server.Core.Interfaces.A2.Students;
 using Server.Core.Interfaces.TA.TimeAttendenceSyncs;
 using Server.Infrastructure.Datas.MasterData;
-using Shared.Core.Commons;
 using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
 
@@ -49,30 +47,6 @@ public partial class TimeAttendenceEventService
         _dbContext = dbContext;
 
     }
-
-
-
-    /// <summary>
-    /// Gửi qua RabbitMQ đồng bộ diểm danh
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public async Task<Result<SyncDataRequest>> PushAttendence2SMAS(SyncDataRequest data)
-    {
-        try
-        {
-            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}");
-            await aa.Send(data);
-
-            return new Result<SyncDataRequest>($"Gửi thành công", true);
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e);
-            return new Result<SyncDataRequest>($"Gửi email lỗi: {e.Message}", false);
-        }
-    }
-
 
 
     /// <summary>

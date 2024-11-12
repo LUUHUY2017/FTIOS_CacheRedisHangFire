@@ -53,6 +53,7 @@
 
   <ItemGroup>
     <Compile Remove="MasterDatas\A2\AutoReportInOut\V1\AutoReportInOutService.cs" />
+    <Compile Remove="MasterDatas\TA\TimeAttendenceEvents\V1\TimeAttendenceSyncSmasConsumer.cs" />
     <Compile Remove="Services\PeopleCounttingService.cs" />
   </ItemGroup>
 
