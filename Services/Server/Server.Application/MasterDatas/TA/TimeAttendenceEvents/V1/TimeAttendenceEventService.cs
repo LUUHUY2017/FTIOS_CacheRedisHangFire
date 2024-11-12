@@ -199,8 +199,10 @@ public partial class TimeAttendenceEventService
                             valueAttendence = "C";
                         }
 
-                        var time = _dbContext.TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode
-                        && o.EventTime.Value.Date == info.TimeEvent.Value.Date && o.AttendenceSection == sectionTime
+
+
+                        var time = _dbContext.TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode && o.EventTime.Value.Date == info.TimeEvent.Value.Date
+                        && o.AttendenceSection == sectionTime
                         ).FirstOrDefault();
 
                         if (time == null)

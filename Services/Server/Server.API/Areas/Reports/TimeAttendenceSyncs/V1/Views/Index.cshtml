@@ -104,7 +104,7 @@
                                     <th style=" white-space: nowrap;">
                                         <input type="text" class="form-control " v-model="params.organizationName">
                                     </th>
-                                   
+
                                     <th style=" white-space: nowrap;">
                                         <input type="text" class="form-control " v-model="params.message">
                                     </th>
@@ -121,16 +121,16 @@
                                         <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Tối</span>
                                     </td>
                                     <td style=" white-space: nowrap;">
-                                        <span style="cursor:pointer" v-if="item.syncStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
+                                        <span v-if="item.syncStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
                                         <span style="cursor:pointer" v-else-if="item.syncStatus ==false" v-on:click="onSubmitSync(item)" class='badge bg-danger bg-opacity-10 text-danger'>Không thành công</span>
-                                        <span style="cursor:pointer" v-else class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
+                                        <span style="cursor:pointer" v-else  v-on:click="onSubmitSync(item)" class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
                                     </td>
                                     <td style=" white-space: nowrap;">
                                         <span>{{ formatDateTime(item.eventTime) }}</span>
                                     </td>
                                     <td><span>{{item.className}}</span></td>
                                     <td><span>{{item.organizationName}}</span></td>
-                                   
+
                                     <td><span>{{item.message}}</span></td>
                                 </tr>
                             </tbody>
@@ -244,7 +244,7 @@
 
             data: [],
             name_file: "LICHSUDIEMDANH_" + new Date().getDate() + "_" + new Date().getTime(),
-      
+
             object: {
                 dateNow: formatDateTime(new Date()),
                 config: {
@@ -385,6 +385,7 @@
                         window.location = window.location.href;
                     $('.loader').hide(0);
                     if (response.data.succeeded) {
+                        alertify.success(response.data.message);
                         this.onLoadData();
                     }
                     else {
