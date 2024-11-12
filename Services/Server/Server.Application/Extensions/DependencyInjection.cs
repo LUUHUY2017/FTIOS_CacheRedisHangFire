@@ -17,6 +17,7 @@ using Server.Application.CronJobs;
 using Server.Application.MasterDatas.A0.Accounts.V1;
 using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
+using Server.Application.MasterDatas.A0.RollCallTimeConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
 using Server.Application.MasterDatas.A2.Devices;
 using Server.Application.MasterDatas.A2.MonitorDevices.V1;
@@ -43,6 +44,7 @@ using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Server.Infrastructure.Repositories;
 using Server.Infrastructure.Repositories.A0.AttendanceConfigs;
+using Server.Infrastructure.Repositories.A0.RollCallTimeConfigs;
 using Server.Infrastructure.Repositories.A0.TimeConfigs;
 using Server.Infrastructure.Repositories.A2.Devices;
 using Server.Infrastructure.Repositories.A2.Organizations;
@@ -290,7 +292,9 @@ public static class DependencyInjection
         //OTP
         service.AddScoped<IOTPRepository, OTPRepository>();
 
-
+        //RollCallTimeConfig
+        service.AddScoped<IRollCallTimeConfigRepository, RollCallTimeConfigRepository>();
+        service.AddScoped<RollCallTimeConfigService>();
     }
 
     public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)

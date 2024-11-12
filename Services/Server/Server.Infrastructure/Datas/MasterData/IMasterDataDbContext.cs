@@ -20,6 +20,7 @@ public interface IMasterDataDbContext
     public DbSet<RoleGroupPage> RoleGroupPage { get; set; }
     public DbSet<AttendanceConfig> AttendanceConfig { get; set; }
     public DbSet<TimeConfig> TimeConfig { get; set; }
+    public DbSet<RollCallTimeConfig> RollCallTimeConfig { get; set; }
 
     #endregion
 
