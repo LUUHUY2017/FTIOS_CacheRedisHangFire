@@ -90,10 +90,10 @@ public class SendEmailController : AuthBaseAPIController
                              EmailSettings = new EmailSettings()
                              {
                                  EmailFrom = emailConfig.Email,
-                                 Host = emailConfig.Server,
-                                 Port = emailConfig.Port ?? 587,
-                                 Password = emailConfig.PassWord,
-                                 UserName = emailConfig.Email,
+                                 SmtpHost = emailConfig.Server,
+                                 SmtpPort = emailConfig.Port ?? 587,
+                                 SmtpPass = emailConfig.PassWord,
+                                 SmtpUser = emailConfig.Email,
                                  DisplayName = emailConfig.UserName,
                              }
                          });
