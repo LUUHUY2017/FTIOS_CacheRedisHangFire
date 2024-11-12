@@ -68,7 +68,7 @@ public partial class PagesConst
 
     public static readonly PageObject URL_V1_ScheduleJob = new PageObject
     {
-        Id = "e7d6cf64-4105-44c5-8f94-ba4930db4e22",
+        Id = "d2d6cf84-4105-44c5-8f94-ba4930db4e22",
         Name = "Lập lịch đồng bộ ",
         Url = "V1/ScheduleJob",
         Module = Module.Master,

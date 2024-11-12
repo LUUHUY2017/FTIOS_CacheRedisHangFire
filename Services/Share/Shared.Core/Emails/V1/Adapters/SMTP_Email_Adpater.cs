@@ -103,16 +103,16 @@ public class SMTP_Email_Adpater
                     }
                 }
 
-                smtp.Port = mailRequest.EmailSettings.Port;
+                smtp.Port = mailRequest.EmailSettings.SmtpPort;
 
-                smtp.Host = mailRequest.EmailSettings.Host;// "smtp.gmail.com";
+                smtp.Host = mailRequest.EmailSettings.SmtpHost;// "smtp.gmail.com";
                 //smtp.Host = host;
 
                 smtp.EnableSsl = true;
                 //smtp.EnableSsl = enableSsl;
 
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential(mailRequest.EmailSettings.UserName, mailRequest.EmailSettings.Password);
+                smtp.Credentials = new NetworkCredential(mailRequest.EmailSettings.SmtpUser, mailRequest.EmailSettings.SmtpPass);
 
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
 
