@@ -57,8 +57,8 @@ public partial class SyncDeviceServerService
                          from or in OG.DefaultIfEmpty()
 
                          where
-                          (request.StartDate != null ? _do.LastModifiedDate.Date >= request.StartDate.Value.Date : true)
-                          && (request.EndDate != null ? _do.LastModifiedDate.Date <= request.EndDate.Value.Date : true)
+                          (request.StartDate != null ? _do.LastModifiedDate >= request.StartDate : true)
+                          && (request.EndDate != null ? _do.LastModifiedDate <=  request.EndDate.Value.Date.AddDays(1).AddMilliseconds(-1) : true)
                           && (!string.IsNullOrWhiteSpace(request.DeviceId) ? _do.DeviceId == request.DeviceId : true)
                           && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? la.OrganizationId == request.OrganizationId : true)
 

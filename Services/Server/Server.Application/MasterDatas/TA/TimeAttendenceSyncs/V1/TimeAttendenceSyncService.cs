@@ -1,4 +1,5 @@
-﻿using EventBus.Messages;
+﻿using DocumentFormat.OpenXml.Office2021.DocumentTasks;
+using EventBus.Messages;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -64,8 +65,8 @@ public partial class TimeAttendenceSyncService
                          from or in OG.DefaultIfEmpty()
 
                          where
-                          (request.StartDate != null ? _do.CreatedDate.Date >= request.StartDate.Value.Date : true)
-                          && (request.EndDate != null ? _do.CreatedDate.Date <= request.EndDate.Value.Date : true)
+                          (request.StartDate != null ? _do.CreatedDate >= request.StartDate : true)
+                          && (request.EndDate != null ? _do.CreatedDate <= request.EndDate.Value.Date.AddDays(1).AddMilliseconds(-1) : true)
                              && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? st.OrganizationId == request.OrganizationId : true)
                           && (!string.IsNullOrWhiteSpace(request.ClassId) ? st.ClassId == request.ClassId : true)
 
@@ -223,8 +224,10 @@ public partial class TimeAttendenceSyncService
                     var sync = await GetByEventIdAsync(item.Id);
                     if (sync != null)
                     {
-                        sync.SyncStatus = ite.status;
-                        sync.Message = ite.message;
+                        if (sync.SyncStatus != true)
+                            sync.SyncStatus = ite.status;
+
+                        sync.Message += $"\r\n[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}";
                         sync.LastModifiedDate = DateTime.Now;
                     }
                 }
@@ -233,7 +236,6 @@ public partial class TimeAttendenceSyncService
             {
                 Logger.Error(ext);
             }
-
             await _dbContext.SaveChangesAsync();
 
             return new Result<TimeAttendenceEvent>($"Đồng bộ thành công", true);
