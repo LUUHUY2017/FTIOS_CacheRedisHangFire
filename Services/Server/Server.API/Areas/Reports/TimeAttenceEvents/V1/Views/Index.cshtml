@@ -2,6 +2,13 @@
     ViewData["Title"] = "Lịch sử điểm danh";
     Layout = "~/Views/Shared/_LayoutManage.cshtml";
 }
+<style>
+    .list-color {
+        margin-bottom: 4px;
+        margin-right: 11px;
+        float: left;
+    }
+</style>
 
 <!-- Main content -->
 <div class="content-wrapper" id="webui">
@@ -96,15 +103,15 @@
                                     </th>
                                     <th style=" white-space: nowrap;">
                                         <input type="text" class="form-control " v-model="params.organizationName">
-                                    </th> 
+                                    </th>
                                     <th>
                                         <input type="text" class="form-control " v-model="params.deviceId">
                                     </th>
-                                   
+
                                     <th>
                                         <input type="datetime" class="form-control " disabled readonly id="createdDate">
                                     </th>
-                                    
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -124,7 +131,7 @@
                                     <td><span>{{item.organizationName}}</span></td>
                                     @* <td><span>{{item.deviceName}}</span></td> *@
                                     <td><span>{{item.deviceId}}</span></td>
-                                    
+
                                     <td style=" white-space: nowrap;">
                                         <span>{{ formatDate(item.dateOfBirth) }}</span>
                                     </td>
@@ -162,18 +169,18 @@
                             </div>
                         </div>
                     </div>
-                 
+
                     <div class="row ">
-                        <div class="text-danger">Lưu ý:</div>
-                    @*     <div class="col-md-12" style=" justify-content: center;">
-                            <ul style="list-style-type: none; padding-left: 0px;">
-                                <li class="list-color"><span class="block-color ROW_WHITE"> C </span> Có mặt </li>
-                                <li class="list-color"><span class="block-color ROW_SUCCESS">K </span> Nghỉ không phép </li>
-                                <li class="list-color"><span class="block-color ROW_WARN ">P </span> Nghỉ không phép </li>
-                                <li class="list-color" style="margin-left: 1px;"><span class="block-color  ROW_DANGER"> X </span> Trường hợp đặc biệt (Đi muộn, bỏ tiết, về sớm)</li>
-                            </ul>
-                        </div>
- *@
+                        <div class="text-danger fw-bold">Lưu ý:</div>
+                        @* <div class="col-md-12" style=" justify-content: center;">
+                        <ul style="list-style-type: none; padding-left: 0px;">
+                        <li class="list-color"><span class="block-color ROW_WHITE"> C </span> Có mặt </li>
+                        <li class="list-color"><span class="block-color ROW_SUCCESS">K </span> Nghỉ không phép </li>
+                        <li class="list-color"><span class="block-color ROW_WARN ">P </span> Nghỉ không phép </li>
+                        <li class="list-color" style="margin-left: 1px;"><span class="block-color  ROW_DANGER"> X </span> Trường hợp đặc biệt (Đi muộn, bỏ tiết, về sớm)</li>
+                        </ul>
+                        </div> *@
+
                         <div class="col-md-12" style=" justify-content: center;">
                             <ul style="list-style-type: none; padding-left: 0px;">
                                 <li class="list-color"><span class="block-color bg-success"> 0 </span> Sáng  </li>

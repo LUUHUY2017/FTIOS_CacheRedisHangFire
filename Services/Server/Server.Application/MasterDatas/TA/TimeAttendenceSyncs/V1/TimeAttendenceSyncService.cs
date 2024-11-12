@@ -75,7 +75,7 @@ public partial class TimeAttendenceSyncService
                              Id = _do.Id,
                              Actived = _do.Actived,
                              CreatedDate = _do.CreatedDate,
-                             LastModifiedDate = _do.LastModifiedDate,
+                             LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
                              CreatedBy = _do.CreatedBy,
                              ReferenceId = _do.ReferenceId,
                              TimeAttendenceEventId = _do.TimeAttendenceEventId,
