@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
 using Server.Core.Interfaces.GIO.VehicleInOuts;
 using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
+using Server.Core.Interfaces.TimeAttendenceSyncs.Responses;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
@@ -169,6 +170,21 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpPost("PostSyncItem")]
+    public async Task<IActionResult> PostSyncItem(AttendenceSyncReportRes request)
+    {
+        try
+        {
+            var retval = await _timeService.SyncAttendenceToSmas(request.TimeAttendenceEventId);
+            return Ok(retval);
+        }
+        catch (Exception ex)
+        {
+            return Ok(new Result<object>("Lỗi:" + ex.Message, false));
+        }
+    }
+
 }
 
 

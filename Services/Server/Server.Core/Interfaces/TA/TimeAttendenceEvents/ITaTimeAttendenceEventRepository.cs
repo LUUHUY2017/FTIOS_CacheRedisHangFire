@@ -8,6 +8,7 @@ public interface ITATimeAttendenceEventRepository
     Task<Result<TimeAttendenceEvent>> CreateAsync(TimeAttendenceEvent data);
     Task<Result<TimeAttendenceEvent>> UpdateAsync(TimeAttendenceEvent data);
     Task<Result<int>> DeleteAsync(string id);
+    Task<TimeAttendenceEvent> GetByIdAsync(string id);
 }
 
 

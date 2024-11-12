@@ -1,10 +1,18 @@
 ﻿using EventBus.Messages;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Server.Application.Services.VTSmart;
+using Server.Application.Services.VTSmart.Responses;
+using Server.Core.Entities.TA;
+using Server.Core.Interfaces.TA.TimeAttendenceEvents;
+using Server.Core.Interfaces.TA.TimeAttendenceSyncs;
 using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
 using Server.Core.Interfaces.TimeAttendenceSyncs.Responses;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
+using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
 
 namespace Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
@@ -14,6 +22,9 @@ public partial class TimeAttendenceSyncService
     private readonly ISignalRClientService _signalRClientService;
     private readonly IConfiguration _configuration;
     private readonly IMasterDataDbContext _dbContext;
+    private readonly ITATimeAttendenceSyncRepository _timeAttendenceSyncRepository;
+    private readonly ITATimeAttendenceEventRepository _timeAttendenceEventRepository;
+    private readonly SmartService _smartService;
 
 
     public TimeAttendenceSyncService(
@@ -21,13 +32,19 @@ public partial class TimeAttendenceSyncService
         IConfiguration configuration,
         IEventBusAdapter eventBusAdapter,
         ISignalRClientService signalRClientService,
-        IMasterDataDbContext dbContext
+        IMasterDataDbContext dbContext,
+        ITATimeAttendenceSyncRepository timeAttendenceSyncRepository,
+        ITATimeAttendenceEventRepository timeAttendenceEventRepository,
+        SmartService smartService
         )
     {
         _configuration = configuration;
         _eventBusAdapter = eventBusAdapter;
         _signalRClientService = signalRClientService;
         _dbContext = dbContext;
+        _smartService = smartService;
+        _timeAttendenceSyncRepository = timeAttendenceSyncRepository;
+        _timeAttendenceEventRepository = timeAttendenceEventRepository;
     }
 
     public async Task<IQueryable<AttendenceSyncReportRes>> GetAlls(AttendenceSyncReportFilterReq request)
@@ -52,15 +69,16 @@ public partial class TimeAttendenceSyncService
                              && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? st.OrganizationId == request.OrganizationId : true)
                           && (!string.IsNullOrWhiteSpace(request.ClassId) ? st.ClassId == request.ClassId : true)
 
-                         orderby _do.CreatedDate descending
+                         orderby _do.SyncStatus ascending, _do.CreatedDate descending
                          select new AttendenceSyncReportRes()
                          {
                              Id = _do.Id,
                              Actived = _do.Actived,
                              CreatedDate = _do.CreatedDate,
-                             LastModifiedDate = _do.LastModifiedDate,
+                             LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
                              CreatedBy = _do.CreatedBy,
                              ReferenceId = _do.ReferenceId,
+                             TimeAttendenceEventId = _do.TimeAttendenceEventId,
 
                              StudentCode = st != null ? st.StudentCode : "",
                              StudentName = st != null ? st.FullName : "",
@@ -137,7 +155,94 @@ public partial class TimeAttendenceSyncService
         }
         return query;
     }
+    public async Task<TimeAttendenceSync> GetByEventIdAsync(string id)
+    {
+        try
+        {
+            var _data = await (from _do in _dbContext.TimeAttendenceSync
+                               where _do.TimeAttendenceEventId == id
+                               select _do).FirstOrDefaultAsync();
+            return _data;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
 
+    public async Task<Result<TimeAttendenceEvent>> SyncAttendenceToSmas(string id)
+    {
+        try
+        {
+            var item = await _timeAttendenceEventRepository.GetByIdAsync(id);
+            if (item == null)
+                return new Result<TimeAttendenceEvent>($"Lỗi: Không tìm thấy thông tin điểm danh", false);
+
+            var orgRes = await _dbContext.Organization.FirstOrDefaultAsync(o => o.Id == item.OrganizationId && o.Actived == true);
+            if (orgRes == null)
+                return new Result<TimeAttendenceEvent>($"Lỗi: Điểm danh thuộc trường học", false);
+
+            var studentAbs = new List<StudentAbsence>();
+            ExtraProperties extra = new ExtraProperties()
+            {
+                absenceTime = item.EventTime
+            };
+            var el = new StudentAbsence()
+            {
+                studentCode = item.StudentCode,
+                value = item.ValueAbSent,
+                extraProperties = extra
+            };
+            studentAbs.Add(el);
+
+            var req = new SyncDataRequest()
+            {
+                id = Guid.NewGuid().ToString(),
+                schoolCode = orgRes.OrganizationCode,
+                absenceDate = DateTime.Now,
+                section = 0,
+                formSendSMS = 1,
+                studentCodeType = 2,
+                studentAbsenceByDevices = studentAbs,
+            };
+
+            Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
+            var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
+            Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
+
+            if (res == null || !res.IsSuccess)
+                return new Result<TimeAttendenceEvent>($"Lỗi đồng bộ: Đồng bộ không thành công", false);
+
+            item.EventType = true;
+
+            try
+            {
+                var _listLog = new List<TimeAttendenceSync>();
+                foreach (var ite in res.Responses)
+                {
+                    var sync = await GetByEventIdAsync(item.Id);
+                    if (sync != null)
+                    {
+                        sync.SyncStatus = ite.status;
+                        sync.Message = ite.message;
+                        sync.LastModifiedDate = DateTime.Now;
+                    }
+                }
+            }
+            catch (Exception ext)
+            {
+                Logger.Error(ext);
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return new Result<TimeAttendenceEvent>($"Đồng bộ thành công", true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<TimeAttendenceEvent>($"Lỗi đồng bộ: " + ex.Message, false);
+        }
+    }
 
 }
 

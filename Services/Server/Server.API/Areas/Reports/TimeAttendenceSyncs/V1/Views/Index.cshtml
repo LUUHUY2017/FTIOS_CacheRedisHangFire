@@ -55,115 +55,138 @@
             </div>
             <div class="card">
                 <div class="card-body">
-                    <div id="table" class="table-responsive">
-                        <table class="table table-bordered table-striped  table-hover">
-                            <thead class="">
-                                <tr>
-                                    <th>Stt</th>
-                                    <th> Mã học sinh </th>
-                                    <th> Họ tên </th>
-                                    <th> Buổi điểm danh</th>
-                                    <th> Trạng thái </th>
-                                    <th> Thời gian diểm danh  </th>
-                                    <th> Lớp </th>
-                                    <th> Trường </th>
-                                    <th> Thông báo </th>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        <button type="button" class="btn btn-primary" v-on:click="onLoadData(true)"> <i class="fa fa-search"></i> </button>
-                                    </th>
-                                    <th>
-                                        <input type="text" class="form-control" v-model="params.studentCode">
-                                    </th>
-                                    <th>
-                                        <input type="text" class="form-control " v-model="params.studentName">
-                                    </th>
-                                    <th style=" white-space: nowrap;">
-                                        <select class="form-select" v-model="params.attendenceSection">
-                                            <option value="">Tất cả</option>
-                                            <option value="0">Sáng</option>
-                                            <option value="1">Chiều</option>
-                                            <option value="2">Tối</option>
-                                        </select>
-                                    </th>
-                                    <th>
-                                        <select class="form-select" v-model="params.syncStatus">
-                                            <option selected value="">Tất cả</option>
-                                            <option value="True">Thành công</option>
-                                            <option value="False">Lỗi</option>
-                                            <option value="None">Đang chờ</option>
-                                        </select>
-                                    </th>
-                                    <th>
-                                        <input type="text" class="form-control " disabled>
-                                    </th>
-                                    <th>
-                                        <input type="text" class="form-control " v-model="params.className">
-                                    </th>
-                                    <th style=" white-space: nowrap;">
-                                        <input type="text" class="form-control " v-model="params.organizationName">
-                                    </th>
-                                   
-                                    <th style=" white-space: nowrap;">
-                                        <input type="text" class="form-control " v-model="params.message">
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(item, index) in data">
-                                    <td><span>{{index  +1 }}</span></td>
-                                    <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
-                                    <td style=" white-space: nowrap;"><span>{{item.studentName}}</span></td>
-                                    <td style=" white-space: nowrap;">
-                                        <span v-if="item.attendenceSection ==0" class='badge bg-success  bg-opacity-10 text-success '>Sáng</span>
-                                        <span v-else-if="item.attendenceSection ==1" class='badge bg-primary bg-opacity-10 text-primary'>Chiều</span>
-                                        <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Tối</span>
-                                    </td>
-                                    <td style=" white-space: nowrap;">
-                                        <span v-if="item.syncStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
-                                        <span v-else-if="item.syncStatus ==false" class='badge bg-danger bg-opacity-10 text-danger'>Không thành công</span>
-                                        <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
-                                    </td>
-                                    <td style=" white-space: nowrap;">
-                                        <span>{{ formatDateTime(item.eventTime) }}</span>
-                                    </td>
-                                    <td><span>{{item.className}}</span></td>
-                                    <td><span>{{item.organizationName}}</span></td>
-                                   
-                                    <td><span>{{item.message}}</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="phan-trang " style="width: 100%;">
-                        <div class="fixed-table-pagination">
-                            <div class="row">
-                                <div style="float:left" class="col-md-8">
-                                    <div style=" margin-top: 10px !important; overflow:hidden" class=" pagination">
-                                        <ul id="pagingNumbers" class="pagination" style="margin: 0px !important;">  </ul>
-                                    </div>
-                                </div>
-
-                                <div style="float: right;text-align: right;" class="col-md-4 ">
-                                    <div style=" margin-top: 10px !important; " class=" pagination-detail">
-                                        <span class="pagination-info">
-                                            Hiển thị {{firstRow}} đến {{totalDataRowNext}} trong tổng số {{totalRow}} hàng
-                                        </span>
-                                        <span class="page-list">
-                                            <select v-model:value="filter.RowsPerPage" id="RowsPerPage" class=" " v-on:change="renderRowOnPage()">
-                                                <option value="10">10</option>
-                                                <option selected value="25">25</option>
-                                                <option value="50">50</option>
-                                                <option value="100">100</option>
-                                                <option value="250">250</option>
+                    <div class="row">
+                        <div id="table" class="table-responsive">
+                            <table class="table table-bordered table-striped  table-hover">
+                                <thead class="">
+                                    <tr>
+                                        <th>Stt</th>
+                                        <th> Mã học sinh </th>
+                                        <th> Họ tên </th>
+                                        <th> Buổi điểm danh</th>
+                                        <th> Trạng thái </th>
+                                        <th> Thời gian diểm danh  </th>
+                                        <th> Lớp </th>
+                                        <th> Trường </th>
+                                        <th> Thông báo </th>
+                                        <th> Thời gian cập nhật  </th>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <button type="button" class="btn btn-primary" v-on:click="onLoadData(true)"> <i class="fa fa-search"></i> </button>
+                                        </th>
+                                        <th>
+                                            <input type="text" class="form-control" v-model="params.studentCode">
+                                        </th>
+                                        <th>
+                                            <input type="text" class="form-control " v-model="params.studentName">
+                                        </th>
+                                        <th style=" white-space: nowrap;">
+                                            <select class="form-select" v-model="params.attendenceSection">
+                                                <option value="">Tất cả</option>
+                                                <option value="0">Sáng</option>
+                                                <option value="1">Chiều</option>
+                                                <option value="2">Tối</option>
                                             </select>
-                                            hàng trên mỗi trang
-                                        </span>
+                                        </th>
+                                        <th>
+                                            <select class="form-select" v-model="params.syncStatus">
+                                                <option selected value="">Tất cả</option>
+                                                <option value="True">Thành công</option>
+                                                <option value="False">Không thành công</option>
+                                                <option value="None">Đang chờ</option>
+                                            </select>
+                                        </th>
+                                        <th>
+                                            <input type="text" class="form-control " disabled>
+                                        </th>   
+                                        <th>
+                                            <input type="text" class="form-control " v-model="params.className">
+                                        </th>
+                                        <th style=" white-space: nowrap;">
+                                            <input type="text" class="form-control " v-model="params.organizationName">
+                                        </th>
+
+                                        <th style=" white-space: nowrap;">
+                                            <input type="text" class="form-control " v-model="params.message">
+                                        </th>
+                                        <th>
+                                            <input type="text" class="form-control " disabled>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(item, index) in data">
+                                        <td><span>{{index  +1 }}</span></td>
+                                        <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
+                                        <td style=" white-space: nowrap;"><span>{{item.studentName}}</span></td>
+                                        <td style=" white-space: nowrap;">
+                                            <span v-if="item.attendenceSection ==0" class='badge bg-success  bg-opacity-10 text-success '>Sáng</span>
+                                            <span v-else-if="item.attendenceSection ==1" class='badge bg-primary bg-opacity-10 text-primary'>Chiều</span>
+                                            <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Tối</span>
+                                        </td>
+                                        <td style=" white-space: nowrap;">
+                                            <span v-if="item.syncStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
+                                            <span style="cursor:pointer" v-else-if="item.syncStatus ==false" v-on:click="onSubmitSync(item)" class='badge bg-danger bg-opacity-10 text-danger'>Không thành công</span>
+                                            <span style="cursor:pointer" v-else v-on:click="onSubmitSync(item)" class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
+                                        </td>
+                                        <td style=" white-space: nowrap;">
+                                            <span>{{ formatDateTime(item.eventTime) }}</span>
+                                        </td>
+                                        <td><span>{{item.className}}</span></td>
+                                        <td><span>{{item.organizationName}}</span></td>
+
+                                        <td><span>{{item.message}}</span></td>
+                                        <td style=" white-space: nowrap;">
+                                            <span>{{ formatDateTime(item.lastModifiedDate) }}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="phan-trang " style="width: 100%;">
+                            <div class="fixed-table-pagination">
+                                <div class="row">
+                                    <div style="float:left" class="col-md-8">
+                                        <div style=" margin-top: 10px !important; overflow:hidden" class=" pagination">
+                                            <ul id="pagingNumbers" class="pagination" style="margin: 0px !important;">  </ul>
+                                        </div>
+                                    </div>
+
+                                    <div style="float: right;text-align: right;" class="col-md-4 ">
+                                        <div style=" margin-top: 10px !important; " class=" pagination-detail">
+                                            <span class="pagination-info">
+                                                Hiển thị {{firstRow}} đến {{totalDataRowNext}} trong tổng số {{totalRow}} hàng
+                                            </span>
+                                            <span class="page-list">
+                                                <select v-model:value="filter.RowsPerPage" id="RowsPerPage" class=" " v-on:change="renderRowOnPage()">
+                                                    <option value="10">10</option>
+                                                    <option selected value="25">25</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                    <option value="250">250</option>
+                                                </select>
+                                                hàng trên mỗi trang
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <div class="text-danger fw-bold">Lưu ý:</div>
+                        <div class="col-md-12" style="justify-content: center;">
+                            <ul style="list-style-type: none; padding-left: 0px;">
+                                <li class="list-color">
+
+                                    <span style="cursor:pointer" class="block-color bg-danger "></span>
+                                    <span style="cursor:pointer" class="block-color bg-warning "></span>
+                                    Click vào trạng thái để đồng bộ lại
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -244,7 +267,7 @@
 
             data: [],
             name_file: "LICHSUDIEMDANH_" + new Date().getDate() + "_" + new Date().getTime(),
-      
+
             object: {
                 dateNow: formatDateTime(new Date()),
                 config: {
@@ -378,7 +401,23 @@
                 this.value = row;
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('XemChiTiet')).show();
             },
-
+            onSubmitSync(item) {
+                $('.loader').show();
+                axios.post('/api/v1/TimeAttendenceSync/PostSyncItem', item, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+                    $('.loader').hide(0);
+                    if (response.data.succeeded) {
+                        alertify.success(response.data.message);
+                        this.onLoadData();
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+                });
+            },
 
             onLoadCombobox() {
                 axios.post('/api/v1/StudentSmas/PostSchool', null, this.object.config).then(response => {

@@ -62,7 +62,7 @@ public partial class SyncDeviceServerService
                           && (!string.IsNullOrWhiteSpace(request.DeviceId) ? _do.DeviceId == request.DeviceId : true)
                           && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? la.OrganizationId == request.OrganizationId : true)
 
-                         orderby _do.LastModifiedDate descending
+                         orderby _do.SynStatus ascending, _do.LastModifiedDate descending
                          select new SyncDeviceServerReportRes()
                          {
                              Id = _do.Id,
@@ -80,6 +80,7 @@ public partial class SyncDeviceServerService
                              DeviceName = de != null ? de.DeviceName : "",
                              IPAddress = de != null ? de.IPAddress : "",
 
+                             SynStatus = _do.SynStatus,
                              SynAction = _do.SynAction,
                              SynCardMessage = _do.SynCardMessage,
                              SynCardStatus = _do.SynCardStatus,
@@ -88,7 +89,6 @@ public partial class SyncDeviceServerService
                              SynFingerMessage = _do.SynFingerMessage,
                              SynFingerStatus = _do.SynFingerStatus,
                              SynMessage = _do.SynMessage,
-                             SynStatus = _do.SynStatus,
 
                          });
 

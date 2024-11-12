@@ -95,9 +95,14 @@ public class OrganizationRepository : RepositoryBaseMasterData<Organization>, IO
         try
         {
             var _order = _db.Organization.FirstOrDefault(o => o.Id == data.Id);
+            var check = _db.Organization.FirstOrDefault(o => o.OrganizationCode == data.OrganizationCode);
             if (_order != null)
             {
                 // data.CopyPropertiesTo(_order);
+                if (check != null && data.OrganizationCode != _order.OrganizationCode)
+                {
+                    return new Result<Organization>(null, "Mã trường đã có vui lòng nhập mã khác!", false);
+                }
                 _order.OrganizationCode = data.OrganizationCode;
                 _order.OrganizationName = data.OrganizationName;
                 _order.OrganizationDescription = data.OrganizationDescription;
@@ -106,6 +111,10 @@ public class OrganizationRepository : RepositoryBaseMasterData<Organization>, IO
             }
             else
             {
+                if (check != null)
+                {
+                    return new Result<Organization>(null, "Mã trường đã có vui lòng nhập mã khác!", false);
+                }
                 _order = new Organization();
                 data.CopyPropertiesTo(_order);
                 _db.Organization.Add(_order);

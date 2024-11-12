@@ -11,7 +11,7 @@ using Server.Infrastructure.Datas.MasterData;
 namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 {
     [DbContext(typeof(MasterDataDbContext))]
-    [Migration("20241109040728_MasterData_Init")]
+    [Migration("20241112035916_MasterData_Init")]
     partial class MasterData_Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -114,6 +114,62 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.HasKey("Id");
 
                     b.ToTable("AttendanceConfig");
+                });
+
+            modelBuilder.Entity("Server.Core.Entities.A0.AttendanceTimeConfig", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<bool?>("Actived")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<TimeSpan?>("EndTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Logs")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OrganizationId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("ReferenceId")
+                        .HasColumnType("longtext");
+
+                    b.Property<TimeSpan?>("StartTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AttendanceTimeConfig");
                 });
 
             modelBuilder.Entity("Server.Core.Entities.A0.EmailConfiguration", b =>

@@ -94,7 +94,6 @@ public class StudentRepository : RepositoryBaseMasterData<Student>, IStudentRepo
             try
             {
                 var retVal = await _dbContext.SaveChangesAsync();
-
             }
             catch (Exception ex)
             {

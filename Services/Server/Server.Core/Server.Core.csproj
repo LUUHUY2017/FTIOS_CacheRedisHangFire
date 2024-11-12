@@ -37,7 +37,6 @@
 
   <ItemGroup>
     <Folder Include="Entities\A1\" />
-    <Folder Include="Interfaces\A0\" />
     <Folder Include="Interfaces\A2\Students\Requests\" />
     <Folder Include="Interfaces\A2\Students\Responses\" />
     <Folder Include="Interfaces\A3\" />

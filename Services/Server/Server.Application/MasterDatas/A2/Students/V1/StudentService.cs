@@ -426,10 +426,13 @@ public class StudentService
     {
         try
         {
-            await _studentRepository.SaveDataAsync(request);
+            var res = await _studentRepository.SaveDataAsync(request);
+            if (!res.Succeeded)
+                return new Result<DtoStudentRequest>($"Cập nhật không thành công", false);
+
             var per = new Person()
             {
-                Id = request.Id,
+                Id = res.Data.Id,
                 Actived = true,
                 PersonCode = request.StudentCode,
                 FirstName = request.Name,
@@ -438,6 +441,7 @@ public class StudentService
             };
             var data = await _personRepository.SaveAsync(per);
             return new Result<DtoStudentRequest>($"Cập nhật thành công", true);
+
         }
         catch (Exception e)
         {

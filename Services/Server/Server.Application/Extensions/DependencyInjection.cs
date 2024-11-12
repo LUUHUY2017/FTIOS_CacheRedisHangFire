@@ -17,6 +17,7 @@ using Server.Application.CronJobs;
 using Server.Application.MasterDatas.A0.Accounts.V1;
 using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
+using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
 using Server.Application.MasterDatas.A2.Devices;
 using Server.Application.MasterDatas.A2.MonitorDevices.V1;
@@ -43,6 +44,7 @@ using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Server.Infrastructure.Repositories;
 using Server.Infrastructure.Repositories.A0.AttendanceConfigs;
+using Server.Infrastructure.Repositories.A0.AttendanceTimeConfigs;
 using Server.Infrastructure.Repositories.A0.TimeConfigs;
 using Server.Infrastructure.Repositories.A2.Devices;
 using Server.Infrastructure.Repositories.A2.Organizations;
@@ -111,7 +113,7 @@ public static class DependencyInjection
 
         services.AddScoped<TimeAttendenceEventService>();
         services.AddScoped<TimeAttendenceEventConsumer>();
-        services.AddScoped<TimeAttendenceSyncSmasConsumer>();
+        //services.AddScoped<TimeAttendenceSyncSmasConsumer>();
         services.AddScoped<Server_RequestConsummer>();
 
 
@@ -126,7 +128,7 @@ public static class DependencyInjection
             ////Đăng ký xử lý bản tin data XML của Brickstream
             config.AddConsumer<StudentConsumer>();
             config.AddConsumer<TimeAttendenceEventConsumer>();
-            config.AddConsumer<TimeAttendenceSyncSmasConsumer>();
+            //config.AddConsumer<TimeAttendenceSyncSmasConsumer>();
             //Đăng ký xử lý bản tin xuống thiết bị
             config.AddConsumer<Server_RequestConsummer>();
 
@@ -156,10 +158,10 @@ public static class DependencyInjection
                     c.ConfigureConsumer<TimeAttendenceEventConsumer>(ct);
                 });
 
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}", c =>
-                {
-                    c.ConfigureConsumer<TimeAttendenceSyncSmasConsumer>(ct);
-                });
+                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}", c =>
+                //{
+                //    c.ConfigureConsumer<TimeAttendenceSyncSmasConsumer>(ct);
+                //});
                 #endregion
 
                 #region Gửi request xuống máy trạm
@@ -290,7 +292,9 @@ public static class DependencyInjection
         //OTP
         service.AddScoped<IOTPRepository, OTPRepository>();
 
-
+        //RollCallTimeConfig
+        service.AddScoped<IAttendanceTimeConfigRepository, AttendanceTimeConfigRepository>();
+        service.AddScoped<AttendanceTimeConfigService>();
     }
 
     public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)

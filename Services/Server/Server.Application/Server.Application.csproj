@@ -53,6 +53,7 @@
 
   <ItemGroup>
     <Compile Remove="MasterDatas\A2\AutoReportInOut\V1\AutoReportInOutService.cs" />
+    <Compile Remove="MasterDatas\TA\TimeAttendenceEvents\V1\TimeAttendenceSyncSmasConsumer.cs" />
     <Compile Remove="Services\PeopleCounttingService.cs" />
   </ItemGroup>
 
@@ -80,6 +81,7 @@
 
   <ItemGroup>
     <Folder Include="MasterDatas\A0\Person\" />
+    <Folder Include="MasterDatas\A2\AutoReportInOut\V1\AutoMappers\" />
     <Folder Include="MasterDatas\A2\SyncDeviceServers\V1\Model\" />
   </ItemGroup>
 
