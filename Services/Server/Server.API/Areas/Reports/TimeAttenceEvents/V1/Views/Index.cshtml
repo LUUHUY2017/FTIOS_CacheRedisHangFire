@@ -34,7 +34,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-3  ">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="form-label">Từ ngày</label>
                             <datetime type="date"
                                       v-model="filter.startDate"
@@ -42,13 +42,29 @@
                                       placeholder="Vui lòng chọn thời gian...">
                             </datetime>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="form-label">Đến ngày</label>
                             <datetime type="date"
                                       v-model="filter.endDate"
                                       class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
                                       placeholder="Vui lòng chọn thời gian...">
                             </datetime>
+                        </div>
+
+                        <div class="col-md-1">
+                        </div>
+
+                        <div class="col-md-2 ">
+                            <label class="form-label">Tổng số học sinh điểm danh</label>
+                            <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalAmount">
+                        </div>
+                        <div class="col-md-2 ">
+                            <label class="form-label">Tổng số học sinh đã đồng bộ</label>
+                            <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalFace">
+                        </div>
+                        <div class="col-md-2 ">
+                            <label class="form-label">Tổng số học sinh chưa đồng bộ</label>
+                            <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="totalCurrent">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -287,6 +303,9 @@
                 attendenceSection: "",
             },
             data: [],
+            totalAmount: 0,
+            totalFace: 0,
+            totalCurrent: 0,
             name_file: "LICHSUDIEMDANH_" + new Date().getDate() + "_" + new Date().getTime(),
             object: {
                 dateNow: formatDateTime(new Date()),
@@ -303,7 +322,13 @@
             rowsPerPage: 50,
         },
         methods: {
+
             onLoadData(resetPage) {
+                this.onLoadDataDetail(resetPage);
+                this.onLoadData_General();
+            },
+
+            onLoadDataDetail(resetPage) {
                 $('.loader').show();
                 this.checkParams();
                 if (resetPage)
@@ -328,6 +353,26 @@
                     console.log(error);
                 });
             },
+
+            onLoadData_General() {
+                this.checkParams();
+                axios.post('/api/v1/TimeAttenceEvent/PostGeneral', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    this.totalAmount = response.data.data.totalAmount;
+                    this.totalFace = response.data.data.totalFace;
+                    this.totalCurrent = response.data.data.totalCurrent;
+
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+
+
+
             checkParams() {
                 this.filter.FilterItems = [];
                 Object.entries(this.params).forEach(([key, value]) => {
@@ -382,7 +427,7 @@
             },
             renderRowOnPage() {
                 this.filter.CurentPage = 1;
-                this.onLoadData();
+                this.onLoadDataDetail();
             },
             formatDateTime(date) {
                 let data = date != null ? moment(date).format('DD/MM/YYYY HH:mm:ss') : null;
