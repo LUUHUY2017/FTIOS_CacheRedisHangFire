@@ -195,11 +195,11 @@ public class AppConfigService
         {
             if (string.IsNullOrEmpty(request.Id))
             {
-                var check = await _appConfigRepository.GetByFirstAsync(x  => x.AccountName.Trim() == request.AccountName.Trim());
-                if (check.Data != null)
-                {
-                    return new Result<AttendanceConfig>(null, $"Tài khoản đã có vui lòng sử dụng tài khoản khác!", false);
-                }    
+                //var check = await _appConfigRepository.GetByFirstAsync(x  => x.AccountName.Trim() == request.AccountName.Trim());
+                //if (check.Data != null)
+                //{
+                //    return new Result<AttendanceConfig>(null, $"Tài khoản đã có vui lòng sử dụng tài khoản khác!", false);
+                //}    
 
                 var dataAdd = _mapper.Map<AttendanceConfig>(request); 
                 var retVal = await _appConfigRepository.AddAsync(dataAdd);
@@ -269,7 +269,7 @@ public class AppConfigService
                                 join o in _dBContext.Organization on cf.OrganizationId equals o.Id into orgGroup
                                 from o in orgGroup.DefaultIfEmpty() // LEFT JOIN
                                 where (cf.Actived == true
-                                && (!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? cf.OrganizationId == filter.OrganizationId : true
+                                //&& (!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? cf.OrganizationId == filter.OrganizationId : true
                                   //&& ((filter.SiteId != 0) ? siteIds.Contains(device.SiteId) : true)
                                   //&& ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "serial_number") ? device.SerialNumber.ToLower().Contains(filter.Key.ToLower()) : true)
                                   //&& ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "device_name") ? device.DeviceName.ToLower().Contains(filter.Key.ToLower()) : true)

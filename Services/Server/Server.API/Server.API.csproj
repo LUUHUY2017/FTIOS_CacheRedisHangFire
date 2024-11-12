@@ -98,6 +98,8 @@
 
     <Compile Include="APIs\Data\AttendanceConfigs\V1\Controllers\AttendanceConfigController.cs" />
 
+    <Compile Include="APIs\Data\AttendanceTimeConfigs\V1\Models\AttendanceTimeTypeConst.cs" />
+
     <Compile Include="APIs\Data\Devices\V1\Controllers\DeviceAdminController.cs" />
 
     <Compile Include="APIs\Data\MonitorDevices\V1\Controllers\MonitorDeviceController.cs" />

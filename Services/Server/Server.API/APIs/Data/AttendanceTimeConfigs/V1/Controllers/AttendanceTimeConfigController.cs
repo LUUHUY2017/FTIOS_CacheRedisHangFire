@@ -2,6 +2,7 @@
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Server.API.APIs.Data.AttendanceTimeConfigs.V1.Models;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1.Models;
 using Share.WebApp.Controllers;
@@ -20,6 +21,18 @@ public class AttendanceTimeConfigController : AuthBaseAPIController
     public AttendanceTimeConfigController(AttendanceTimeConfigService attendanceTimeConfigService)
     {
         _attendanceTimeConfigService = attendanceTimeConfigService;
+    }
+
+
+    /// <summary>
+    /// Lấy danh sách type
+    /// </summary>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpGet("GetTypes")]
+    public async Task<IActionResult> GetTypes()
+    {
+        return Ok(new Result<List<object>>(AttendanceTimeTypeConst.AttendanceTimeTypes, "Thành công", true));
     }
 
     /// <summary>

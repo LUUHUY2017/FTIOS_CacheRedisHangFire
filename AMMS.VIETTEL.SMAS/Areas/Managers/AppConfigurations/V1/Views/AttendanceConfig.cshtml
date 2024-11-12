@@ -7,7 +7,7 @@
 
         <div class="content">
 
-            <div class="card">
+            @* <div class="card">
                 <div class="card-body">
                     <form v-on:submit.prevent="loadData">
                         <div class="row mb-3">
@@ -19,28 +19,79 @@
                                     </option>
                                 </select>
                             </div>
-                            @*  <div class="col-lg-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
-                            </div>  *@
-
                         </div>
                     </form>
                 </div>
-            </div>
+            </div> *@
 
             <div class="card">
                 <div class="card-body">
-                    <div class="pull-left">
+                    @* <div class="pull-left">
                         <a v-on:click="onPopupModelEdit(null, false)" class="btn btn-primary " style="margin-right: 5px;"> Thêm mới</a>
-                    </div>
-                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                    </div> *@
+                    <form class="needs-validation" novalidate id="FormAddEdit">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td class="p-2 fw-bold ">Kết nối Gateway</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <!--Endpoint-gateway-->
+                                        <div class="row mb-3">
+                                            <label class="col-form-label text-start col-lg-3">Endpoint-gateway <span class="text-danger">*</span></label>
+                                            <div class="col-lg-9">
+                                                <input type="text" class="form-control" required v-model="item.endpointGateway">
+                                                <div class="invalid-feedback">Vui lòng nhập Endpoint-gateway</div>
+                                                <div class="valid-feedback"> </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-form-label text-start col-lg-3">Key  <span class="text-danger">*</span></label>
+                                            <div class="col-lg-9">
+                                                <input type="text" class="form-control" required v-model="item.key">
+                                                <div class="invalid-feedback">Vui lòng nhập Key</div>
+                                                <div class="valid-feedback"> </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-form-label text-start col-lg-3">KeyIV  <span class="text-danger">*</span></label>
+                                            <div class="col-lg-9">
+                                                <input type="text" class="form-control" required v-model="item.keyIV">
+                                                <div class="invalid-feedback">Vui lòng nhập KeyIV</div>
+                                                <div class="valid-feedback"> </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label class="col-form-label text-start col-lg-3">SecretKey  <span class="text-danger">*</span></label>
+                                            <div class="col-lg-9">
+                                                <input type="text" class="form-control" required v-model="item.secretKey">
+                                                <div class="invalid-feedback">Vui lòng nhập SecretKey</div>
+                                                <div class="valid-feedback"> </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2">
+                                        <div class="row mb-3">
+                                            <div class="text-start">
+                                                <button type="button" class="btn btn-primary" v-on:click="onSaveData()">Lưu dữ liệu</button>
+                                                @* <button type="button" class="btn btn-primary" v-on:click="onAsyncData()" :disabled="!checkAsyncButton">Đồng bộ</button> *@
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
+    @* <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
         <div id="waitDialog" class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -109,7 +160,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> *@
 </div>
 
 
@@ -135,7 +186,7 @@
                         var ele = `<div style="white-space: nowrap;">`;
                         //ele += `<a href = "javascript:" class= "btn btn-sm btn-info reAsync" title = "Đồng bộ " > <i class="fa fa-repeat" > </i> </a > &nbsp;`;
                         ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit"  title = "Update " > <i class="fa fa-pencil" > </i><span class="sr-only">Update</span > </a > &nbsp;`;
-                        ele += `<a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i> <span class="sr-only">Inactive</span></a>&nbsp;`;
+                       // ele += `<a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i> <span class="sr-only">Inactive</span></a>&nbsp;`;
                         ele += ` </div>`;
                         return ele;
                     },
@@ -143,26 +194,26 @@
                         'click .edit': function (e, value, row) {
                             _config.onPopupModelEdit(row, true);
                         },
-                        'click .delete': function (e, value, row) {
-                            var question = "Bạn có chắc chắn muốn xóa dòng này khỏi cơ sở dữ liệu không? sau khi xóa không khôi phục lại được!";
-                            var content = "Nhập nội dung xóa (không quá 250 kí tự)";
-                            alertify.prompt(question, content, ''
-                                , function (evt, value) {
-                                    axios.post('/api/v1/AppConfiguration/Delete', { id: row.id + '', reason: value }, _config.object.bearerAuthorization).then(response => {
-                                        if (response.data.succeeded) {
-                                            alertify.success(response.data.message);
-                                            _config.loadData();
-                                        }
-                                        else {
-                                            alertify.warning(response.data.message);
-                                        }
-                                    }).catch(error => {
-                                        alert("Lỗi: " + error.response.data.message);
-                                    });
-                                }, function () {
-                                    //alertify.error('Cancel')
-                                });
-                        },
+                        // 'click .delete': function (e, value, row) {
+                        //     var question = "Bạn có chắc chắn muốn xóa dòng này khỏi cơ sở dữ liệu không? sau khi xóa không khôi phục lại được!";
+                        //     var content = "Nhập nội dung xóa (không quá 250 kí tự)";
+                        //     alertify.prompt(question, content, ''
+                        //         , function (evt, value) {
+                        //             axios.post('/api/v1/AppConfiguration/Delete', { id: row.id + '', reason: value }, _config.object.bearerAuthorization).then(response => {
+                        //                 if (response.data.succeeded) {
+                        //                     alertify.success(response.data.message);
+                        //                     _config.loadData();
+                        //                 }
+                        //                 else {
+                        //                     alertify.warning(response.data.message);
+                        //                 }
+                        //             }).catch(error => {
+                        //                 alert("Lỗi: " + error.response.data.message);
+                        //             });
+                        //         }, function () {
+                        //             //alertify.error('Cancel')
+                        //         });
+                        // },
                         // 'click .reAsync': function (e, value, row) {
                         //     $('.loader').show();
                         //     axios.post('/api/v1/AppConfiguration/SchoolAsync', row, _config.object.bearerAuthorization).then(response => {
@@ -186,34 +237,39 @@
                         // },
                     }
                 },
+                // {
+                //     title: "SchoolName",
+                //     field: 'organizationName',
+                //     sortable: true,
+                // },
+                // {
+                //     title: 'TimeAsync',
+                //     field: 'timeAsync',
+                //     sortable: true,
+                //     formatter: function (value, row, index) {
+                //         if (value) {
+                //             const d = new Date(value);
+                //             return d.toLocaleDateString('vi-VN', {
+                //                 year: 'numeric',
+                //                 month: '2-digit',
+                //                 day: '2-digit',
+                //                 hour: '2-digit',
+                //                 minute: '2-digit',
+                //                 second: '2-digit'
+                //             });
+                //         } else {
+                //             return ""; // Trả về chuỗi rỗng
+                //         }
+                //     },
+                // },
+                // {
+                //     title: "EndpointIdentity",
+                //     field: 'endpointIdentity',
+                //     sortable: true,
+                // },
                 {
-                    title: "SchoolName",
-                    field: 'organizationName',
-                    sortable: true,
-                },
-                {
-                    title: 'TimeAsync',
-                    field: 'timeAsync',
-                    sortable: true,
-                    formatter: function (value, row, index) {
-                        if (value) {
-                            const d = new Date(value);
-                            return d.toLocaleDateString('vi-VN', {
-                                year: 'numeric',
-                                month: '2-digit',
-                                day: '2-digit',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit'
-                            });
-                        } else {
-                            return ""; // Trả về chuỗi rỗng
-                        }
-                    },
-                },
-                {
-                    title: "EndpointIdentity",
-                    field: 'endpointIdentity',
+                    title: "EndpointGateway",
+                    field: 'endpointGateway',
                     sortable: true,
                 },
                 {
@@ -302,6 +358,7 @@
 
                     if (response.data.succeeded) {
                         this.data = response.data.data;
+                        this.item = this.data[0];
                         // this.item = response.data.data || {
                         //     endpointIdentity: 'https://sso.vtsmas.vn/connect/token',
                         //     endpointGateway: 'https://gateway.vtsmas.vn',
