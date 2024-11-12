@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
 using Server.Core.Interfaces.GIO.VehicleInOuts;
 using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
+using Server.Core.Interfaces.TimeAttendenceSyncs.Responses;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
@@ -169,6 +170,32 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpPost("PostSyncItem")]
+    public async Task<IActionResult> PostSyncItem(AttendenceSyncReportRes request)
+    {
+        try
+        {
+            //string imgSrc = "";
+            //var retval = await _timeService.GetByIdAsync(request.PersonId);
+            //if (!retval.Succeeded)
+            //    return Ok(new Result<object>("Không tìm thấy học sinh", false));
+
+            //if (resImg.Succeeded)
+            //    imgSrc = resImg.Data.FaceData;
+
+
+            //Student student = retval.Data;
+            //student.ImageSrc = imgSrc;
+            //var datas = await _studentService.PushStudentsByEventBusAsync(student);
+            return Ok(request);
+        }
+        catch (Exception ex)
+        {
+            return Ok(new Result<object>("Lỗi:" + ex.Message, false));
+        }
+    }
+
 }
 
 
