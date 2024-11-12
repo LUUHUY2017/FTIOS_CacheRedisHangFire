@@ -56,7 +56,7 @@ public class StudentService
     }
 
     /// <summary>
-    /// RabbitMQ: Gửi thông tin đồng bộ học sinh  qua RabbitMQ
+    /// RabbitMQ: Gửi thông tin 1 học sinh xuống các thiết bị qua RabbitMQ
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -82,7 +82,7 @@ public class StudentService
         }
     }
     /// <summary>
-    /// RabbitMQ: Gửi thông tin tất cả học sinh  qua RabbitMQ xuống 1 thiết bị
+    /// RabbitMQ: Gửi tất cả học sinh   xuống 1 thiết bị qua RabbitMQ
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -107,6 +107,12 @@ public class StudentService
             return new Result<RB_ServerRequest>($"Gửi email lỗi: {e.Message}", false);
         }
     }
+    /// <summary>
+    /// Đẩy 1 học sinh xuống 1 thiết bị
+    /// </summary>
+    /// <param name="dev"></param>
+    /// <param name="stu"></param>
+    /// <returns></returns>
     public async Task<Result<RB_ServerRequest>> PushStudentByEventBusAsync(Device dev, Student stu)
     {
         try
@@ -219,7 +225,6 @@ public class StudentService
                     request.ImageBase64 = Common.ConvertFileImageToBase64(fileName);
                 }
             }
-
             await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64);
 
 
@@ -270,10 +275,12 @@ public class StudentService
                              FullName = _do.FullName,
                              Name = _do.Name,
                              DateOfBirth = _do.DateOfBirth,
+
                              GenderCode = _do.GenderCode,
                              ImageSrc = _do.ImageSrc,
                              ClassId = _do.ClassId,
                              ClassName = _do.ClassName,
+
                              IsExemptedFull = _do.IsExemptedFull,
                              StatusCode = _do.StatusCode,
                              Status = _do.Status,
@@ -281,12 +288,14 @@ public class StudentService
                              EthnicCode = _do.EthnicCode,
                              PolicyTargetCode = _do.PolicyTargetCode,
                              PriorityEncourageCode = _do.PriorityEncourageCode,
+
                              SyncCodeClass = _do.SyncCodeClass,
                              IdentifyNumber = _do.IdentifyNumber,
                              StudentClassId = _do.StudentClassId,
                              SortOrder = _do.SortOrder,
                              SortOrderByClass = _do.SortOrderByClass,
                              GradeCode = _do.GradeCode,
+
                              ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null,
                              IsFace = la != null ? true : false,
                              IsFaceName = la != null ? "Có" : "Không",
@@ -472,7 +481,6 @@ public class StudentService
             var _devis = _dbContext.Device.Where(o => o.Actived == true && stu.OrganizationId == o.OrganizationId).ToList();
             if (_devis == null || _devis.Count == 0)
                 return list_Sync;
-
 
             foreach (var device in _devis)
             {
