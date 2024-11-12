@@ -108,8 +108,13 @@
     <div class="page-content" id="page-content">
         <!-- Main sidebar -->
         @await Html.PartialAsync("/Views/Shared/Components/_sidebar-ContentPartial.cshtml")
+
         @RenderBody()
+      
+
     </div>
+
+
     <script src="~/assets/js/styles/custom.js?v=@DateTime.Now"></script>
 </body>
 </html>

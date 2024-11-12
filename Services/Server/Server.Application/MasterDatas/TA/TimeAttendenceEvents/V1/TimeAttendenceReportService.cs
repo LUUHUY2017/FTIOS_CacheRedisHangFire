@@ -20,8 +20,8 @@ public partial class TimeAttendenceEventService
                          from or in OG.DefaultIfEmpty()
 
                          where
-                          (request.StartDate != null ? _do.CreatedDate.Date >= request.StartDate.Value.Date : true)
-                          && (request.EndDate != null ? _do.CreatedDate.Date <= request.EndDate.Value.Date : true)
+                          (request.StartDate != null ? _do.EventTime.Value.Date >= request.StartDate.Value.Date : true)
+                          && (request.EndDate != null ? _do.EventTime.Value.Date <= request.EndDate.Value.Date : true)
                             && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? la.OrganizationId == request.OrganizationId : true)
                           && (!string.IsNullOrWhiteSpace(request.ClassId) ? la.ClassId == request.ClassId : true)
                          orderby _do.CreatedDate descending

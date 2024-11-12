@@ -107,7 +107,27 @@ public class StudentService
             return new Result<RB_ServerRequest>($"Gửi email lỗi: {e.Message}", false);
         }
     }
-
+    public async Task<Result<RB_ServerRequest>> PushStudentByEventBusAsync(Device dev, Student stu)
+    {
+        try
+        {
+            var retval = await Sync1Student2Device(dev, stu);
+            if (retval.Any())
+            {
+                foreach (var item in retval)
+                {
+                    var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}");
+                    await aa.Send(item);
+                }
+            }
+            return new Result<RB_ServerRequest>($"Gửi thành công", true);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+            return new Result<RB_ServerRequest>($"Gửi email lỗi: {e.Message}", false);
+        }
+    }
 
     /// <summary>
     /// Cập nhật trạng thái đồng bộ từ RabbitMQ
@@ -216,81 +236,6 @@ public class StudentService
 
     }
 
-    /// <summary>
-    /// Lấy thông tin  lịch sử đồng bộ
-    /// </summary>
-    /// <param name="stu"></param>
-    /// <returns></returns>
-    public async Task<List<RB_ServerRequest>> Sync1Student2Devices(Student stu)
-    {
-        List<RB_ServerRequest> list_Sync = new List<RB_ServerRequest>();
-
-        try
-        {
-            var _devis = _dbContext.Device.Where(o => o.Actived == true && stu.OrganizationId == o.OrganizationId).ToList();
-            if (_devis == null || _devis.Count == 0)
-                return list_Sync;
-
-
-            foreach (var device in _devis)
-            {
-                var item = await _dbContext.PersonSynToDevice.Where(o => o.DeviceId == device.Id && o.PersonId == stu.Id).FirstOrDefaultAsync();
-
-                if (item == null)
-                {
-                    item = new PersonSynToDevice()
-                    {
-                        DeviceId = device.Id,
-                        PersonId = stu.Id,
-                        SynAction = ServerRequestAction.ActionAdd,
-                        LastModifiedDate = DateTime.Now
-                    };
-                    await _dbContext.PersonSynToDevice.AddAsync(item);
-                }
-                else
-                {
-                    item.SynAction = ServerRequestAction.ActionAdd;
-                    item.SynStatus = null;
-                    item.SynFaceStatus = null;
-                    item.SynMessage = null;
-                }
-                await _dbContext.SaveChangesAsync();
-
-
-                var _TA_PersonInfo = new TA_PersonInfo()
-                {
-                    Id = stu.Id,
-                    DeviceId = device.Id,
-                    DeviceModel = device.DeviceModel,
-                    FisrtName = stu.Name,
-                    FullName = stu.FullName,
-                    PersonCode = stu.StudentCode,
-                    SerialNumber = device.SerialNumber,
-                    UserFace = stu.ImageSrc
-                };
-
-                var param = JsonConvert.SerializeObject(_TA_PersonInfo);
-                var list_SyncItem = new RB_ServerRequest()
-                {
-                    Id = item.Id,
-                    Action = ServerRequestAction.ActionAdd,
-                    SerialNumber = device.SerialNumber,
-                    DeviceId = device.Id,
-                    DeviceModel = device.DeviceModel,
-                    RequestType = ServerRequestType.UserInfo,
-                    RequestParam = param,
-                    SchoolId = device.OrganizationId,
-                };
-
-                list_Sync.Add(list_SyncItem);
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-        return list_Sync;
-    }
 
     /// <summary>
     /// Lấy danh sách học sinh AMMS
@@ -514,7 +459,83 @@ public class StudentService
     }
 
     /// <summary>
-    /// Lấy thông tin  lịch sử đồng bộ
+    /// Đẩy 1 học sinh xuống toàn bộ thiết bị
+    /// </summary>
+    /// <param name="stu"></param>
+    /// <returns></returns>
+    public async Task<List<RB_ServerRequest>> Sync1Student2Devices(Student stu)
+    {
+        List<RB_ServerRequest> list_Sync = new List<RB_ServerRequest>();
+
+        try
+        {
+            var _devis = _dbContext.Device.Where(o => o.Actived == true && stu.OrganizationId == o.OrganizationId).ToList();
+            if (_devis == null || _devis.Count == 0)
+                return list_Sync;
+
+
+            foreach (var device in _devis)
+            {
+                var item = await _dbContext.PersonSynToDevice.Where(o => o.DeviceId == device.Id && o.PersonId == stu.Id).FirstOrDefaultAsync();
+
+                if (item == null)
+                {
+                    item = new PersonSynToDevice()
+                    {
+                        DeviceId = device.Id,
+                        PersonId = stu.Id,
+                        SynAction = ServerRequestAction.ActionAdd,
+                        LastModifiedDate = DateTime.Now
+                    };
+                    await _dbContext.PersonSynToDevice.AddAsync(item);
+                }
+                else
+                {
+                    item.SynAction = ServerRequestAction.ActionAdd;
+                    item.SynStatus = null;
+                    item.SynFaceStatus = null;
+                    item.SynMessage = null;
+                }
+                await _dbContext.SaveChangesAsync();
+
+
+                var _TA_PersonInfo = new TA_PersonInfo()
+                {
+                    Id = stu.Id,
+                    DeviceId = device.Id,
+                    DeviceModel = device.DeviceModel,
+                    FisrtName = stu.Name,
+                    FullName = stu.FullName,
+                    PersonCode = stu.StudentCode,
+                    SerialNumber = device.SerialNumber,
+                    UserFace = stu.ImageSrc
+                };
+
+                var param = JsonConvert.SerializeObject(_TA_PersonInfo);
+                var list_SyncItem = new RB_ServerRequest()
+                {
+                    Id = item.Id,
+                    Action = ServerRequestAction.ActionAdd,
+                    SerialNumber = device.SerialNumber,
+                    DeviceId = device.Id,
+                    DeviceModel = device.DeviceModel,
+                    RequestType = ServerRequestType.UserInfo,
+                    RequestParam = param,
+                    SchoolId = device.OrganizationId,
+                };
+
+                list_Sync.Add(list_SyncItem);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return list_Sync;
+    }
+
+    /// <summary>
+    /// Đẩy toàn bộ học sinh xuống 1 thiết bị
     /// </summary>
     /// <param name="stu"></param>
     /// <returns></returns>
@@ -524,10 +545,6 @@ public class StudentService
 
         try
         {
-            var _devis = await _dbContext.Device.Where(o => o.Actived == true && o.Id == dev.Id).FirstOrDefaultAsync();
-            if (_devis == null)
-                return list_Sync;
-
             var students = await _dbContext.Student.Where(o => o.Actived == true && o.OrganizationId == dev.OrganizationId).ToListAsync();
             var faces = await _dbContext.PersonFace.Where(o => o.Actived == true && o.OrganizationId == dev.OrganizationId).ToListAsync();
 
@@ -596,5 +613,73 @@ public class StudentService
         return list_Sync;
     }
 
+    /// <summary>
+    /// Đẩy 1 học sinh xuống 1 thiết bị
+    /// </summary>
+    /// <param name="stu"></param>
+    /// <returns></returns>
+    public async Task<List<RB_ServerRequest>> Sync1Student2Device(Device dev, Student stu)
+    {
+        List<RB_ServerRequest> list_Sync = new List<RB_ServerRequest>();
+
+        try
+        {
+            var face = await _dbContext.PersonFace.Where(o => o.Actived == true && o.PersonId == stu.Id).FirstOrDefaultAsync();
+            var item = _dbContext.PersonSynToDevice.FirstOrDefault(o => o.DeviceId == dev.Id && o.PersonId == stu.Id);
+
+            if (item == null)
+            {
+                item = new PersonSynToDevice()
+                {
+                    DeviceId = dev.Id,
+                    PersonId = stu.Id,
+                    SynAction = ServerRequestAction.ActionAdd,
+                    LastModifiedDate = DateTime.Now
+                };
+                await _dbContext.PersonSynToDevice.AddAsync(item);
+            }
+            else
+            {
+                item.SynAction = ServerRequestAction.ActionAdd;
+                item.SynStatus = null;
+                item.SynFaceStatus = null;
+                item.SynMessage = null;
+            }
+            await _dbContext.SaveChangesAsync();
+
+
+            var _TA_PersonInfo = new TA_PersonInfo()
+            {
+                Id = stu.Id,
+                DeviceId = dev.Id,
+                DeviceModel = dev.DeviceModel,
+                FisrtName = stu.Name,
+                FullName = stu.FullName,
+                PersonCode = stu.StudentCode,
+                SerialNumber = dev.SerialNumber,
+                UserFace = face?.FaceData
+            };
+            var param = JsonConvert.SerializeObject(_TA_PersonInfo);
+
+
+            var list_SyncItem = new RB_ServerRequest()
+            {
+                Id = item.Id,
+                DeviceId = dev.Id,
+                Action = ServerRequestAction.ActionAdd,
+                SerialNumber = dev.SerialNumber,
+                SchoolId = dev.OrganizationId,
+                DeviceModel = dev.DeviceModel,
+                RequestType = ServerRequestType.UserInfo,
+                RequestParam = param,
+            };
+            list_Sync.Add(list_SyncItem);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return list_Sync;
+    }
 
 }

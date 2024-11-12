@@ -121,7 +121,7 @@ public partial class TimeAttendenceEventService
 
 
                 var config = await _dbContext.AttendanceTimeConfig.Where(o => o.Actived == true && o.OrganizationId == student.OrganizationId
-                          && timeOfDay >= o.StartTime && timeOfDay <= o.EndTime).FirstOrDefaultAsync();
+                          && timeOfDay >= o.StartTime && timeOfDay <= o.EndTime).OrderByDescending(o => o.LastModifiedDate).FirstOrDefaultAsync();
                 if (config != null)
                 {
                     int sectionTime = Convert.ToInt32(config.Type);
