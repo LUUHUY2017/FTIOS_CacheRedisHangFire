@@ -161,9 +161,9 @@
                                     </div>
 
                                 </div>
-                             
 
-                               
+
+
 
                                 <div class="row mb-3">
                                     <div class="text-end">
@@ -260,7 +260,7 @@
                             ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit"  title = "Cập nhật " > <i class="fa fa-pencil" > </i>  </a > &nbsp;`;
                             ele += `<a href = "javascript:" class= "btn btn-danger btn-sm delete-asset inactive" title="Inactive "> <i class="fa fa-minus-circle" ></i> </a> &nbsp;`;
                             ele += `<a href = "javascript:" class= "btn btn-sm btn-info resend"  title = "Chạy lại đồng bộ" > <i class="fa fa-repeat" > </i>  </a > &nbsp;`;
-                            ele += `<a href = "javascript:" class= "btn btn-sm btn-info detail"  title = "Lịch sử đồng bộ" > <i class="fa fa-history" > </i>  </a > &nbsp;`;
+                            ele += `<a href = "javascript:" class= "btn btn-sm btn-success detail"  title = "Lịch sử đồng bộ" > <i class="fa fa-history" > </i>  </a > &nbsp;`;
                         }
                         else
                             ele += `<a href="javascript:" class="btn btn-info btn-sm delete-asset active" title="Active "> <i class="fa fa-plus-square" ></i><span class="sr-only">Active</span></a> &nbsp;`;
@@ -272,7 +272,11 @@
                             _Schedule.onPopupModelEdit(row);
                         },
                         'click .resend': function (e, value, row) {
-                            _Schedule.onResend(row);
+
+                            var question = "Bạn có chắc chắn muốn đồng bộ học sinh về ngay bây giờ không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                _Schedule.onResend(row);
+                            }, function () { });
                         },
                         'click .detail': function (e, value, row) {
                             _Schedule.onViewLog(row);
@@ -500,11 +504,9 @@
             },
 
             onResend(row) {
-                $('.loader').show();
                 axios.get('/api/v1/ScheduleJob/Resend?id=' + row.id, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
-                    $('.loader').delay(100).hide(0);
 
                     if (response.data.succeeded)
                         alertify.success("Thao tác thành công!");

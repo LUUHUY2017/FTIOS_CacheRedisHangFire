@@ -160,7 +160,7 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
 
                 Student student = retval.Data;
                 student.ImageSrc = imgSrc;
-                var datas = await _studentService.PushPersonByEventBusAsync(student);
+                var datas = await _studentService.PushStudentsByEventBusAsync(student);
                 return Ok(datas);
             }
             catch (Exception ex)

@@ -116,7 +116,7 @@ public class ScheduleJobController : AuthBaseAPIController
             if (retVal.Data.ScheduleType == "DONGBODIEMDANH")
                 await _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
         }
-        return Ok();
+        return Ok(new Result<object>("Thành công", true));
     }
 
     /// <summary>
