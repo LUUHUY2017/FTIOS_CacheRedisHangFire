@@ -1,4 +1,5 @@
 ﻿using AMMS.Shared.Commons;
+using Microsoft.EntityFrameworkCore;
 using Server.Core.Entities.TA;
 using Server.Core.Interfaces.TA.TimeAttendenceEvents;
 using Server.Infrastructure.Datas.MasterData;
@@ -78,8 +79,16 @@ public class TATimeAttendenceEventRepository : ITATimeAttendenceEventRepository
         }
     }
 
-
-
-
-
+    public async Task<TimeAttendenceEvent> GetByIdAsync(string id)
+    {
+        try
+        {
+            var result = await _db.TimeAttendenceEvent.FirstOrDefaultAsync(o => o.Id == id);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
 }

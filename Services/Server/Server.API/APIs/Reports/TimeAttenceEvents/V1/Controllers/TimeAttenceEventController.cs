@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
+using Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
 using Server.Core.Interfaces.GIO.VehicleInOuts;
 using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
 using Share.WebApp.Controllers;
@@ -25,18 +26,21 @@ public class TimeAttenceEventController : AuthBaseAPIController
     private readonly IMapper _mapper;
     private readonly IGIOVehicleInOutRepository _vehicleInOut;
     private readonly TimeAttendenceEventService _timeService;
+    private readonly TimeAttendenceSyncService _timeSyncService;
 
     public TimeAttenceEventController(
         IMediator mediator,
         IMapper mapper,
         IGIOVehicleInOutRepository vehicleInOut,
-        TimeAttendenceEventService timeService
+        TimeAttendenceEventService timeService,
+        TimeAttendenceSyncService timeSyncService
         )
     {
         _mediator = mediator;
         _mapper = mapper;
         _vehicleInOut = vehicleInOut;
         _timeService = timeService;
+        _timeSyncService = timeSyncService;
 
     }
 
@@ -85,6 +89,49 @@ public class TimeAttenceEventController : AuthBaseAPIController
                 curentPage = request.CurentPage,
             };
             return Ok(new Result<object>(retVal, "Thành công!", true));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Post
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("PostGeneral")]
+    public async Task<ActionResult> PostGeneral(AttendenceReportFilterReq request)
+    {
+        try
+        {
+            request.OrganizationId = GetOrganizationId();
+            var items = await _timeService.GetAlls(request);
+            int totalAmount = await items.CountAsync();
+
+            var req = _mapper.Map<AttendenceSyncReportFilterReq>(request);
+            var syncs = await _timeSyncService.GetAlls(req);
+
+            int totalFace = await syncs.CountAsync(o => o.SyncStatus == true);
+            int totalCurrent = totalAmount - totalFace;
+
+            //#region Type
+            //var infos = items.GroupBy(o => o.OrganizationId).Select(g => new ObjectDataDashboard()
+            //{
+            //    Name = g.Key ?? "N/A",
+            //    Value = g.Count(o => o.IsFace == true),
+            //    Percent = g.Count(o => o.Actived == true),
+            //}).OrderBy(o => o.Name).ToList();
+            //#endregion
+
+            var retVal = new
+            {
+                totalAmount = totalAmount,
+                totalFace = totalFace,
+                totalCurrent = totalCurrent,
+            };
+            return Ok(new Result<object>(retVal, "Thành công", true));
         }
         catch (Exception ex)
         {

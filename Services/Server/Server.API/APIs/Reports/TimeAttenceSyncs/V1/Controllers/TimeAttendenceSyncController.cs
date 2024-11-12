@@ -176,19 +176,8 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
     {
         try
         {
-            //string imgSrc = "";
-            //var retval = await _timeService.GetByIdAsync(request.PersonId);
-            //if (!retval.Succeeded)
-            //    return Ok(new Result<object>("Không tìm thấy học sinh", false));
-
-            //if (resImg.Succeeded)
-            //    imgSrc = resImg.Data.FaceData;
-
-
-            //Student student = retval.Data;
-            //student.ImageSrc = imgSrc;
-            //var datas = await _studentService.PushStudentsByEventBusAsync(student);
-            return Ok(request);
+            var retval = await _timeService.SyncAttendenceToSmas(request.TimeAttendenceEventId);
+            return Ok(retval);
         }
         catch (Exception ex)
         {

@@ -119,6 +119,7 @@ public class CronJobService : ICronJobService
                 Logs = jobRes.ScheduleJobName,
                 ScheduleJobId = jobRes.Id,
             };
+
             int count = 0, i = 0;
             if (res.Any())
             {
@@ -154,6 +155,8 @@ public class CronJobService : ICronJobService
                 logSchedule.ScheduleLogNote = "Thành công";
                 logSchedule.Message = string.Format("Không có bản tin nào trả về");
             }
+
+
             await _dbContext.ScheduleJobLog.AddAsync(logSchedule);
             await _dbContext.SaveChangesAsync();
         }
@@ -210,44 +213,42 @@ public class CronJobService : ICronJobService
                 studentAbsenceByDevices = studentAbs,
             };
 
-            Logger.Warning("Requests:" + JsonConvert.SerializeObject(req));
+            Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
             var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
-            Logger.Warning("Response:" + JsonConvert.SerializeObject(res));
+            Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
 
-            if (res != null)
+            if (res == null || !res.IsSuccess)
+                return;
+
+            datas.ForEach(o => { o.EventType = true; });
+
+
+            try
             {
-                if (res.IsSuccess)
+                var _listLog = new List<TimeAttendenceSync>();
+                foreach (var item in res.Responses)
                 {
-                    datas.ForEach(o => { o.EventType = true; });
-
-                    try
+                    var el = datas.FirstOrDefault(o => o.StudentCode == item.studentCode && o.EventTime == item.extraProperties.absenceTime);
+                    if (el == null)
+                        continue;
+                    var log = new TimeAttendenceSync()
                     {
-                        var _listLog = new List<TimeAttendenceSync>();
-                        foreach (var item in res.Responses)
-                        {
-                            var el = datas.FirstOrDefault(o => o.StudentCode == item.studentCode && o.EventTime == item.extraProperties.absenceTime);
-                            if (el == null)
-                                continue;
-                            var log = new TimeAttendenceSync()
-                            {
-                                TimeAttendenceEventId = el.Id,
-                                SyncStatus = item.status,
-                                Message = item.message,
-                                CreatedDate = DateTime.Now,
-                                LastModifiedDate = DateTime.Now,
-                            };
-                            _listLog.Add(log);
-                        }
-
-                        await _dbContext.TimeAttendenceSync.AddRangeAsync(_listLog);
-                    }
-                    catch (Exception ext)
-                    {
-                        Logger.Error(ext);
-                    }
-                    await _dbContext.SaveChangesAsync();
+                        TimeAttendenceEventId = el.Id,
+                        SyncStatus = item.status,
+                        Message = item.message,
+                        CreatedDate = DateTime.Now,
+                        LastModifiedDate = DateTime.Now,
+                    };
+                    _listLog.Add(log);
                 }
+
+                await _dbContext.TimeAttendenceSync.AddRangeAsync(_listLog);
             }
+            catch (Exception ext)
+            {
+                Logger.Error(ext);
+            }
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
