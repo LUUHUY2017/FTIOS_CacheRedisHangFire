@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Server.API.APIs.Data.AttendanceTimeConfigs.V1.Models;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1.Models;
+using Server.Application.MasterDatas.A2.Devices;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
@@ -54,7 +55,7 @@ public class AttendanceTimeConfigController : AuthBaseAPIController
     [HttpPost("GetsFilter")]
     public async Task<IActionResult> GetsFilter(AttendanceTimeConfigFilter filter)
     {
-        _attendanceTimeConfigService.UserId = User.GetSubjectId();
+            _attendanceTimeConfigService.UserId = User.GetSubjectId();
         var data = await _attendanceTimeConfigService.GetsFilter(filter);
         return Ok(data);
     }
@@ -91,4 +92,24 @@ public class AttendanceTimeConfigController : AuthBaseAPIController
     {
         return Ok(await _attendanceTimeConfigService.DeleteAsync(request));
     }
+    /// <summary>
+    /// Tắt hoạt động 
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("InActive")]
+    public async Task<IActionResult> Active(ActiveRequest request)
+    {
+        return Ok(await _attendanceTimeConfigService.Active(request));
+    }
+
+    /// <summary>
+    /// Bật hoạt động 
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("Active")]
+    public async Task<IActionResult> InActive(InactiveRequest request)
+    {
+        return Ok(await _attendanceTimeConfigService.InActive(request));
+    }
+
 }

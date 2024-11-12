@@ -11,6 +11,8 @@ public class AttendanceTimeConfigResponse
     public string? Name { get; set; }
     public string? Type { get; set; }
 
+    public bool? Actived { get; set; }
+
     public TimeSpan? StartTime { get; set; }
     public TimeSpan? EndTime { get; set; }
 
@@ -24,6 +26,7 @@ public class AttendanceTimeConfigResponse
         StartTime = tc?.StartTime;
         EndTime = tc?.EndTime;
         Note = tc?.Note;
+        Actived = tc?.Actived;
         OrganizationId = o?.Id;
         OrganizationName = o?.OrganizationName ?? string.Empty;
     }
