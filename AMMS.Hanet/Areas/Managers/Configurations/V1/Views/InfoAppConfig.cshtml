@@ -21,15 +21,6 @@
                                         <div class="valid-feedback"> </div>
                                     </div>
                                 </div>
-                                <!--Plate Id-->
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-2">PlaceId </label>
-                                    <div class="col-lg-10">
-                                        <input type="text" class="form-control" required v-model="item.placeId">
-                                        <div class="invalid-feedback">Vui lòng nhập PlaceId</div>
-                                        <div class="valid-feedback"> </div>
-                                    </div>
-                                </div>
                                 <!--Client secret-->
                                 <div class="row mb-3">
                                     <label class="col-form-label text-start col-lg-2">Client secret </label>
@@ -57,7 +48,15 @@
                                         <div class="valid-feedback"> </div>
                                     </div>
                                 </div>
-
+                                <!--Place Id-->
+                                <div class="row mb-3">
+                                    <label class="col-form-label text-start col-lg-2">PlaceId </label>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" required v-model="item.placeId">
+                                        <div class="invalid-feedback">Vui lòng nhập PlaceId</div>
+                                        <div class="valid-feedback"> </div>
+                                    </div>
+                                </div>
                                 <div class="row mb-3">
                                     <div class="col-lg-12">
                                         <button type="button" class="btn btn-primary" v-on:click="onSaveData()">Lưu dữ liệu</button>
@@ -70,24 +69,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <!--user ID-->
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-2">userID </label>
-                                    <div class="col-lg-10">
-                                        <input type="text" class="form-control" required v-model="item.userId" disabled>
-                                        <div class="invalid-feedback">Vui lòng nhập userID</div>
-                                        <div class="valid-feedback"> </div>
-                                    </div>
-                                </div>
-                                <!--Email-->
-                                <div class="row mb-3">
-                                    <label class="col-form-label text-start col-lg-2">Email </label>
-                                    <div class="col-lg-10">
-                                        <input type="text" class="form-control" required v-model="item.email" disabled>
-                                        <div class="invalid-feedback">Vui lòng nhập email</div>
-                                        <div class="valid-feedback"> </div>
-                                    </div>
-                                </div>
+                                
                                 <!--Token type-->
                                 <div class="row mb-3">
                                     <label class="col-form-label text-start col-lg-2">Token type </label>
@@ -242,6 +224,7 @@
 
                     if (response.data.succeeded) {
                         alertify.success("Thành công");
+                        this.item = response.data.data || {};
                     }
                     else {
                         alertify.notify(response.data.message, 'error', 6, function () { });

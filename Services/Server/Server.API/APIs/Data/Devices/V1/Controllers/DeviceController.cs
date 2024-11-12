@@ -35,8 +35,9 @@ public class DeviceController : AuthBaseAPIController
     /// Lấy danh sách đang hoạt động
     /// </summary>
     /// <returns></returns>
-    [AllowAnonymous]
     [HttpGet("Gets")]
+    [Authorize("Bearer")]
+
     public async Task<IActionResult> Gets()
     {
         try

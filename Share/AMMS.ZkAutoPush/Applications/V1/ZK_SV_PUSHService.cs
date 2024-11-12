@@ -41,11 +41,10 @@ namespace AMMS.ZkAutoPush.Applications.V1
             {
                 IclockCommand command = null;
 
-                //var thietbi = ListTerminal.FirstOrDefault(x => x.sn == rB_ServerRequest.SerialNumber);
                 var sn = rB_ServerRequest.SerialNumber.Trim();
                 if (sn == null)
                     return;
-                Logger.Warning("Data :" + rB_ServerRequest.RequestParam);
+                Logger.Warning("Data :" + rB_ServerRequest.SerialNumber + " " + rB_ServerRequest.Id);
                 IclockCommand command2 = null;
 
                 if (rB_ServerRequest.Action == ServerRequestAction.ActionAdd && rB_ServerRequest.RequestType == ServerRequestType.UserInfo)
@@ -54,14 +53,12 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
                     if (data == null)
                         return;
-                    await SaveUserInfo(data);
+                    // await SaveUserInfo(data);
 
                     command = IclockOperarion.CommandUploadUser(sn, data.PersonCode, data.FullName, "", "0", data.UserCard, rB_ServerRequest.Id);
                     //Đẩy thêm ảnh
                     if (!string.IsNullOrEmpty(data.UserFace))
                     {
-                        //if (rB_ServerRequest.SerialNumber == "PYA8241500003")
-                        //{
                         data.UserFace = ConvertBase64ToPngBase64(data.UserFace);
                         command2 = IclockOperarion.CommandUploadUserFaceV3(sn, data.PersonCode, data.UserFace);
 
@@ -69,9 +66,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                         {
                             command2.DataId = Guid.NewGuid().ToString();
                             command2.ParentId = rB_ServerRequest.Id;
-
                             await AddCommand(rB_ServerRequest, command);
-
                         }
                     }
                 }

@@ -78,7 +78,7 @@ public partial class TimeAttendenceSyncService
 
                              AttendenceSection = la.AttendenceSection,
                              AbsenceDate = la.AbsenceDate,
-
+                             EventTime = la.EventTime,
 
                          });
 

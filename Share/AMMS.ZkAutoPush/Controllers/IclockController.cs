@@ -298,9 +298,6 @@ public class IclockController : ControllerBase
             data.SN = sn;
             data.ReceivedTime = DateTime.Now;
 
-            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}_{EventBusConstants.ZKTECO}{EventBusConstants.ZK_Response_Push_D2S}");
-            await aa.Send(data);
-
             var contentArr1 = content.Split('\n');
             if (contentArr1.Length > 0)
             {
@@ -317,11 +314,16 @@ public class IclockController : ControllerBase
                             if (x != null)
                             {
                                 x.RevicedTime = DateTime.Now;
+                                await _deviceCommandCacheService.Save(x);
                             }
                         }
                     }
                 }
             }
+
+            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}_{EventBusConstants.ZKTECO}{EventBusConstants.ZK_Response_Push_D2S}");
+            await aa.Send(data);
+
         }
         catch (Exception e)
         {

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +17,13 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     [Authorize("Bearer")]
-    //[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+    [AuthorizeMaster]
     public class StudentController : AuthBaseAPIController
     {
         private readonly IMapper _mapper;
         private readonly SmartService _smartService;
         private readonly StudentService _studentService;
+
         private readonly IPersonRepository _personRepository;
         private readonly IStudentRepository _studentRepository;
 
@@ -35,9 +37,6 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
 
             _personRepository = personRepository;
             _studentRepository = studentRepository;
-
-
-
         }
 
         /// <summary>
@@ -60,7 +59,6 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
         /// <returns></returns>
 
         [HttpPost("Post")]
-        [AllowAnonymous]
         public async Task<IActionResult> Post(StudentSearchRequest request)
         {
             try
@@ -108,5 +106,44 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Post
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("PostGeneral")]
+        public async Task<ActionResult> PostGeneral(StudentSearchRequest request)
+        {
+            try
+            {
+                request.OrganizationId = GetOrganizationId();
+                var items = await _studentService.GetAlls(request);
+                int totalAmount = await items.CountAsync();
+                int totalFace = await items.CountAsync(o => o.IsFace == true);
+                int totalCurrent = totalAmount - totalFace;
+
+                //#region Type
+                //var infos = items.GroupBy(o => o.OrganizationId).Select(g => new ObjectDataDashboard()
+                //{
+                //    Name = g.Key ?? "N/A",
+                //    Value = g.Count(o => o.IsFace == true),
+                //    Percent = g.Count(o => o.Actived == true),
+                //}).OrderBy(o => o.Name).ToList();
+                //#endregion
+
+                var retVal = new
+                {
+                    totalAmount = totalAmount,
+                    totalFace = totalFace,
+                    totalCurrent = totalCurrent,
+                };
+                return Ok(new Result<object>(retVal, "Thành công", true));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

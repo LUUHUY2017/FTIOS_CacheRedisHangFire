@@ -38,6 +38,11 @@ public class AppConfigService
             };
             HanetParam.PlaceId = data.PlaceId;
         }
+        else
+        {
+            data = new app_config();
+            data.GrantType = "refresh_token";
+        }
         return new Result<app_config>(data, "Thành công!", true);
     }
 

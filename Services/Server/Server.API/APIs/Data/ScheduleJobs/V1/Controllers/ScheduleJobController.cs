@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AMMS.Share.WebApp.Helps;
+using AutoMapper;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,7 @@ namespace Server.API.APIs.Data.ScheduleJobs.V1.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
 [Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[AuthorizeMaster]
 public class ScheduleJobController : AuthBaseAPIController
 {
     private readonly IMediator _mediator;
@@ -60,7 +61,7 @@ public class ScheduleJobController : AuthBaseAPIController
             foreach (var item in data)
             {
                 item.ScheduleTypeName = ListScheduleCategory.ScheduleTypes.FirstOrDefault(o => o.Id == item.ScheduleType)?.Name;
-                item.ScheduleSequentialName = ListScheduleCategory.Sequentials.FirstOrDefault(o => o.Id == item.ScheduleSequential)?.Name;
+                item.ScheduleSequentialName = ListScheduleCategory.SequentialTypes.FirstOrDefault(o => o.Id == item.ScheduleSequential)?.Name;
             }
         }
         return Ok(new { items = data });
@@ -115,7 +116,7 @@ public class ScheduleJobController : AuthBaseAPIController
             if (retVal.Data.ScheduleType == "DONGBODIEMDANH")
                 await _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
         }
-        return Ok();
+        return Ok(new Result<object>("Thành công", true));
     }
 
     /// <summary>
@@ -164,7 +165,8 @@ public class ScheduleJobController : AuthBaseAPIController
     [HttpGet("ScheduleOptions")]
     public async Task<ActionResult> ScheduleOptions()
     {
-        var sequentials = ListScheduleCategory.Sequentials.ToList();
+        var sequentials = ListScheduleCategory.SequentialTypes.ToList();
+        var sequentialMaxTypes = ListScheduleCategory.SequentialMaxTypes.ToList();
         var scheduleTypes = ListScheduleCategory.ScheduleTypes.ToList();
         return Ok(new
         {

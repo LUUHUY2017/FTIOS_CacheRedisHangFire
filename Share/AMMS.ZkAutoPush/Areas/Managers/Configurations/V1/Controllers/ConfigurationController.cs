@@ -5,7 +5,6 @@ using Share.WebApp.Helps;
 namespace AMMS.ZkAutoPush.Areas.Managers.Configurations.V1.Controllers;
 
 
-//[Route("v1/[controller]")]
 [AuthorizeClient]
 public class ConfigurationController : AuthBaseController
 {

@@ -150,8 +150,9 @@ public class DeviceCommandCacheService
     /// <returns></returns>
     public async Task<IclockCommand> Set(IclockCommand data)
     {
+        var expirationTime = DateTime.Now.AddMinutes(timeExp_Minute);
         var sub_key = GetKey(data.SerialNumber, data.Id.ToString());
-        var entity = await _cacheService.SetData(sub_key, data);
+        var entity = await _cacheService.SetData(sub_key, data, expirationTime);
         return entity;
     }
 

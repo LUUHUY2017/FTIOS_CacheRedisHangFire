@@ -4,6 +4,9 @@ namespace Server.Core.Entities.A2;
 
 public class Student : EntityBase
 {
+    /// <summary>
+    /// Mã SMAS
+    /// </summary>
     public string? StudentCode { get; set; }
     public string? FullName { get; set; }
     public string? DateOfBirth { get; set; }
@@ -28,7 +31,9 @@ public class Student : EntityBase
 
     public string? ClassId { get; set; }
     public string? ClassName { get; set; }
-
+    /// <summary>
+    /// mã SSO
+    /// </summary>
     public string? SyncCode { get; set; }
     public string? SyncCodeClass { get; set; }
     public string? SchoolCode { get; set; }

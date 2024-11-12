@@ -55,27 +55,15 @@
 
                         <div class="col-md-2 ">
                             <label class="form-label">Thiết bị</label>
-                            <select class="form-select select" id="FDevice">
+                            <select class="form-select select mb-3" id="FDevice">
                                 <option selected value="">Tất cả </option>
                                 <option v-for="option in combobox.devices" v-bind:value="option.id">
                                     {{ option.deviceName }} - {{option.serialNumber}}
                                 </option>
                             </select>
                         </div>
-
-
-                        @*   <div class="col-md-2">
-                        <select class="form-select select" required data-placeholder="Vui lòng chọn trường" id="FOrganization">
-                        <option selected value="">Tất cả </option>
-                        <option v-for="option in combobox.organizations" v-bind:value="option.id">
-                        {{ option.organizationName }}
-                        </option>
-                        </select>
-                        </div> *@
-
-
                         <div class="col-md-2 d-flex align-items-end">
-                            <button type="button" v-on:click=onLoadData() class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            <button type="button" v-on:click="onLoadData(true)" class="btn btn-primary mb-3" style="margin-right: 5px;">Tìm kiếm</button>
                         </div>
                     </div>
                 </div>
@@ -83,89 +71,102 @@
 
             <div class="card">
                 <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6 ">
+                            <label class="form-label">Tổng số học sinh: <span class="fw-bold me-3">{{totalAmount !=null ? totalAmount.toLocaleString() : 0}}</span></label>
+                            <label class="form-label">Thành công: <span class="fw-bold me-3">{{totalFace !=null ? totalFace.toLocaleString() : 0}} </span></label>
+                            <label class="form-label">Đang chờ: <span class="fw-bold me-3">{{totalWait !=null ? totalWait.toLocaleString() : 0}}</span></label>
+                            <label class="form-label">Không thành công: <span class="fw-bold me-3">{{totalCurrent !=null ? totalCurrent.toLocaleString() : 0}}</span></label>
+                        </div>
 
-                    <div id="table" class="table-responsive">
-                        <table class="table table-bordered table-striped  table-hover">
-                            <thead class="">
-                                <tr>
-                                    <th>Stt</th>
-                                    <th> Thao tác </th>
-                                    <th> Mã học sinh </th>
-                                    <th> Họ tên </th>
-                                    <th> Thiết bị </th>
-                                    <th> Thao tác </th>
-                                    <th> Trạng thái </th>
-                                    <th> Trạng thái khuôn mặt </th>
-                                    <th> Thông báo </th>
-                                    <th> Nội dung </th>
-                                    <th> Thời gian cập nhật  </th>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        <button type="button" class="btn btn-primary" v-on:click="onLoadData(true)"> <i class="fa fa-search"></i> </button>
-                                    </th>
-                                    <th> </th>
-                                    <th>
-                                        <input type="text" class="form-control" v-model="params.studentCode">
-                                    </th>
-                                    <th>
-                                        <input type="text" class="form-control " v-model="params.studentName">
-                                    </th>
-                                    <th>
-                                        <input type="text" class="form-control " v-model="params.deviceName">
-                                    </th>
-                                    <th>
-                                        <input type="text" class="form-control " v-model="params.synAction">
-                                    </th>
-                                    <th>
-                                        <select class="form-select" v-model="params.synStatus">
-                                            <option selected value="">Tất cả</option>
-                                            <option value="True">Thành công</option>
-                                            <option value="False">Lỗi</option>
-                                            <option value="None">Đang chờ</option>
-                                        </select>
-                                    </th>
-                                    <th>
-                                    </th>
-                                   
-                                    <th>
-                                        <input type="text" class="form-control " v-model="params.synMessage">
-                                    </th>
-                                    <th>
-                                        <input type="text" class="form-control " v-model="params.synFaceMessage">
-                                    </th>
-                                    <th>
-                                        <input type="datetime" class="form-control " disabled readonly id="createdDate">
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(item, index) in data">
-                                    <td><span>{{index  +1 }}</span></td>
-                                    <td><a v-on:click="onSubmitSync(item)" class="btn btn-sm btn-info edit" title="Đồng bộ lại "> <i class="fa fa-refresh"> </i> </a></td>
-                                    <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
-                                    <td style=" white-space: nowrap;"><span>{{item.studentName}}</span></td>
-                                    <td style=" white-space: nowrap;"><span>{{item.deviceName}}</span></td>
-                                    <td style=" white-space: nowrap;"><span>{{item.synAction}}</span></td>
-                                    <td style=" white-space: nowrap;">
-                                        <span v-if="item.synStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
-                                        <span v-else-if="item.synStatus ==false" class='badge bg-danger bg-opacity-10 text-danger'>Không thành công</span>
-                                        <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
-                                    </td>
-                                    
-                                    <td style=" white-space: nowrap;">
-                                        <input v-if="item.synFaceStatus ==true" type='checkbox' class='checked' checked />
-                                        <input v-else-if="item.synFaceStatus== false" type='checkbox' class='checked' />
-                                        <input v-else="item.synFaceStatus== false" type='checkbox' readonly disabled />
-                                    </td>
-                                    <td><span>{{item.synMessage}}</span></td>
-                                    <td><span>{{item.synFaceMessage}}</span></td>
-                                    <td style=" white-space: nowrap;">
-                                        <span>{{ formatDateTime(item.lastModifiedDate) }}</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="table" class="table-responsive">
+                                <table class="table table-bordered table-striped  table-hover">
+                                    <thead class="">
+                                        <tr>
+                                            <th>Stt</th>
+                                            <th> Thao tác </th>
+                                            <th> Mã học sinh </th>
+                                            <th> Họ tên </th>
+                                            <th> Thiết bị </th>
+                                            <th> Thao tác </th>
+                                            <th> Trạng thái </th>
+                                            <th> Trạng thái khuôn mặt </th>
+                                            <th> Thông báo </th>
+                                            <th> Nội dung </th>
+                                            <th> Thời gian cập nhật  </th>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <button type="button" class="btn btn-primary" v-on:click="onLoadData(true)"> <i class="fa fa-search"></i> </button>
+                                            </th>
+                                            <th> </th>
+                                            <th>
+                                                <input type="text" class="form-control" v-model="params.studentCode">
+                                            </th>
+                                            <th>
+                                                <input type="text" class="form-control " v-model="params.studentName">
+                                            </th>
+                                            <th>
+                                                <input type="text" class="form-control " v-model="params.deviceName">
+                                            </th>
+                                            <th>
+                                                <input type="text" class="form-control " v-model="params.synAction">
+                                            </th>
+                                            <th>
+                                                <select class="form-select" v-model="params.synStatus">
+                                                    <option selected value="">Tất cả</option>
+                                                    <option value="True">Thành công</option>
+                                                    <option value="False">Lỗi</option>
+                                                    <option value="None">Đang chờ</option>
+                                                </select>
+                                            </th>
+                                            <th>
+                                            </th>
+
+                                            <th>
+                                                <input type="text" class="form-control " v-model="params.synMessage">
+                                            </th>
+                                            <th>
+                                                <input type="text" class="form-control " v-model="params.synFaceMessage">
+                                            </th>
+                                            <th>
+                                                <input type="datetime" class="form-control " disabled readonly id="createdDate">
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, index) in data">
+                                            <td><span>{{index  +1 }}</span></td>
+                                            <td><a v-on:click="onSubmitSync(item)" class="btn btn-sm btn-info edit" title="Đồng bộ lại "> <i class="fa fa-refresh"> </i> </a></td>
+                                            <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
+                                            <td style=" white-space: nowrap;"><span>{{item.studentName}}</span></td>
+                                            <td style=" white-space: nowrap;"><span>{{item.deviceName}}</span></td>
+                                            <td style=" white-space: nowrap;"><span>{{item.synAction}}</span></td>
+                                            <td style=" white-space: nowrap;">
+                                                <span v-if="item.synStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
+                                                <span v-else-if="item.synStatus ==false" class='badge bg-danger bg-opacity-10 text-danger'>Không thành công</span>
+                                                <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
+                                            </td>
+
+                                            <td style=" white-space: nowrap;">
+                                                <input v-if="item.synFaceStatus ==true" type='checkbox' class='checked' checked />
+                                                <input v-else-if="item.synFaceStatus== false" type='checkbox' class='checked' />
+                                                <input v-else="item.synFaceStatus== false" type='checkbox' readonly disabled />
+                                            </td>
+                                            <td><span>{{item.synMessage}}</span></td>
+                                            <td><span>{{item.synFaceMessage}}</span></td>
+                                            <td style=" white-space: nowrap;">
+                                                <span>{{ formatDateTime(item.lastModifiedDate) }}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="phan-trang " style="width: 100%;">
@@ -180,7 +181,7 @@
                                 <div style="float: right;text-align: right;" class="col-md-4 ">
                                     <div style=" margin-top: 10px !important; " class=" pagination-detail">
                                         <span class="pagination-info">
-                                            Showing {{firstRow}} to {{totalDataRowNext}} of {{totalRow}} rows
+                                            Hiển thị {{firstRow}} đến {{totalDataRowNext}} trong tổng số {{totalRow}} hàng
                                         </span>
                                         <span class="page-list">
                                             <select v-model:value="filter.RowsPerPage" id="RowsPerPage" class=" " v-on:change="renderRowOnPage()">
@@ -190,7 +191,7 @@
                                                 <option value="100">100</option>
                                                 <option value="250">250</option>
                                             </select>
-                                            rows per page
+                                            hàng trên mỗi trang
                                         </span>
                                     </div>
                                 </div>
@@ -362,6 +363,11 @@
         data: {
 
             data: [],
+            totalAmount: 0,
+            totalFace: 0,
+            totalCurrent: 0,
+            totalWait: 0,
+
             filter: {
                 Export: 0,
                 ClassId: null,
@@ -405,6 +411,28 @@
         },
         methods: {
             onLoadData(resetPage) {
+                this.onLoadDataDetail(resetPage);
+                this.onLoadData_General();
+            },
+            onLoadData_General() {
+                this.checkParams();
+                axios.post('/api/v1/SyncDeviceServer/PostGeneral', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    this.totalAmount = response.data.data.totalAmount;
+                    this.totalFace = response.data.data.totalFace;
+                    this.totalCurrent = response.data.data.totalCurrent;
+                    this.totalWait = response.data.data.totalWait;
+
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+
+            onLoadDataDetail(resetPage) {
                 $('.loader').show();
 
                 this.checkParams();

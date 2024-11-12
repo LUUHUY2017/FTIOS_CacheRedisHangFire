@@ -141,7 +141,8 @@ public class DeviceController : ControllerBase
             var top100Data = await _hANET_API_Service.UserByPlaceId(HanetParam.PlaceId, page);
             foreach (var item in top100Data)
             {
-                await _HANET_Device_Reponse_Service.AddUserData(item);
+                if (item.departmentID != "8235")
+                    await _HANET_Device_Reponse_Service.AddUserData(item);
             }
             countData = top100Data.Count;
             totalData += countData;

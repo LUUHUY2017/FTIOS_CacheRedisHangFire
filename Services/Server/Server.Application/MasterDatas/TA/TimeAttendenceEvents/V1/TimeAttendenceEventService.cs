@@ -168,7 +168,7 @@ public partial class TimeAttendenceEventService
                         string valueAttendence = "C";
 
                         // Gửi SMS Kiểu gửi tin nhắn: 1: Gửi tin nhắn qua SMS và EduOne 2: Gửi thông báo qua EduOne 3: Gửi tin nhắn qua SMS
-                        int? formSendSMS = null;
+                        int? formSendSMS = 1;
 
                         //if (hour >= 12)
                         //{
@@ -233,10 +233,11 @@ public partial class TimeAttendenceEventService
                         {
                             time = new TimeAttendenceEvent();
                             time.Actived = true;
+                            time.EventTime = info.TimeEvent;
                             addEvent = true;
                         }
 
-                        time.EventTime = info.TimeEvent;
+                        time.LastModifiedDate = DateTime.Now;
                         time.EnrollNumber = info.PersonCode;
                         time.StudentCode = info.PersonCode;
 
