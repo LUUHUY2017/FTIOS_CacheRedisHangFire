@@ -7,7 +7,7 @@ using AMMS.Hanet.Applications.TerminalCommandLogs.V1;
 using AMMS.Hanet.Applications.V1.Consummer;
 using AMMS.Hanet.Applications.V1.Service;
 using AMMS.Hanet.Datas.Databases;
- using EventBus.Messages;
+using EventBus.Messages;
 using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -102,6 +102,16 @@ public static class DependencyInjection
               //.EnableDetailedErrors()
               )
           ;
+
+
+            services.AddDbContext<ViettelDbContext>(options =>
+            options.UseMySql(
+                  mySqlConntectionString
+                  , ServerVersion.AutoDetect(mySqlConntectionString)
+                  , o => o.SchemaBehavior(MySqlSchemaBehavior.Ignore)
+                  ) 
+              )
+            ;
         }
         else if (MasterDBConnectionType == "PostgreSQL")
         {
@@ -110,11 +120,18 @@ public static class DependencyInjection
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
 
                 );
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            services.AddDbContext<ViettelDbContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+
+                );
         }
         else
         {
             services.AddDbContext<DeviceAutoPushDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             //services.AddDbContext<DeviceAutoPushDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), builder => builder.UseRowNumberForPaging()));
+
+            services.AddDbContext<ViettelDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         }
         #endregion
 
@@ -123,6 +140,7 @@ public static class DependencyInjection
         services.AddScoped(typeof(IAsyncRepository<>), typeof(RepositoryBase<>));
         services.AddScoped<IDeviceAutoPushDbContext, DeviceAutoPushDbContext>();
 
+        services.AddScoped<IViettelDbContext, ViettelDbContext>();
 
         return services;
     }
