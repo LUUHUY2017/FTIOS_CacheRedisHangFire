@@ -134,8 +134,14 @@ public partial class TimeAttendenceEventService
                     int? formSendSMS = 1;
 
                     bool addEvent = false;
-                    var time = await _dbContext.TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode && o.EventTime.Value.Date == eventDate && o.AttendenceSection == sectionTime).FirstOrDefaultAsync();
 
+                    var startOfDay = eventDate.Date;
+                    var endOfDay = eventDate.Date.AddDays(1);
+                    // gây ra chậm hơn 
+                    //var time = await _dbContext.TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode && o.EventTime.Value.Date == eventDate && o.AttendenceSection == sectionTime).FirstOrDefaultAsync();
+                    // áp dung tối ưu chỉ mục
+
+                    var time = await _dbContext.TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode && o.EventTime >= startOfDay && o.EventTime < endOfDay && o.AttendenceSection == sectionTime).FirstOrDefaultAsync();
                     if (time == null)
                     {
                         time = new TimeAttendenceEvent();
