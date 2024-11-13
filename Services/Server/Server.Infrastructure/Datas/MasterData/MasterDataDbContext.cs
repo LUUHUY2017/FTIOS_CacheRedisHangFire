@@ -95,9 +95,9 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
         modelBuilder.Entity<TimeAttendenceSync>()
         .HasIndex(te => te.CreatedDate)
         .HasDatabaseName("IX_TimeAttendenceSync_CreatedDate");
-        modelBuilder.Entity<TimeAttendenceEvent>()
+        modelBuilder.Entity<TimeAttendenceSync>()
         .HasIndex(te => te.OrganizationId)
-        .HasDatabaseName("IX_TimeAttendenceEvent_OrganizationId");
+        .HasDatabaseName("IX_TimeAttendenceSync_OrganizationId");
 
         //Index Student
         modelBuilder.Entity<Student>()
@@ -112,7 +112,18 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
         .HasIndex(te => te.OrganizationId)
         .HasDatabaseName("IX_PersonFace_OrganizationId");
 
+        //Index PersonFace
+        modelBuilder.Entity<PersonFace>()
+        .HasIndex(te => te.OrganizationId)
+        .HasDatabaseName("IX_PersonFace_OrganizationId");
 
+        //Index PersonSynToDevice
+        modelBuilder.Entity<PersonSynToDevice>()
+        .HasIndex(te => te.LastModifiedDate)
+        .HasDatabaseName("IX_PersonSynToDevice_LastModifiedDate");
+        modelBuilder.Entity<PersonSynToDevice>()
+        .HasIndex(te => te.OrganizationId)
+        .HasDatabaseName("IX_PersonSynToDevice_OrganizationId");
 
 
         //modelBuilder.HasDefaultSchema("Identity"); //Tạo Schema
