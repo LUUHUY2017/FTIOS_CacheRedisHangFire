@@ -28,33 +28,7 @@ public class DeviceCacheService
         serialNumber = serialNumber.ToUpper();
 
         var entity = await _cacheService.GetData<zk_terminal>(GetKey(serialNumber));
-        if (entity == null)
-        {
-            try
-            {
-                var obj = await _dbContext.zk_terminal.FirstOrDefaultAsync(o => o.sn == serialNumber);
-                if (obj != null)
-                {
-                    entity = obj;
-                }
-                else
-                {
-                    obj = new zk_terminal();
-                    obj.sn = serialNumber;
-                    obj.name = serialNumber;
-                    obj.Id = Guid.NewGuid().ToString();
-                    obj.create_time = DateTime.Now;
-                    _dbContext.zk_terminal.Add(obj);
-                    _dbContext.SaveChanges();
-                }
-                await Set(obj);
-
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
+     
         return entity;
     }
     public async Task<zk_terminal> Set(zk_terminal data)
