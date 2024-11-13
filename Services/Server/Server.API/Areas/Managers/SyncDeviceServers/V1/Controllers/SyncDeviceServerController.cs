@@ -5,6 +5,7 @@ namespace Server.API.Areas.Managers.SyncDeviceServers.V1.Controllers
 {
     [Route("v1/[controller]")]
     [AuthorizeMaster]
+
     public class SyncDeviceServerController : Controller
     {
         const string pathUrl = "~/Areas/Managers/SyncDeviceServers/V1/Views/";

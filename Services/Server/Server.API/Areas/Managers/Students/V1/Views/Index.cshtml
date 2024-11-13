@@ -46,6 +46,7 @@
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
                                 <button type="submit" class="btn btn-primary mb-3" style="margin-right: 5px;">Tìm kiếm</button>
+                                <button type="button" v-on:click="onExport()" class="btn btn-primary mb-3" style="margin-right: 5px;">Xuất Excel</button>
                             </div>
                             <div class="col-md-1">
                             </div>
@@ -81,7 +82,7 @@
                                     <th> Năm sinh </th>
                                     <th> Lớp </th>
                                     <th> Khuôn mặt </th>
-                                    <th> Mã SSO </th>
+                                    <th> Mã CSDLN </th>
                                     <th> Thời gian cập nhật  </th>
                                 </tr>
                                 <tr>
@@ -302,6 +303,8 @@
             </div>
         </div>
     </div>
+
+    @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
 </div>
 
 
@@ -506,7 +509,19 @@
                 } else
                     return null;
             },
+            onExport() {
+                $('.loader').show();
+                axios.post('/api/v1/Student/export', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login'))
+                        window.location = window.location.href;
 
+                    $('.loader').delay(100).hide(0);
+                    window.location.href = '/' + response.data;
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
             onResetForm() {
                 this.item = {};
             },
