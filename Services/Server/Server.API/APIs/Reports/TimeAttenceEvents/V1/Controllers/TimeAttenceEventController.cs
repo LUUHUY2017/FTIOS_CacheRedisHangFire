@@ -66,7 +66,7 @@ public class TimeAttenceEventController : AuthBaseAPIController
             }
 
 
-            int totalRow =  await  items.CountAsync();
+            int totalRow = await items.CountAsync();
             // phân trang
             int skip = (request.CurentPage.Value - 1) * (request.RowsPerPage.Value);
             int totalPage = (totalRow + request.RowsPerPage.Value - 1) / request.RowsPerPage.Value;
@@ -146,6 +146,7 @@ public class TimeAttenceEventController : AuthBaseAPIController
     {
         try
         {
+            request.OrganizationId = GetOrganizationId();
             var datas = await _timeService.GetAlls(request);
 
             if (request.FilterItems != null && request.FilterItems.Count > 0)

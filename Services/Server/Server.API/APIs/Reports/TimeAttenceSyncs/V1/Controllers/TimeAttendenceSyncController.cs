@@ -98,6 +98,7 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
     {
         try
         {
+            request.OrganizationId = GetOrganizationId();
             var datas = await _timeService.GetAlls(request);
             if (request.FilterItems != null && request.FilterItems.Count > 0)
             {
