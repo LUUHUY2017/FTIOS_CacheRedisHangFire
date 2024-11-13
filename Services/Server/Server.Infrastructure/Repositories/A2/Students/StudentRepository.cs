@@ -69,6 +69,7 @@ public class StudentRepository : RepositoryBaseMasterData<Student>, IStudentRepo
                 _order.SyncCode = data.SyncCode;
 
                 _order.StudentCode = data.StudentCode;
+                _order.EthnicCode = data.EthnicCode;
                 _order.FullName = data.FullName;
                 _order.Name = data.Name;
 
