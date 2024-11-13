@@ -1,5 +1,6 @@
 ﻿using AMMS.Share.WebApp.Helps;
 using AutoMapper;
+using ClosedXML.Report;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -144,5 +145,70 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Export
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("Export")]
+        public async Task<ActionResult> Export(StudentSearchRequest request)
+        {
+            try
+            {
+                var datas = await _studentService.GetAlls(request);
+
+                if (request.FilterItems != null && request.FilterItems.Count > 0)
+                {
+                    foreach (var filter in request.FilterItems)
+                    {
+                        datas = await _studentService.ApplyFilter(datas, filter);
+                    }
+                }
+
+                var items = await datas.ToListAsync();
+
+                string companyName = "";
+                string diachi = "";
+
+                string inputFileName = "DANHSACHHOCSINH.xlsx";
+                string outputFileName = "DANHSACHHOCSINH_" + DateTime.Now.ToString("ddMMyyyy_hhmmstt") + ".xlsx";
+
+                var rootParth = Common.GetExcelFolder();
+                var rootParth_Output = Common.GetExcelDateFullFolder(DateTime.Now.Date);
+                var parth_Output = Common.GetExcelDatePathFolder(DateTime.Now.Date);
+
+                string inputFile = rootParth + inputFileName;
+                string outputFile = rootParth_Output + outputFileName;
+
+                //var company = _GIO_PersonInOutService.GetA0Organization();
+                //if (company != null)
+                //{
+                //    companyName = company.OrganizationName.ToUpper();
+                //    diachi = company.OrganizationAddress;
+                //}
+                using (var template = new XLTemplate(inputFile))
+                {
+                    var data1 = new
+                    {
+                        ThoiGianIn = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                        Items = items,
+                        CompanyName = companyName,
+                        Address = diachi,
+                    };
+                    template.AddVariable(data1);
+                    var start = DateTime.Now;
+                    template.Generate();
+                    template.SaveAs(outputFile);
+                }
+                return Ok(parth_Output + outputFileName);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
     }
 }

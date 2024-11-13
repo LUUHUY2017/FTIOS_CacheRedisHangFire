@@ -132,8 +132,10 @@ public class CronJobService : ICronJobService
 
                     var el = new Student()
                     {
-                        SyncCode = item.SyncCodeSSO,
+                        SyncCode = item.SyncCode,
                         StudentCode = item.StudentCode,
+                        EthnicCode = item.StudentCode?.Replace("-", "").Replace(" ", ""),
+
                         ClassId = item.ClassId,
                         ClassName = item.ClassName,
                         DateOfBirth = item.BirthDay,

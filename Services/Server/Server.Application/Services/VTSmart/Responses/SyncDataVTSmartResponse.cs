@@ -52,7 +52,14 @@
 
     public class StudenSmasApiResponse
     {
+        /// <summary>
+        /// Mã EduFlatform
+        /// </summary>
         public string? SyncCodeSSO { get; set; }
+        /// <summary>
+        /// Mã CSDL ngành
+        /// </summary>
+        public string? SyncCode { get; set; }
         public string? StudentCode { get; set; }
         public string? StudentName { get; set; }
         public string? ClassName { get; set; }

@@ -375,6 +375,7 @@ public sealed class SmartService
                         var data = await result.Content.ReadAsStringAsync();
                         var res = JsonConvert.DeserializeObject<StudentDataApiResponse>(data);
                         //var res1 = JsonConvert.DeserializeObject<dynamic>(data);
+                        //Logger.Warning("res: " + JsonConvert.SerializeObject(res1));
                         if (res.IsSuccess)
                         {
                             retval = res.Responses;
