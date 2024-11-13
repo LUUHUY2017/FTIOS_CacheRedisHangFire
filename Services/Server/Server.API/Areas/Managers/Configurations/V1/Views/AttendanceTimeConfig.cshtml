@@ -115,6 +115,9 @@
                                     <button type="button" class="btn btn-primary" v-on:click="onSaveData()">Lưu dữ liệu</button>
                                 </div>
                             </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label text-start">Chú ý: Khoảng thời gian giữa các buổi không được lồng nhau  </label>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -268,7 +271,7 @@
                 showExport: false,
                 sortable: true,
                 groupBy: true,
-                paginationHAlign: 'right',
+                paginationHAlign: 'left',
                 paginationDetailHAlign: 'right',
                 pageSize: 10,
                 pageList: [10, 25, 50, 100, 200],

@@ -65,19 +65,19 @@ public class MonitorDeviceService
             var dataUpdate = new List<Device>();
             foreach (var request in requests)
             {
-                var deviceUpdate = await _dbContext.Device.FirstOrDefaultAsync(x => x.SerialNumber == request.SerialNumber);
+                var deviceUpdate = await _dbContext.Device.FirstOrDefaultAsync(x => x.SerialNumber == request.serialNumber);
                 if (deviceUpdate != null)
                 {
-                    deviceUpdate.CheckConnectTime = request.ConnectUpdateTime;
-                    if (request.ConnectionStatus == true)
+                    deviceUpdate.CheckConnectTime = request.connectUpdateTime;
+                    if (request.connectionStatus == true)
                     {
                         deviceUpdate.ConnectionStatus = true;
-                        deviceUpdate.ConnectUpdateTime = request.ConnectUpdateTime;
+                        deviceUpdate.ConnectUpdateTime = request.time_online;
                     }
                     else
                     {
                         deviceUpdate.ConnectionStatus = false;
-                        deviceUpdate.DisConnectUpdateTime = request.ConnectUpdateTime;
+                        deviceUpdate.DisConnectUpdateTime = request.time_offline;
                     }
                     dataUpdate.Add(deviceUpdate);
                 }
@@ -98,6 +98,34 @@ public class MonitorDeviceService
         {
             return new Result<List<Device>>(null, $"Có lỗi: {e.Message}", false);
         }
-        
     } 
+
+    public async Task<Result<List<Device>>> OffAllDevice()
+    {
+        try
+        {
+            var allDevice = await _dbContext.Device.Where(x => x.Actived == true && x.ConnectionStatus == true).ToListAsync();
+            foreach (var device in allDevice)
+            {
+                device.ConnectionStatus = false;
+                device.ConnectUpdateTime = DateTime.Now;
+                device.DisConnectUpdateTime = DateTime.Now;
+            }
+
+            _dbContext.Device.UpdateRange(allDevice);
+            var check = _dbContext.SaveChanges();
+            if (check > 0)
+            {
+                return new Result<List<Device>>(allDevice, "Thành công!", true);
+            }
+            else
+            {
+                return new Result<List<Device>>(null, "Có lỗi xảy ra!", false);
+            }
+        }
+        catch (Exception e)
+        {
+            return new Result<List<Device>>(null, $"Có lỗi: {e.Message}", false);
+        }
+    }
 }

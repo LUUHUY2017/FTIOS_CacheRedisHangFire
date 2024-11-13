@@ -89,4 +89,21 @@ public class MonitorDeviceController : AuthBaseAPIController
         }
         return Ok(device);
     }
+
+    [HttpPost("ChangeStatusDevice")]
+    public async Task<IActionResult> ChangeStatusDevice(List<MDeviceStatusRequest> requests)
+    {
+        if (_signalRService != null && _signalRService.Connection != null && _signalRService.Connection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connected)
+        {
+            await _signalRService.Connection.InvokeAsync("RefreshDevice", JsonConvert.SerializeObject(requests));
+        }
+
+        return Ok(await _monitorDeviceService.UpdateStatusConnect(requests));
+    }
+
+    [HttpGet("OffAllDevice")]
+    public async Task<IActionResult> OffAllDevice()
+    {
+        return Ok(await _monitorDeviceService.OffAllDevice());
+    }
 }   
