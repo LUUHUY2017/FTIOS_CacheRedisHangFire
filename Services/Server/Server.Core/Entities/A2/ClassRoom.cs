@@ -1,9 +1,10 @@
 ﻿using Shared.Core.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Server.Core.Entities.A2;
 
 public class ClassRoom : EntityBase
-{ 
+{
     ///// <summary>
     ///// ID trường học
     ///// </summary>
@@ -11,11 +12,13 @@ public class ClassRoom : EntityBase
 
     public Organization? Organization { get; set; }
 
-
     /// <summary>
     /// Tên lớp học
     /// </summary>
     public string Name { get; set; }
+
+    [MaxLength(50)]
+    public string SchoolId { get; set; }
 }
 
 ///// <summary>

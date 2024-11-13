@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Infrastructure.Datas.MasterData;
 
@@ -10,9 +11,10 @@ using Server.Infrastructure.Datas.MasterData;
 namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 {
     [DbContext(typeof(MasterDataDbContext))]
-    partial class MasterDataDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241113022509_MasterData_Init_index")]
+    partial class MasterData_Init_index
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -802,11 +804,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.Property<string>("ReferenceId")
                         .HasColumnType("longtext");
-
-                    b.Property<string>("SchoolId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
@@ -1604,10 +1601,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Depcription")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime(6)");
 
@@ -1786,8 +1779,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("ClassName")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(50)
@@ -1800,28 +1792,22 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("EthnicCode")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("FullName")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("FullNameOther")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("GenderCode")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("GradeCode")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("IdentifyNumber")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ImageSrc")
                         .HasColumnType("longtext");
@@ -1840,24 +1826,20 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("OrganizationId")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
                     b.Property<string>("PersonId")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PolicyTargetCode")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PriorityEncourageCode")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Reason")
                         .HasMaxLength(1000)
@@ -1867,8 +1849,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("SchoolCode")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<int?>("SortOrder")
                         .HasColumnType("int");
@@ -1883,25 +1864,18 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("StudentClassId")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("StudentCode")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SyncCode")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SyncCodeClass")
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ClassName")
-                        .HasDatabaseName("IX_Student_ClassName");
 
                     b.HasIndex("OrganizationId")
                         .HasDatabaseName("IX_Student_OrganizationId");
@@ -1920,7 +1894,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.Property<string>("ClassRoomId")
                         .IsRequired()
-                        .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
                     b.Property<string>("CreatedBy")
@@ -1957,12 +1930,10 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.Property<string>("SchoolId")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SchoolYearId")
                         .IsRequired()
-                        .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
@@ -2250,8 +2221,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasColumnType("int");
 
                     b.Property<string>("ClassCode")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(50)
@@ -2270,8 +2240,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("EnrollNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("EventTime")
                         .HasColumnType("datetime(6)");
@@ -2313,8 +2282,7 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("SchoolCode")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SchoolYearCode")
                         .HasColumnType("longtext");

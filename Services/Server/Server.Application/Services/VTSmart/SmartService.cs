@@ -417,6 +417,7 @@ public sealed class SmartService
                         var data = await result.Content.ReadAsStringAsync();
                         retval = JsonConvert.DeserializeObject<SyncDataResponse>(data);
 
+
                     }
                 }
             }
