@@ -94,10 +94,10 @@ public class LoginModel : PageModel
         {
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            var user = await _userManager.FindByNameAsync(Input.Email) ?? await _userManager.FindByEmailAsync(Input.Email);
+            var user = await _userManager.FindByNameAsync(Input.Email.Trim()) ?? await _userManager.FindByEmailAsync(Input.Email.Trim());
             if (user != null && !user.EmailConfirmed)
             {
-                ModelState.AddModelError(string.Empty, "Account not confirmed!");
+                ModelState.AddModelError(string.Empty, "Tài khoản chưa được xác thực");
                 return Page();
             }
             var result = await _signInManager.PasswordSignInAsync(user?.UserName ?? "", Input.Password, Input.RememberMe, lockoutOnFailure: false);
@@ -217,7 +217,7 @@ public class LoginModel : PageModel
                 //{
                 //    Logger.Error(ex);
                 //}
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                ModelState.AddModelError(string.Empty, "Sai thông tin tài khoản hoặc mật khẩu");
                 return Page();
             }
         }
