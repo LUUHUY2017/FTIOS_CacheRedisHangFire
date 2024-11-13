@@ -1,0 +1,229 @@
+﻿@{
+    ViewData["Title"] = "Quản lý danh sách lệnh";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+
+<!-- Main content -->
+<div class="content-wrapper" id="webui">
+
+    <!-- Inner content -->
+    <div class="content-inner">
+
+        <!-- Page header -->
+        <div class="page-header page-header-light shadow">
+            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+                <div class="d-flex">
+                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
+                        <span class="fw-normal">@ViewData["Title"]</span>
+                    </h4>
+                </div>
+
+                <div class="d-lg-block my-lg-auto ms-lg-auto" id="page_header">
+                    <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
+                        <div class="d-inline-flex mt-3 mt-sm-0">
+                            <div class="pull-right">
+                               @*  <a v-on:click="openFormAdd()" class="btn btn-primary " style="margin-right: 5px;"> Thêm mới</a>  *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /page header -->
+        <!-- Content area -->
+
+        <div class="content">
+
+            <div class="card">
+                <div class="card-body">
+                    <form v-on:submit.prevent="loadData">
+                        <div class="row mb-3">
+                            <div class="col-lg-2">
+                                <label class="form-label">Trạng thái</label>
+                                <select class="form-select" v-model:value="filter.onlineStatus">
+                                    <option value="">Tất cả</option>
+                                    <option value="success">Thành công</option>
+                                    <option value="fail">Thất bại</option>
+                                </select>
+                            </div>
+                            @* <div class="col-lg-3">
+                            <label class="form-label">Tổ chức</label>
+                            <select id="organization" class="form-select" v-model:value="filter.organizationId">
+                            <option :value="-1">Tất cả</option>
+                            <option v-for="option in organizations" v-bind:value="option.id">
+                            {{ option.organizationName }}
+                            </option>
+                            </select>
+                            </div> *@
+                            <div class="col-lg-2">
+                                <label class="form-label">Tìm kiếm theo</label>
+                                <select class="form-select" v-model:value="filter.columnTable">
+                                    <option value="serial_number">Số sê ri thiết bị</option>
+                                    @* <option value="device_name">Tên thiết bị</option> *@
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="form-label">Từ khóa tìm kiếm</label>
+                                <input type="text" id="key" name="key" placeholder="Nhập từ khóa tìm kiếm" class="form-control" v-model="filter.key">
+                            </div>
+                            <div class="col-lg-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var _terminalCommand = new Vue({
+        el: '#webui',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [
+                {
+                    field: '#action',
+                    title: 'Chức năng',
+                    align: 'center',
+                    formatter: (value, row, index) => {
+                        var ele = `<div style="white-space: nowrap; ">`;
+
+                        //if (row.actived) {
+                        //ele += `<a href="javascript: " class="btn btn-sm btn-warning edit" title="Cập nhật đăng ký "><i class="fa fa-pencil" > </i> </a> &nbsp `;
+                        //ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset inactive " title="Ngừng hoạt động "> <i class="fa fa-minus-circle" ></i> </a> &nbsp; `;
+                        //}
+                        //if (!row.actived) {
+                        //    ele += ` <a href="javascript:" class="btn btn-danger btn-sm delete-asset active" title="Kích hoạt "> <i class="fa fa-plus-square" ></i> </a> &nbsp; `;
+                        ele += `<a href = "javascript:" class= "btn btn-sm btn-info resend"  title = "Gửi lại" > <i class="fa fa-repeat" > </i>  </a > &nbsp;`;
+                        ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset delete " title="Xóa "> <i class="fa fa-trash" ></i> </a> &nbsp; `;
+                        //}
+                        ele += ` </div>`;
+
+                        return ele;
+                    },
+                    events: {
+                        // 'click .edit': function (e, value, row) {
+                        //     _terminalCommand.onPopupModelEdit(row, true);
+                        // },
+                    }
+                },
+                {
+                    title: "Loại lệnh",
+                    field: 'command_type',
+                    sortable: true,
+                },
+                {
+                    title: "Số sê ri thiết bị",
+                    field: 'terminal_sn',
+                    sortable: true,
+                },
+                {
+                    title: 'Tình trạng',
+                    field: 'successed',
+                    sortable: true,
+                    // formatter: (data) => {
+                    //     return `<span class='fw-bold' style="color: ${data === 'Online' ? 'green' : 'red'};">${data}</span>`;
+                        // }
+                    formatter: (value, row, index) => {
+                        if (value) {
+                            return "<span class='badge bg-primary bg-opacity-10 text-primary'>" + "Thành công" + "</span>";
+                        } else {
+                            return "<span class='badge bg-warning bg-opacity-10 text-warning'>" + "Thất bại" + "</span>";
+                        }
+                    },
+                },
+                {
+                    title: "Nội dung",
+                    field: 'content',
+                    sortable: true,
+                },
+
+            ],
+            data: [],
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                showExport: false,
+                sortable: true,
+                searchAlign: 'right',
+                paginationHAlign: 'right',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+                pageList: [10, 25, 50, 100, 200],
+            },
+            filter: {
+                columnTable: "serial_number",
+                actived: true,
+                onlineStatus: "",
+                organizationId: -1,
+                key: "",
+                export: "0",
+            },
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                editAction: false,
+                infoAction: false,
+                bearerAuthorization: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+            item: {},
+            config: {
+                saveFile: false,
+                receivingData: false,
+            },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.post('/api/v1/TerminalCommandLog/GetsFilter', this.filter, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.data = response.data.data;
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+
+            // onSaveConfig() {
+            //     console.log(this.config.receivingData);
+
+            //     $('.loader').show();
+            //     axios.get('/api/v1/DeviceCache/SetSetup?saveFile=' + this.config.saveFile + '&receivingData=' + this.config.receivingData, this.object.bearerAuthorization).then(response => {
+            //         if (response.request.responseURL.includes('~/Account/Login')) {
+            //             window.location = window.location.href;
+            //         }
+
+            //         this.data = response.data.data;
+            //         $('.loader').delay(100).hide(0);
+            //     }).catch(error => {
+            //         $('.loader').delay(100).hide(0);
+            //         console.log(error);
+            //     });
+            // },
+        },
+        mounted() {
+            this.loadData();
+        },
+    })
+</script>
+

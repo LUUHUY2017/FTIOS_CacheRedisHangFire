@@ -3,6 +3,7 @@ using AMMS.Hanet.Applications;
 using AMMS.Hanet.Applications.AppConfigs.V1;
 using AMMS.Hanet.Applications.CronJobs;
 using AMMS.Hanet.Applications.MonitorDevices.V1;
+using AMMS.Hanet.Applications.TerminalCommandLogs.V1;
 using AMMS.Hanet.Applications.V1.Consummer;
 using AMMS.Hanet.Applications.V1.Service;
 using AMMS.Hanet.Datas.Databases;
@@ -60,6 +61,9 @@ public static class DependencyInjection
         service.AddScoped<DeviceCacheService>();
         service.AddSingleton<SignalRClientService>();
         //service.AddScoped<CronJobService>();
+
+        // TerminalCommandLog
+        service.AddScoped<TerminalCommandLogService>();
 
     }
 

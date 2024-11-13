@@ -1,0 +1,504 @@
+﻿@{
+    ViewData["Title"] = "Trạng thái thiết bị";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+
+<!-- Main content -->
+<div class="content-wrapper" id="webui">
+
+    <!-- Inner content -->
+    <div class="content-inner">
+
+        <!-- Page header -->
+        <div class="page-header page-header-light shadow">
+            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+                <div class="d-flex">
+                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
+                        <span class="fw-normal">@ViewData["Title"]</span>
+                    </h4>
+                </div>
+
+                <div class="d-lg-block my-lg-auto ms-lg-auto" id="page_header">
+                    <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
+                        <div class="d-inline-flex mt-3 mt-sm-0">
+                            <div class="pull-right">
+                                @*<a v-on:click="openFormAdd()" class="btn btn-primary " style="margin-right: 5px;"> Thêm mới</a> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /page header -->
+        <!-- Content area -->
+
+        <div class="content">
+
+            <div class="card">
+                <div class="card-body">
+                    <form v-on:submit.prevent="loadData">
+                        <div class="row mb-3">
+                            <div class="col-lg-2">
+                                <label class="form-label">Tìm kiếm theo</label>
+                                <select class="form-select" v-model:value="filter.columnTable">
+                                    <option value="serial_number">Số serial</option>
+                                    <option value="device_name">Tên thiết bị</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="form-label">Trạng thái</label>
+                                <select class="form-select" v-model:value="filter.onlineStatus">
+                                    <option value="">Tất cả</option>
+                                    <option value="Online">Online</option>
+                                    <option value="Offline">Offline</option>
+                                </select>
+                            </div>
+                            @* <div class="col-lg-3">
+                                <label class="form-label">Tổ chức</label>
+                                <select id="organization" class="form-select" v-model:value="filter.organizationId">
+                                    <option :value="-1">Tất cả</option>
+                                    <option v-for="option in organizations" v-bind:value="option.id">
+                                        {{ option.organizationName }}
+                                    </option>
+                                </select>
+                            </div> *@
+                            <div class="col-lg-3">
+                                <label class="form-label">Từ khóa tìm kiếm</label>
+                                <input type="text" id="key" name="key" placeholder="Nhập từ khóa tìm kiếm" class="form-control" v-model="filter.key">
+                            </div>
+                            <div class="col-lg-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Quick stats boxes -->
+            <div class="row">
+                <div class="col-lg-6">
+                    <!-- Devices online -->
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <h3 class="mb-0 f-bold">Thiết bị hệ thống({{ devicesAll.length }})</h3>
+                                @* <span class="badge bg-black bg-opacity-50 rounded-pill align-self-center ms-auto">+53,6%</span> *@
+                            </div>
+
+                            @* <div>
+                                <div class="fs-md opacity-75 fw-bold">Online: {{ onlineNumberAll }}</div> <!-- Đổi màu chữ thành sáng hơn -->
+                            </div> *@
+                        </div>
+
+                        <div class="rounded overflow-hidden mx-3 mb-1" id="devices-online"></div>
+                    </div>
+
+                </div>
+                <div class="col-lg-6">
+                    <!-- Devices online -->
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <h3 class="mb-0 f-bold">Thiết bị tìm kiếm({{ data.length }})</h3>
+                                @* <span class="badge bg-black bg-opacity-50 rounded-pill align-self-center ms-auto">+53,6%</span> *@
+                            </div>
+
+                           @*  <div>
+                                <div class="fs-md opacity-75 fw-bold">Online: {{ onlineNumberAll }}</div> <!-- Đổi màu chữ thành sáng hơn -->
+                            </div> *@
+                        </div>
+
+                        <div class="rounded overflow-hidden mx-3 mb-1" id="devices-online-filter"></div>
+                    </div>
+
+                </div>
+                <div class="col-lg-4">
+                    <!-- Devices online -->
+                    <!--
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <h3 class="mb-0 f-bold">Devices({{ devicesAll.length }})</h3>
+                                @* <span class="badge bg-black bg-opacity-50 rounded-pill align-self-center ms-auto">+53,6%</span> *@
+                            </div>
+
+                            <div>
+                                <div class="fs-md opacity-75 fw-bold">Online: {{ onlineNumberAll }}</div>
+                            </div>
+                        </div>
+
+                        <div class="rounded overflow-hidden mx-3 mb-1" id="devices-online"></div>
+                    </div>
+                    -->
+                </div>
+            </div>
+            <!-- /quick stats boxes -->
+
+            <div class="card">
+                <div class="card-body">
+                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}} @ViewData["Title"]</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+
+                        <form class="needs-validation" novalidate>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-lg-3">Mã<span class="text-danger">*</span></label>
+                                <div class="col-lg-9">
+                                    <input type="text" class="form-control" required placeholder="Mã" v-model="item.organizationCode">
+                                    <div class="invalid-feedback">Invalid feedback</div>
+                                    <div class="valid-feedback">Valid feedback</div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-lg-3">Tên viết tắt<span class="text-danger">*</span></label>
+                                <div class="col-lg-9">
+                                    <input type="text" class="form-control" required placeholder="Tên viết tắt" v-model="item.organizationShortName">
+                                    <div class="invalid-feedback">Invalid feedback</div>
+                                    <div class="valid-feedback">Valid feedback</div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-lg-3">Tên đầy đù<span class="text-danger">*</span></label>
+                                <div class="col-lg-9">
+                                    <input type="text" class="form-control" required placeholder="Tên đầy đù" v-model="item.organizationName">
+                                    <div class="invalid-feedback">Invalid feedback</div>
+                                    <div class="valid-feedback">Valid feedback</div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-lg-3">Địa chỉ<span class="text-danger">*</span></label>
+                                <div class="col-lg-9">
+                                    <input type="text" class="form-control" required placeholder="Địa chỉ" v-model="item.organizationAddress">
+                                    <div class="invalid-feedback">Invalid feedback</div>
+                                    <div class="valid-feedback">Valid feedback</div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-lg-3">Điện thoại</label>
+                                <div class="col-lg-9">
+                                    <input type="text" class="form-control" required placeholder="Điện thoại" v-model="item.organizationPhone">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-lg-3">Email</label>
+                                <div class="col-lg-9">
+                                    <input type="text" class="form-control" required placeholder="Email" v-model="item.organizationEmail">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-lg-3">Mã số thuế</label>
+                                <div class="col-lg-9">
+                                    <input type="text" class="form-control" required placeholder="Mã số thuế" v-model="item.organizationTax">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-lg-3">Mô tả </label>
+                                <div class="col-lg-9">
+                                    <input type="text" class="form-control" v-model="item.organizationDescription">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-lg-3">Ghi chú </label>
+                                <div class="col-lg-9">
+                                    <input type="text" class="form-control" v-model="item.organizationNote">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label col-lg-3">Hoạt động</label>
+                                <div class="col-lg-9">
+                                    <div class="form-check-horizontal">
+                                        <label class="form-check form-switch mb-0">
+                                            <input type="checkbox" class="form-check-input" v-model="item.actived">
+                                            <span class="form-check-label">Active</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-primary" v-on:click="onClickSaveData()">Lưu dữ liệu</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+    connection.on("RefreshDevice", function (data) {
+        var data1 = JSON.parse(data);
+        // _device.devicesAll = JSON.parse(data);
+        // _device.data = _device.devicesAll;
+        // drawChart();
+        _device.loadData();
+    });
+</script>
+
+<script>
+    // google.charts.load('current', { 'packages': ['corechart'] });
+    // google.charts.setOnLoadCallback(drawChart);
+    // function drawChart(devices, elementId) {
+    //     const onlineNumberAll = devices.filter(user => (user.onlineStatus === 'Online') || (user.OnlineStatus === 'Online')).length;
+    //     const offlineNumberAll = devices.filter(user => (user.onlineStatus === 'Offline') || (user.OnlineStatus === 'Offline')).length;
+
+    //     var data = google.visualization.arrayToDataTable([
+    //         ['Active', 'Number'],
+    //         [`Online - ${onlineNumberAll}`, onlineNumberAll],
+    //         [`Offline - ${offlineNumberAll}`, offlineNumberAll],
+    //     ]);
+
+    //     var options = {
+    //         is3D: true,
+    //         //pieHole: 0.3,
+    //         pieSliceText: 'value',
+    //         legend: {
+    //             position: 'left',
+    //             alignment: 'center',
+    //         },
+    //         legendTextStyle: {
+    //             fontSize: 14,
+    //             bold: true,
+    //         },
+    //         pieSliceTextStyle: {
+    //             color: 'white',
+    //             fontSize: 12,
+    //             bold: true
+    //         },
+    //         colors: ['green', 'red'],
+    //     };
+    //     var chart = new google.visualization.PieChart(document.getElementById(elementId));
+
+    //     chart.draw(data, options);
+    // }
+    
+    var _device = new Vue({
+        el: '#webui',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [
+                 
+                {
+                    title: "Tên máy",
+                    field: 'name',
+                    sortable: true,
+                },
+                {
+                    title: "Mã trường",
+                    field: 'ip_address',
+                    sortable: true,
+                },
+                
+                {
+                    title: "Ngày tạo",
+                    field: 'create_time',
+                    sortable: true,
+                },
+                
+                {
+                    title: 'onlineStatus',
+                    field: 'onlineStatus',
+                    sortable: true,
+                    formatter: (data) => {
+                        return `<span class='fw-bold' style="color: ${data === 'Online' ? 'green' : 'red'};">${data}</span>`;
+                    }
+                },
+              
+                {
+                    title: 'lastTimeOffline',
+                    field: 'lastTimeOffline',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
+                {
+                    title: 'lastTimeCheckConnection',
+                    field: 'lastTimeCheckConnection',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
+                
+                // {
+                //     title: 'lastTimeUpdateData',
+                //     field: 'lastTimeUpdateData',
+                //     sortable: true,
+                //     formatter: function (value, row, index) {
+                //         if (value) {
+                //             const d = new Date(value);
+                //             return d.toLocaleDateString('vi-VN', {
+                //                 year: 'numeric',
+                //                 month: '2-digit',
+                //                 day: '2-digit',
+                //                 hour: '2-digit',
+                //                 minute: '2-digit',
+                //                 second: '2-digit'
+                //             });
+                //         } else {
+                //             return ""; // Trả về chuỗi rỗng
+                //         }
+                //     },
+                // },
+                // {
+                //     title: 'lastTimeUpdateSocket',
+                //     field: 'lastTimeUpdateSocket',
+                //     sortable: true,
+                //     formatter: function (value, row, index) {
+                //         if (value) {
+                //             const d = new Date(value);
+                //             return d.toLocaleDateString('vi-VN', {
+                //                 year: 'numeric',
+                //                 month: '2-digit',
+                //                 day: '2-digit',
+                //                 hour: '2-digit',
+                //                 minute: '2-digit',
+                //                 second: '2-digit'
+                //             });
+                //         } else {
+                //             return ""; // Trả về chuỗi rỗng
+                //         }
+                //     },
+                // },
+                // {
+                //     title: "Tổ chức",
+                //     field: "organizationName",
+                //     sortable: true,
+                // },
+                // {
+                //     title: "Địa điểm",
+                //     field: "siteName",
+                //     sortable: true,
+                // },
+                // {
+                //     title: "Vị trí",
+                //     field: "locationName",
+                //     sortable: true,
+                // },
+            ],
+            data: [],
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                showExport: false,
+                sortable: true,
+                searchAlign: 'right',
+                paginationHAlign: 'right',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+                pageList: [10, 25, 50, 100, 200],
+            },
+            filter: {
+                columnTable: "serial_number",
+                actived: true,
+                onlineStatus: "",
+                organizationId: -1,
+                key: "",
+                export: "0",
+            },
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                editAction: false,
+                infoAction: false,
+                bearerAuthorization: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+            item: {},
+            devicesAll: [],
+            onlineNumberAll: 0,
+            offlineNumberAll: 0,
+            onlineNumber: 0,
+            offlineNumber: 0,
+            organizations: [],
+            config: {
+                saveFile: false,
+                receivingData: false,
+            },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.get('/api/v1/MonitorDevice/Gets', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.data = response.data.data;
+                    //drawChart(this.data, 'devices-online-filter');
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+
+            onSaveConfig() {
+                console.log(this.config.receivingData);
+
+                $('.loader').show();
+                axios.get('/api/v1/DeviceCache/SetSetup?saveFile=' + this.config.saveFile + '&receivingData=' + this.config.receivingData, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    this.data = response.data.data;
+                    $('.loader').delay(100).hide(0);
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+        },
+        mounted() {
+            this.loadData();
+        },
+    })
+</script>
+

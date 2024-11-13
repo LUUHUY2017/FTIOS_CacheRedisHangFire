@@ -66,13 +66,10 @@ public class TimeAttenceEventController : AuthBaseAPIController
             }
 
 
-            int totalRow = await items.CountAsync();
+            int totalRow =  await  items.CountAsync();
             // phân trang
             int skip = (request.CurentPage.Value - 1) * (request.RowsPerPage.Value);
-            int totalPage = 0;
-            totalPage = totalRow / (request.RowsPerPage.Value);
-            if (totalRow % (request.RowsPerPage.Value) > 0)
-                totalPage++;
+            int totalPage = (totalRow + request.RowsPerPage.Value - 1) / request.RowsPerPage.Value;
 
             var datas = await items.Skip(skip).Take(request.RowsPerPage.Value).ToListAsync();
             int totalDataRow = datas.Count();
