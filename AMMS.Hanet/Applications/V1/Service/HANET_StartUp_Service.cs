@@ -7,6 +7,7 @@ using RestSharp;
 using Shared.Core.Entities;
 using Shared.Core.Loggers;
 using System.ComponentModel.DataAnnotations;
+using static AMMS.Hanet.Applications.CronJobs.CronJobService;
 
 namespace AMMS.Hanet.Applications.V1.Service
 {
@@ -290,6 +291,28 @@ namespace AMMS.Hanet.Applications.V1.Service
                 Logger.Error(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Cập nhật trạng thái thiết bị
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateStatus(List<terminal_status> data)
+        {
+            try
+            {
+                string url = "api/v1/MonitorDevice/ChangeStatusDevice";
+
+                var result = await PostData(url, data);
+
+                return;
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+            }
+        }
+
     }
     /// <summary>
     /// Dữ liệu SV trả về

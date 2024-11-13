@@ -82,15 +82,17 @@ public partial class CronJobService : ICronJobService
             //Đẩy trạng thái qua signal r
             try
             {
-                Logger.Warning(DateTime.Now.ToString("HH:mm:ss dd/MM/yyy") + ": Gửi qua sinalr");
+                Logger.Warning(DateTime.Now.ToString("HH:mm:ss dd/MM/yyy") + ": Gửi qua api");
+
 
                 //Gửi qua sinalr
                 if (terminal_status != null && terminal_status.Count() > 0)
                 {
-                    if (_signalRService != null && _signalRService.Connection != null && _signalRService.Connection.State == HubConnectionState.Connected)
-                    {
-                        await _signalRService.Connection.InvokeAsync("RefreshDevice", JsonConvert.SerializeObject(terminal_status));
-                    }
+                    await _startupDataService.UpdateStatus(terminal_status);
+                    //if (_signalRService != null && _signalRService.Connection != null && _signalRService.Connection.State == HubConnectionState.Connected)
+                    //{
+                    //    await _signalRService.Connection.InvokeAsync("RefreshDevice", JsonConvert.SerializeObject(terminal_status));
+                    //}
                 }
             }
             catch (Exception ex)

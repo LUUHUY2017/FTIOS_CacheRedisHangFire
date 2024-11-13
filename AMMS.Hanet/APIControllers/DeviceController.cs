@@ -2,8 +2,10 @@
 using AMMS.Hanet.Applications.V1.Service;
 using AMMS.Hanet.Data;
 using AMMS.Hanet.Data.Response;
+using AMMS.Hanet.Datas.Databases;
 using EventBus.Messages;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -19,14 +21,16 @@ public class DeviceController : ControllerBase
     HANET_API_Service _hANET_API_Service;
     private readonly IEventBusAdapter _eventBusAdapter;
     private readonly IConfiguration _configuration;
+    ViettelDbContext _viettelDbContext;
 
-    public DeviceController(HANET_Server_Push_Service HANET_Process_Service, IConfiguration configuration, IEventBusAdapter eventBusAdapter, HANET_API_Service hANET_API_Service, HANET_Device_Reponse_Service hANET_Device_Reponse_Service)
+    public DeviceController(HANET_Server_Push_Service HANET_Process_Service, IConfiguration configuration, IEventBusAdapter eventBusAdapter, HANET_API_Service hANET_API_Service, HANET_Device_Reponse_Service hANET_Device_Reponse_Service, ViettelDbContext viettelDbContext)
     {
         _HANET_Process_Service = HANET_Process_Service;
         _eventBusAdapter = eventBusAdapter;
         _configuration = configuration;
         _hANET_API_Service = hANET_API_Service;
         _HANET_Device_Reponse_Service = hANET_Device_Reponse_Service;
+        _viettelDbContext = viettelDbContext;
     }
 
     /// <summary>
@@ -175,31 +179,35 @@ public class DeviceController : ControllerBase
 
                 if (data != null && item != null)
                 {
-                    double ticks = item.checkinTime.Value;
-                    TimeSpan time = TimeSpan.FromMilliseconds(ticks);
-                    DateTime date = new DateTime(1970, 1, 1) + time;
+                    long milliSec = item.checkinTime.Value;
+                    DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(milliSec);
+                    DateTime utc7DateTime = dateTimeOffset.ToOffset(TimeSpan.FromHours(7)).DateTime;
+                    //Tìm học sinh
+                    var user = await _viettelDbContext.Student.FirstOrDefaultAsync(x => x.SyncCode == item.aliasID);
 
-                    TA_AttendenceHistory tA_AttendenceHistory = new TA_AttendenceHistory()
+                    if (user != null)
                     {
-                        Id = data.id,
-                        DeviceId = data.deviceID,
-                        PersonCode = item.aliasID,
-                        SerialNumber = item.deviceName,
-                        TimeEvent = date,
-                        Type = (int)TA_AttendenceType.Face,
-                    };
+                        TA_AttendenceHistory tA_AttendenceHistory = new TA_AttendenceHistory()
+                        {
+                            Id = data.id,
+                            DeviceId = data.deviceID,
+                            PersonCode = user.StudentCode,
+                            SerialNumber = item.deviceName,
+                            TimeEvent = utc7DateTime,
+                            Type = (int)TA_AttendenceType.Face,
+                        };
 
-                    RB_DataResponse rB_Response = new RB_DataResponse()
-                    {
-                        Id = tA_AttendenceHistory.Id,
-                        Content = JsonConvert.SerializeObject(tA_AttendenceHistory),
-                        ReponseType = RB_DataResponseType.AttendenceHistory,
-                    };
+                        RB_DataResponse rB_Response = new RB_DataResponse()
+                        {
+                            Id = tA_AttendenceHistory.Id,
+                            Content = JsonConvert.SerializeObject(tA_AttendenceHistory),
+                            ReponseType = RB_DataResponseType.AttendenceHistory,
+                        };
 
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
+                        var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
 
-                    await aa.Send(rB_Response);
-
+                        await aa.Send(rB_Response);
+                    }
                 }
             }
             countData = top100Data.Count;

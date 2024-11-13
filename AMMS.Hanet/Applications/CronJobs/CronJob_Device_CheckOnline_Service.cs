@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using AMMS.Hanet.Applications.V1.Service;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Shared.Core.Loggers;
@@ -82,10 +83,7 @@ public partial class CronJobService : ICronJobService
             {
                 if (terminal_status != null && terminal_status.Count() > 0)
                 {
-                    if (_signalRService != null && _signalRService.Connection != null && _signalRService.Connection.State == HubConnectionState.Connected)
-                    {
-                        await _signalRService.Connection.InvokeAsync("RefreshDevice", JsonConvert.SerializeObject(terminal_status));
-                    }
+                    await _hanetStartUpService.UpdateStatus(terminal_status);
                 }
             }
             catch (Exception)

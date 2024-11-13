@@ -133,7 +133,7 @@
         /// <summary>
         ///  Timestamp tại thời điểm camera checkin.
         /// </summary>
-        public double? checkinTime { get; set; }
+        public long? checkinTime { get; set; }
     }
 
 }

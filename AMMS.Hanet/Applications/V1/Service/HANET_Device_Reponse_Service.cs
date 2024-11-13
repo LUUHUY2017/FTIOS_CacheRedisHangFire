@@ -22,11 +22,13 @@ namespace AMMS.Hanet.Applications.V1.Service
         private readonly IConfiguration _configuration;
 
         DeviceAutoPushDbContext _deviceAutoPushDbContext;
-        public HANET_Device_Reponse_Service(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter, IConfiguration configuration1)
+        ViettelDbContext _viettelDbContext;
+        public HANET_Device_Reponse_Service(DeviceAutoPushDbContext deviceAutoPushDbContext, IEventBusAdapter eventBusAdapter, IConfiguration configuration1, ViettelDbContext viettelDbContext)
         {
             _deviceAutoPushDbContext = deviceAutoPushDbContext;
             _eventBusAdapter = eventBusAdapter;
             _configuration = configuration1;
+            _viettelDbContext = viettelDbContext;
         }
         /// <summary>
         /// Xử lý thông tin thiết bị trả về
@@ -51,18 +53,24 @@ namespace AMMS.Hanet.Applications.V1.Service
                     return;
                 }
 
-                await AddTransactionLog(data, reponse);
-
                 if (string.IsNullOrEmpty(data.aliasID))
                     return;
 
-                await AddATTLOG(data);
+                //Tìm học sinh
+                var user = await _viettelDbContext.Student.FirstOrDefaultAsync(x => x.SyncCode == data.aliasID);
+                //Lưu thông tin 
+                await AddTransactionLog(data, reponse);
+
+                if (user == null) return;
+
+                //Đẩy sang SV
+                await AddATTLOG(data, user);
 
             }
 
         }
 
-        private async Task AddATTLOG(Hanet_Checkin_Data data)
+        private async Task AddATTLOG(Hanet_Checkin_Data data, Student? student)
         {
             try
             {
@@ -73,8 +81,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                     {
                         Id = data.id,
                         DeviceId = data.deviceID,
-                        PersonCode = data.aliasID,
-                        //PersonId = taData.PersonId,
+                        PersonCode = student.StudentCode,
                         SerialNumber = data.deviceName,
                         TimeEvent = data.date,
                         Type = (int)TA_AttendenceType.Face,
@@ -210,8 +217,6 @@ namespace AMMS.Hanet.Applications.V1.Service
         {
             try
             {
-
-
                 hanet_transaction hanet_Transaction = new hanet_transaction()
                 {
                     id = data.id,
@@ -223,7 +228,6 @@ namespace AMMS.Hanet.Applications.V1.Service
                 };
                 _deviceAutoPushDbContext.Add(hanet_Transaction);
                 _deviceAutoPushDbContext.SaveChanges();
-
             }
             catch (Exception ex)
             {
