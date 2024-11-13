@@ -1,4 +1,5 @@
 ﻿using Shared.Core.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Server.Core.Entities.A2;
 
@@ -10,16 +11,20 @@ public class StudentClassRoomYear : EntityBase
     /// <summary>
     /// ID trường học
     /// </summary>
+    [MaxLength(50)]
     public string SchoolId { get; set; }
 
     /// <summary>
     /// Id lớp học
     /// </summary>
+    [MaxLength(50)]
     public string ClassRoomId { get; set; }
 
     /// <summary>
     /// Id Năm học
     /// </summary>
+    /// 
+    [MaxLength(50)]
     public string SchoolYearId { get; set; }
 
 
