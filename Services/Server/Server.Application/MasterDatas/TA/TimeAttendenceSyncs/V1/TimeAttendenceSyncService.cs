@@ -61,7 +61,7 @@ public partial class TimeAttendenceSyncService
                          from st in KD.DefaultIfEmpty()
 
 
-                         join _or in _dbContext.Organization on la.OrganizationId equals _or.Id into OG
+                         join _or in _dbContext.Organization on _do.OrganizationId equals _or.Id into OG
                          from or in OG.DefaultIfEmpty()
 
                          where
@@ -224,7 +224,7 @@ public partial class TimeAttendenceSyncService
                         if (sync.SyncStatus != true)
                             sync.SyncStatus = ite.status;
 
-                        sync.Message += $"\r\n[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}";
+                        sync.Message += $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}\r\n";
                         sync.LastModifiedDate = DateTime.Now;
                     }
                 }

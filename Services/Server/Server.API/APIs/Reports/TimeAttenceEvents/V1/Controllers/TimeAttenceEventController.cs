@@ -94,7 +94,7 @@ public class TimeAttenceEventController : AuthBaseAPIController
     }
 
     /// <summary>
-    /// Post
+    /// PostGeneral
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

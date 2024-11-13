@@ -235,7 +235,7 @@ public class CronJobService : ICronJobService
                     {
                         TimeAttendenceEventId = el.Id,
                         SyncStatus = item.status,
-                        Message = $"\r\n [{DateTime.Now:dd/MM/yy HH:mm:ss}]: {item.message}",
+                        Message = $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {item.message}\r\n",
                         CreatedDate = DateTime.Now,
                         LastModifiedDate = DateTime.Now,
                     };
