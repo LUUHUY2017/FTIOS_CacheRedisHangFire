@@ -225,7 +225,9 @@ public class StudentService
                     request.ImageBase64 = Common.ConvertFileImageToBase64(fileName);
                 }
             }
-            await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64);
+
+            if (!string.IsNullOrWhiteSpace(request.ImageBase64))
+                await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64);
 
 
             stu.ImageSrc = request.ImageBase64;

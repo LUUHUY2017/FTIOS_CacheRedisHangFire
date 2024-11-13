@@ -53,12 +53,12 @@ public partial class SyncDeviceServerService
                          join _de in _dbContext.Device on _do.DeviceId equals _de.Id into KG
                          from de in KG.DefaultIfEmpty()
 
-                         join _or in _dbContext.Organization on la.OrganizationId equals _or.Id into OG
-                         from or in OG.DefaultIfEmpty()
+                             //join _or in _dbContext.Organization on la.OrganizationId equals _or.Id into OG
+                             //from or in OG.DefaultIfEmpty()
 
                          where
                           (request.StartDate != null ? _do.LastModifiedDate >= request.StartDate : true)
-                          && (request.EndDate != null ? _do.LastModifiedDate <=  request.EndDate.Value.Date.AddDays(1).AddMilliseconds(-1) : true)
+                          && (request.EndDate != null ? _do.LastModifiedDate <= request.EndDate.Value.Date.AddDays(1).AddMilliseconds(-1) : true)
                           && (!string.IsNullOrWhiteSpace(request.DeviceId) ? _do.DeviceId == request.DeviceId : true)
                           && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? la.OrganizationId == request.OrganizationId : true)
 
