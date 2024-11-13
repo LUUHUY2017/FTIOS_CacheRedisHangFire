@@ -29,6 +29,7 @@ public class ZK_DEVICE_RPService
     {
         try
         {
+            Logger.Information(data.SN + " : " + data.Content);
             var content = data.Content;
             var contentArr1 = content.Split('\n');
             if (contentArr1.Length > 0)

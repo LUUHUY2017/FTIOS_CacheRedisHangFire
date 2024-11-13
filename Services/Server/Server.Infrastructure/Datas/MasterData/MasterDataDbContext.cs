@@ -79,13 +79,62 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        //modelBuilder.HasDefaultSchema("Identity"); //Tạo Schema
+        //Index TimeAttendenceEvent
+        modelBuilder.Entity<TimeAttendenceEvent>()
+          .HasIndex(te => te.EventTime)
+          .HasDatabaseName("IX_TimeAttendenceEvent_EventTime");
+        modelBuilder.Entity<TimeAttendenceEvent>()
+        .HasIndex(te => te.CreatedDate)
+        .HasDatabaseName("IX_TimeAttendenceEvent_CreatedDate");
+        modelBuilder.Entity<TimeAttendenceEvent>()
+        .HasIndex(te => te.OrganizationId)
+        .HasDatabaseName("IX_TimeAttendenceEvent_OrganizationId");
 
+
+        //Index TimeAttendenceSync
+        modelBuilder.Entity<TimeAttendenceSync>()
+        .HasIndex(te => te.CreatedDate)
+        .HasDatabaseName("IX_TimeAttendenceSync_CreatedDate");
+        modelBuilder.Entity<TimeAttendenceSync>()
+        .HasIndex(te => te.OrganizationId)
+        .HasDatabaseName("IX_TimeAttendenceSync_OrganizationId");
+
+        //Index Student
+        modelBuilder.Entity<Student>()
+        .HasIndex(te => te.OrganizationId)
+        .HasDatabaseName("IX_Student_OrganizationId");
+        modelBuilder.Entity<Student>()
+        .HasIndex(te => te.ClassName)
+        .HasDatabaseName("IX_Student_ClassName");
+
+        //Index PersonFace
+        modelBuilder.Entity<PersonFace>()
+        .HasIndex(te => te.OrganizationId)
+        .HasDatabaseName("IX_PersonFace_OrganizationId");
+
+        //Index PersonFace
+        modelBuilder.Entity<PersonFace>()
+        .HasIndex(te => te.OrganizationId)
+        .HasDatabaseName("IX_PersonFace_OrganizationId");
+
+        //Index PersonSynToDevice
+        modelBuilder.Entity<PersonSynToDevice>()
+        .HasIndex(te => te.LastModifiedDate)
+        .HasDatabaseName("IX_PersonSynToDevice_LastModifiedDate");
+        modelBuilder.Entity<PersonSynToDevice>()
+        .HasIndex(te => te.OrganizationId)
+        .HasDatabaseName("IX_PersonSynToDevice_OrganizationId");
+
+
+        //modelBuilder.HasDefaultSchema("Identity"); //Tạo Schema
         //modelBuilder.Entity<ApplicationUser>(entity =>
         //{
         //    entity.ToTable(name: "User");
         //}); //Tạo bảng
-
         //modelBuilder.Seed();
+
+
+
+
     }
 }

@@ -269,7 +269,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
         {
             try
             {
-                var obj = _deviceAutoPushDbContext.zk_terminal.FirstOrDefault(x => x.Id == a2_Devices.Id);
+                var obj = _deviceAutoPushDbContext.zk_terminal.FirstOrDefault(x => x.sn == a2_Devices.sn);
                 if (obj == null)
                 {
                     a2_Devices.create_time = DateTime.Now;
@@ -279,7 +279,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 }
                 else
                 {
-                    obj.sn = a2_Devices.sn;
+ 
                     obj.name = a2_Devices.name;
                     await _deviceAutoPushDbContext.SaveChangesAsync();
                 }

@@ -45,6 +45,8 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 if (sn == null)
                     return;
                 Logger.Warning("Data :" + rB_ServerRequest.SerialNumber + " " + rB_ServerRequest.Id);
+                Logger.Information("SV_RQ :" + rB_ServerRequest.SerialNumber + " : " + rB_ServerRequest.RequestParam);
+
                 IclockCommand command2 = null;
 
                 if (rB_ServerRequest.Action == ServerRequestAction.ActionAdd && rB_ServerRequest.RequestType == ServerRequestType.UserInfo)
@@ -288,7 +290,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
             try
             {
                 bool add = false;
-                var data = _deviceAutoPushDbContext.zk_terminal.FirstOrDefault(x => x.Id == tA_Device.Id);
+                var data = _deviceAutoPushDbContext.zk_terminal.FirstOrDefault(x => x.sn == tA_Device.SerialNumber);
                 if (data == null)
                 {
                     add = true;
@@ -299,6 +301,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 data.ip_address = tA_Device.IpAdress;
                 data.port = tA_Device.Port;
                 data.sn = tA_Device.SerialNumber;
+                data.name = tA_Device.DeviceName;
                 if (add)
                 {
                     await _deviceAutoPushDbContext.zk_terminal.AddAsync(data);

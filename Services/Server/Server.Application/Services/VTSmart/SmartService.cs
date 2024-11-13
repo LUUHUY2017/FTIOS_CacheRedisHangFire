@@ -369,11 +369,12 @@ public sealed class SmartService
                     //client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _accessToken.access_token);
 
                     var result = await client.PostAsync(api, parameter);
-                    Logger.Warning("Lỗi: " + JsonConvert.SerializeObject(result));
+                    //Logger.Warning("Lỗi: " + JsonConvert.SerializeObject(result));
                     if (result.IsSuccessStatusCode)
                     {
                         var data = await result.Content.ReadAsStringAsync();
                         var res = JsonConvert.DeserializeObject<StudentDataApiResponse>(data);
+                        //var res1 = JsonConvert.DeserializeObject<dynamic>(data);
                         if (res.IsSuccess)
                         {
                             retval = res.Responses;
@@ -416,6 +417,7 @@ public sealed class SmartService
                     {
                         var data = await result.Content.ReadAsStringAsync();
                         retval = JsonConvert.DeserializeObject<SyncDataResponse>(data);
+
 
                     }
                 }

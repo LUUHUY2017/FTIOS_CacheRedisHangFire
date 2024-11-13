@@ -132,7 +132,7 @@ public class CronJobService : ICronJobService
 
                     var el = new Student()
                     {
-                        SyncCode = item.SyncCode,
+                        SyncCode = item.SyncCodeSSO,
                         StudentCode = item.StudentCode,
                         ClassId = item.ClassId,
                         ClassName = item.ClassName,
@@ -231,11 +231,12 @@ public class CronJobService : ICronJobService
                     var el = datas.FirstOrDefault(o => o.StudentCode == item.studentCode && o.EventTime == item.extraProperties.absenceTime);
                     if (el == null)
                         continue;
+
                     var log = new TimeAttendenceSync()
                     {
                         TimeAttendenceEventId = el.Id,
                         SyncStatus = item.status,
-                        Message = item.message,
+                        Message = $"\r\n [{DateTime.Now:dd/MM/yy HH:mm:ss}]: {item.message}",
                         CreatedDate = DateTime.Now,
                         LastModifiedDate = DateTime.Now,
                     };

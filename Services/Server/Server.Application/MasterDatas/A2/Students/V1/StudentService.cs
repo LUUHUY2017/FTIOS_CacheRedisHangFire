@@ -135,112 +135,6 @@ public class StudentService
         }
     }
 
-    /// <summary>
-    /// Cập nhật trạng thái đồng bộ từ RabbitMQ
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    public async Task<bool> SaveStatuSyncDevice(RB_ServerResponse request)
-    {
-        bool statusSync = false;
-        try
-        {
-            var _devis = await _dbContext.PersonSynToDevice.FirstOrDefaultAsync(o => o.Id == request.Id);
-            if (_devis != null)
-            {
-                _devis.SynStatus = request.IsSuccessed;
-                _devis.SynFaceStatus = request.IsSuccessed;
-                _devis.SynMessage = request.Message;
-                _devis.SynFaceMessage = request.Content;
-                _devis.LastModifiedDate = DateTime.Now;
-            }
-            await _dbContext.SaveChangesAsync();
-            statusSync = true;
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-        return statusSync;
-    }
-
-    /// <summary>
-    /// Lưu thông tin học sinh vào AMMS, ảnh khuôn mặt
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    public async Task<Result<DtoStudentRequest>> SaveFromWeb(DtoStudentRequest request)
-    {
-        try
-        {
-            var stu = _map.Map<Student>(request);
-
-
-            //var res = await _studentRepository.SaveDataAsync(stu);
-            //if (res.Succeeded)
-            //{
-            //    var per = new Person()
-            //    {
-            //        Id = res.Data.Id,
-            //        Actived = true,
-            //        PersonCode = request.StudentCode,
-            //        FirstName = request.Name,
-            //        LastName = request.FullName,
-            //        CitizenId = request.IdentifyNumber,
-            //    };
-            //    var data = await _personRepository.SaveAsync(per);
-            //}
-
-
-            DateTime dateStudent = DateTime.Now;
-            string dateString = stu.DateOfBirth;
-            string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
-            bool success = DateTime.TryParseExact(
-                dateString,
-                formats,
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.None,
-                out dateStudent
-            );
-
-            var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
-            var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
-
-            string imageName = stu.Id + ".jpg";
-            string fileName = imageFullFolder + imageName;
-
-            if (!string.IsNullOrWhiteSpace(request.ImageBase64))
-            {
-                Image img = Common.Base64ToImage(request.ImageBase64);
-                if (File.Exists(fileName))
-                    File.Delete(fileName);
-                //img.Save(fileName);
-                Common.SaveJpeg1(fileName, img, 100);
-            }
-            else
-            {
-                if (!string.IsNullOrWhiteSpace(request.ImageSrc))
-                {
-                    await Common.DownloadAndSaveImage(request.ImageSrc, fileName);
-                    request.ImageBase64 = Common.ConvertFileImageToBase64(fileName);
-                }
-            }
-            await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64);
-
-
-            stu.ImageSrc = request.ImageBase64;
-            var revt = await PushStudentsByEventBusAsync(stu);
-
-            return new Result<DtoStudentRequest>($"Cập nhật thành công", true);
-        }
-        catch (Exception e)
-        {
-            Logger.Warning(e.Message);
-            return new Result<DtoStudentRequest>($"Gửi email lỗi: {e.Message}", false);
-        }
-
-    }
-
 
     /// <summary>
     /// Lấy danh sách học sinh AMMS
@@ -308,7 +202,6 @@ public class StudentService
             return null;
         }
     }
-
     /// <summary>
     /// Bộ lọc tìm kiếm
     /// </summary>
@@ -371,6 +264,115 @@ public class StudentService
         return query;
     }
 
+
+    /// <summary>
+    /// Cập nhật trạng thái đồng bộ từ RabbitMQ
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<bool> SaveStatuSyncDevice(RB_ServerResponse request)
+    {
+        bool statusSync = false;
+        try
+        {
+            var _devis = await _dbContext.PersonSynToDevice.FirstOrDefaultAsync(o => o.Id == request.Id);
+            if (_devis != null)
+            {
+                _devis.SynStatus = request.IsSuccessed;
+                _devis.SynFaceStatus = request.IsSuccessed;
+                _devis.SynMessage = request.Message;
+                _devis.SynFaceMessage = request.Content;
+                _devis.LastModifiedDate = DateTime.Now;
+            }
+            await _dbContext.SaveChangesAsync();
+            statusSync = true;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return statusSync;
+    }
+
+
+    /// <summary>
+    /// Lưu thông tin học sinh vào AMMS, ảnh khuôn mặt
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<Result<DtoStudentRequest>> SaveFromWeb(DtoStudentRequest request)
+    {
+        try
+        {
+            var stu = _map.Map<Student>(request);
+
+
+            //var res = await _studentRepository.SaveDataAsync(stu);
+            //if (res.Succeeded)
+            //{
+            //    var per = new Person()
+            //    {
+            //        Id = res.Data.Id,
+            //        Actived = true,
+            //        PersonCode = request.StudentCode,
+            //        FirstName = request.Name,
+            //        LastName = request.FullName,
+            //        CitizenId = request.IdentifyNumber,
+            //    };
+            //    var data = await _personRepository.SaveAsync(per);
+            //}
+
+
+            DateTime dateStudent = DateTime.Now;
+            string dateString = stu.DateOfBirth;
+            string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
+            bool success = DateTime.TryParseExact(
+                dateString,
+                formats,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out dateStudent
+            );
+
+            var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
+            var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
+
+            string imageName = stu.Id + ".jpg";
+            string fileName = imageFullFolder + imageName;
+
+            if (!string.IsNullOrWhiteSpace(request.ImageBase64))
+            {
+                Image img = Common.Base64ToImage(request.ImageBase64);
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+                //img.Save(fileName);
+                Common.SaveJpeg1(fileName, img, 100);
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(request.ImageSrc))
+                {
+                    await Common.DownloadAndSaveImage(request.ImageSrc, fileName);
+                    request.ImageBase64 = Common.ConvertFileImageToBase64(fileName);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.ImageBase64))
+                await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64);
+
+
+            stu.ImageSrc = request.ImageBase64;
+            var revt = await PushStudentsByEventBusAsync(stu);
+
+            return new Result<DtoStudentRequest>($"Cập nhật thành công", true);
+        }
+        catch (Exception e)
+        {
+            Logger.Warning(e.Message);
+            return new Result<DtoStudentRequest>($"Gửi email lỗi: {e.Message}", false);
+        }
+
+    }
     /// <summary>
     /// Lưu thông tin học sinh từ SMAS
     /// </summary>
@@ -404,7 +406,6 @@ public class StudentService
         }
 
     }
-
     /// <summary>
     /// Lưu ảnh học sinh từ Hanet
     /// </summary>
@@ -466,6 +467,8 @@ public class StudentService
         }
 
     }
+
+
 
     /// <summary>
     /// Đẩy 1 học sinh xuống toàn bộ thiết bị
@@ -690,4 +693,21 @@ public class StudentService
         return list_Sync;
     }
 
+
+    public async Task<Result<PersonFace>> GetFaceByPersonId(string personId)
+    {
+        try
+        {
+            var _devis = await _dbContext.PersonFace.FirstOrDefaultAsync(o => o.PersonId == personId);
+            if (_devis == null)
+                return new Result<PersonFace>($"Không có ảnh khuôn mặt", false);
+
+            return new Result<PersonFace>(_devis, $"Cập nhật thành công", true);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warning(ex.Message);
+            return new Result<PersonFace>($"Lỗi: " + ex.Message, false);
+        }
+    }
 }

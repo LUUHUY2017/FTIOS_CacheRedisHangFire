@@ -27,6 +27,7 @@ public abstract class EntityBase//: IEntityBase
     public string? Reason { get; set; }
     public string? Logs { get; set; }
 
+    [MaxLength(50)]
     public string? OrganizationId { get; set; }
     public string? ReferenceId { get; set; }
 

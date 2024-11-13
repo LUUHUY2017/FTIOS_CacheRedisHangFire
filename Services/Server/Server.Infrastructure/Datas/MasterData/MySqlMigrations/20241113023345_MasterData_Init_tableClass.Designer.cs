@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.Infrastructure.Datas.MasterData;
 
@@ -10,9 +11,10 @@ using Server.Infrastructure.Datas.MasterData;
 namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 {
     [DbContext(typeof(MasterDataDbContext))]
-    partial class MasterDataDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241113023345_MasterData_Init_tableClass")]
+    partial class MasterData_Init_tableClass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -428,12 +430,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LastModifiedDate")
-                        .HasDatabaseName("IX_PersonSynToDevice_LastModifiedDate");
-
-                    b.HasIndex("OrganizationId")
-                        .HasDatabaseName("IX_PersonSynToDevice_OrganizationId");
 
                     b.ToTable("PersonSynToDevice");
                 });
@@ -2407,9 +2403,6 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
 
                     b.HasIndex("CreatedDate")
                         .HasDatabaseName("IX_TimeAttendenceSync_CreatedDate");
-
-                    b.HasIndex("OrganizationId")
-                        .HasDatabaseName("IX_TimeAttendenceSync_OrganizationId");
 
                     b.ToTable("TimeAttendenceSync");
                 });

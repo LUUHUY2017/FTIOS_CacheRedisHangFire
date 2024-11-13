@@ -21,7 +21,6 @@
                     <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
                         <div class="d-inline-flex mt-3 mt-sm-0">
                             <div class="pull-right">
-                                @* <a v-on:click="onPopupModelEdit(null)" class="btn btn-primary " style="margin-right: 5px;"> Đồng bộ học sinh</a> *@
                             </div>
                         </div>
                     </div>
@@ -143,7 +142,7 @@
                                             <td><span>{{index  +1 }}</span></td>
                                             <td><a v-on:click="onSubmitSync(item)" class="btn btn-sm btn-info edit" title="Đồng bộ lại "> <i class="fa fa-refresh"> </i> </a></td>
                                             <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
-                                            <td style=" white-space: nowrap;"><span>{{item.studentName}}</span></td>
+                                            <td style=" white-space: nowrap;cursor:pointer" v-on:click="onViewImage(item)"><a style="text-decoration: underline;">{{item.studentName}}</a></td>
                                             <td style=" white-space: nowrap;"><span>{{item.deviceName}}</span></td>
                                             <td style=" white-space: nowrap;"><span>{{item.synAction}}</span></td>
                                             <td style=" white-space: nowrap;">
@@ -205,96 +204,54 @@
     </div>
 
     <div class="modal fade" id="ModelAddEdit" aria-hidden="true">
-        <div id="waitDialog" class="modal-dialog modal-xl">
+        <div id="waitDialog" class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}}</h5>
                     <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
                 </div>
-                <form class="form-horizontal has-validation-callback" v-on:submit.prevent="onSubmitFormAddEdit" id="FormAddEdit">
-                    <div class="modal-body">
-                        <div class="box">
-                            <div class="row">
-                                <div class="row mb-4">
-                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                    <div class="col-md-2">
-                                        <div class="form-group mb-3">
-                                            <div class="text-center" id="khung-chup">
-                                                <div class="anh-chup image-div">
-                                                    <a id="aoutput" data-fancybox="gallery" v-bind:href="item.imageSrc">
-                                                        <img id="output" v-bind:src="item.imageSrc">
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-md-12 col-sm-12  ">
-                                                <input type="file" id="imageInput" class="form-control">
+                <div class="modal-body">
+                    <div class="box">
+                        <div class="row">
+                            <div class="row justify-content-center mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <div class="text-center" id="khung-chup">
+                                            <div class="anh-chup image-div">
+                                                <a id="aoutput" data-fancybox="gallery" v-bind:href="item.imageSrc">
+                                                    <img id="output" v-bind:src="item.imageSrc">
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-md-5">
-                                        <label class="col-md-4 control-label text-nowrap fw-bold mb-1 ">Mã học sinh   </label>
-                                        <div class="col-md-10 col-sm-12  ">
-                                            <input class="form-control  mb-1 " type="text" readonly required id="studentCode" name="studentCode" v-model:value="item.studentCode">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Căn cước  </label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <input class="form-control  mb-1 " type="text" readonly required id="identifyNumber" name="identifyNumber" v-model:value="item.identifyNumber">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Lớp  </label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <input class="form-control  mb-1  " type="text" readonly required id="className" name="className" v-model:value="item.className">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Giới tính</label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="01"> Nam</label>
-                                                <label> <input type="radio" class="form-check-input" disabled required v-model:value="item.genderCode" value="02">Nữ </label>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-md-12">
+                                    <label class="col-md-4 control-label text-nowrap fw-bold mb-1 ">Mã học sinh </label>
+                                    <div class="col-md-12   ">
+                                        <input class="form-control  mb-1 " type="text" readonly required id="studentCode" name="studentCode" v-model:value="item.studentCode">
                                     </div>
-
-                                    <div class="col-md-5">
-                                        <div class="form-group">
-                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Họ và tên    </label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <input type="text" id="fullName" name="fullName" readonly required class="form-control  mb-1  " v-model:value="item.fullName">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-md-4 control-label text-nowrap fw-bold mb-1">Trạng thái </label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <input type="text" id="status" name="status" readonly required class="form-control  mb-1  " v-model:value="item.status">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Năm sinh</label>
-                                            <div class="col-md-10 col-sm-12  ">
-                                                <input type="text" id="syncCode" name="syncCode" readonly required class="form-control  mb-1" v-model:value="item.dateOfBirth">
-                                            </div>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Họ và tên </label>
+                                        <div class="col-md-12    ">
+                                            <input type="text" id="studentName" name="studentName" readonly required class="form-control  mb-1  " v-model:value="item.studentName">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <div class="text-end">
-                            <button type="button" class="btn mr-5" data-bs-dismiss="modal"> Bỏ qua </button>
-                            <button type="submit" class="btn btn-primary"> Lưu </button>
-                        </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="text-end">
+                        <button type="button" class="btn mr-5" data-bs-dismiss="modal">Đóng </button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -531,41 +488,6 @@
             onResetForm() {
                 this.item = {};
             },
-            onPopupModelEdit(row) {
-                this.item = row;
-                this.item.dateOfBirth = moment(row.dateOfBirth).format('DD/MM/YYYY');
-                this.item = { ...this.item };
-
-
-                this.object.form_tile = "Thông tin học sinh";
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
-            },
-
-            onSubmitFormAddEdit() {
-                if (!validateForm("#FormAddEdit"))
-                    return true;
-
-                $('.loader').show();
-                axios.put('/api/v1/SyncDeviceServer/Edit', this.item, this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login'))
-                        window.location = window.location.href;
-
-                    $('.loader').hide(0);
-                    if (response.data.succeeded) {
-                        _syncD.onLoadData();
-
-                        bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
-                        alertify.success(response.data.message);
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                }).catch(error => {
-                    $('.loader').hide(0);
-
-                });
-            },
-
             onSubmitSync(item) {
                 $('.loader').show();
                 axios.post('/api/v1/SyncDeviceServer/PostSyncItem', item, this.object.config).then(response => {
@@ -578,6 +500,30 @@
                     else {
                         alertify.notify(response.data.message, 'error', 6, function () { });
                     }
+
+              
+                }).catch(error => {
+                    $('.loader').hide(0);
+                });
+            },
+
+            onViewImage(row) {
+                const el = { ...row };
+                this.item = el;
+                axios.get('/api/v1/SyncDeviceServer/GetFaceByPersonId?personId=' + row.personId, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+                    $('.loader').hide(0);
+
+                    if (response.data.succeeded) {
+                        let res = response.data.data;
+                        try { this.item.imageSrc = res.faceData != null ? "data:image/png;base64," + res.faceData : null } catch (Ex) { }
+                        this.item = { ...this.item };
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'warning', 6, function () { });
+                    }
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
                 }).catch(error => {
                     $('.loader').hide(0);
                 });
