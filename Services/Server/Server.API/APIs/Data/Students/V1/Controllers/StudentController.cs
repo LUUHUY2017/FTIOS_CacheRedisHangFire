@@ -156,6 +156,7 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
         {
             try
             {
+                request.OrganizationId = GetOrganizationId();
                 var datas = await _studentService.GetAlls(request);
 
                 if (request.FilterItems != null && request.FilterItems.Count > 0)

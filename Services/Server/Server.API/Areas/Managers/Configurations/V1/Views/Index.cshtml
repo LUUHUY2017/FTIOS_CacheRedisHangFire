@@ -17,7 +17,7 @@
                         if (tab == "cauhinhthoigian")
                             tab_cauhinhthoigian = "active";
 
-                        // string tab_thoigiandiemdanh = "";
+            // string tab_thoigiandiemdanh = "";
                         // if (tab == "thoigiandiemdanh")
                         //     tab_thoigiandiemdanh = "active";
                         // <li class="nav-item">
@@ -43,11 +43,11 @@
                                 Thời gian điểm danh
                             </a>
                         </li>
-                       @*  <li class="nav-item">
-                            <a href="@Url.Action("index", new { tab="thoigiandiemdanh" })" class="nav-link @tab_thoigiandiemdanh">
-                                <i class="ph-house m-2"></i>
-                                Thời gian điểm danh
-                            </a>
+                        @*  <li class="nav-item">
+                        <a href="@Url.Action("index", new { tab="thoigiandiemdanh" })" class="nav-link @tab_thoigiandiemdanh">
+                        <i class="ph-house m-2"></i>
+                        Thời gian điểm danh
+                        </a>
                         </li> *@
                     </ul>
 
@@ -62,12 +62,12 @@
                         </div>
 
                         @* <div class="tab-pane fade mt-1 show @tab_thoigiandiemdanh" role="tabpanel">
-                            @if (tab == "thoigiandiemdanh")
-                            {
-                                <div class="accordion" id="tab_thoigiandiemdanh">
-                                    @await Html.PartialAsync("/Areas/Managers/Configurations/V1/Views/AttendanceTimeConfig.cshtml")
-                                </div>
-                            }
+                        @if (tab == "thoigiandiemdanh")
+                        {
+                        <div class="accordion" id="tab_thoigiandiemdanh">
+                        @await Html.PartialAsync("/Areas/Managers/Configurations/V1/Views/AttendanceTimeConfig.cshtml")
+                        </div>
+                        }
                         </div> *@
                     </div>
 
@@ -75,5 +75,6 @@
             </div>
         </div>
     </div>
+    @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
 </div>
 

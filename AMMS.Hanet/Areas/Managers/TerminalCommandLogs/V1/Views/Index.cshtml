@@ -41,10 +41,10 @@
                         <div class="row mb-3">
                             <div class="col-lg-2">
                                 <label class="form-label">Trạng thái</label>
-                                <select class="form-select" v-model:value="filter.onlineStatus">
+                                <select class="form-select" v-model:value="filter.status">
                                     <option value="">Tất cả</option>
-                                    <option value="success">Thành công</option>
-                                    <option value="fail">Thất bại</option>
+                                    <option value="1">Thành công</option>
+                                    <option value="0">Thất bại</option>
                                 </select>
                             </div>
                             @* <div class="col-lg-3">
@@ -101,24 +101,35 @@
                     align: 'center',
                     formatter: (value, row, index) => {
                         var ele = `<div style="white-space: nowrap; ">`;
-
-                        //if (row.actived) {
-                        //ele += `<a href="javascript: " class="btn btn-sm btn-warning edit" title="Cập nhật đăng ký "><i class="fa fa-pencil" > </i> </a> &nbsp `;
-                        //ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset inactive " title="Ngừng hoạt động "> <i class="fa fa-minus-circle" ></i> </a> &nbsp; `;
-                        //}
-                        //if (!row.actived) {
-                        //    ele += ` <a href="javascript:" class="btn btn-danger btn-sm delete-asset active" title="Kích hoạt "> <i class="fa fa-plus-square" ></i> </a> &nbsp; `;
                         ele += `<a href = "javascript:" class= "btn btn-sm btn-info resend"  title = "Gửi lại" > <i class="fa fa-repeat" > </i>  </a > &nbsp;`;
                         ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset delete " title="Xóa "> <i class="fa fa-trash" ></i> </a> &nbsp; `;
-                        //}
+                        ele += ` <a href="javascript: " class="btn btn-info btn-sm delete-asset info " title="Chi tiết "> <i class="fa fa-info" ></i> </a> &nbsp; `;
                         ele += ` </div>`;
-
                         return ele;
                     },
                     events: {
                         // 'click .edit': function (e, value, row) {
                         //     _terminalCommand.onPopupModelEdit(row, true);
                         // },
+                        'click .delete': function (e, value, row) {
+                            var question = "Bạn có chắc chắn xóa thiết bị này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/TerminalCommandLog/delete', { id: row.id, reason: "" }, _terminalCommand.object.bearerAuthorization).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _terminalCommand.data = [];
+                                        _terminalCommand.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
                     }
                 },
                 {
@@ -161,7 +172,7 @@
                 showExport: false,
                 sortable: true,
                 searchAlign: 'right',
-                paginationHAlign: 'right',
+                paginationHAlign: 'left',
                 paginationDetailHAlign: 'right',
                 pageSize: 25,
                 pageList: [10, 25, 50, 100, 200],
@@ -169,8 +180,7 @@
             filter: {
                 columnTable: "serial_number",
                 actived: true,
-                onlineStatus: "",
-                organizationId: -1,
+                status: "",
                 key: "",
                 export: "0",
             },

@@ -21,7 +21,11 @@ public class TerminalCommandLogService
     {
         try
         {
-            var data = await _dbContext.hanet_commandlog.Where(x => true).ToListAsync();
+            var status = filter.Status == "1";
+            var data = await _dbContext.hanet_commandlog.Where(x => 
+                                                        ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "serial_number") ? x.terminal_sn.Contains(filter.Key) : true) 
+                                                        && (!string.IsNullOrEmpty(filter.Status) ? x.successed == status : true)
+                                                        ).ToListAsync();
             return new Result<List<hanet_commandlog>>(data, $"Thành công!", true);
         }
         catch (Exception ex)
