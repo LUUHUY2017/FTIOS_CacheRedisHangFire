@@ -135,6 +135,136 @@ public class StudentService
         }
     }
 
+
+    /// <summary>
+    /// Lấy danh sách học sinh AMMS
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<IQueryable<DtoStudentResponse>> GetAlls(StudentSearchRequest request)
+    {
+        try
+        {
+            bool actived = request.Actived == "1" ? true : false;
+            var _data = (from _do in _dbContext.Student
+
+                         join _la in _dbContext.PersonFace on _do.Id equals _la.PersonId into K
+                         from la in K.DefaultIfEmpty()
+                         where _do.Actived == actived
+                            && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
+
+                         orderby _do.ClassName ascending, _do.Name ascending
+
+                         select new DtoStudentResponse()
+                         {
+                             Id = _do.Id,
+                             Actived = _do.Actived,
+                             CreatedDate = _do.CreatedDate,
+                             LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
+                             StudentCode = _do.StudentCode,
+                             SyncCode = _do.SyncCode,
+                             ReferenceId = _do.ReferenceId,
+                             OrganizationId = _do.OrganizationId,
+
+                             FullName = _do.FullName,
+                             Name = _do.Name,
+                             DateOfBirth = _do.DateOfBirth,
+
+                             GenderCode = _do.GenderCode,
+                             ImageSrc = _do.ImageSrc,
+                             ClassId = _do.ClassId,
+                             ClassName = _do.ClassName,
+
+                             IsExemptedFull = _do.IsExemptedFull,
+                             StatusCode = _do.StatusCode,
+                             Status = _do.Status,
+                             FullNameOther = _do.FullNameOther,
+                             EthnicCode = _do.EthnicCode,
+                             PolicyTargetCode = _do.PolicyTargetCode,
+                             PriorityEncourageCode = _do.PriorityEncourageCode,
+
+                             SyncCodeClass = _do.SyncCodeClass,
+                             IdentifyNumber = _do.IdentifyNumber,
+                             StudentClassId = _do.StudentClassId,
+                             SortOrder = _do.SortOrder,
+                             SortOrderByClass = _do.SortOrderByClass,
+                             GradeCode = _do.GradeCode,
+
+                             ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null,
+                             IsFace = la != null ? true : false,
+                             IsFaceName = la != null ? "Có" : "Không",
+                         });
+
+            return _data;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+    /// <summary>
+    /// Bộ lọc tìm kiếm
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public async Task<IQueryable<DtoStudentResponse>> ApplyFilter(IQueryable<DtoStudentResponse> query, FilterItems filter)
+    {
+        switch (filter.PropertyName.ToLower())
+        {
+            case "fullname":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.FullName.Contains(filter.Value.Trim()));
+                break;
+            case "studentcode":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
+                break;
+            case "classid":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.ClassId.Contains(filter.Value.Trim()));
+                break;
+            case "organizationid":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.OrganizationId.Contains(filter.Value.Trim()));
+                break;
+            case "classname":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
+                break;
+            case "synccode":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.SyncCode.Contains(filter.Value.Trim()));
+                break;
+
+            case "gradecode":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.GradeCode.Contains(filter.Value.Trim()));
+                break;
+
+            case "status":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.Status.Contains(filter.Value.Trim()));
+                break;
+
+            case "isfacename":
+                if (!string.IsNullOrWhiteSpace(filter.Value))
+                    query = query.Where(p => p.IsFaceName.Contains(filter.Value.Trim()));
+                break;
+            case "identifynumber":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.IdentifyNumber.Contains(filter.Value.Trim()));
+                break;
+
+
+
+            default:
+                break;
+        }
+        return query;
+    }
+
+
     /// <summary>
     /// Cập nhật trạng thái đồng bộ từ RabbitMQ
     /// </summary>
@@ -163,6 +293,7 @@ public class StudentService
         }
         return statusSync;
     }
+
 
     /// <summary>
     /// Lưu thông tin học sinh vào AMMS, ảnh khuôn mặt
@@ -242,137 +373,6 @@ public class StudentService
         }
 
     }
-
-
-    /// <summary>
-    /// Lấy danh sách học sinh AMMS
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    public async Task<IQueryable<DtoStudentResponse>> GetAlls(StudentSearchRequest request)
-    {
-        try
-        {
-            bool actived = request.Actived == "1" ? true : false;
-            var _data = (from _do in _dbContext.Student
-
-                         join _la in _dbContext.PersonFace on _do.Id equals _la.PersonId into K
-                         from la in K.DefaultIfEmpty()
-                         where _do.Actived == actived
-                            && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
-
-                         orderby _do.ClassName ascending, _do.Name ascending
-
-                         select new DtoStudentResponse()
-                         {
-                             Id = _do.Id,
-                             Actived = _do.Actived,
-                             CreatedDate = _do.CreatedDate,
-                             LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
-                             StudentCode = _do.StudentCode,
-                             SyncCode = _do.SyncCode,
-                             ReferenceId = _do.ReferenceId,
-                             OrganizationId = _do.OrganizationId,
-
-                             FullName = _do.FullName,
-                             Name = _do.Name,
-                             DateOfBirth = _do.DateOfBirth,
-
-                             GenderCode = _do.GenderCode,
-                             ImageSrc = _do.ImageSrc,
-                             ClassId = _do.ClassId,
-                             ClassName = _do.ClassName,
-
-                             IsExemptedFull = _do.IsExemptedFull,
-                             StatusCode = _do.StatusCode,
-                             Status = _do.Status,
-                             FullNameOther = _do.FullNameOther,
-                             EthnicCode = _do.EthnicCode,
-                             PolicyTargetCode = _do.PolicyTargetCode,
-                             PriorityEncourageCode = _do.PriorityEncourageCode,
-
-                             SyncCodeClass = _do.SyncCodeClass,
-                             IdentifyNumber = _do.IdentifyNumber,
-                             StudentClassId = _do.StudentClassId,
-                             SortOrder = _do.SortOrder,
-                             SortOrderByClass = _do.SortOrderByClass,
-                             GradeCode = _do.GradeCode,
-
-                             ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null,
-                             IsFace = la != null ? true : false,
-                             IsFaceName = la != null ? "Có" : "Không",
-                         });
-
-            return _data;
-        }
-        catch (Exception ex)
-        {
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// Bộ lọc tìm kiếm
-    /// </summary>
-    /// <param name="query"></param>
-    /// <param name="filter"></param>
-    /// <returns></returns>
-    public async Task<IQueryable<DtoStudentResponse>> ApplyFilter(IQueryable<DtoStudentResponse> query, FilterItems filter)
-    {
-        switch (filter.PropertyName.ToLower())
-        {
-            case "fullname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.FullName.Contains(filter.Value.Trim()));
-                break;
-            case "studentcode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
-                break;
-            case "classid":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.ClassId.Contains(filter.Value.Trim()));
-                break;
-            case "organizationid":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.OrganizationId.Contains(filter.Value.Trim()));
-                break;
-            case "classname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
-                break;
-            case "synccode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.SyncCode.Contains(filter.Value.Trim()));
-                break;
-
-            case "gradecode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.GradeCode.Contains(filter.Value.Trim()));
-                break;
-
-            case "status":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.Status.Contains(filter.Value.Trim()));
-                break;
-
-            case "isfacename":
-                if (!string.IsNullOrWhiteSpace(filter.Value))
-                    query = query.Where(p => p.IsFaceName.Contains(filter.Value.Trim()));
-                break;
-            case "identifynumber":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.IdentifyNumber.Contains(filter.Value.Trim()));
-                break;
-
-
-
-            default:
-                break;
-        }
-        return query;
-    }
-
     /// <summary>
     /// Lưu thông tin học sinh từ SMAS
     /// </summary>
@@ -406,7 +406,6 @@ public class StudentService
         }
 
     }
-
     /// <summary>
     /// Lưu ảnh học sinh từ Hanet
     /// </summary>
@@ -468,6 +467,8 @@ public class StudentService
         }
 
     }
+
+
 
     /// <summary>
     /// Đẩy 1 học sinh xuống toàn bộ thiết bị
@@ -692,4 +693,21 @@ public class StudentService
         return list_Sync;
     }
 
+
+    public async Task<Result<PersonFace>> GetFaceByPersonId(string personId)
+    {
+        try
+        {
+            var _devis = await _dbContext.PersonFace.FirstOrDefaultAsync(o => o.PersonId == personId);
+            if (_devis == null)
+                return new Result<PersonFace>($"Không có ảnh khuôn mặt", false);
+
+            return new Result<PersonFace>(_devis, $"Cập nhật thành công", true);
+        }
+        catch (Exception ex)
+        {
+            Logger.Warning(ex.Message);
+            return new Result<PersonFace>($"Lỗi: " + ex.Message, false);
+        }
+    }
 }
