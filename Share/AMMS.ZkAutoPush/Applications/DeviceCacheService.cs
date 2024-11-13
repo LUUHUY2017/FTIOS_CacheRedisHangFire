@@ -41,6 +41,7 @@ public class DeviceCacheService
                 {
                     obj = new zk_terminal();
                     obj.sn = serialNumber;
+                    obj.name = serialNumber;
                     obj.Id = Guid.NewGuid().ToString();
                     obj.create_time = DateTime.Now;
                     _dbContext.zk_terminal.Add(obj);
