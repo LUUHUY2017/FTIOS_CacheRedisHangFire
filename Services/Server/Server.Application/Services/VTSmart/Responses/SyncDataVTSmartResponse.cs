@@ -52,7 +52,7 @@
 
     public class StudenSmasApiResponse
     {
-        public string? SyncCode { get; set; }
+        public string? SyncCodeSSO { get; set; }
         public string? StudentCode { get; set; }
         public string? StudentName { get; set; }
         public string? ClassName { get; set; }

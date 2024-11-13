@@ -132,7 +132,7 @@ public class CronJobService : ICronJobService
 
                     var el = new Student()
                     {
-                        SyncCode = item.SyncCode,
+                        SyncCode = item.SyncCodeSSO,
                         StudentCode = item.StudentCode,
                         ClassId = item.ClassId,
                         ClassName = item.ClassName,

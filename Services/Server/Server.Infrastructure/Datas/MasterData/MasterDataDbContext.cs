@@ -79,6 +79,15 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
     {
         base.OnModelCreating(modelBuilder);
 
+
+        //modelBuilder.Entity<TimeAttendenceEvent>()
+        //    .HasIndex(te => te.EventTime)
+        //    .HasDatabaseName("IX_TimeAttendenceEvent_EventTime");
+
+        //modelBuilder.Entity<TimeAttendenceEvent>()
+        //.HasIndex(te => te.CreatedDate)
+        //.HasDatabaseName("IX_TimeAttendenceEvent_CreatedDate");
+
         //modelBuilder.HasDefaultSchema("Identity"); //Tạo Schema
 
         //modelBuilder.Entity<ApplicationUser>(entity =>
