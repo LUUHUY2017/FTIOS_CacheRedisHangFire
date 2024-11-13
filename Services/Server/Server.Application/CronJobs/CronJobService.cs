@@ -215,7 +215,7 @@ public class CronJobService : ICronJobService
                 studentAbsenceByDevices = studentAbs,
             };
 
-            Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
+            //Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
             var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
             Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
 
@@ -223,7 +223,6 @@ public class CronJobService : ICronJobService
                 return;
 
             datas.ForEach(o => { o.EventType = true; });
-
 
             try
             {

@@ -105,12 +105,11 @@ public class TimeAttenceEventController : AuthBaseAPIController
         {
             request.OrganizationId = GetOrganizationId();
             var items = await _timeService.GetAlls(request);
+
             int totalAmount = await items.CountAsync();
-
-            var req = _mapper.Map<AttendenceSyncReportFilterReq>(request);
-            var syncs = await _timeSyncService.GetAlls(req);
-
-            int totalFace = await syncs.CountAsync(o => o.SyncStatus == true);
+            //var req = _mapper.Map<AttendenceSyncReportFilterReq>(request);
+            //var syncs = await _timeSyncService.GetAlls(req);
+            int totalFace = await items.CountAsync(o => o.EventType == true);
             int totalCurrent = totalAmount - totalFace;
 
             //#region Type
