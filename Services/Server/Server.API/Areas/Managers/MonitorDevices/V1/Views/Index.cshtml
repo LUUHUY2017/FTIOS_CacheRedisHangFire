@@ -262,16 +262,8 @@
     function offAllDevice() {
         //console.log("Không nhận được dữ liệu trong vòng 10 phút.");
         if (_mDevice.checkSignalR) {
-            let dataPost = [];
-            for (var i = 0; i < _mDevice.devicesAll.length; i++) {
-                dataPost.push({
-                    serialNumber: _mDevice.devicesAll[i].serialNumber,
-                    connectionStatus: false,
-                    connectUpdateTime: new Date()
-                });
-            }
-            _mDevice.updateStatus(dataPost);
-            _mDevice.loadData();
+            //console.log("Đã vào");
+            _mDevice.offAllDeviceDb();
             _mDevice.checkSignalR = false;
         }
         
@@ -283,7 +275,7 @@
     connection.on("RefreshDevice", function (data) {
         _mDevice.checkSignalR = true;
         var data1s = JSON.parse(data);
-        //console.log(data1);
+
         var listUpdate = [];
         for (var i = 0; i < data1s.length; i++) {
             var data1 = data1s[i];
@@ -297,11 +289,11 @@
                 deviceToUpdate.connectionStatus = data1.connectionStatus;
                 deviceToUpdate.checkConnectTime = data1.connectUpdateTime;
                 if (data1.connectionStatus) {
-                    deviceToUpdate.connectUpdateTime = data1.connectUpdateTime;
+                    deviceToUpdate.connectUpdateTime = data1.time_online;
                 }
                 else
                 {
-                    deviceToUpdate.disConnectUpdateTime = data1.connectUpdateTime;
+                    deviceToUpdate.disConnectUpdateTime = data1.time_offline;
                 }
                 listUpdate.push(data1);
             }
@@ -313,9 +305,6 @@
 
         drawChart(_mDevice.devicesAll, 'devices-online');
         drawChart(_mDevice.data, 'devices-online-filter');
-        //Update db
-        //console.log(listUpdate);
-        _mDevice.updateStatus(listUpdate);
         //console.log("Đã đặt lại thời gian.");
         clearInterval(timeoutHandle);
         timeoutHandle = setInterval(offAllDevice, TIMEOUT_DURATION);
@@ -493,7 +482,7 @@
                 showExport: false,
                 sortable: true,
                 searchAlign: 'right',
-                paginationHAlign: 'right',
+                paginationHAlign: 'left',
                 paginationDetailHAlign: 'right',
                 pageSize: 25,
                 pageList: [10, 25, 50, 100, 200],
@@ -562,6 +551,16 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+                }).catch(error => {
+                    console.log(error);
+                });
+            },
+            offAllDeviceDb() {
+                axios.get('/api/v1/MonitorDevice/OffAllDevice', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.loadData();
                 }).catch(error => {
                     console.log(error);
                 });
