@@ -49,7 +49,7 @@ public class TimeAttendenceEventConsumer : IConsumer<RB_DataResponse>
                 var dataAte = JsonConvert.DeserializeObject<TA_AttendenceImage>(dataRes.Content);
                 if (dataAte != null)
                 {
-                    await _timeAttendenceEventService.ProcessAttendenceImage(dataAte.ImageBase64, dataAte.AttendenceHistoryId);
+                    //await _timeAttendenceEventService.ProcessAttendenceImage(dataAte.ImageBase64, dataAte.AttendenceHistoryId);
                 }
             }
 

@@ -182,12 +182,10 @@ public class CronJobService : ICronJobService
             if (orgRes == null)
                 return;
 
-
             // Lấy dữ liệu theo block gửi qua api
-            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.SchoolCode == orgRes.OrganizationCode && o.EventType != true).OrderBy(o => o.EventTime).Take(30).ToListAsync();
+            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.OrganizationId == orgRes.Id && o.EventType != true).OrderBy(o => o.EventTime).Take(30).ToListAsync();
             if (datas.Count == 0)
                 return;
-
 
             var studentAbs = new List<StudentAbsence>();
             foreach (var item in datas)
