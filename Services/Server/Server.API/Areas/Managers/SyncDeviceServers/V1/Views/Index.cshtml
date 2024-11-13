@@ -142,7 +142,7 @@
                                             <td><span>{{index  +1 }}</span></td>
                                             <td><a v-on:click="onSubmitSync(item)" class="btn btn-sm btn-info edit" title="Đồng bộ lại "> <i class="fa fa-refresh"> </i> </a></td>
                                             <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
-                                            <td style=" white-space: nowrap;cursor:pointer" v-on:click="onViewImage(item)"><a>{{item.studentName}}</a></td>
+                                            <td style=" white-space: nowrap;cursor:pointer" v-on:click="onViewImage(item)"><a style="text-decoration: underline;">{{item.studentName}}</a></td>
                                             <td style=" white-space: nowrap;"><span>{{item.deviceName}}</span></td>
                                             <td style=" white-space: nowrap;"><span>{{item.synAction}}</span></td>
                                             <td style=" white-space: nowrap;">
@@ -239,7 +239,7 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label  text-nowrap fw-bold mb-1">Họ và tên </label>
                                         <div class="col-md-12    ">
-                                            <input type="text" id="fullName" name="fullName" readonly required class="form-control  mb-1  " v-model:value="item.fullName">
+                                            <input type="text" id="studentName" name="studentName" readonly required class="form-control  mb-1  " v-model:value="item.studentName">
                                         </div>
                                     </div>
                                 </div>
@@ -508,21 +508,20 @@
             },
 
             onViewImage(row) {
-                $('.loader').show();
                 const el = { ...row };
                 this.item = el;
-
                 axios.get('/api/v1/SyncDeviceServer/GetFaceByPersonId?personId=' + row.personId, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
                     $('.loader').hide(0);
+
                     if (response.data.succeeded) {
                         let res = response.data.data;
                         try { this.item.imageSrc = res.faceData != null ? "data:image/png;base64," + res.faceData : null } catch (Ex) { }
                         this.item = { ...this.item };
                     }
                     else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
+                        alertify.notify(response.data.message, 'warning', 6, function () { });
                     }
                     bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
                 }).catch(error => {
