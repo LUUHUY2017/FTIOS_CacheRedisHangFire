@@ -112,7 +112,6 @@ public class IclockController : ControllerBase
     [HttpPost("cdata")]
     public async Task<string> cdata(string sn, string table)
     {
-        Logger.Warning($"cdata: method: {Request.Method}, sn: {sn},  table: {table}");
         try
         {
             var req = HttpContext.Request;
@@ -121,7 +120,7 @@ public class IclockController : ControllerBase
             string content = "";
             using (StreamReader reader = new StreamReader(req.Body, Encoding.UTF8, true, 4096, true))
                 content = reader.ReadToEndAsync().Result;
-            //Logger.Warning(content);
+            //Logger.Warning($"cdata: method: {Request.Method}, sn: {sn},  table: {table}, content: {content}");
 
             //Đẩy dữ liệu lên RabbitMQ
             ZK_TA_DATA data = new ZK_TA_DATA();
