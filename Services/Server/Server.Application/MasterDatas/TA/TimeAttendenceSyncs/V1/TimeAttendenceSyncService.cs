@@ -259,6 +259,25 @@ public partial class TimeAttendenceSyncService
             return new Result<TimeAttendenceEvent>($"Lỗi đồng bộ: " + ex.Message, false);
         }
     }
+    public async Task<Result<TimeAttendenceEvent>> PostAgain()
+    {
+        try
+        {
+            // Tìm các Id từ bảng timeattendenceevent mà không có bản ghi tương ứng trong timeattendencesync
+            var idsWithoutSync = await _dbContext.TimeAttendenceEvent.Where(e => !_dbContext.TimeAttendenceSync.Any(s => s.TimeAttendenceEventId == e.Id)).Select(e => e.Id).ToListAsync();
+            // Cập nhật EventType cho các bản ghi có Id trong danh sách idsWithoutSync
+            var eventsToUpdate = await _dbContext.TimeAttendenceEvent.Where(e => idsWithoutSync.Contains(e.Id)).ToListAsync();
 
+            foreach (var eventItem in eventsToUpdate)
+                eventItem.EventType = false;
+            // Lưu thay đổi vào cơ sở dữ liệu
+            await _dbContext.SaveChangesAsync();
+            return new Result<TimeAttendenceEvent>($"Thành công", true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<TimeAttendenceEvent>($"Lỗi: " + ex.Message, false);
+        }
+    }
 }
 

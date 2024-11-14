@@ -205,12 +205,36 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
         }
     }
 
+    /// <summary>
+    /// ĐỒng bộ lại 1 bản ghi
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("PostSyncItem")]
     public async Task<IActionResult> PostSyncItem(AttendenceSyncReportRes request)
     {
         try
         {
             var retval = await _timeService.SyncAttendenceToSmas(request.TimeAttendenceEventId);
+            return Ok(retval);
+        }
+        catch (Exception ex)
+        {
+            return Ok(new Result<object>("Lỗi:" + ex.Message, false));
+        }
+    }
+
+    /// <summary>
+    /// Chạy lại bản tin bị misss
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("PostAgain")]
+    public async Task<IActionResult> PostAgain(AttendenceSyncReportRes request)
+    {
+        try
+        {
+            var retval = await _timeService.PostAgain();
             return Ok(retval);
         }
         catch (Exception ex)
