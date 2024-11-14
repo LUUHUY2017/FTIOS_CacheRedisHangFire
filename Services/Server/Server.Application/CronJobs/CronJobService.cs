@@ -239,6 +239,7 @@ public class CronJobService : ICronJobService
                         CreatedDate = DateTime.Now,
                         LastModifiedDate = DateTime.Now,
                     };
+                    _listLog.Add(log);
                 }
 
                 await _dbContext.TimeAttendenceSync.AddRangeAsync(_listLog);

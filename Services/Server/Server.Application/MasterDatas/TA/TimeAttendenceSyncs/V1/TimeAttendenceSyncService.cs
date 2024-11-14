@@ -229,6 +229,7 @@ public partial class TimeAttendenceSyncService
                         if (sync.SyncStatus != true)
                             sync.SyncStatus = ite.status;
 
+
                         sync.Message += $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}\r\n";
                         sync.LastModifiedDate = DateTime.Now;
                     }
