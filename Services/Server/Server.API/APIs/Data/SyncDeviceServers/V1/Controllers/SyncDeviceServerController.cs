@@ -110,8 +110,6 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
             try
             {
                 request.OrganizationId = GetOrganizationId();
-                request.StartDate = null;
-                request.EndDate = null;
                 var items = await _syncDeviceService.GetAlls(request);
 
                 if (request.FilterItems != null && request.FilterItems.Count > 0)

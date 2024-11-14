@@ -503,7 +503,7 @@
                         alertify.notify(response.data.message, 'error', 6, function () { });
                     }
 
-              
+
                 }).catch(error => {
                     $('.loader').hide(0);
                 });
@@ -519,7 +519,8 @@
 
                     if (response.data.succeeded) {
                         let res = response.data.data;
-                        try { this.item.imageSrc = res.faceData != null ? "data:image/png;base64," + res.faceData : null } catch (Ex) { }
+                        // try { this.item.imageSrc = res.faceData != null ? "data:image/png;base64," + res.faceData : null } catch (Ex) { }
+                        try { this.item.imageSrc = "/" + res.faceUrl } catch (Ex) { }
                         this.item = { ...this.item };
                     }
                     else {
