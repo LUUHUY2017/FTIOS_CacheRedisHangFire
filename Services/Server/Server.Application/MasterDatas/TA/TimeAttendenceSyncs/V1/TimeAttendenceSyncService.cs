@@ -74,14 +74,15 @@ public partial class TimeAttendenceSyncService
                              Id = _do.Id,
                              Actived = _do.Actived,
                              CreatedDate = _do.CreatedDate,
-                             LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
+                             LastModifiedDate = la != null ? la.CreatedDate : _do.LastModifiedDate,
+
                              CreatedBy = _do.CreatedBy,
                              ReferenceId = _do.ReferenceId,
                              TimeAttendenceEventId = _do.Id,
                              AbsenceDate = _do.AbsenceDate,
                              EventTime = _do.EventTime,
                              OrganizationId = _do.OrganizationId,
-
+                             AttendenceSection = _do.AttendenceSection,
 
                              StudentCode = st != null ? st.StudentCode : "",
                              StudentName = st != null ? st.FullName : "",
@@ -94,7 +95,7 @@ public partial class TimeAttendenceSyncService
                              SyncStatus = la != null ? la.SyncStatus : null,
                              ParamResponses = la != null ? la.ParamResponses : null,
                              ParamRequests = la != null ? la.ParamRequests : null,
-                             AttendenceSection = _do.AttendenceSection,
+
                          });
 
             return _data;
