@@ -7,6 +7,7 @@ using EventBus.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Drawing.Imaging;
 using System.Text;
 
 namespace AMMS.Hanet.APIControllers;
@@ -146,7 +147,16 @@ public class DeviceController : ControllerBase
             foreach (var item in top100Data)
             {
                 if (item.departmentID != "8235")
-                    await _HANET_Device_Reponse_Service.AddUserData(item);
+                {
+                    //Tìm học sinh
+                    var user = await _HANET_Device_Reponse_Service.FindUserFromHanet(item.aliasID);
+                    if (user != null)
+                    {
+                        item.aliasID = user.StudentCode;
+                        await _HANET_Device_Reponse_Service.AddUserData(item);
+
+                    }
+                }
             }
             countData = top100Data.Count;
             totalData += countData;
@@ -177,13 +187,13 @@ public class DeviceController : ControllerBase
             {
                 var data = await _HANET_Device_Reponse_Service.AddTransactionHistoryLog(item);
 
-                if (data != null && item != null)
+                if (data != null && item != null && !string.IsNullOrEmpty(item.aliasID))
                 {
                     long milliSec = item.checkinTime.Value;
                     DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(milliSec);
                     DateTime utc7DateTime = dateTimeOffset.ToOffset(TimeSpan.FromHours(7)).DateTime;
                     //Tìm học sinh
-                    var user = await _viettelDbContext.Student.FirstOrDefaultAsync(x => x.SyncCode == item.aliasID);
+                    var user = await _HANET_Device_Reponse_Service.FindUserFromHanet(item.aliasID);
 
                     if (user != null)
                     {
@@ -207,6 +217,30 @@ public class DeviceController : ControllerBase
                         var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
 
                         await aa.Send(rB_Response);
+
+                        //Đẩy lại ảnh
+                        var image = _HANET_Device_Reponse_Service.ConvertImage(item.avatar, data.id + ".jpg", ImageFormat.Jpeg);
+
+
+                        TA_AttendenceImage tA_AttendenceImage = new TA_AttendenceImage()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            ImageBase64 = image,
+                            PersonCode = user.StudentCode,
+                            SerialNumber = data.deviceID,
+                            TimeEvent = utc7DateTime,
+                            AttendenceHistoryId = data.id,
+                        };
+
+                        RB_DataResponse rB_DataResponse = new RB_DataResponse()
+                        {
+                            Id = tA_AttendenceImage.Id,
+                            Content = JsonConvert.SerializeObject(tA_AttendenceImage),
+                            ReponseType = RB_DataResponseType.AttendenceImage,
+                        };
+
+                        var aa2 = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
+                        await aa2.Send(rB_DataResponse);
                     }
                 }
             }
