@@ -114,6 +114,8 @@
 
     <Compile Include="APIs\Data\ScheduleJobs\V1\Requests\ScheduleJobLogFilter.cs" />
 
+    <Compile Include="APIs\Data\ScheduleSendMails\V1\Mappers\AutoMappers.cs" />
+
     <Compile Include="APIs\Data\Students\V1\Controllers\StudentController.cs" />
 
     <Compile Include="APIs\Data\StudentSmas\V1\Controllers\StudentSmasController.cs" />

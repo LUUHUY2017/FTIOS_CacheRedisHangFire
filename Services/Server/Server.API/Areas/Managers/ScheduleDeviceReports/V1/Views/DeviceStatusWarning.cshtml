@@ -503,7 +503,7 @@
                         'click .delete': function (e, value, row) {
                             var question = "Bạn có chắc chắn muốn xóa dòng này khỏi cơ sở dữ liệu không? sau khi xóa không khôi phục lại được!";
                             alertify.confirm('Thông báo!', question, function () {
-                                axios.post('/api/v1/ScheduleSendEmailDetail/Delete', { id: row.id, reason: "deleted" }, _deviceStatus.object.config).then(response => {
+                                axios.post('/api/v1/ScheduleSendEmailDetail/Delete', { id: row.id, reason: "deleted" }, _deviceStatus.object.bearerAuthorization).then(response => {
                                     if (response.data.succeeded) {
                                         alertify.success(response.data.message);
                                         _deviceStatus.onGetDetail();
@@ -680,7 +680,7 @@
 
             onGetDetail() {
                 $('.loader').show();
-                axios.get('/api/v1/ScheduleSendEmailDetail/Get?sheduleId=' + this.item.id, this.object.config).then(response => {
+                axios.get('/api/v1/ScheduleSendEmailDetail/Get?sheduleId=' + this.item.id, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 
@@ -696,7 +696,7 @@
 
             onResend(row) {
                 $('.loader').show();
-                axios.get('/api/v1/DeviceNotification/Resend?id=' + row.id, this.object.config).then(response => {
+                axios.get('/api/v1/DeviceNotification/Resend?id=' + row.id, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
                     $('.loader').delay(100).hide(0);
@@ -719,7 +719,7 @@
 
                 this.item_add.scheduleId = this.item.id;
 
-                axios.post('/api/v1/ScheduleSendEmailDetail/Edit', this.item_add, this.object.config).then(response => {
+                axios.post('/api/v1/ScheduleSendEmailDetail/Edit', this.item_add, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 

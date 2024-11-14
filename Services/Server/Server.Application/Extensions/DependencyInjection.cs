@@ -66,6 +66,7 @@ using Share.Core.Pagination;
 using Shared.Core.Caches.Redis;
 using Shared.Core.Emails.V1;
 using Shared.Core.Emails.V1.Adapters;
+using Shared.Core.Emails.V1.Commons;
 using Shared.Core.Repositories;
 using Shared.Core.SignalRs;
 using System.Reflection;
@@ -108,8 +109,8 @@ public static class DependencyInjection
         // Đăng ký dịch vụ Email
         services.AddScoped<SendEmailMessageService1>();
         services.AddScoped<EmailSenderServiceV1>();
-        //services.AddScoped<EmailRabbitMQConsummerV1>();
-        //services.AddScoped<SendEmailMessageResponseConsumer1>();
+        services.AddScoped<EmailRabbitMQConsummerV1>();
+        services.AddScoped<SendEmailMessageResponseConsumer1>();
 
         // Đăng ký dịch vụ SyncDevice&Ta
         services.AddScoped<TimeAttendenceEventService>();
@@ -126,8 +127,8 @@ public static class DependencyInjection
         services.AddMassTransit(config =>
         {
             // Đăng ký dịch vụ nghe vào Rabbbit
-            //config.AddConsumer<EmailRabbitMQConsummerV1>();
-            //config.AddConsumer<SendEmailMessageResponseConsumer1>();
+            config.AddConsumer<EmailRabbitMQConsummerV1>();
+            config.AddConsumer<SendEmailMessageResponseConsumer1>();
 
 
             ////Đăng ký xử lý bản tin data XML của Brickstream
@@ -180,16 +181,16 @@ public static class DependencyInjection
 
 
                 #region Email 
-                ////Email Sending
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EmailConst.EventBusChanelSendEmail}", c =>
-                //{
-                //    c.ConfigureConsumer<EmailRabbitMQConsummerV1>(ct);
-                //});
-                ////Email Receiving
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EmailConst.EventBusChanelSendEmailResponse}", c =>
-                //{
-                //    c.ConfigureConsumer<SendEmailMessageResponseConsumer1>(ct);
-                //});
+                //Email Sending
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EmailConst.EventBusChanelSendEmail}", c =>
+                {
+                    c.ConfigureConsumer<EmailRabbitMQConsummerV1>(ct);
+                });
+                //Email Receiving
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EmailConst.EventBusChanelSendEmailResponse}", c =>
+                {
+                    c.ConfigureConsumer<SendEmailMessageResponseConsumer1>(ct);
+                });
                 #endregion
 
 

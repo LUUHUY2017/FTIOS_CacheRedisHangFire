@@ -2,7 +2,7 @@
 
 public class ScheduleSendEmailDetailRequest
 {
-    public int? Id { get; set; }
+    public string? Id { get; set; }
 
     public int? OrganizationId { get; set; }
 
@@ -17,7 +17,7 @@ public class ScheduleSendEmailDetailRequest
     /// <summary>
     /// Tên lịch báo cáo
     /// </summary>
-    public int? ScheduleId { get; set; }
+    public string? ScheduleId { get; set; }
 
     /// <summary>
     /// Email nhận báo cáo

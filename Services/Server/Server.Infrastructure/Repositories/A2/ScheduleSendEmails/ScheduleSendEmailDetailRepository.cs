@@ -52,7 +52,7 @@ public class ScheduleSendEmailDetailRepository : IScheduleSendEmailDetailReposit
             {
                 _orderDetail = new ScheduleSendMailDetail();
                 data.CopyPropertiesTo(_orderDetail);
-                _db.ScheduleSendMailDetail.Update(_orderDetail);
+                await _db.ScheduleSendMailDetail.AddAsync(_orderDetail);
                 message = "Thêm mới thành công";
             }
 

@@ -49,7 +49,7 @@ public class ScheduleSendEmailDetailController : AuthBaseAPIController
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    [HttpPut("Edit")]
+    [HttpPost("Edit")]
     public async Task<ActionResult> Edit(ScheduleSendEmailDetailRequest request)
     {
         try
