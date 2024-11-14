@@ -530,12 +530,32 @@
 
                 this.item = el;
                 try { this.item.dateOfBirth1 = ConvertDinhDangNgay(el.dateOfBirth); } catch (Ex) { }
-                try { this.item.imageSrc = el.imageBase64 != null ? "data:image/png;base64," + el.imageBase64 : null } catch (Ex) { }
-                this.item = { ...this.item };
+                // try { this.item.imageSrc = el.imageBase64 != null ? "data:image/png;base64," + el.imageBase64 : null } catch (Ex) { }
+                // this.item = { ...this.item };
+
+                this.onViewImage(this.item);
 
                 this.object.form_tile = "Thông tin học sinh";
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
             },
+
+            onViewImage(row) {
+                axios.get('/api/v1/Student/GetFaceByPersonId?personId=' + row.id, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+                    $('.loader').hide(0);
+                    if (response.data.succeeded) {
+                        let res = response.data.data;
+                        try { this.item.imageSrc = res.faceData != null ? "data:image/png;base64," + res.faceData : null } catch (Ex) { }
+                        this.item = { ...this.item };
+                    }
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+                }).catch(error => {
+                    $('.loader').hide(0);
+                });
+            },
+
+
 
             onSubmitFormAddEdit() {
                 if (!validateForm("#FormAddEdit"))
