@@ -28,7 +28,12 @@ public class DeviceCacheService
         serialNumber = serialNumber.ToUpper();
 
         var entity = await _cacheService.GetData<zk_terminal>(GetKey(serialNumber));
-     
+        //Kiểm tra trong CSDL nếu caches không có
+        if (entity == null)
+        {
+            entity = _dbContext.zk_terminal.FirstOrDefault(x => x.sn == serialNumber);
+        }
+
         return entity;
     }
     public async Task<zk_terminal> Set(zk_terminal data)
