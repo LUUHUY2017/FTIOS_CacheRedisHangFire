@@ -106,6 +106,16 @@ public partial class PagesConst
         CategoryMenu = Category.ThietLap.Id,
     };
 
+    public static readonly PageObject URL_V1_OrganizationAdmin = new PageObject
+    {
+        Id = "9614c34d-e84e-4434-a834-42e966f39d5d",
+        Name = "Trường học",
+        Url = "V1/OrganizationAdmin",
+        Module = Module.Master,
+        RolePermission = RoleConst.SuperAdmin_Role,
+        CategoryMenu = Category.ThietLap.Id,
+    };
+
     public static readonly PageObject URL_V1_MonitorDevice = new PageObject
     {
         Id = "257961e3-0ed6-480f-a414-ce7341818d65",
@@ -178,6 +188,7 @@ public partial class PagesConst
             _ListMenu.Add(URL_V1_DeviceSuperAdmin);
             _ListMenu.Add(URL_V1_DeviceAdmin);
             _ListMenu.Add(URL_V1_Organization);
+            _ListMenu.Add(URL_V1_OrganizationAdmin);
             _ListMenu.Add(URL_V1_MonitorDevice);
 
             _ListMenu.Add(URL_V1_Configuration);

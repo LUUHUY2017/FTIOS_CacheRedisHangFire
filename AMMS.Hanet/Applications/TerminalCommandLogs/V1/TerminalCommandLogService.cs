@@ -34,6 +34,19 @@ public class TerminalCommandLogService
         }
     }
 
+    public async Task<Result<hanet_commandlog>> GetDetail(string id)
+    {
+        try
+        {
+            var data = await _dbContext.hanet_commandlog.FirstOrDefaultAsync(x => x.Id == id);
+            return new Result<hanet_commandlog>(data, $"Thành công!", true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<hanet_commandlog>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
     public async Task<Result<int>> Delete(DeleteRequest request)
     {
         try

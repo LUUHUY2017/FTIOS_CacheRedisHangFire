@@ -16,6 +16,12 @@ public class TerminalCommandLogController : ControllerBase
         _terminalCommandLogService = terminalCommandLogService;
     }
 
+    [HttpGet("GetDetail")]
+    public async Task<IActionResult> GetDetail(string id)
+    {
+        return Ok(await _terminalCommandLogService.GetDetail(id));
+    }
+
     [HttpPost("GetsFilter")]
     public async Task<IActionResult> GetsFilter(TerminalCommandLogFilter filter)
     {
