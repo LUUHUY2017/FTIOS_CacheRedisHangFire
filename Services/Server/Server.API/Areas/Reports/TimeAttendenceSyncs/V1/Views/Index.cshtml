@@ -2,6 +2,17 @@
     ViewData["Title"] = "Lịch sử đồng bộ điểm danh";
     Layout = "~/Views/Shared/_LayoutManage.cshtml";
 }
+<style>
+    .block-color {
+    height: 20px;
+    width: 20px;
+    display: inline-block;
+    margin-bottom: -5px;
+    line-height: 20px;
+    text-align: center;
+}
+
+</style>
 
 <!-- Main content -->
 <div class="content-wrapper" id="webui">
@@ -53,11 +64,11 @@
                             <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalAmount">
                         </div>
                         <div class="col-md-2 ">
-                            <label class="form-label">Thành công</label>
+                            <label class="form-label">Tổng số đã đồng bộ</label>
                             <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalFace">
                         </div>
                         <div class="col-md-2 ">
-                            <label class="form-label" v-on:click="onSubmitAgain()" title="Số bản ghi được cập nhật lại sang SMAS"> Không thành công </label>
+                            <label class="form-label" v-on:click="onSubmitAgain()" title="Số bản ghi được cập nhật lại sang SMAS"> Đang chờ </label>
                             <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="totalCurrent">
                         </div>
                     </div>
@@ -468,8 +479,8 @@
                 });
             },
 
-            onSubmitAgain(item) {
-                axios.post('/api/v1/TimeAttendenceSync/PostAgain', this.object.config).then(response => {
+            onSubmitAgain() {
+                axios.post('/api/v1/TimeAttendenceSync/PostAgain', this.filter, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 

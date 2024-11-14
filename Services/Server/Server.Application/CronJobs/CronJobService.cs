@@ -193,7 +193,7 @@ public partial class CronJobService : ICronJobService
                 return;
 
             // Lấy dữ liệu theo block gửi qua api
-            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.OrganizationId == orgRes.Id && o.EventType != true).OrderBy(o => o.EventTime).Take(30).ToListAsync();
+            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.OrganizationId == orgRes.Id && o.EventType != true).OrderBy(o => o.EventTime).Take(50).ToListAsync();
             if (datas.Count == 0)
                 return;
 
