@@ -4,11 +4,11 @@ public partial class SendEmail
 {
     public Guid Id { get; set; }
 
-    public int OrganizationId { get; set; }
+    public string? OrganizationId { get; set; }
 
     public DateTime CreateTime { get; set; }
 
-    public int? EmailSenderId { get; set; }
+    public string? EmailSenderId { get; set; }
 
     public string ToEmails { get; set; } = null!;
 

@@ -76,6 +76,16 @@ public partial class PagesConst
         CategoryMenu = Category.ThietLap.Id,
     };
 
+    public static readonly PageObject URL_V1_ScheduleReport = new PageObject
+    {
+        Id = "8953cf90-7f3f-4155-8d07-f80579719b33",
+        Name = "Lập lịch báo cáo ",
+        Url = "V1/ScheduleReport",
+        Module = Module.Master,
+        RolePermission = RoleConst.SuperAdmin_Role,
+        CategoryMenu = Category.ThietLap.Id,
+    };
+
     public static readonly PageObject URL_V1_DeviceSuperAdmin = new PageObject
     {
         Id = "e7d6cf64-4105-44c5-8f94-ba4930db4e22",
@@ -185,6 +195,7 @@ public partial class PagesConst
             _ListMenu.Add(URL_V1_SyncDeviceServer);
 
             _ListMenu.Add(URL_V1_ScheduleJob);
+            _ListMenu.Add(URL_V1_ScheduleReport);
             _ListMenu.Add(URL_V1_DeviceSuperAdmin);
             _ListMenu.Add(URL_V1_DeviceAdmin);
             _ListMenu.Add(URL_V1_Organization);
