@@ -2,6 +2,8 @@
 using AMMS.DeviceData.RabbitMq;
 using AMMS.ZkAutoPush.Applications;
 using AMMS.ZkAutoPush.Applications.CronJobs;
+using AMMS.ZkAutoPush.Applications.MonitorDevices.V1.Models;
+using AMMS.ZkAutoPush.Applications.TerminalCommandLogs.V1;
 using AMMS.ZkAutoPush.Applications.V1;
 using AMMS.ZkAutoPush.Applications.V1.Consummer;
 using AMMS.ZkAutoPush.Datas.Databases;
@@ -162,6 +164,11 @@ public static class DependencyInjection
         service.AddScoped<DeviceCommandCacheService>();
         service.AddSingleton<SignalRClientService>();
 
+        //MonitorDevice
+        service.AddScoped<MonitorDeviceService>();
+
+        //CommandLog
+        service.AddScoped<TerminalCommandLogService>();
 
     }
     public static void AddSignalRService(this IServiceCollection service, IConfiguration configuration)
