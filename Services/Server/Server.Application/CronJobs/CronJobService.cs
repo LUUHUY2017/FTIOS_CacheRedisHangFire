@@ -182,12 +182,10 @@ public class CronJobService : ICronJobService
             if (orgRes == null)
                 return;
 
-
             // Lấy dữ liệu theo block gửi qua api
-            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.SchoolCode == orgRes.OrganizationCode && o.EventType != true).OrderBy(o => o.EventTime).Take(30).ToListAsync();
+            var datas = await _dbContext.TimeAttendenceEvent.Where(o => o.OrganizationId == orgRes.Id && o.EventType != true).OrderBy(o => o.EventTime).Take(30).ToListAsync();
             if (datas.Count == 0)
                 return;
-
 
             var studentAbs = new List<StudentAbsence>();
             foreach (var item in datas)
@@ -215,7 +213,7 @@ public class CronJobService : ICronJobService
                 studentAbsenceByDevices = studentAbs,
             };
 
-            Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
+            //Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
             var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
             Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
 
@@ -223,7 +221,6 @@ public class CronJobService : ICronJobService
                 return;
 
             datas.ForEach(o => { o.EventType = true; });
-
 
             try
             {
@@ -238,7 +235,7 @@ public class CronJobService : ICronJobService
                     {
                         TimeAttendenceEventId = el.Id,
                         SyncStatus = item.status,
-                        Message = $"\r\n [{DateTime.Now:dd/MM/yy HH:mm:ss}]: {item.message}",
+                        Message = $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {item.message}\r\n",
                         CreatedDate = DateTime.Now,
                         LastModifiedDate = DateTime.Now,
                     };

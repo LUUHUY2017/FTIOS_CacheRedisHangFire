@@ -1,4 +1,5 @@
-﻿using AMMS.ZkAutoPush.Datas.Databases;
+﻿using AMMS.ZkAutoPush.Applications.V1;
+using AMMS.ZkAutoPush.Datas.Databases;
 using Hangfire;
 using Share.WebApp.Controllers;
 using Shared.Core.SignalRs;
@@ -11,13 +12,14 @@ public partial class CronJobService : ICronJobService
     private readonly DeviceCacheService _deviceCacheService;
     private readonly IConfiguration _configuration;
     private readonly ISignalRClientService _signalRService;
-
-    public CronJobService(DeviceAutoPushDbContext deviceAutoPushDbContext, DeviceCacheService deviceCacheService, IConfiguration configuration, ISignalRClientService signalRClientService)
+    private readonly StartupDataService _startupDataService;
+    public CronJobService(DeviceAutoPushDbContext deviceAutoPushDbContext, DeviceCacheService deviceCacheService, IConfiguration configuration, ISignalRClientService signalRClientService, StartupDataService startupDataService )
     {
         _dbContext = deviceAutoPushDbContext;
         _deviceCacheService = deviceCacheService;
         _configuration = configuration;
         _signalRService = signalRClientService;
+        _startupDataService = startupDataService;
     }
     public async Task Test()
     {

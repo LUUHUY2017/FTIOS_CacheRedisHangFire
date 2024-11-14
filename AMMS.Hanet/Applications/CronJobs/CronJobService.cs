@@ -1,4 +1,5 @@
-﻿using AMMS.Hanet.Datas.Databases;
+﻿using AMMS.Hanet.Applications.V1.Service;
+using AMMS.Hanet.Datas.Databases;
 using Hangfire;
 using Share.WebApp.Controllers;
 using Shared.Core.SignalRs;
@@ -11,13 +12,14 @@ public partial class CronJobService : ICronJobService
     private readonly DeviceCacheService _deviceCacheService;
     private readonly IConfiguration _configuration;
     private readonly ISignalRClientService _signalRService;
-
-    public CronJobService(DeviceAutoPushDbContext deviceAutoPushDbContext, DeviceCacheService deviceCacheService, IConfiguration configuration, ISignalRClientService signalRClientService)
+    private readonly HANET_StartUp_Service _hanetStartUpService;
+    public CronJobService(DeviceAutoPushDbContext deviceAutoPushDbContext, DeviceCacheService deviceCacheService, IConfiguration configuration, ISignalRClientService signalRClientService, HANET_StartUp_Service hanetStartUpService)
     {
         _dbContext = deviceAutoPushDbContext;
         _deviceCacheService = deviceCacheService;
         _configuration = configuration;
         _signalRService = signalRClientService;
+        _hanetStartUpService = hanetStartUpService;
     }
     public async Task Test()
     {

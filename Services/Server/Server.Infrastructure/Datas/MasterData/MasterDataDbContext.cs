@@ -83,12 +83,20 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
         modelBuilder.Entity<TimeAttendenceEvent>()
           .HasIndex(te => te.EventTime)
           .HasDatabaseName("IX_TimeAttendenceEvent_EventTime");
-        modelBuilder.Entity<TimeAttendenceEvent>()
-        .HasIndex(te => te.CreatedDate)
-        .HasDatabaseName("IX_TimeAttendenceEvent_CreatedDate");
+        //modelBuilder.Entity<TimeAttendenceEvent>()
+        //.HasIndex(te => te.CreatedDate)
+        //.HasDatabaseName("IX_TimeAttendenceEvent_CreatedDate");
         modelBuilder.Entity<TimeAttendenceEvent>()
         .HasIndex(te => te.OrganizationId)
         .HasDatabaseName("IX_TimeAttendenceEvent_OrganizationId");
+
+        modelBuilder.Entity<TimeAttendenceEvent>()
+       .HasIndex(e => new { e.OrganizationId, e.EventTime, e.EnrollNumber })
+       .HasDatabaseName("IX_Org_Eventtype_Enroll");
+
+        modelBuilder.Entity<TimeAttendenceEvent>()
+         .HasIndex(e => new { e.OrganizationId, e.EventType, e.EventTime })
+         .HasDatabaseName("IX_Org_Eventtype_Eventtime");
 
 
         //Index TimeAttendenceSync
@@ -112,11 +120,6 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
         .HasIndex(te => te.OrganizationId)
         .HasDatabaseName("IX_PersonFace_OrganizationId");
 
-        //Index PersonFace
-        modelBuilder.Entity<PersonFace>()
-        .HasIndex(te => te.OrganizationId)
-        .HasDatabaseName("IX_PersonFace_OrganizationId");
-
         //Index PersonSynToDevice
         modelBuilder.Entity<PersonSynToDevice>()
         .HasIndex(te => te.LastModifiedDate)
@@ -124,6 +127,14 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
         modelBuilder.Entity<PersonSynToDevice>()
         .HasIndex(te => te.OrganizationId)
         .HasDatabaseName("IX_PersonSynToDevice_OrganizationId");
+
+        modelBuilder.Entity<PersonSynToDevice>()
+       .HasIndex(e => new { e.OrganizationId, e.LastModifiedDate })
+       .HasDatabaseName("IX_Org_ModifiedDate");
+
+        modelBuilder.Entity<PersonSynToDevice>()
+       .HasIndex(e => new { e.PersonId, e.DeviceId })
+       .HasDatabaseName("IX_PersonId_DeviceId");
 
 
         //modelBuilder.HasDefaultSchema("Identity"); //Tạo Schema

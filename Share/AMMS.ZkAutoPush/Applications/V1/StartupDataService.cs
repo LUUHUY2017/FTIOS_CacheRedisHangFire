@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using Shared.Core.Loggers;
 using System.ComponentModel.DataAnnotations;
+using static AMMS.ZkAutoPush.Applications.CronJobs.CronJobService;
 
 namespace AMMS.ZkAutoPush.Applications.V1
 {
@@ -261,6 +262,27 @@ namespace AMMS.ZkAutoPush.Applications.V1
             }
         }
         /// <summary>
+        /// Cập nhật trạng thái thiết bị
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateStatus(List<terminal_status> data)
+        {
+            try
+            {
+                string url = "api/v1/MonitorDevice/ChangeStatusDevice";
+
+                var result = await PostData(url, data);
+
+                return;
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Lưu thông tin thiết bị
         /// </summary>
         /// <param name="a2_Devices"></param>
@@ -279,7 +301,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 }
                 else
                 {
- 
+
                     obj.name = a2_Devices.name;
                     await _deviceAutoPushDbContext.SaveChangesAsync();
                 }

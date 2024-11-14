@@ -141,7 +141,7 @@ public partial class TimeAttendenceEventService
                     //var time = await _dbContext.TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode && o.EventTime.Value.Date == eventDate && o.AttendenceSection == sectionTime).FirstOrDefaultAsync();
                     // áp dung tối ưu chỉ mục
 
-                    var time = await _dbContext.TimeAttendenceEvent.Where(o => o.EnrollNumber == info.PersonCode && o.EventTime >= startOfDay && o.EventTime < endOfDay && o.AttendenceSection == sectionTime).FirstOrDefaultAsync();
+                    var time = await _dbContext.TimeAttendenceEvent.Where(o => o.OrganizationId == student.OrganizationId &&  o.EventTime >= startOfDay && o.EventTime < endOfDay && o.EnrollNumber == info.PersonCode && o.AttendenceSection == sectionTime).FirstOrDefaultAsync();
                     if (time == null)
                     {
                         time = new TimeAttendenceEvent();

@@ -88,6 +88,39 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
         }
     }
 
+
+    /// <summary>
+    /// PostGeneral
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("PostGeneral")]
+    public async Task<ActionResult> PostGeneral(AttendenceSyncReportFilterReq request)
+    {
+        try
+        {
+            request.OrganizationId = GetOrganizationId();
+            var items = await _timeService.GetAlls(request);
+
+            int totalAmount = await items.CountAsync();
+            int totalFace = await items.CountAsync(o => o.SyncStatus == true);
+            int totalCurrent = totalAmount - totalFace;
+
+            var retVal = new
+            {
+                totalAmount = totalAmount,
+                totalFace = totalFace,
+                totalCurrent = totalCurrent,
+            };
+            return Ok(new Result<object>(retVal, "Thành công", true));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
     /// <summary>
     /// Export
     /// </summary>

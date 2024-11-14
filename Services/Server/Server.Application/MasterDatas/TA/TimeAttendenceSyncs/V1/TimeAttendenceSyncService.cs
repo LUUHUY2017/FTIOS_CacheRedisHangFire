@@ -52,25 +52,24 @@ public partial class TimeAttendenceSyncService
     {
         try
         {
-            var _data = (from _do in _dbContext.TimeAttendenceSync
+            var _data = (from _do in _dbContext.TimeAttendenceEvent
 
-                         join _la in _dbContext.TimeAttendenceEvent on _do.TimeAttendenceEventId equals _la.Id into K
+                         join _la in _dbContext.TimeAttendenceSync on _do.Id equals _la.TimeAttendenceEventId into K
                          from la in K.DefaultIfEmpty()
 
-                         join _st in _dbContext.Student on la.StudentCode equals _st.StudentCode into KD
+                         join _st in _dbContext.Student on _do.StudentCode equals _st.StudentCode into KD
                          from st in KD.DefaultIfEmpty()
 
 
-                         join _or in _dbContext.Organization on la.OrganizationId equals _or.Id into OG
+                         join _or in _dbContext.Organization on _do.OrganizationId equals _or.Id into OG
                          from or in OG.DefaultIfEmpty()
 
                          where
-                          (request.StartDate != null ? _do.CreatedDate >= request.StartDate : true)
-                          && (request.EndDate != null ? _do.CreatedDate <= request.EndDate.Value.Date.AddDays(1).AddMilliseconds(-1) : true)
-                             && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? st.OrganizationId == request.OrganizationId : true)
-                          && (!string.IsNullOrWhiteSpace(request.ClassId) ? st.ClassId == request.ClassId : true)
+                            (request.StartDate != null ? _do.EventTime >= request.StartDate : true)
+                             && (request.EndDate != null ? _do.EventTime <= request.EndDate.Value.Date.AddDays(1).AddMilliseconds(-1) : true)
+                             && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
 
-                         orderby _do.SyncStatus ascending, _do.CreatedDate descending
+                         orderby _do.EventTime descending, _do.StudentCode ascending
                          select new AttendenceSyncReportRes()
                          {
                              Id = _do.Id,
@@ -79,26 +78,24 @@ public partial class TimeAttendenceSyncService
                              LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
                              CreatedBy = _do.CreatedBy,
                              ReferenceId = _do.ReferenceId,
-                             TimeAttendenceEventId = _do.TimeAttendenceEventId,
+                             TimeAttendenceEventId = _do.Id,
+                             AbsenceDate = _do.AbsenceDate,
+                             EventTime = _do.EventTime,
+                             OrganizationId = _do.OrganizationId,
+
 
                              StudentCode = st != null ? st.StudentCode : "",
                              StudentName = st != null ? st.FullName : "",
                              ClassName = st != null ? st.ClassName : "",
 
-                             OrganizationId = la != null ? la.OrganizationId : null,
-
                              OrganizationCode = or != null ? or.OrganizationCode : "",
                              OrganizationName = or != null ? or.OrganizationName : "",
 
-                             Message = _do.Message,
-                             SyncStatus = _do.SyncStatus,
-                             ParamResponses = _do.ParamResponses,
-                             ParamRequests = _do.ParamRequests,
-
-                             AttendenceSection = la.AttendenceSection,
-                             AbsenceDate = la.AbsenceDate,
-                             EventTime = la.EventTime,
-
+                             Message = la != null ? la.Message : null,
+                             SyncStatus = la != null ? la.SyncStatus : null,
+                             ParamResponses = la != null ? la.ParamResponses : null,
+                             ParamRequests = la != null ? la.ParamRequests : null,
+                             AttendenceSection = _do.AttendenceSection,
                          });
 
             return _data;
@@ -207,7 +204,7 @@ public partial class TimeAttendenceSyncService
                 studentAbsenceByDevices = studentAbs,
             };
 
-            Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
+            //Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
             var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
             Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
 
@@ -227,7 +224,7 @@ public partial class TimeAttendenceSyncService
                         if (sync.SyncStatus != true)
                             sync.SyncStatus = ite.status;
 
-                        sync.Message += $"\r\n[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}";
+                        sync.Message += $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}\r\n";
                         sync.LastModifiedDate = DateTime.Now;
                     }
                 }

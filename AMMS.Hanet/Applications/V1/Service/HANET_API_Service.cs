@@ -408,8 +408,8 @@ namespace AMMS.Hanet.Applications.V1.Service
                 var client = new RestClient(options);
                 var request = new RestRequest("/person/getCheckinByPlaceIdInTimestamp", Method.Post);
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-                request.AddParameter("token", HanetParam.Token.access_token);
-                request.AddParameter("placeID", HanetParam.PlaceId);
+                request.AddParameter("token", HanetParamTest.Token.access_token);
+                request.AddParameter("placeID", HanetParamTest.PlaceId);
                 request.AddParameter("page", page);
                 request.AddParameter("size", pagesize);
                 request.AddParameter("from", fromDate);
@@ -424,8 +424,9 @@ namespace AMMS.Hanet.Applications.V1.Service
 
                 result = JsonConvert.DeserializeObject<Hanet_Response_Array>(strResult);
 
-                if (result == null) return listData;
+                if (result == null|| result.data == null) return listData;
 
+ 
                 if (result.returnCode != Hanet_Response_Static.SUCCESSCode)
                     return listData;
                 foreach (var obj in result.data)
