@@ -321,6 +321,9 @@ namespace Server.Infrastructure.Datas.MasterData.MySqlMigrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<string>("FaceUrl")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("LastModifiedBy")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");

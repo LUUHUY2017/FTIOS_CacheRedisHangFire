@@ -57,7 +57,7 @@
                             <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalFace">
                         </div>
                         <div class="col-md-2 ">
-                            <label class="form-label"> Không thành công </label>
+                            <label class="form-label" title="Số bản ghi được cập nhật lại sang SMAS"> Không thành công </label>
                             <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="totalCurrent">
                         </div>
                     </div>
@@ -143,8 +143,8 @@
                                         </td>
                                         <td style=" white-space: nowrap;">
                                             <span v-if="item.syncStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
-                                            <span style="cursor:pointer" v-else-if="item.syncStatus ==false" v-on:click="onSubmitSync(item)" class='badge bg-danger bg-opacity-10 text-danger'>Không thành công</span>
-                                            <span style="cursor:pointer" v-else v-on:click="onSubmitSync(item)" class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
+                                            <span style="cursor:pointer" v-else-if="item.syncStatus ==false" v-on:click="onSubmitSync(item)" class='badge bg-warning  bg-opacity-10 text-warning'>Không thành công</span>
+                                            <span style="cursor:pointer" v-else v-on:click="onSubmitSync(item)" class='badge bg-danger bg-opacity-10 text-danger'>Đang chờ</span>
                                         </td>
                                         <td style=" white-space: nowrap;">
                                             <span>{{ formatDateTime(item.eventTime) }}</span>
@@ -277,6 +277,7 @@
                 studentName: null,
                 deviceId: null,
                 dateOfBirth: null,
+                message: null,
                 className: null,
                 organizationName: null,
                 attendenceSection: "",

@@ -2,7 +2,7 @@
 using Share.WebApp.Controllers;
 using Share.WebApp.Helps;
 
-namespace AMMS.ZkAutoPush.Areas.Managers.Configurations.V1.Controllers;
+namespace AMMS.ZkAutoPush.Areas.Managers.Configurations.V1;
 
 
 [AuthorizeClient]

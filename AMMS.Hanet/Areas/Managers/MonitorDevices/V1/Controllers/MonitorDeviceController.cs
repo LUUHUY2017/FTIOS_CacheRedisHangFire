@@ -3,7 +3,7 @@ using Share.WebApp.Controllers;
 
 namespace Server.API.Areas.Managers.MonitorDevices.V1.Controllers;
 
-//[Route("v1/[controller]")]
+[Route("v1/[controller]")]
 //[AuthorizeClient]
 
 public class MonitorDeviceController : AuthBaseController

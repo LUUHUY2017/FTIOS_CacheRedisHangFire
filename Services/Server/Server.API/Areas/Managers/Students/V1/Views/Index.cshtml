@@ -530,12 +530,16 @@
 
                 this.item = el;
                 try { this.item.dateOfBirth1 = ConvertDinhDangNgay(el.dateOfBirth); } catch (Ex) { }
-                try { this.item.imageSrc = el.imageBase64 != null ? "data:image/png;base64," + el.imageBase64 : null } catch (Ex) { }
+                // try { this.item.imageSrc = el.imageBase64 != null ? "data:image/png;base64," + el.imageBase64 : null } catch (Ex) { }
+                try { this.item.imageSrc = el.faceUrl } catch (Ex) { }
                 this.item = { ...this.item };
+
+                // this.onViewImage(this.item);
 
                 this.object.form_tile = "Thông tin học sinh";
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
             },
+
 
             onSubmitFormAddEdit() {
                 if (!validateForm("#FormAddEdit"))

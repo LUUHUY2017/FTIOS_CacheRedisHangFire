@@ -66,7 +66,7 @@ public class TimeAttenceEventController : AuthBaseAPIController
             }
 
 
-            int totalRow = await items.CountAsync();
+            int totalRow = await items.Select(o => o.Id).CountAsync();
             // phân trang
             int skip = (request.CurentPage.Value - 1) * (request.RowsPerPage.Value);
             int totalPage = (totalRow + request.RowsPerPage.Value - 1) / request.RowsPerPage.Value;
@@ -106,9 +106,7 @@ public class TimeAttenceEventController : AuthBaseAPIController
             request.OrganizationId = GetOrganizationId();
             var items = await _timeService.GetAlls(request);
 
-            int totalAmount = await items.CountAsync();
-            //var req = _mapper.Map<AttendenceSyncReportFilterReq>(request);
-            //var syncs = await _timeSyncService.GetAlls(req);
+            int totalAmount = await items.Select(o => o.Id).CountAsync();
             int totalFace = await items.CountAsync(o => o.EventType == true);
             int totalCurrent = totalAmount - totalFace;
 
