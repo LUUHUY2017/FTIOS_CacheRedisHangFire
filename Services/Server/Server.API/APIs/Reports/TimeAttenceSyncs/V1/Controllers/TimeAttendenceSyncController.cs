@@ -58,7 +58,7 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
                 }
             }
 
-            int totalRow = await items.CountAsync();
+            int totalRow = await items.Select(o => o.Id).CountAsync();
             // phân trang
             int skip = (request.CurentPage.Value - 1) * (request.RowsPerPage.Value);
             int totalPage = 0;
@@ -102,8 +102,8 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
             request.OrganizationId = GetOrganizationId();
             var items = await _timeService.GetAlls(request);
 
-            int totalAmount = await items.CountAsync();
-            int totalFace = await items.CountAsync(o => o.SyncStatus == true);
+            int totalAmount = await items.Select(o => new { o.TimeAttendenceEventId }).CountAsync();
+            int totalFace = await items.Select(o => new { o.TimeAttendenceEventId, o.SyncStatus }).Distinct().CountAsync(o => o.SyncStatus == true);
             int totalCurrent = totalAmount - totalFace;
 
             var retVal = new
