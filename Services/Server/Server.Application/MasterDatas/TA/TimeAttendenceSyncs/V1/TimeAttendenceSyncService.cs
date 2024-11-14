@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Office2021.DocumentTasks;
-using EventBus.Messages;
+﻿using EventBus.Messages;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -133,6 +132,11 @@ public partial class TimeAttendenceSyncService
             case "organizationname":
                 if (filter.Comparison == 0)
                     query = query.Where(p => p.OrganizationName.Contains(filter.Value.Trim()));
+                break;
+
+            case "message":
+                if (filter.Comparison == 0)
+                    query = query.Where(p => p.Message.Contains(filter.Value.Trim()));
                 break;
 
             case "syncstatus":
