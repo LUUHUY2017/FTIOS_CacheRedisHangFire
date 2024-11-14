@@ -1,7 +1,9 @@
-﻿using Hangfire;
+﻿using AMMS.Notification.Workers.Emails;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Server.Application.MasterDatas.A2.DeviceNotifications.V1;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
@@ -13,7 +15,7 @@ using Shared.Core.SignalRs;
 
 namespace Server.Application.CronJobs;
 
-public class CronJobService : ICronJobService
+public partial class CronJobService : ICronJobService
 {
     private readonly IMasterDataDbContext _dbContext;
     private readonly SmartService _smartService;
@@ -21,17 +23,25 @@ public class CronJobService : ICronJobService
     private readonly IConfiguration _configuration;
     private readonly ISignalRClientService _signalRService;
 
+    private readonly SendEmailMessageService1 _sendEmailMessageService1;
+    private readonly DeviceReportService _deviceReportService;
+
     public CronJobService(IMasterDataDbContext dbContext,
         SmartService smartService,
         StudentService studentService,
         IConfiguration configuration,
-        ISignalRClientService signalRClientService)
+        ISignalRClientService signalRClientService,
+        SendEmailMessageService1 sendEmailMessageService1,
+        DeviceReportService deviceReportService
+        )
     {
         _dbContext = dbContext;
         _smartService = smartService;
         _studentService = studentService;
         _configuration = configuration;
         _signalRService = signalRClientService;
+        _sendEmailMessageService1 = sendEmailMessageService1;
+        _deviceReportService = deviceReportService;
         //var recurringJobs = JobStorage.Current.GetConnection().GetRecurringJobs();
     }
 

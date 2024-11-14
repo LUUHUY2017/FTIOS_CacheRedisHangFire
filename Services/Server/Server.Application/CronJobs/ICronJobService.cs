@@ -9,5 +9,8 @@ public interface ICronJobService
     Task RemoveScheduleCronJob(string jobId, string sheduleId );
     Task SyncStudentFromSmas(string sheduleId);
     Task SyncAttendenceToSmas(string sheduleId);
-  
+    Task Device_Warning_ScheduleSendMail(string sheduleId);
+    Task CreateDeviceStatusWarningCronJob(List<ScheduleSendMail> scheduleLists);
+    Task UpdateDeviceStatusWarningCronJob(string jobId, string sheduleId, string newCronExpression);
+
 }

@@ -255,5 +255,6 @@ namespace Server.Application.MasterDatas.A2.Devices
         {
             return new Result<List<object>>(DeviceBrandConst.BrandNames, "Thành công", true);
         }
+
     }
 }

@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Lập lịch gửi Email";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+<div class="content-wrapper" id="webui">
+    <!-- Inner content -->
+    <div class="content-inner">
+        <div class="content">
+            <div class="card">
+                <div class="card-body">
+                    @{
+                        string tab = Context.Request.Query["tab"].ToString().ToLower();
+                        if (string.IsNullOrEmpty(tab))
+                            tab = "thongbaothietbi";
+
+                        string tab_thongbaothietbi = "";
+                        if (tab == "thongbaothietbi")
+                            tab_thongbaothietbi = "active";
+
+            // string tab_ketnoikhongdulieu = "";
+                        // if (tab == "ketnoikhongdulieu")
+                        //     tab_ketnoikhongdulieu = "active";
+
+            // string tab_canhbaodotbien = "";
+                        // if (tab == "canhbaodotbien")
+                        //     tab_canhbaodotbien = "active";
+
+                    }
+                    <ul class="nav nav-tabs nav-tabs-highlight">
+                        <li class="nav-item">
+                            <a href="@Url.Action("index", new { tab="thongbaothietbi" })" class="nav-link @tab_thongbaothietbi">
+                                <i class="ph-chat-centered-dots m-2"></i>
+                                Thông báo thiết bị
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade  mt-1 show @tab_thongbaothietbi" role="tabpanel">
+                            @if (tab == "thongbaothietbi")
+                            {
+                                <div class="accordion" id="tab_thongbaothietbi">
+                                    @await Html.PartialAsync("/Areas/Managers/ScheduleDeviceReports/V1/Views/DeviceStatusWarning.cshtml")
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

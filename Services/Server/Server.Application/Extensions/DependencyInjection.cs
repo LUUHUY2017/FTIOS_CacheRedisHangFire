@@ -3,6 +3,7 @@ using AMMS.DeviceData.RabbitMq;
 using AMMS.Notification.Datas;
 using AMMS.Notification.Datas.Interfaces.SendEmails;
 using AMMS.Notification.Datas.Repositories.SendEmails;
+using AMMS.Notification.Workers.Emails;
 using EntityFrameworkCore.UseRowNumberForPaging;
 using EventBus.Messages;
 using MassTransit;
@@ -19,6 +20,7 @@ using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
+using Server.Application.MasterDatas.A2.DeviceNotifications.V1;
 using Server.Application.MasterDatas.A2.Devices;
 using Server.Application.MasterDatas.A2.MonitorDevices.V1;
 using Server.Application.MasterDatas.A2.Organizations.V1;
@@ -29,6 +31,7 @@ using Server.Application.Services.VTSmart;
 using Server.Core.Identity.Interfaces.Accounts.Services;
 using Server.Core.Identity.Repositories;
 using Server.Core.Interfaces.A0;
+using Server.Core.Interfaces.A2.DeviceNotifications;
 using Server.Core.Interfaces.A2.Devices;
 using Server.Core.Interfaces.A2.Organizations;
 using Server.Core.Interfaces.A2.Persons;
@@ -46,6 +49,7 @@ using Server.Infrastructure.Repositories;
 using Server.Infrastructure.Repositories.A0.AttendanceConfigs;
 using Server.Infrastructure.Repositories.A0.AttendanceTimeConfigs;
 using Server.Infrastructure.Repositories.A0.TimeConfigs;
+using Server.Infrastructure.Repositories.A2.DeviceNotifications;
 using Server.Infrastructure.Repositories.A2.Devices;
 using Server.Infrastructure.Repositories.A2.Organizations;
 using Server.Infrastructure.Repositories.A2.Persons;
@@ -60,6 +64,7 @@ using Server.Infrastructure.Repositories.TA.TimeAttendenceEvents;
 using Server.Infrastructure.Repositories.TA.TimeAttendenceSyncs;
 using Share.Core.Pagination;
 using Shared.Core.Caches.Redis;
+using Shared.Core.Emails.V1;
 using Shared.Core.Emails.V1.Adapters;
 using Shared.Core.Repositories;
 using Shared.Core.SignalRs;
@@ -101,8 +106,8 @@ public static class DependencyInjection
         services.Configure<EventBusSettings>(eventBusSettings);
 
         // Đăng ký dịch vụ Email
-        //services.AddScoped<SendEmailMessageService1>();
-        //services.AddScoped<EmailSenderServiceV1>();
+        services.AddScoped<SendEmailMessageService1>();
+        services.AddScoped<EmailSenderServiceV1>();
         //services.AddScoped<EmailRabbitMQConsummerV1>();
         //services.AddScoped<SendEmailMessageResponseConsumer1>();
 
@@ -295,6 +300,11 @@ public static class DependencyInjection
         //RollCallTimeConfig
         service.AddScoped<IAttendanceTimeConfigRepository, AttendanceTimeConfigRepository>();
         service.AddScoped<AttendanceTimeConfigService>();
+
+        //DeviceStatusWarning
+        service.AddScoped<IDeviceNotificationRepository, DeviceNotificationRepository>();
+        service.AddScoped<DeviceNotificationService>();
+        service.AddScoped<DeviceReportService>();
     }
 
     public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)

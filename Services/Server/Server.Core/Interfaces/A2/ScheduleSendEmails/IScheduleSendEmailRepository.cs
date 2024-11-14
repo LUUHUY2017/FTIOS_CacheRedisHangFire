@@ -12,7 +12,7 @@ public interface IScheduleSendMailRepository
     Task<Result<ScheduleSendMail>> ActiveAsync(ActiveRequest data);
     Task<Result<ScheduleSendMail>> InActiveAsync(InactiveRequest data);
 
-
+    Task<Result<ScheduleSendMail>> DeleteAsync(DeleteRequest data);
 
 }
 

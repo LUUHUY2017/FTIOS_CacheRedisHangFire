@@ -116,5 +116,23 @@ public class ScheduleSendEmailRepository : IScheduleSendMailRepository
         }
     }
 
-
+    public async Task<Result<ScheduleSendMail>> DeleteAsync(DeleteRequest data)
+    {
+        string message = "";
+        try
+        {
+            var _order = _db.ScheduleSendMail.FirstOrDefault(o => o.Id == data.Id);
+            if (_order != null)
+            {
+                _db.ScheduleSendMail.Remove(_order);
+                message = "Cập nhật thành công";
+            }
+            var retVal = await _db.SaveChangesAsync();
+            return new Result<ScheduleSendMail>(_order, message, true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<ScheduleSendMail>("Lỗi: " + ex.ToString(), false);
+        }
+    }
 }

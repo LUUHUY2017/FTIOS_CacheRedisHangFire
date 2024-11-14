@@ -197,6 +197,17 @@ public class ScheduleSendEmailController : AuthBaseAPIController
         return Ok(result);
     }
 
+    // <summary>
+    ///  Xóa vĩnh viễn
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    [HttpPost("Delete")]
+    public async Task<ActionResult> Delete(DeleteRequest request)
+    {
+        var result = await _sheduleSendEmailReponsity.DeleteAsync(request);
+        return Ok(result);
+    }
     #region Options
     /// <summary>
     /// Lấy danh sách tổ chức
