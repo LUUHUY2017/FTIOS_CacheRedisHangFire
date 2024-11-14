@@ -229,9 +229,20 @@ public partial class TimeAttendenceSyncService
                         if (sync.SyncStatus != true)
                             sync.SyncStatus = ite.status;
 
-
                         sync.Message += $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}\r\n";
                         sync.LastModifiedDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        var log = new TimeAttendenceSync()
+                        {
+                            TimeAttendenceEventId = item.Id,
+                            SyncStatus = ite.status,
+                            Message = $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}\r\n",
+                            CreatedDate = DateTime.Now,
+                            LastModifiedDate = DateTime.Now,
+                        };
+                        await _dbContext.TimeAttendenceSync.AddAsync(log);
                     }
                 }
             }

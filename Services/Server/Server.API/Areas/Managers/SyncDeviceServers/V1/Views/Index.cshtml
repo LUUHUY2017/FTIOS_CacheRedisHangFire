@@ -156,8 +156,8 @@
                                                 <input v-else-if="item.synFaceStatus== false" type='checkbox' class='checked' />
                                                 <input v-else="item.synFaceStatus== false" type='checkbox' readonly disabled />
                                             </td>
-                                            <td><span>{{item.synMessage}}</span></td>
-                                            <td><span>{{item.synFaceMessage}}</span></td>
+                                            <td style=" white-space: nowrap;"><span>{{item.synMessage}}</span></td>
+                                            <td style=" white-space: nowrap;"><span>{{item.synFaceMessage}}</span></td>
                                             <td style=" white-space: nowrap;">
                                                 <span>{{ formatDateTime(item.lastModifiedDate) }}</span>
                                             </td>
