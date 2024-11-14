@@ -188,7 +188,7 @@ public partial class TimeAttendenceSyncService
             var studentAbs = new List<StudentAbsence>();
             ExtraProperties extra = new ExtraProperties()
             {
-                absenceTime = item.EventTime
+                absenceTime = item.EventTime.Value.ToString("yyyy-MM-dd HH:mm:ss")
             };
             var el = new StudentAbsence()
             {
@@ -209,7 +209,7 @@ public partial class TimeAttendenceSyncService
                 studentAbsenceByDevices = studentAbs,
             };
 
-            //Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
+            Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
             var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
             Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
 
