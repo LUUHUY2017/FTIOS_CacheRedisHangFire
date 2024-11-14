@@ -275,7 +275,7 @@ services.AddSignalRService(configuration);
 
 //AutoMapper
 services.AddAutoMapper(typeof(Program));
-services.AddAddAutoMapperServices();
+services.AddAutoMapperServices();
 
 services.AddHttpClient();
 services.AddControllersWithViews();
