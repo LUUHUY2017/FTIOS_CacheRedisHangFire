@@ -144,7 +144,7 @@
                                     </td>
                                     <td style=" white-space: nowrap;">
                                         <span v-if="item.eventType ==true" class='badge bg-primary bg-opacity-10 text-primary'>Đã đồng bộ</span>
-                                        <span style="cursor:pointer" v-else v-on:click="onSubmitSync(item)" class='badge bg-danger bg-opacity-10 text-danger'>Đang chờ</span>
+                                        <span style="cursor:pointer" v-else class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
                                     </td>
                                     <td style=" white-space: nowrap;">
                                         <span>{{ formatDateTime(item.eventTime) }}</span>
