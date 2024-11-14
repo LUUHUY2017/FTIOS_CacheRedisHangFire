@@ -109,6 +109,17 @@ public partial class TimeAttendenceEventService
                 }
                 break;
 
+            case "eventtype":
+                if (!string.IsNullOrWhiteSpace(filter.Value))
+                {
+                    var statusValue = filter.Value.ToLower();
+                    if (statusValue == "true")
+                        query = query.Where(p => p.EventType == true);
+                    else
+                        query = query.Where(p => p.EventType == null);
+                }
+                break;
+
             case "classname":
                 if (filter.Comparison == 0)
                     query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));

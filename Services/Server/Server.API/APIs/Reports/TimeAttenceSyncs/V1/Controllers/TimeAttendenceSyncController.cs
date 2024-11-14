@@ -103,7 +103,7 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
             var items = await _timeService.GetAlls(request);
 
             int totalAmount = await items.Select(o => new { o.TimeAttendenceEventId }).CountAsync();
-            int totalFace = await items.Select(o => new { o.TimeAttendenceEventId, o.SyncStatus }).Distinct().CountAsync(o => o.SyncStatus == true);
+            int totalFace = await items.Select(o => new { o.TimeAttendenceEventId, o.SyncStatus }).Distinct().CountAsync(o => o.SyncStatus != null);
             int totalCurrent = totalAmount - totalFace;
 
             var retVal = new
@@ -230,11 +230,11 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("PostAgain")]
-    public async Task<IActionResult> PostAgain(AttendenceSyncReportRes request)
+    public async Task<IActionResult> PostAgain(AttendenceSyncReportFilterReq request)
     {
         try
         {
-            var retval = await _timeService.PostAgain();
+            var retval = await _timeService.PostAgain(request);
             return Ok(retval);
         }
         catch (Exception ex)

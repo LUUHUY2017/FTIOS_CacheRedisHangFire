@@ -502,8 +502,15 @@ if (app.Environment.IsDevelopment())
     var runMigration = configuration["RunMigration"];
     if (runMigration == "True")
     {
+       
+
+
         using (var scope = app.Services.CreateScope())
         {
+            // Update DB automantic
+            //var dbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
+            //await dbContext.Database.MigrateAsync();
+
             await scope.ServiceProvider.GetRequiredService<IdentityContext>().Database.MigrateAsync();
             await scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>().Database.MigrateAsync();
             await scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.MigrateAsync();

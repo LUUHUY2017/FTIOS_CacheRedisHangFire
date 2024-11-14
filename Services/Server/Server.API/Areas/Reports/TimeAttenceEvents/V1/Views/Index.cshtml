@@ -2,13 +2,7 @@
     ViewData["Title"] = "Lịch sử điểm danh";
     Layout = "~/Views/Shared/_LayoutManage.cshtml";
 }
-<style>
-    .list-color {
-        margin-bottom: 4px;
-        margin-right: 11px;
-        float: left;
-    }
-</style>
+
 
 <!-- Main content -->
 <div class="content-wrapper" id="webui">
@@ -17,7 +11,7 @@
 
         <!-- Page header -->
         <div class="page-header page-header-light shadow">
-            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+            <div  class="page-header-content d-lg-flex">
                 <div class="d-flex">
                     <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
                         <span class="fw-normal">@ViewData["Title"]</span>
@@ -59,11 +53,11 @@
                             <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalAmount">
                         </div>
                         <div class="col-md-2 ">
-                            <label class="form-label">Tổng số học sinh đã đồng bộ</label>
+                            <label class="form-label" title="Số học sinh điểm danh được quét đồng bộ">Tổng số học sinh đã đồng bộ</label>
                             <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalFace">
                         </div>
                         <div class="col-md-2 ">
-                            <label class="form-label">Tổng số học sinh chưa đồng bộ</label>
+                            <label class="form-label" title="Số học sinh điểm danh chờ quét đồng bộ">Tổng số học sinh chưa đồng bộ</label>
                             <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="totalCurrent">
                         </div>
                     </div>
@@ -87,6 +81,7 @@
                                     <th> Mã học sinh </th>
                                     <th> Họ tên </th>
                                     <th> Buổi điểm danh</th>
+                                    <th> Trạng thái </th>
                                     <th> Thời gian diểm danh  </th>
                                     <th> Lớp </th>
                                     <th> Trường </th>
@@ -109,6 +104,13 @@
                                             <option value="0">Sáng</option>
                                             <option value="1">Chiều</option>
                                             <option value="2">Tối</option>
+                                        </select>
+                                    </th>
+                                    <th>
+                                        <select class="form-select" v-model="params.eventType">
+                                            <option selected value="">Tất cả</option>
+                                            <option value="True">Đã đồng bộ</option>
+                                            <option value="None">Đang chờ</option>
                                         </select>
                                     </th>
                                     <th>
@@ -139,6 +141,10 @@
                                         <span v-if="item.attendenceSection ==0" class='badge bg-success  bg-opacity-10 text-success '>Sáng</span>
                                         <span v-else-if="item.attendenceSection ==1" class='badge bg-primary bg-opacity-10 text-primary'>Chiều</span>
                                         <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Tối</span>
+                                    </td>
+                                    <td style=" white-space: nowrap;">
+                                        <span v-if="item.eventType ==true" class='badge bg-primary bg-opacity-10 text-primary'>Đã đồng bộ</span>
+                                        <span style="cursor:pointer" v-else class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
                                     </td>
                                     <td style=" white-space: nowrap;">
                                         <span>{{ formatDateTime(item.eventTime) }}</span>
@@ -256,7 +262,13 @@
 
     @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
 </div>
-
+<style>
+    .list-color {
+        margin-bottom: 4px;
+        margin-right: 11px;
+        float: left;
+    }
+</style>
 <script>
     $(document).ready(function () {
         // $('#classId').on("change", function () {
@@ -299,6 +311,7 @@
                 studentCode: null,
                 studentName: null,
                 deviceId: null,
+                eventType: "",
                 dateOfBirth: null,
                 className: null,
                 organizationName: null,
