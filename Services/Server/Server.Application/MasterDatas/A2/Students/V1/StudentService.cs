@@ -150,6 +150,7 @@ public class StudentService
 
                          join _la in _dbContext.PersonFace on _do.Id equals _la.PersonId into K
                          from la in K.DefaultIfEmpty()
+
                          where _do.Actived == actived
                             && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
 
@@ -190,7 +191,7 @@ public class StudentService
                              SortOrderByClass = _do.SortOrderByClass,
                              GradeCode = _do.GradeCode,
 
-                             ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null,
+                             //ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null,
                              IsFace = la != null ? true : false,
                              IsFaceName = la != null ? "Có" : "Không",
                          });
@@ -358,7 +359,7 @@ public class StudentService
             }
 
             if (!string.IsNullOrWhiteSpace(request.ImageBase64))
-                await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64);
+                await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64, fileName);
 
 
             stu.ImageSrc = request.ImageBase64;
@@ -453,7 +454,7 @@ public class StudentService
                 //img.Save(fileName);
                 Common.SaveJpeg1(fileName, img, 100);
             }
-            await _personRepository.SaveImageAsync(stu.Id, request.UserFace);
+            await _personRepository.SaveImageAsync(stu.Id, request.UserFace, fileName);
 
             //stu.ImageSrc = request.UserFace;
             //var revt = await PushPersonByEventBusAsync(stu);

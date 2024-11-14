@@ -210,6 +210,18 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
             }
         }
 
-
+        [HttpGet("GetFaceByPersonId")]
+        public async Task<IActionResult> GetFaceByPersonId(string personId)
+        {
+            try
+            {
+                var datas = await _studentService.GetFaceByPersonId(personId);
+                return Ok(datas);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new Result<object>("Lỗi:" + ex.Message, false));
+            }
+        }
     }
 }
