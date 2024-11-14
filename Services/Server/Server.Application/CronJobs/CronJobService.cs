@@ -202,7 +202,7 @@ public partial class CronJobService : ICronJobService
             {
                 ExtraProperties extra = new ExtraProperties()
                 {
-                    absenceTime = item.EventTime
+                    absenceTime = item.EventTime.Value.ToString("yyyy-MM-dd HH:mm:ss")
                 };
                 var el = new StudentAbsence()
                 {
@@ -237,7 +237,7 @@ public partial class CronJobService : ICronJobService
                 var _listLog = new List<TimeAttendenceSync>();
                 foreach (var item in res.Responses)
                 {
-                    var el = datas.FirstOrDefault(o => o.StudentCode == item.studentCode && o.EventTime == item.extraProperties.absenceTime);
+                    var el = datas.FirstOrDefault(o => o.StudentCode == item.studentCode && o.EventTime.Value.ToString("yyyy-MM-dd HH:mm:ss") == item.extraProperties.absenceTime);
                     if (el == null)
                         continue;
 

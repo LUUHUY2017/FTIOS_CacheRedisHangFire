@@ -31,7 +31,7 @@
         public bool? periodIV { get; set; } = false;
         public bool? periodV { get; set; } = false;
         public bool? periodVI { get; set; } = false;
-        public DateTime? absenceTime { get; set; }
+        public string? absenceTime { get; set; }
 
     }
 

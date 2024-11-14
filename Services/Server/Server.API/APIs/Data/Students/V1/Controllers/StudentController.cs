@@ -74,7 +74,7 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
                 }
 
 
-                int totalRow = await items.CountAsync();
+                int totalRow = await items.Select(o => o.Id).CountAsync();
                 // phân trang
                 int skip = (request.CurentPage.Value - 1) * (request.RowsPerPage.Value);
                 int totalPage = 0;
@@ -119,7 +119,9 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
             {
                 request.OrganizationId = GetOrganizationId();
                 var items = await _studentService.GetAlls(request);
-                int totalAmount = await items.CountAsync();
+
+
+                int totalAmount = await items.Select(o => o.Id).CountAsync();
                 int totalFace = await items.CountAsync(o => o.IsFace == true);
                 int totalCurrent = totalAmount - totalFace;
 

@@ -192,8 +192,9 @@ public class StudentService
                              GradeCode = _do.GradeCode,
 
                              //ImageBase64 = la != null ? (!string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null) : null,
-                             IsFace = la != null ? true : false,
-                             IsFaceName = la != null ? "Có" : "Không",
+                             FaceUrl = la != null ? (!string.IsNullOrWhiteSpace(la.FaceUrl) ? "\\" + la.FaceUrl : "") : "",
+                             IsFace = la != null ? (!string.IsNullOrWhiteSpace(la.FaceUrl) ? true : false) : false,
+                             IsFaceName = la != null ? (!string.IsNullOrWhiteSpace(la.FaceUrl) ? "Có" : "Không") : "Không",
                          });
 
             return _data;
@@ -335,11 +336,13 @@ public class StudentService
                 out dateStudent
             );
 
+
             var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
             var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
 
             string imageName = stu.Id + ".jpg";
             string fileName = imageFullFolder + imageName;
+            string folderName = imageFolder + imageName;
 
             if (!string.IsNullOrWhiteSpace(request.ImageBase64))
             {
@@ -353,14 +356,19 @@ public class StudentService
             {
                 if (!string.IsNullOrWhiteSpace(request.ImageSrc))
                 {
-                    await Common.DownloadAndSaveImage(request.ImageSrc, fileName);
-                    request.ImageBase64 = Common.ConvertFileImageToBase64(fileName);
+                    // Lưu ảnh online
+                    //await Common.DownloadAndSaveImage(request.ImageSrc, fileName);
+
+                    /// Parse ảnh sàng base64
+                    var rootFolder = Common.GetCurentFolder();
+                    string fileNames = rootFolder + request.ImageSrc;
+                    request.ImageBase64 = Common.ConvertFileImageToBase64(fileNames);
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(request.ImageBase64))
-                await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64, fileName);
 
+            if (!string.IsNullOrWhiteSpace(request.ImageBase64))
+                await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64, folderName);
 
             stu.ImageSrc = request.ImageBase64;
             var revt = await PushStudentsByEventBusAsync(stu);
@@ -444,7 +452,7 @@ public class StudentService
 
             string imageName = stu.Id + ".jpg";
             string fileName = imageFullFolder + imageName;
-
+            string folderName = imageFolder + imageName;
 
             if (!string.IsNullOrWhiteSpace(request.UserFace))
             {
@@ -454,7 +462,7 @@ public class StudentService
                 //img.Save(fileName);
                 Common.SaveJpeg1(fileName, img, 100);
             }
-            await _personRepository.SaveImageAsync(stu.Id, request.UserFace, fileName);
+            await _personRepository.SaveImageAsync(stu.Id, request.UserFace, folderName);
 
             //stu.ImageSrc = request.UserFace;
             //var revt = await PushPersonByEventBusAsync(stu);
@@ -510,7 +518,6 @@ public class StudentService
                 }
                 await _dbContext.SaveChangesAsync();
 
-
                 var _TA_PersonInfo = new TA_PersonInfo()
                 {
                     Id = stu.Id,
@@ -557,6 +564,8 @@ public class StudentService
 
         try
         {
+            var imageFullFolder = Common.GetCurentFolder();
+
             var students = await _dbContext.Student.Where(o => o.Actived == true && o.OrganizationId == dev.OrganizationId).ToListAsync();
             var faces = await _dbContext.PersonFace.Where(o => o.Actived == true && o.OrganizationId == dev.OrganizationId).ToListAsync();
 
@@ -590,6 +599,13 @@ public class StudentService
                 await _dbContext.SaveChangesAsync();
 
 
+                string imageBase64 = string.Empty;
+                if (face != null && face.FaceUrl != null)
+                {
+                    string fileName = imageFullFolder + face.FaceUrl;
+                    imageBase64 = Common.ConvertFileImageToBase64(fileName);
+                }
+
                 var _TA_PersonInfo = new TA_PersonInfo()
                 {
                     Id = stu.Id,
@@ -599,7 +615,8 @@ public class StudentService
                     FullName = stu.FullName,
                     PersonCode = stu.StudentCode,
                     SerialNumber = dev.SerialNumber,
-                    UserFace = face?.FaceData
+                    //UserFace = face?.FaceData
+                    UserFace = imageBase64
                 };
                 var param = JsonConvert.SerializeObject(_TA_PersonInfo);
 
@@ -636,6 +653,7 @@ public class StudentService
 
         try
         {
+            var imageFullFolder = Common.GetCurentFolder();
             var face = await _dbContext.PersonFace.Where(o => o.Actived == true && o.PersonId == stu.Id).FirstOrDefaultAsync();
             var item = _dbContext.PersonSynToDevice.FirstOrDefault(o => o.DeviceId == dev.Id && o.PersonId == stu.Id);
 
@@ -660,6 +678,14 @@ public class StudentService
             await _dbContext.SaveChangesAsync();
 
 
+
+            string imageBase64 = string.Empty;
+            if (face != null && face.FaceUrl != null)
+            {
+                string fileName = imageFullFolder + face.FaceUrl;
+                imageBase64 = Common.ConvertFileImageToBase64(fileName);
+            }
+
             var _TA_PersonInfo = new TA_PersonInfo()
             {
                 Id = stu.Id,
@@ -669,7 +695,8 @@ public class StudentService
                 FullName = stu.FullName,
                 PersonCode = stu.StudentCode,
                 SerialNumber = dev.SerialNumber,
-                UserFace = face?.FaceData
+                //UserFace = face?.FaceData
+                UserFace = imageBase64
             };
             var param = JsonConvert.SerializeObject(_TA_PersonInfo);
 

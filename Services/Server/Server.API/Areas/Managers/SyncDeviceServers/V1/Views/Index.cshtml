@@ -126,10 +126,10 @@
                                             <th>
                                             </th>
 
-                                            <th>
+                                            <th style="white-space:nowrap">
                                                 <input type="text" class="form-control " v-model="params.synMessage">
                                             </th>
-                                            <th>
+                                            <th style="white-space:nowrap">
                                                 <input type="text" class="form-control " v-model="params.synFaceMessage">
                                             </th>
                                             <th>
@@ -156,8 +156,8 @@
                                                 <input v-else-if="item.synFaceStatus== false" type='checkbox' class='checked' />
                                                 <input v-else="item.synFaceStatus== false" type='checkbox' readonly disabled />
                                             </td>
-                                            <td><span>{{item.synMessage}}</span></td>
-                                            <td><span>{{item.synFaceMessage}}</span></td>
+                                            <td style=" white-space: nowrap;"><span>{{item.synMessage}}</span></td>
+                                            <td style=" white-space: nowrap;"><span>{{item.synFaceMessage}}</span></td>
                                             <td style=" white-space: nowrap;">
                                                 <span>{{ formatDateTime(item.lastModifiedDate) }}</span>
                                             </td>
@@ -503,7 +503,7 @@
                         alertify.notify(response.data.message, 'error', 6, function () { });
                     }
 
-              
+
                 }).catch(error => {
                     $('.loader').hide(0);
                 });
@@ -519,11 +519,9 @@
 
                     if (response.data.succeeded) {
                         let res = response.data.data;
-                        try { this.item.imageSrc = res.faceData != null ? "data:image/png;base64," + res.faceData : null } catch (Ex) { }
+                        // try { this.item.imageSrc = res.faceData != null ? "data:image/png;base64," + res.faceData : null } catch (Ex) { }
+                        try { this.item.imageSrc = "/" + res.faceUrl } catch (Ex) { }
                         this.item = { ...this.item };
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'warning', 6, function () { });
                     }
                     bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
                 }).catch(error => {

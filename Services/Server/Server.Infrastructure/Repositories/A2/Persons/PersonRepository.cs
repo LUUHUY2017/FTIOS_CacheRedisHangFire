@@ -42,7 +42,7 @@ public class PersonRepository : RepositoryBaseMasterData<Person>, IPersonReposit
             return new Result<Person>("Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<PersonFace>> SaveImageAsync(string personId, string base64String, string file)
+    public async Task<Result<PersonFace>> SaveImageAsync(string personId, string base64String, string folderName)
     {
         string message = "";
         try
@@ -50,8 +50,8 @@ public class PersonRepository : RepositoryBaseMasterData<Person>, IPersonReposit
             var org = await _dbContext.PersonFace.FirstOrDefaultAsync(o => o.PersonId == personId);
             if (org != null)
             {
-                org.FaceData = base64String;
-                org.Logs = file;
+                //org.FaceData = base64String;
+                org.FaceUrl = folderName;
                 _dbContext.PersonFace.Update(org);
                 message = "Cập nhật thành công";
             }
@@ -60,8 +60,8 @@ public class PersonRepository : RepositoryBaseMasterData<Person>, IPersonReposit
                 org = new PersonFace();
                 org.PersonId = personId;
                 org.FaceIndex = 1;
-                org.Logs = file;
-                org.FaceData = base64String;
+                org.FaceUrl = folderName;
+                //org.FaceData = base64String;
                 _dbContext.PersonFace.Add(org);
                 message = "Thêm mới thành công";
             }

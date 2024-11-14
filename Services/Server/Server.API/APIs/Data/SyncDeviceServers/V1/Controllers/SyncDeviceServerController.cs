@@ -72,7 +72,7 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
                 }
 
 
-                int totalRow = await items.CountAsync();
+                int totalRow = await items.Select(o => o.Id).CountAsync();
                 // phân trang
                 int skip = (request.CurentPage.Value - 1) * (request.RowsPerPage.Value);
                 int totalPage = 0;
@@ -110,8 +110,6 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
             try
             {
                 request.OrganizationId = GetOrganizationId();
-                request.StartDate = null;
-                request.EndDate = null;
                 var items = await _syncDeviceService.GetAlls(request);
 
                 if (request.FilterItems != null && request.FilterItems.Count > 0)
@@ -122,7 +120,7 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
                     }
                 }
 
-                int totalAmount = await items.CountAsync();
+                int totalAmount = await items.Select(o => o.Id).CountAsync();
                 int totalFace = await items.CountAsync(o => o.SynStatus == true);
                 int totalWait = await items.CountAsync(o => o.SynStatus == null);
                 int totalCurrent = totalAmount - totalWait - totalFace;
