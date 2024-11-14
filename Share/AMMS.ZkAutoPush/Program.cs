@@ -28,7 +28,7 @@ IConfiguration configuration = builder.Configuration;
 IConfigurationRoot configRoot = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
 
 services.AddOptions(); //Kích hoạt Options
-//services.AddVersion();// Versioning
+services.AddVersion();// Versioning
 
 services.AddCors(options =>
 {
@@ -273,6 +273,9 @@ services.AddControllers();
 //SignalR
 services.AddSignalRService(configuration);
 
+//AutoMapper
+services.AddAutoMapper(typeof(Program));
+services.AddAddAutoMapperServices();
 
 services.AddHttpClient();
 services.AddControllersWithViews();

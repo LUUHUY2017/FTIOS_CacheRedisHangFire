@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Share.WebApp.Controllers;
 
-namespace Server.API.Areas.Managers.MonitorDevices.V1.Controllers;
+namespace AMMS.ZkAutoPush.Areas.Managers.TerminalCommandLogs.V1;
 
 [Route("v1/[controller]")]
 //[AuthorizeClient]
 
-public class MonitorDeviceController : AuthBaseController
+public class TerminalCommandLogController : AuthBaseController
 {
-    const string pathUrl = "~/Areas/Managers/MonitorDevices/V1/Views/";
+    const string pathUrl = "~/Areas/Managers/TerminalCommandLogs/V1/Views/";
+    //const string pathUrl = "~/Areas/Managers/TerminalCommandLogs/";
 
     public IActionResult Index()
     {
