@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Trạng thái thiết bị";
+    ViewData["Title"] = "Giám sát thiết bị";
     Layout = "~/Views/Shared/_LayoutManage.cshtml";
 }
 
@@ -40,18 +40,11 @@
                     <form v-on:submit.prevent="loadData">
                         <div class="row mb-3">
                             <div class="col-lg-2">
-                                <label class="form-label">Tìm kiếm theo</label>
-                                <select class="form-select" v-model:value="filter.columnTable">
-                                    <option value="serial_number">Số serial</option>
-                                    <option value="device_name">Tên thiết bị</option>
-                                </select>
-                            </div>
-                            <div class="col-lg-2">
                                 <label class="form-label">Trạng thái</label>
-                                <select class="form-select" v-model:value="filter.onlineStatus">
+                                <select class="form-select" v-model:value="filter.status">
                                     <option value="">Tất cả</option>
-                                    <option value="Online">Online</option>
-                                    <option value="Offline">Offline</option>
+                                    <option value="1">Online</option>
+                                    <option value="0">Offline</option>
                                 </select>
                             </div>
                             @* <div class="col-lg-3">
@@ -63,6 +56,13 @@
                                     </option>
                                 </select>
                             </div> *@
+                            <div class="col-lg-2">
+                                <label class="form-label">Tìm kiếm theo</label>
+                                <select class="form-select" v-model:value="filter.columnTable">
+                                    <option value="serial_number">Số serial</option>
+                                    <option value="device_name">Tên thiết bị</option>
+                                </select>
+                            </div>
                             <div class="col-lg-3">
                                 <label class="form-label">Từ khóa tìm kiếm</label>
                                 <input type="text" id="key" name="key" placeholder="Nhập từ khóa tìm kiếm" class="form-control" v-model="filter.key">
@@ -75,66 +75,6 @@
                     </form>
                 </div>
             </div>
-
-            <!-- Quick stats boxes -->
-            <div class="row">
-                <div class="col-lg-6">
-                    <!-- Devices online -->
-                    <div class="card bg-primary text-white">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <h3 class="mb-0 f-bold">Thiết bị hệ thống({{ devicesAll.length }})</h3>
-                                @* <span class="badge bg-black bg-opacity-50 rounded-pill align-self-center ms-auto">+53,6%</span> *@
-                            </div>
-
-                            @* <div>
-                                <div class="fs-md opacity-75 fw-bold">Online: {{ onlineNumberAll }}</div> <!-- Đổi màu chữ thành sáng hơn -->
-                            </div> *@
-                        </div>
-
-                        <div class="rounded overflow-hidden mx-3 mb-1" id="devices-online"></div>
-                    </div>
-
-                </div>
-                <div class="col-lg-6">
-                    <!-- Devices online -->
-                    <div class="card bg-primary text-white">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <h3 class="mb-0 f-bold">Thiết bị tìm kiếm({{ data.length }})</h3>
-                                @* <span class="badge bg-black bg-opacity-50 rounded-pill align-self-center ms-auto">+53,6%</span> *@
-                            </div>
-
-                           @*  <div>
-                                <div class="fs-md opacity-75 fw-bold">Online: {{ onlineNumberAll }}</div> <!-- Đổi màu chữ thành sáng hơn -->
-                            </div> *@
-                        </div>
-
-                        <div class="rounded overflow-hidden mx-3 mb-1" id="devices-online-filter"></div>
-                    </div>
-
-                </div>
-                <div class="col-lg-4">
-                    <!-- Devices online -->
-                    <!--
-                    <div class="card bg-primary text-white">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <h3 class="mb-0 f-bold">Devices({{ devicesAll.length }})</h3>
-                                @* <span class="badge bg-black bg-opacity-50 rounded-pill align-self-center ms-auto">+53,6%</span> *@
-                            </div>
-
-                            <div>
-                                <div class="fs-md opacity-75 fw-bold">Online: {{ onlineNumberAll }}</div>
-                            </div>
-                        </div>
-
-                        <div class="rounded overflow-hidden mx-3 mb-1" id="devices-online"></div>
-                    </div>
-                    -->
-                </div>
-            </div>
-            <!-- /quick stats boxes -->
 
             <div class="card">
                 <div class="card-body">
@@ -297,36 +237,81 @@
         },
         data: {
             columns: [
-                 
+                {
+                    field: '#action',
+                    title: 'Chức năng',
+                    align: 'center',
+                    formatter: (value, row, index) => {
+                        var ele = `<div style="white-space: nowrap; ">`;
+                        //ele += `<a href = "javascript:" class= "btn btn-sm btn-info resend"  title = "Gửi lại" > <i class="fa fa-repeat" > </i>  </a > &nbsp;`;
+                        ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset delete " title="Xóa "> <i class="fa fa-trash" ></i> </a> &nbsp; `;
+                        //ele += ` <a href="javascript: " class="btn btn-info btn-sm delete-asset info " title="Chi tiết "> <i class="fa fa-info" ></i> </a> &nbsp; `;
+                        ele += ` </div>`;
+                        return ele;
+                    },
+                    events: {
+                        'click .delete': function (e, value, row) {
+                            var question = "Bạn có chắc chắn xóa thiết bị này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/MonitorDevice/delete', { id: row.id, reason: "" }, _device.object.bearerAuthorization).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _device.data = [];
+                                        _device.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+                    }
+                },
+                {
+                    title: "Số sê ri",
+                    field: 'sn',
+                    sortable: true,
+                },
                 {
                     title: "Tên máy",
                     field: 'name',
                     sortable: true,
                 },
                 {
-                    title: "Mã trường",
-                    field: 'ip_address',
-                    sortable: true,
-                },
-                
-                {
                     title: "Ngày tạo",
                     field: 'create_time',
                     sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
                 },
-                
                 {
-                    title: 'onlineStatus',
-                    field: 'onlineStatus',
+                    title: 'Trang thái',
+                    field: 'online_status',
                     sortable: true,
                     formatter: (data) => {
-                        return `<span class='fw-bold' style="color: ${data === 'Online' ? 'green' : 'red'};">${data}</span>`;
+                        return `<span class='fw-bold' style="color: ${data ? 'green' : 'red'};">${data ? "Online" : "Offline"}</span>`;
                     }
                 },
-              
                 {
-                    title: 'lastTimeOffline',
-                    field: 'lastTimeOffline',
+                    title: 'Thời gian kiểm tra',
+                    field: 'last_checkconnection',
                     sortable: true,
                     formatter: function (value, row, index) {
                         if (value) {
@@ -345,8 +330,8 @@
                     },
                 },
                 {
-                    title: 'lastTimeCheckConnection',
-                    field: 'lastTimeCheckConnection',
+                    title: 'Thời gian mất kết nối',
+                    field: 'time_offline',
                     sortable: true,
                     formatter: function (value, row, index) {
                         if (value) {
@@ -364,7 +349,26 @@
                         }
                     },
                 },
-                
+                {
+                    title: 'Thời gian kết nối lại',
+                    field: 'time_online',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
                 // {
                 //     title: 'lastTimeUpdateData',
                 //     field: 'lastTimeUpdateData',
@@ -437,7 +441,7 @@
             filter: {
                 columnTable: "serial_number",
                 actived: true,
-                onlineStatus: "",
+                status: "",
                 organizationId: -1,
                 key: "",
                 export: "0",
@@ -466,7 +470,7 @@
         methods: {
             loadData() {
                 $('.loader').show();
-                axios.get('/api/v1/MonitorDevice/Gets', this.object.bearerAuthorization).then(response => {
+                axios.post('/api/v1/MonitorDevice/GetsFilter', this.filter, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
@@ -479,22 +483,22 @@
                 });
             },
 
-            onSaveConfig() {
-                console.log(this.config.receivingData);
+            // onSaveConfig() {
+            //     console.log(this.config.receivingData);
 
-                $('.loader').show();
-                axios.get('/api/v1/DeviceCache/SetSetup?saveFile=' + this.config.saveFile + '&receivingData=' + this.config.receivingData, this.object.bearerAuthorization).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login')) {
-                        window.location = window.location.href;
-                    }
+            //     $('.loader').show();
+            //     axios.get('/api/v1/DeviceCache/SetSetup?saveFile=' + this.config.saveFile + '&receivingData=' + this.config.receivingData, this.object.bearerAuthorization).then(response => {
+            //         if (response.request.responseURL.includes('~/Account/Login')) {
+            //             window.location = window.location.href;
+            //         }
 
-                    this.data = response.data.data;
-                    $('.loader').delay(100).hide(0);
-                }).catch(error => {
-                    $('.loader').delay(100).hide(0);
-                    console.log(error);
-                });
-            },
+            //         this.data = response.data.data;
+            //         $('.loader').delay(100).hide(0);
+            //     }).catch(error => {
+            //         $('.loader').delay(100).hide(0);
+            //         console.log(error);
+            //     });
+            // },
         },
         mounted() {
             this.loadData();

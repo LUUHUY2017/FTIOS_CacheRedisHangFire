@@ -83,6 +83,60 @@
             </div>
 
         </div>
+
+        <div class="modal fade" id="ModelInfo" aria-hidden="true">
+            <div id="waitDialog" class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="staticBackdropLabel" class="modal-title">Thông tin chi tiết</h5>
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card-body">
+
+                            <form class="needs-validation" novalidate>
+                                <div class="row mb-3">
+                                    <label class="col-form-label col-lg-3">Loại lệnh </label>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" v-model="item.command_type" readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-form-label col-lg-3">Số sê ri thiết bị </label>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" v-model="item.terminal_sn" readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-form-label col-lg-3">Hành động </label>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" v-model="item.command_ation" readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-form-label col-lg-3">Trạng thái </label>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" v-model="item.successed" readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-form-label col-lg-3">Ngày tạo </label>
+                                    <div class="col-lg-9">
+                                        <input type="text" class="form-control" v-model="item.create_time" readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-form-label col-lg-3">Nội dung </label>
+                                    <div class="col-lg-9">
+                                        <textarea class="form-control" v-model="item.content" readonly rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -111,6 +165,23 @@
                         // 'click .edit': function (e, value, row) {
                         //     _terminalCommand.onPopupModelEdit(row, true);
                         // },
+                        'click .info': function (e, value, row) {
+                            $('.loader').show();
+                            axios.get('/api/v1/TerminalCommandLog/GetDetail?id=' + row.id, _terminalCommand.object.bearerAuthorization).then(response => {
+                                if (response.data.succeeded) {
+                                    _terminalCommand.item = response.data.data;
+                                    bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelInfo')).show();
+                                }
+                                else {
+                                    alertify.warning(response.data.message);
+                                }
+                                $('.loader').delay(100).hide(0);
+                            }).catch(error => {
+                                $('.loader').delay(100).hide(0);
+                                console.log(error);
+                                alert("Lỗi: " + error.response.data.message);
+                            });
+                        },
                         'click .delete': function (e, value, row) {
                             var question = "Bạn có chắc chắn xóa thiết bị này không?";
                             alertify.confirm('Thông báo!', question, function () {
@@ -158,10 +229,15 @@
                     },
                 },
                 {
-                    title: "Nội dung",
-                    field: 'content',
+                    title: "Hành động",
+                    field: 'command_ation',
                     sortable: true,
                 },
+                // {
+                //     title: "Nội dung",
+                //     field: 'content',
+                //     sortable: true,
+                // },
 
             ],
             data: [],
