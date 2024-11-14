@@ -57,7 +57,7 @@
                             <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalFace">
                         </div>
                         <div class="col-md-2 ">
-                            <label class="form-label" title="Số bản ghi được cập nhật lại sang SMAS"> Không thành công </label>
+                            <label class="form-label" v-on:click="onSubmitAgain()" title="Số bản ghi được cập nhật lại sang SMAS"> Không thành công </label>
                             <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="totalCurrent">
                         </div>
                     </div>
@@ -115,7 +115,7 @@
                                         </th>
                                         <th>
                                             <input type="text" class="form-control " disabled>
-                                        </th>   
+                                        </th>
                                         <th>
                                             <input type="text" class="form-control " v-model="params.className">
                                         </th>
@@ -152,7 +152,7 @@
                                         <td><span>{{item.className}}</span></td>
                                         <td><span style="white-space:nowrap">{{item.organizationName}}</span></td>
 
-                                        <td><span style="white-space:pre" >{{item.message}}</span></td>
+                                        <td><span style="white-space:pre">{{item.message}}</span></td>
                                         <td style=" white-space: nowrap;">
                                             <span>{{ formatDateTime(item.lastModifiedDate) }}</span>
                                         </td>
@@ -307,7 +307,7 @@
         },
         methods: {
 
-             onLoadData(resetPage) {
+            onLoadData(resetPage) {
                 this.onLoadDataDetail(resetPage);
                 this.onLoadData_General();
             },
@@ -339,7 +339,7 @@
                     console.log(error);
                 });
             },
-            
+
             onLoadData_General() {
                 this.checkParams();
                 axios.post('/api/v1/TimeAttendenceSync/PostGeneral', this.filter, this.object.config).then(response => {
@@ -459,6 +459,22 @@
                     if (response.data.succeeded) {
                         alertify.success(response.data.message);
                         this.onLoadData();
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+                });
+            },
+
+            onSubmitAgain(item) {
+                axios.post('/api/v1/TimeAttendenceSync/PostAgain', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    if (response.data.succeeded) {
+                        alertify.success(response.data.message);
                     }
                     else {
                         alertify.notify(response.data.message, 'error', 6, function () { });
