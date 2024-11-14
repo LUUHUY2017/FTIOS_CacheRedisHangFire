@@ -523,9 +523,6 @@
                         try { this.item.imageSrc = "/" + res.faceUrl } catch (Ex) { }
                         this.item = { ...this.item };
                     }
-                    else {
-                        alertify.notify(response.data.message, 'warning', 6, function () { });
-                    }
                     bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
                 }).catch(error => {
                     $('.loader').hide(0);
