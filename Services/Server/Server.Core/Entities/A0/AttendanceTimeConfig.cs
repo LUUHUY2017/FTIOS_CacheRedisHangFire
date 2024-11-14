@@ -9,5 +9,7 @@ public class AttendanceTimeConfig : EntityBase
     public TimeSpan? StartTime { get; set; }
     public TimeSpan? EndTime { get; set; }
 
+    public TimeSpan? LateTime { get; set; }
+    public TimeSpan? BreakTime { get; set; }
     public string? Note { get; set; }
 }

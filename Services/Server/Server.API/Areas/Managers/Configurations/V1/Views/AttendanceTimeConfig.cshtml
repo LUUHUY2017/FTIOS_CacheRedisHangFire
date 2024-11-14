@@ -99,6 +99,14 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
+                                <label class="col-form-label text-start col-lg-4">Thời gian bắt đầu tính muộn <span class="text-danger">*</span></label>
+                                <div class="col-lg-7">
+                                    <input type="time" class="form-control" required v-model="item.lateTime" step="1">
+                                    <div class="invalid-feedback">Vui lòng nhập thời gian bắt đầu tính muộn</div>
+                                    <div class="valid-feedback">Valid feedback</div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
                                 <label class="col-form-label text-start col-lg-4">Loại buổi <span class="text-danger">*</span></label>
                                 <div class="col-lg-7">
                                     <select id="OrgainizationEdit" class="form-select" required data-dropdown-parent="#ModelAddEdit" data-placeholder="Vui lòng chọn buổi điểm danh" v-model:value="item.type">
@@ -258,6 +266,11 @@
                 {
                     title: `Thời gian kết thúc`,
                     field: 'endTime',
+                    sortable: true,
+                },
+                {
+                    title: `Thời gian bắt đầu tính muộn`,
+                    field: 'lateTime',
                     sortable: true,
                 },
 

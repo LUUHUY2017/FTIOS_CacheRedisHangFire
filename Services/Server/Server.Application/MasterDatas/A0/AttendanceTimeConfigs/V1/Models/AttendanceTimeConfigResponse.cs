@@ -16,6 +16,9 @@ public class AttendanceTimeConfigResponse
     public TimeSpan? StartTime { get; set; }
     public TimeSpan? EndTime { get; set; }
 
+    public TimeSpan? LateTime { get; set; }
+    public TimeSpan? BreakTime { get; set; }
+
     public string? Note { get; set; }
 
     public AttendanceTimeConfigResponse(AttendanceTimeConfig tc, Organization o)
@@ -26,6 +29,8 @@ public class AttendanceTimeConfigResponse
         StartTime = tc?.StartTime;
         EndTime = tc?.EndTime;
         Note = tc?.Note;
+        LateTime = tc?.LateTime;
+        BreakTime = tc?.BreakTime;
         Actived = tc?.Actived;
         OrganizationId = o?.Id;
         OrganizationName = o?.OrganizationName ?? string.Empty;

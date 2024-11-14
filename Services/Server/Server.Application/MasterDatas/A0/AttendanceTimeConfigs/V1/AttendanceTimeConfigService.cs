@@ -49,6 +49,8 @@ public class AttendanceTimeConfigService
                 dataUpdate.Type = request.Type;
                 dataUpdate.StartTime = request.StartTime;
                 dataUpdate.EndTime = request.EndTime;
+                dataUpdate.LateTime = request.LateTime;
+                dataUpdate.BreakTime = request.BreakTime;
                 dataUpdate.Note = request.Note;
                 var retVal = await _attendanceTimeConfigRepository.UpdateAsync(dataUpdate);
                 return retVal;
