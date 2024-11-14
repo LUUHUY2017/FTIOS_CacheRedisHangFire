@@ -142,7 +142,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 var device = await _deviceCacheService.Get(sn);
                 
                 //nếu thiết bị online
-                if (device.online_status == true)
+               // if (device.online_status == true)
                 {
                     //Thêm lệnh vào caches
                     await _deviceCommandCacheService.Save(command);

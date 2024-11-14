@@ -22,7 +22,7 @@ namespace AMMS.ZkAutoPush.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddAddAutoMapperServices(this IServiceCollection services)
+    public static IServiceCollection AddAutoMapperServices(this IServiceCollection services)
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         return services;
