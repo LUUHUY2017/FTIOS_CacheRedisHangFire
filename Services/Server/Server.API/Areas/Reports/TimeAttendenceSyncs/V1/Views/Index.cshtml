@@ -2,17 +2,6 @@
     ViewData["Title"] = "Lịch sử đồng bộ điểm danh";
     Layout = "~/Views/Shared/_LayoutManage.cshtml";
 }
-<style>
-    .block-color {
-    height: 20px;
-    width: 20px;
-    display: inline-block;
-    margin-bottom: -5px;
-    line-height: 20px;
-    text-align: center;
-}
-
-</style>
 
 <!-- Main content -->
 <div class="content-wrapper" id="webui">
@@ -22,7 +11,7 @@
 
         <!-- Page header -->
         <div class="page-header page-header-light shadow">
-            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+            <div  class="page-header-content d-lg-flex">
                 <div class="d-flex">
                     <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
                         <span class="fw-normal">@ViewData["Title"]</span>
@@ -249,6 +238,17 @@
 
     @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
 </div>
+
+<style>
+    .block-color {
+        height: 20px;
+        width: 20px;
+        display: inline-block;
+        margin-bottom: -5px;
+        line-height: 20px;
+        text-align: center;
+    }
+</style>
 
 <script>
     $(document).ready(function () {
