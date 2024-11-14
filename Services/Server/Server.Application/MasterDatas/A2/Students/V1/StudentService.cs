@@ -418,7 +418,7 @@ public class StudentService
             if (string.IsNullOrWhiteSpace(request.PersonCode))
                 return new Result<DtoStudentRequest>($"Phải có mã học sinh", false);
 
-            var stu = await _dbContext.Student.FirstOrDefaultAsync(o => o.SyncCode == request.PersonCode.ToString());
+            var stu = await _dbContext.Student.FirstOrDefaultAsync(o => o.StudentCode == request.PersonCode.ToString());
             if (stu == null)
                 return new Result<DtoStudentRequest>($"Không tìm thấy thông tin học sinh", false);
 

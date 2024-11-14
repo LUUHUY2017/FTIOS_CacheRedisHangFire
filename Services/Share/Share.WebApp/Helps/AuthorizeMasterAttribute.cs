@@ -22,7 +22,7 @@ public class AuthorizeMasterAttribute : Attribute, IAuthorizationFilter, IAuthor
     public string? UserId { get; set; }
     public string? VHost { get; set; }
     public string? AccessToken { get; set; }
-    public bool? isSupeAdmin { get; set; } = null;
+    public bool? isSupeAdmin { get; set; } = false;
 
 
     //public AuthorizeMasterAttribute()
@@ -103,8 +103,7 @@ public class AuthorizeMasterAttribute : Attribute, IAuthorizationFilter, IAuthor
                     var items = AMMS_Client_Call_API.GetPageApiByUser(VHost, AccessToken, UserId);
 
                     var _getMenus = AMMS_Get_Menu_User.GetMenuByUser(pages, categories, items.PageId, isSupeAdmin);
-                    PagesConst.Menu_MD_Left = new List<MenuShowModel>();
-                    PagesConst.Menu_MD_Left = _getMenus;
+                    PagesConst.Menu_MD_Left = AMMS_Get_Menu_User.GetMenuByUser(pages, categories, items.PageId, isSupeAdmin);
                 }
             }
         }

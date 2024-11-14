@@ -10,6 +10,8 @@ using System.Drawing;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using Microsoft.EntityFrameworkCore;
+using Shared.Core.Images;
+using NetTopologySuite.Index.HPRtree;
 
 namespace AMMS.Hanet.Applications.V1.Service
 {
@@ -57,7 +59,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                     return;
 
                 //Tìm học sinh
-                var user = await _viettelDbContext.Student.FirstOrDefaultAsync(x => x.SyncCode == data.aliasID);
+                var user = await FindUserFromHanet(data.aliasID);
                 //Lưu thông tin 
                 await AddTransactionLog(data, reponse);
 
@@ -104,7 +106,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                         return;
                     }
 
-                    await AddATTImage(data);
+                    await AddATTImage(data, student);
                 }
                 catch (Exception e)
                 {
@@ -122,7 +124,7 @@ namespace AMMS.Hanet.Applications.V1.Service
             }
         }
 
-        private async Task AddATTImage(Hanet_Checkin_Data data)
+        private async Task AddATTImage(Hanet_Checkin_Data data, Student student)
         {
             try
             {
@@ -133,7 +135,7 @@ namespace AMMS.Hanet.Applications.V1.Service
                 {
                     Id = Guid.NewGuid().ToString(),
                     ImageBase64 = image,
-                    PersonCode = data.aliasID,
+                    PersonCode = student.StudentCode,
                     SerialNumber = data.deviceID,
                     TimeEvent = data.date,
                     AttendenceHistoryId = data.id,
@@ -154,17 +156,28 @@ namespace AMMS.Hanet.Applications.V1.Service
                 Logger.Warning(ex.Message);
             }
         }
-
+        /// <summary>
+        /// Thêm mới
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public async Task AddUserData(Hanet_User_Data data)
         {
             try
             {
-                var image = ConvertImage(data.avatar, data.aliasID + ".jpg", ImageFormat.Jpeg);
+                string imageUrl = data.avatar;
 
+                if (imageUrl == null) return;
+                Uri uri = new Uri(data.avatar);
+                string fileName = Path.GetFileName(uri.LocalPath);
+
+                var image = ConvertImage(imageUrl, fileName, ImageFormat.Jpeg);
+
+                var id = fileName.Split('.')[0];
 
                 TA_PersonInfo obj = new TA_PersonInfo()
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = id,
                     PersonCode = data.aliasID,
                     SerialNumber = "",
                     DeviceModel = EventBusConstants.HANET,
@@ -185,6 +198,24 @@ namespace AMMS.Hanet.Applications.V1.Service
             catch (Exception ex)
             {
                 Logger.Warning(ex.Message);
+            }
+        }
+        /// <summary>
+        /// Tìm học sinh trong CSDL
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public async Task<Student> FindUserFromHanet(string code)
+        {
+            try
+            {
+                var user = await _viettelDbContext.Student.FirstOrDefaultAsync(x => x.SyncCode == code || x.StudentCode == code);
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Logger.Warning(ex.Message);
+                return null;
             }
         }
 
