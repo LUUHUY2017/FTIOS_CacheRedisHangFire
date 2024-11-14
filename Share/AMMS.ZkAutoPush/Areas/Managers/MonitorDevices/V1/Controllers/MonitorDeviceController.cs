@@ -1,21 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Share.WebApp.Controllers;
-using Share.WebApp.Helps;
 
-namespace AMMS.ZkAutoPush.Areas.Managers.Configurations.V1;
+namespace AMMS.ZkAutoPush.Areas.Managers.MonitorDevices.V1.Controllers;
 
+[Route("v1/[controller]")]
+//[AuthorizeClient]
 
-[AuthorizeClient]
-public class ConfigurationController : AuthBaseController
+public class MonitorDeviceController : AuthBaseController
 {
-    const string pathUrl = "~/Areas/Managers/Configurations/V1/Views/";
+    const string pathUrl = "~/Areas/Managers/MonitorDevices/V1/Views/";
 
-    //[HttpGet]
     public IActionResult Index()
     {
         var access_token = Request.Cookies["amms.master.webapp.access_token"];
         return View(pathUrl + "Index.cshtml", access_token);
     }
-
-
 }

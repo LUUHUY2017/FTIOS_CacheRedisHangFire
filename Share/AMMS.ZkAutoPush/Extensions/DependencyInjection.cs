@@ -20,6 +20,11 @@ namespace AMMS.ZkAutoPush.Extensions;
 
 public static class DependencyInjection
 {
+    public static IServiceCollection AddAddAutoMapperServices(this IServiceCollection services)
+    {
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        return services;
+    }
     public static void AddVersion(this IServiceCollection service)
     {
         service.AddApiVersioning(options =>
