@@ -63,7 +63,7 @@
                                         {{ option.organizationName }}
                                     </option>
                                 </select>
-                            </div> 
+                            </div>
                             <div class="col-lg-2">
                                 <label class="form-label">Tìm kiếm theo</label>
                                 <select class="form-select" v-model:value="filter.columnTable">
@@ -526,6 +526,11 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+
                     this.devicesAll = response.data.data;
                     drawChart(this.devicesAll, 'devices-online');
                 }).catch(error => {
@@ -577,7 +582,7 @@
                 // }).catch(error => {
                 //     console.warn(error);
                 // });
-                 axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
+                axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }

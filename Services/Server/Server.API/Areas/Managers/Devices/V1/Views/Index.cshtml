@@ -381,7 +381,7 @@
             },
             deviceBrandsAdd: [],
             item: { actived: true, },
-            combobox: { schools: [], deviceBrands: [],},
+            combobox: { schools: [], deviceBrands: [], },
         },
         methods: {
             loadData() {
@@ -390,6 +390,8 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     if (response.data.succeeded) {
                         this.data = response.data.data;
@@ -434,6 +436,9 @@
                         window.location = window.location.href;
 
                     $('.loader').hide(0);
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     if (response.data.succeeded) {
                         _device.loadData();
 

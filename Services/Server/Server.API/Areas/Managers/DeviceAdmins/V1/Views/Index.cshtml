@@ -53,7 +53,7 @@
                                         {{ option.name}}
                                     </option>
                                 </select>
-                            </div>   
+                            </div>
                             <div class="col-lg-2 my-1" hidden>
                                 <label class="form-label">Trường học</label>
                                 <select id="FilterOrganization" class="form-control select" data-dropdown-parent="#webui_deviceAd" v-model="filter.organizationId">
@@ -488,6 +488,10 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+                    $('.loader').delay(100).hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     this.data = [];
                     if (response.data.succeeded) {
@@ -497,7 +501,7 @@
                         //alertify.notify(response.data.message, 'error', 6, function () { });
                     }
 
-                    $('.loader').delay(100).hide(0);
+
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
                 });
@@ -512,6 +516,8 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     if (response.data.succeeded) {
                         this.source_data = response.data.data.deviceUnSelected;
@@ -538,6 +544,9 @@
                 axios.post('/api/v1/DeviceAdmin/Update', this.item, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     $('.loader').hide(0);
                     if (response.data.succeeded) {
@@ -566,6 +575,9 @@
                 axios.post('/api/v1/deviceAdmin/PostSyncItem', item, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     if (response.data.succeeded) {
                         alertify.success(response.data.message);

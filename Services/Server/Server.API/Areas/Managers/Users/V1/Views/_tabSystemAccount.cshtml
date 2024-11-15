@@ -98,30 +98,30 @@
                             </div>
                         </div>
                     </form>
-                    
+
                     <ul class="nav nav-tabs" role="tablist">
-                        <li  class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link active" data-bs-toggle="tab" href="#tab_user_details">Nhóm quyền </a>
                         </li>
 
-                        @* <li  class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#tab_role_details">Quyền </a>
+                            @* <li  class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#tab_role_details">Quyền </a>
                         </li> *@
                     </ul>
-                    <div  class="tab-content" style="padding: inherit;" :class="{ 'disabled': !showRole }">
+                    <div class="tab-content" style="padding: inherit;" :class="{ 'disabled': !showRole }">
                         <div id="tab_user_details" class="  tab-pane active">
                             <p><b>Nhóm chưa đăng ký </b></p>
                             <bootstrap-table :columns="columns_roleGroups_unselect" :data="data_roleGroups_unselect" :options="options"></bootstrap-table>
                             <p><b>Nhóm đăng ký </b></p>
                             <bootstrap-table :columns="columns_roleGroups_select" :data="data_roleGroups_select" :options="options"></bootstrap-table>
                         </div>
-                        @* <div id="tab_role_details" class=" tab-pane fade">
-                            <p><b>Quyền đăng ký </b></p>
-                            <bootstrap-table :columns="columns_role_unselect" :data="data_role_unselect" :options="options"></bootstrap-table> 
-                            <bootstrap-table :columns="columns_role_select" :data="data_role_select" :options="options"></bootstrap-table>
+                            @* <div id="tab_role_details" class=" tab-pane fade">
+                        <p><b>Quyền đăng ký </b></p>
+                        <bootstrap-table :columns="columns_role_unselect" :data="data_role_unselect" :options="options"></bootstrap-table>
+                        <bootstrap-table :columns="columns_role_select" :data="data_role_select" :options="options"></bootstrap-table>
                         </div> *@
                     </div>
-                     
+
                 </div>
             </div>
         </div>
@@ -138,16 +138,16 @@
                         <li class="nav-item">
                             <a class="nav-link active" data-bs-toggle="tab" href="#tab_user_roleGroup_info">Nhóm quyền</a>
                         </li>
-                        @* <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#tab_user_roles_info">Quyền </a>
+                            @* <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#tab_user_roles_info">Quyền </a>
                         </li> *@
                     </ul>
                     <div class="tab-content" style="padding: inherit">
                         <div id="tab_user_roleGroup_info" class="  tab-pane active">
                             <bootstrap-table :columns="columns_user_roleGroup_info" :data="data_user_roleGroup_info" :options="options"></bootstrap-table>
                         </div>
-                        @* <div id="tab_user_roles_info" class="  tab-pane fade">
-                            <bootstrap-table :columns="columns_user_role_info" :data="data_user_role_info" :options="options"></bootstrap-table>
+                            @* <div id="tab_user_roles_info" class="  tab-pane fade">
+                        <bootstrap-table :columns="columns_user_role_info" :data="data_user_role_info" :options="options"></bootstrap-table>
                         </div> *@
                     </div>
                 </div>
@@ -285,8 +285,8 @@
                     title: 'Trạng thái',
                     sortable: true,
                     field: 'emailConfirmed',
-                    formatter: (value) => value 
-                        ? '<span style="color: green; font-weight: bold;">Đã kích hoạt</span>' 
+                    formatter: (value) => value
+                        ? '<span style="color: green; font-weight: bold;">Đã kích hoạt</span>'
                         : '<span style="color: orange; font-weight: bold;">Chưa kích hoạt</span>'
                 },
                 {
@@ -540,6 +540,10 @@
                         this.data = response.data.data;
                     }
                     $('.loader').hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                 }).catch(error => {
                     console.warn(error);
                     $('.loader').hide(0);
@@ -662,6 +666,9 @@
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     if (response.status == 200) {
                         this.data_roleGroups_unselect = response.data.data.data_roleGroups_unselect;
                         this.data_roleGroups_select = response.data.data.data_roleGroups_select;
@@ -744,6 +751,10 @@
             },
             onChangeEmailSentOtp() {
                 axios.get('/api/v1/UserProfile/ChangeEmail/SendOtp?email=' + this.changeEmail.email, this.object.config).then(response => {
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     if (response.data.succeeded) {
                         this.changeEmail.code = response.data.data.code;
                         this.changeEmail.key = response.data.data.key;

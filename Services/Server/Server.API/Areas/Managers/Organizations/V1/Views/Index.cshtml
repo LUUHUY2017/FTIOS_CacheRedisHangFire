@@ -284,6 +284,8 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     if (response.data.succeeded) {
                         this.data = response.data.data;
@@ -329,9 +331,13 @@
                         window.location = window.location.href;
 
                     $('.loader').hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     if (response.data.succeeded) {
                         _org.loadData();
-                        if (!this.object.editAction) { 
+                        if (!this.object.editAction) {
                             this.loadNavSchool();
                         }
 
@@ -352,6 +358,10 @@
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     if (response.data.succeeded) {
                         localStorage.setItem('schools', JSON.stringify(response.data.data));
                         _navbarHeader.comboboxNav.schoolNavs = response.data.data;
@@ -359,7 +369,7 @@
                 }).catch(error => {
                     console.warn(error);
                 });
-                
+
             },
         },
         mounted() {

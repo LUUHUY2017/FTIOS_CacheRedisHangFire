@@ -395,6 +395,10 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     if (response.data.succeeded) {
 
                         this.data = response.data.data.items;
@@ -404,7 +408,6 @@
                         this.totalPage = parseInt(response.data.data.totalPage);
 
                         this.totalDataRowNext = parseInt(parseInt(this.firstRow) + parseInt(response.data.data.totalDataRow) - 1);
-
                         const pagingNumbers = $('#pagingNumbers');
                         this.renderPagination(pagingNumbers, this.totalPage, this.filter.CurentPage);
                     }
@@ -415,6 +418,10 @@
                     $('.loader').delay(100).hide(0);
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
+
+                    console.log("%c[_____Status Code:_____] " + error.response.status, "color: red;  font-size: 12px;");
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
             onLoadData_General() {
@@ -516,10 +523,16 @@
                         window.location = window.location.href;
 
                     $('.loader').delay(100).hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     window.location.href = '/' + response.data;
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
-                    console.log(error);
+                    console.log("%c[_____Status Code:_____] " + error.response.status, "color: red;  font-size: 12px;");
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
             onResetForm() {
@@ -551,6 +564,9 @@
                         window.location = window.location.href;
 
                     $('.loader').hide(0);
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     if (response.data.succeeded) {
                         _stu.onLoadData();
 
@@ -563,6 +579,9 @@
                 }).catch(error => {
                     $('.loader').hide(0);
 
+                    console.log("%c[_____Status Code:_____] " + error.response.status, "color: red;  font-size: 12px;");
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
         },
