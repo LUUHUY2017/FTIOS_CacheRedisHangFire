@@ -56,15 +56,14 @@
                                     <option value="Offline">Offline</option>
                                 </select>
                             </div>
-                           @*  <div class="col-lg-3">
+                            <div class="col-lg-3" hidden>
                                 <label class="form-label">Tổ chức</label>
-                                <select id="organization" class="form-select" v-model:value="filter.organizationId">
-                                    <option :value="-1">Tất cả</option>
-                                    <option v-for="option in organizations" v-bind:value="option.id">
+                                <select id="FilterOrganization" class="form-control select" v-model:value="filter.organizationId">
+                                    <option v-for="option in combobox.schools" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>
                                 </select>
-                            </div> *@
+                            </div> 
                             <div class="col-lg-2">
                                 <label class="form-label">Tìm kiếm theo</label>
                                 <select class="form-select" v-model:value="filter.columnTable">
@@ -314,6 +313,15 @@
 </script>
 
 <script>
+    $(document).ready(function () {
+        $('#FilterOrganization').on("change", function () {
+            _mDevice.filter.organizationId = $(this).val();
+        });
+    });
+
+</script>
+
+<script>
     google.charts.load('current', { 'packages': ['corechart'] });
     google.charts.setOnLoadCallback(drawChart);
     function drawChart(devices, elementId) {
@@ -322,8 +330,8 @@
 
         var data = google.visualization.arrayToDataTable([
             ['Active', 'Number'],
-            [`Online - ${onlineNumberAll}`, onlineNumberAll],
-            [`Offline - ${offlineNumberAll}`, offlineNumberAll],
+            [`Online: ${onlineNumberAll}`, onlineNumberAll],
+            [`Offline: ${offlineNumberAll}`, offlineNumberAll],
         ]);
 
         var options = {
@@ -494,7 +502,7 @@
                 actived: true,
                 deviceModel: "",
                 onlineStatus: "",
-                //organizationId: -1,
+                organizationId: "0",
                 key: "",
                 export: "0",
             },
@@ -516,6 +524,7 @@
             organizations: [],
             combobox: {
                 deviceBrands: [],
+                schools: [],
             },
             config: {
                 saveFile: false,
@@ -567,6 +576,11 @@
                     console.log(error);
                 });
             },
+            getCookie(name) {
+                const value = "; " + document.cookie;
+                const parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            },
             loadCombox() {
                 // axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
                 //     if (response.request.responseURL.includes('Auth/Login')) {
@@ -576,6 +590,25 @@
                 // }).catch(error => {
                 //     console.warn(error);
                 // });
+                 axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.schools = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
+                    if (this.getCookie("organizationId")) {
+
+                        this.filter.organizationId = this.getCookie("organizationId");
+                        $('#FilterOrganization').val(this.filter.organizationId);
+                    }
+                    else {
+                        this.filter.organizationId = this.combobox.schools[0].id;
+                        $('#FilterOrganization').val(this.filter.organizationId);
+                    }
+
+                    this.loadData();
+                }).catch(error => {
+                    console.warn(error);
+                });
 
                 axios.get('/api/v1/device/GetDeviceBrands', this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
@@ -589,7 +622,7 @@
         },
         mounted() {
             this.loadCombox();
-            this.loadData();
+            //this.loadData();
         },
     })
 </script>

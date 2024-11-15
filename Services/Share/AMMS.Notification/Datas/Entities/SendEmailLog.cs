@@ -1,14 +1,13 @@
-﻿namespace AMMS.Notification.Datas.Entities;
+﻿using Shared.Core.Entities;
 
-public partial class SendEmailLog
+namespace AMMS.Notification.Datas.Entities;
+
+public class SendEmailLog : EntityBase
 {
-    public Guid Id { get; set; }
 
-    public Guid SendEmailId { get; set; }
-
+    public string? SendEmailId { get; set; }
     public DateTime? TimeSent { get; set; }
     public string? MessageLog { get; set; }
     public bool? Sent { get; set; }
-
 }
 

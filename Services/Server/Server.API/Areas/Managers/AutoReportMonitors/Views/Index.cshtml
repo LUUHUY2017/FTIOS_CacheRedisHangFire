@@ -114,7 +114,7 @@
             </div>
         </div>
     </div>
-
+    @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
 </div>
 
 <script>
@@ -249,12 +249,12 @@
                 },
                 {
                     title: "Thời gian tạo",
-                    field: 'createTime',
+                    field: 'createdDate',
                     sortable: true,
                     formatter: (value, row, index) => {
-                        if (row.createTime) {
-                            var createTime = moment(row.createTime).format('DD/MM/YYYY HH:mm:ss');
-                            return "<span class ='black'> " + createTime + "  </span>";
+                        if (row.createdDate) {
+                            var createdDate = moment(row.createdDate).format('DD/MM/YYYY HH:mm:ss');
+                            return "<span class ='black'> " + createdDate + "  </span>";
                         }
                     },
                 },

@@ -63,8 +63,8 @@ public class SendEmailMessageService1
             Console.WriteLine("Cap nhat ket qua gui email qua event bus");
 
             // Nếu kết quả gửi thành công -> Cập nhật vào bảng Lịch sử và kèm ghi Logs
-            Guid id = Guid.Parse(response.Id);
-            var sends = _notiDbContext.SendEmails.FirstOrDefault(o => o.Id == id);
+            //Guid id = Guid.Parse(response.Id);
+            var sends = _notiDbContext.SendEmails.FirstOrDefault(o => o.Id == response.Id);
             if (sends != null)
             {
                 sends.Sent = response.SendStatus;
@@ -74,7 +74,7 @@ public class SendEmailMessageService1
 
                 var sendLog = new SendEmailLog()
                 {
-                    Id = Guid.NewGuid(),
+                    //Id = Guid.NewGuid(),
                     Sent = response.SendStatus,
                     SendEmailId = sends.Id,
                     TimeSent = DateTime.Now,

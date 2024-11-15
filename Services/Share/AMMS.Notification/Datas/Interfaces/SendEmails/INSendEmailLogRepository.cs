@@ -6,7 +6,7 @@ public interface INSendEmailLogRepository
 {
     Task<List<SendEmailLog>> GetAlls();
     Task<Result<SendEmailLog>> UpdateAsync(SendEmailLog data);
-    Task<Result<int>> DeleteAsync(Guid id);
+    Task<Result<int>> DeleteAsync(string id);
 }
 
 
