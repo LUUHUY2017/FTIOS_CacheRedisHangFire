@@ -177,8 +177,9 @@ public class IclockController : ControllerBase
                 {
                     thietBiUpdate.time_online = DateTime.Now;
                     thietBiUpdate.online_status = true;
-                    await _deviceCacheService.Save(thietBiUpdate);
                 }
+                await _deviceCacheService.Save(thietBiUpdate);
+
             }
 
         }
