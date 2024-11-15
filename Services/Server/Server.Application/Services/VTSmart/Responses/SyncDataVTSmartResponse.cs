@@ -23,8 +23,10 @@
         public bool? isLate { get; set; } = false;
         public bool? isOffSoon { get; set; } = false;
         public bool? isOffPeriod { get; set; } = false;
-        public DateTime? lateTime { get; set; }
-        public DateTime? offSoonTime { get; set; }
+
+        public string? lateTime { get; set; }
+        public string? offSoonTime { get; set; }
+
         public bool? periodI { get; set; } = false;
         public bool? periodII { get; set; } = false;
         public bool? periodIII { get; set; } = false;

@@ -500,11 +500,10 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     var runMigration = configuration["RunMigration"];
+
+
     if (runMigration == "True")
     {
-       
-
-
         using (var scope = app.Services.CreateScope())
         {
             // Update DB automantic
@@ -642,6 +641,15 @@ if (app.Environment.IsDevelopment())
             await configurationDbContext.SaveChangesAsync();
 
 
+        }
+    }
+    else
+    {
+        using (var scope = app.Services.CreateScope())
+        {
+            // Update DB automantic
+            var dbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
+            await dbContext.Database.MigrateAsync();
         }
     }
 
