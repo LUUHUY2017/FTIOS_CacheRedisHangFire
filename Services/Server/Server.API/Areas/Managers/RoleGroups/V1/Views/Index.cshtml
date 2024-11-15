@@ -583,6 +583,9 @@
                                     onGet() {
 
                                         axios.get('/v1/RoleGroup/Gets').then(response => {
+                                            if (response.status == 302 || response.status == 401)
+                                                window.location.href = '/Account/login?ReturnUrl=%2F';
+
                                             if (response.data.succeeded) {
                                                 this.data = response.data.data;
                                             }
@@ -597,6 +600,10 @@
                                             $('.loader').show();
                                             axios.post('/v1/RoleGroup/Update', this.item).then(response => {
                                                 $('.loader').hide(0);
+
+                                                if (response.status == 302 || response.status == 401)
+                                                    window.location.href = '/Account/login?ReturnUrl=%2F';
+
                                                 //alertify.alert('Thông báo', "Lưu dữ liệu thành công", function () {
 
                                                 if (_tab_rolegroup.formAction == 'Add') {
@@ -918,6 +925,10 @@
                                     onGet() {
 
                                         axios.get('/v1/RoleGroup/Roles').then(response => {
+
+                                            if (response.status == 302 || response.status == 401)
+                                                window.location.href = '/Account/login?ReturnUrl=%2F';
+
                                             if (response.data.succeeded) {
                                                 this.data = response.data.data;
                                             }

@@ -6,7 +6,7 @@
         <div class="content">
 
             <div class="card">
-               <div class="card-body">
+                <div class="card-body">
                     <form v-on:submit.prevent="loadData">
                         <div class="row mb-3">
                             <div class="col-lg-3" hidden>
@@ -35,7 +35,7 @@
                             </div>
                             <div class="col-lg-2 d-flex align-items-end">
                                 <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
-                            </div> 
+                            </div>
 
                         </div>
                     </form>
@@ -162,7 +162,7 @@
                     formatter: (value, row, index) => {
                         var ele = `<div style="white-space: nowrap;">`;
                         //ele += `<a href = "javascript:" class= "btn btn-sm btn-info reAsync" title = "Đồng bộ " > <i class="fa fa-repeat" > </i> </a > &nbsp;`;
-                        
+
                         if (row.actived) {
                             ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit"  title = "Update " > <i class="fa fa-pencil" > </i><span class="sr-only">Update</span > </a > &nbsp;`;
                             ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset inactive " title="Ngừng hoạt động "> <i class="fa fa-minus-circle" ></i> </a> &nbsp; `;
@@ -304,7 +304,7 @@
                 type: "",
             },
             checkAsyncButton: false,
-            combobox: { schools: [], schoolsEdit: [], types: [],},
+            combobox: { schools: [], schoolsEdit: [], types: [], },
         },
         methods: {
             loadData() {
@@ -313,6 +313,9 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+                    $('.loader').delay(100).hide(0);
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     if (response.data.succeeded) {
                         this.data = response.data.data;
@@ -326,7 +329,7 @@
                         alertify.notify(response.data.message, 'error', 6, function () { });
                     }
 
-                    $('.loader').delay(100).hide(0);
+
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
                 });
@@ -349,6 +352,9 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+                    $('.loader').delay(100).hide(0);
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     if (response.data.succeeded) {
                         alertify.success("Thành công");
@@ -358,7 +364,7 @@
                         alertify.notify(response.data.message, 'error', 6, function () { });
                     }
 
-                    $('.loader').delay(100).hide(0);
+               
                 }).catch(error => {
                     console.log(error);
                     $('.loader').delay(100).hide(0);
@@ -397,7 +403,7 @@
                     }
 
                     this.combobox.schools = response.data.data;
-                    
+
                     if (this.combobox.schools.length > 1) {
                         this.combobox.schools = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
                         this.combobox.schoolsEdit = [...response.data.data];
