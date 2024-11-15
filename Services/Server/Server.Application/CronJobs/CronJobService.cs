@@ -202,7 +202,9 @@ public partial class CronJobService : ICronJobService
             {
                 ExtraProperties extra = new ExtraProperties()
                 {
-                    absenceTime = item.EventTime.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                    isLate = item.IsLate,
+                    lateTime = item.EventTime.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                    absenceTime = item.EventTime.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                 };
                 var el = new StudentAbsence()
                 {

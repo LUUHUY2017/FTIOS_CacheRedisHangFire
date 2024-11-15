@@ -96,6 +96,13 @@ public partial class TimeAttendenceSyncService
                              ParamResponses = la != null ? la.ParamResponses : null,
                              ParamRequests = la != null ? la.ParamRequests : null,
 
+
+                             ValueAbSent = _do.ValueAbSent,
+                             IsLate = _do.IsLate,
+                             LateTime = _do.LateTime,
+                             IsOffSoon = _do.IsOffSoon,
+                             OffSoonTime = _do.OffSoonTime,
+
                          });
 
             return _data;
@@ -123,6 +130,12 @@ public partial class TimeAttendenceSyncService
                 {
                     int section = int.Parse(filter.Value);
                     query = query.Where(p => p.AttendenceSection == section);
+                }
+                break;
+            case "valueabsent":
+                if (!string.IsNullOrWhiteSpace(filter.Value))
+                {
+                    query = query.Where(p => p.ValueAbSent == filter.Value);
                 }
                 break;
 
@@ -188,6 +201,8 @@ public partial class TimeAttendenceSyncService
             var studentAbs = new List<StudentAbsence>();
             ExtraProperties extra = new ExtraProperties()
             {
+                isLate = item.IsLate,
+                lateTime = item.EventTime.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                 absenceTime = item.EventTime.Value.ToString("yyyy-MM-dd HH:mm:ss")
             };
             var el = new StudentAbsence()
