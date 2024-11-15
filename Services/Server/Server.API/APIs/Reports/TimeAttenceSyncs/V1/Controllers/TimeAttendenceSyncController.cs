@@ -104,7 +104,7 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
 
             int totalAmount = await items.Select(o => new { o.TimeAttendenceEventId }).CountAsync();
             int totalFace = await items.Select(o => new { o.TimeAttendenceEventId, o.SyncStatus }).Distinct().CountAsync(o => o.SyncStatus != null);
-            int totalCurrent = totalAmount - totalFace;
+            int totalCurrent = await items.Select(o => new { o.TimeAttendenceEventId, o.SyncStatus }).CountAsync(o => o.SyncStatus == null);
 
             var retVal = new
             {
