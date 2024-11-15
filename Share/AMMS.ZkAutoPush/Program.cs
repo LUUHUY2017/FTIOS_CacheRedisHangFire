@@ -25,7 +25,6 @@ builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Confi
 
 IServiceCollection services = builder.Services;
 IConfiguration configuration = builder.Configuration;
-IConfigurationRoot configRoot = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
 
 services.AddOptions(); //Kích hoạt Options
 services.AddVersion();// Versioning
@@ -47,7 +46,7 @@ services.AddCors(options =>
 
 AppSettings appSettings = new AppSettings();
 configuration.Bind(appSettings);
-AuthBaseController.AMMS_Master_HostAddress = builder.Configuration["Authentication:Authority"];
+AuthBaseController.AMMS_Master_HostAddress = configuration["Authentication:Authority"];
 
 // Add Auth
 services.Configure<Authentication>(configuration.GetSection("Authentication"));
@@ -114,9 +113,9 @@ services.AddAuthorization(options =>
 });
  
 
-if (builder.Configuration["Hangfire:Enable"] == "True")
+if (configuration["Hangfire:Enable"] == "True")
 {
-    if (builder.Configuration["Hangfire:DBType"] == "MySQL")
+    if (configuration["Hangfire:DBType"] == "MySQL")
     {
         //Hangfire MySQL Server
         services.AddHangfire(configuration => configuration
@@ -140,10 +139,10 @@ if (builder.Configuration["Hangfire:Enable"] == "True")
     }
     else
     {
-        services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration["Hangfire:DBConnection"]
+        services.AddHangfire(x => x.UseSqlServerStorage(configuration["Hangfire:DBConnection"]
          , new Hangfire.SqlServer.SqlServerStorageOptions()
          {
-             SchemaName = builder.Configuration["Hangfire:TablesPrefix"]
+             SchemaName = configuration["Hangfire:TablesPrefix"]
          })
          );
     }
@@ -327,6 +326,7 @@ app.UseEndpoints(endpoints =>
 
 if (builder.Configuration["Hangfire:Enable"] == "True")
 {
+    Logger.Warning("Hangfire:Enable");
     //Tạo các job chạy tự động, theo dõi trạng thái của các job     
     //app.UseHangfireDashboard("/hangfire_dashboard");
     app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
@@ -343,8 +343,8 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
-        var viettelDbContext = scope.ServiceProvider.GetRequiredService<DeviceAutoPushDbContext>();
-        await viettelDbContext.Database.MigrateAsync();
+        //var viettelDbContext = scope.ServiceProvider.GetRequiredService<DeviceAutoPushDbContext>();
+        //await viettelDbContext.Database.MigrateAsync();
 
 
         var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();

@@ -1,8 +1,8 @@
 ﻿using StackExchange.Redis;
 using Newtonsoft.Json;
 using Shared.Core.Loggers;
-using Microsoft.Extensions.Configuration;
 using System.Net;
+using Microsoft.Extensions.Configuration;
 
 namespace Shared.Core.Caches.Redis;
 
@@ -10,22 +10,24 @@ namespace Shared.Core.Caches.Redis;
 public class CacheService : ICacheService
 {
     private IDatabase _redis;
-    public CacheService()
+    private IConfiguration _configuration;
+    private ConnectionMultiplexer connection;
+    public CacheService(IConfiguration configuration)
     {
-        ConfigureRedis();
-    }
-    private void ConfigureRedis()
-    {
-        _redis = ConnectionHelper.Connection.GetDatabase();
-    }
+        _configuration = configuration;
+        string url = $"{_configuration["Redis:Host"]}:{_configuration["Redis:Post"]}";
+        connection = ConnectionMultiplexer.Connect(url);
+
+        _redis = connection.GetDatabase();
+    } 
     public async Task<T> GetData<T>(string key)
     {
         try
         {
             var value = await _redis.StringGetAsync(key);
-            if ( string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
-               
+
             }
             else
             {
@@ -63,7 +65,7 @@ public class CacheService : ICacheService
         string json = "";
         try
         {
-             json = JsonConvert.SerializeObject(value);
+            json = JsonConvert.SerializeObject(value);
             //Logger.Info(keyName);
             //Logger.Info(json);
             await _redis.StringSetAsync(keyName, json);
@@ -99,7 +101,9 @@ public class CacheService : ICacheService
     {
         try
         {
-            ConnectionMultiplexer connection = ConnectionHelper.Connection;
+            //ConnectionMultiplexer connection = ConnectionHelper.Connection;
+
+           
             EndPoint endPoint = connection.GetEndPoints().First();
             RedisKey[] keys = connection.GetServer(endPoint).Keys(pattern: pattern).ToArray();
 
@@ -116,9 +120,7 @@ public class CacheService : ICacheService
     public async Task<List<T>> Gets<T>(string pattern)
     {
         try
-        {
-            ConnectionMultiplexer connection = ConnectionHelper.Connection;
-            //IDatabase db = connection.GetDatabase();
+        {  
             EndPoint endPoint = connection.GetEndPoints().First();
             RedisKey[] keys = connection.GetServer(endPoint).Keys(pattern: pattern).ToArray();
             //var server = connection.GetServer(endPoint);

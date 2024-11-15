@@ -23,8 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
 
 IServiceCollection services = builder.Services;
-IConfiguration configuration = builder.Configuration;
-IConfigurationRoot configRoot = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+IConfiguration configuration = builder.Configuration; 
 
 services.AddOptions(); //Kích hoạt Options
 services.AddCors(options =>
