@@ -21,54 +21,159 @@ public partial class NotificationDbContext : DbContext
     {
         modelBuilder.Entity<SendEmail>(entity =>
         {
-            entity.ToTable("send_emails");
+            entity.ToTable("SendEmail");
+
+            entity.HasKey(e => e.Id);
 
             entity.Property(e => e.Id)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("id");
-            entity.Property(e => e.AttachFile)
-                .HasMaxLength(500)
-                .IsUnicode(false)
-                .HasColumnName("attach_file");
-            entity.Property(e => e.BccEmails).HasColumnName("bcc_emails");
-            entity.Property(e => e.Body).HasColumnName("body");
-            entity.Property(e => e.CcEmails).HasColumnName("cc_emails");
-            entity.Property(e => e.CreateTime)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("create_time");
-            entity.Property(e => e.EmailSenderId).HasColumnName("email_sender_id");
-            entity.Property(e => e.NumberOfResend)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("number_of_resend");
-            entity.Property(e => e.OrganizationId).HasColumnName("organization_id");
-            entity.Property(e => e.Sent)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("sent");
+                .HasMaxLength(50)
+                .IsRequired()
+                .HasColumnType("varchar(50)")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.EmailSenderId)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.ToEmails)
+                .IsRequired()
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.CcEmails)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.BccEmails)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
             entity.Property(e => e.Subject)
-                .HasMaxLength(500)
-                .HasColumnName("subject");
+                .IsRequired()
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.Body)
+                .IsRequired()
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.Sent)
+                .HasColumnType("tinyint(1)");
+
             entity.Property(e => e.TimeSent)
-                .HasColumnType("datetime")
-                .HasColumnName("time_sent");
-            entity.Property(e => e.ToEmails).HasColumnName("to_emails");
+                .HasColumnType("datetime(6)");
+
+            entity.Property(e => e.NumberOfResend)
+                .HasColumnType("int");
+
+            entity.Property(e => e.AttachFile)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.CreatedBy)
+                .HasMaxLength(50)
+                .HasColumnType("varchar(50)")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime(6)")
+                .IsRequired();
+
+            entity.Property(e => e.LastModifiedBy)
+                .HasMaxLength(50)
+                .HasColumnType("varchar(50)")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.LastModifiedDate)
+                .HasColumnType("datetime(6)")
+                .IsRequired();
+
+            entity.Property(e => e.Actived)
+                .HasColumnType("tinyint(1)");
+
+            entity.Property(e => e.Reason)
+                .HasMaxLength(1000)
+                .HasColumnType("varchar(1000)")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.Logs)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.OrganizationId)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.ReferenceId)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
         });
+
 
         modelBuilder.Entity<SendEmailLog>(entity =>
         {
-            entity.ToTable("send_email_logs");
+            entity.ToTable("SendEmailLogs");
+
+            entity.HasKey(e => e.Id);
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("id");
-            entity.Property(e => e.SendEmailId).HasColumnName("send_email_id");
+                .HasMaxLength(50)
+                .IsRequired()
+                .HasColumnType("varchar(50)")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.SendEmailId)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
             entity.Property(e => e.TimeSent)
-                .HasColumnType("datetime")
-                .HasColumnName("time_sent");
-            entity.Property(e => e.MessageLog).HasColumnName("message_log");
+                .HasColumnType("datetime(6)");
+
+            entity.Property(e => e.MessageLog)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
             entity.Property(e => e.Sent)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("sent");
+                .HasColumnType("tinyint(1)");
+
+            entity.Property(e => e.CreatedBy)
+                .HasMaxLength(50)
+                .HasColumnType("varchar(50)")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime(6)")
+                .IsRequired();
+
+            entity.Property(e => e.LastModifiedBy)
+                .HasMaxLength(50)
+                .HasColumnType("varchar(50)")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.LastModifiedDate)
+                .HasColumnType("datetime(6)")
+                .IsRequired();
+
+            entity.Property(e => e.Actived)
+                .HasColumnType("tinyint(1)");
+
+            entity.Property(e => e.Reason)
+                .HasMaxLength(1000)
+                .HasColumnType("varchar(1000)")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.Logs)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.OrganizationId)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
+
+            entity.Property(e => e.ReferenceId)
+                .HasColumnType("longtext")
+                .HasCharSet("utf8mb4");
         });
 
 

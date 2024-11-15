@@ -1,12 +1,9 @@
-﻿namespace AMMS.Notification.Datas.Entities;
+﻿using Shared.Core.Entities;
 
-public partial class SendEmail
+namespace AMMS.Notification.Datas.Entities;
+
+public partial class SendEmail : EntityBase
 {
-    public Guid Id { get; set; }
-
-    public string? OrganizationId { get; set; }
-
-    public DateTime CreateTime { get; set; }
 
     public string? EmailSenderId { get; set; }
 

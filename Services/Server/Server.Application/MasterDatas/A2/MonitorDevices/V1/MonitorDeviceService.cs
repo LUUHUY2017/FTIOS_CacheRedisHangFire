@@ -41,6 +41,7 @@ public class MonitorDeviceService
             var devices = (await _deviceRepository.GetAllAsync())
                             .Where(x => x.Actived == true
                                     && ((!string.IsNullOrEmpty(filter.OnlineStatus) && filter.OnlineStatus == "Online") ? x.ConnectionStatus == true : true)   
+                                    && ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? x.OrganizationId == filter.OrganizationId : true)   
                                     && ((!string.IsNullOrEmpty(filter.OnlineStatus) && filter.OnlineStatus == "Offline") ? x.ConnectionStatus != true : true)   
                                     && ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "serial_number") ? x.SerialNumber.Contains(filter.Key) : true)
                                     && ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable == "device_name") ? x.DeviceName.Contains(filter.Key) : true)

@@ -6,5 +6,6 @@ public class MDeviceFilter
     public string? Key {  get; set; }
     public string? DeviceModel { get; set; }
     public string? OnlineStatus { get; set; }
+    public string? OrganizationId { get; set; }
     
 }

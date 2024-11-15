@@ -50,7 +50,7 @@ public class NSendEmailRepository : INSendEmailRepository
         }
     }
 
-    public async Task<Result<int>> DeleteAsync(Guid id)
+    public async Task<Result<int>> DeleteAsync(string id)
     {
         try
         {
