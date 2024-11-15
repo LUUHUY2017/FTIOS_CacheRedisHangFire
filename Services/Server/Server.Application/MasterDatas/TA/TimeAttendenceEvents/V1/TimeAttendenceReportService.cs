@@ -71,7 +71,12 @@ public partial class TimeAttendenceEventService
                              ShiftCode = _do.ShiftCode,
 
                              TAMessage = _do.TAMessage,
-                             ValueAbSent = _do.ValueAbSent
+
+                             ValueAbSent = _do.ValueAbSent,
+                             IsLate = _do.IsLate,
+                             LateTime = _do.LateTime,
+                             IsOffSoon = _do.IsOffSoon,
+                             OffSoonTime = _do.OffSoonTime,
                          });
 
             return _data;
@@ -120,6 +125,12 @@ public partial class TimeAttendenceEventService
                 }
                 break;
 
+            case "valueabsent":
+                if (!string.IsNullOrWhiteSpace(filter.Value))
+                {
+                    query = query.Where(p => p.ValueAbSent == filter.Value);
+                }
+                break;
             case "classname":
                 if (filter.Comparison == 0)
                     query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));

@@ -11,7 +11,7 @@
 
         <!-- Page header -->
         <div class="page-header page-header-light shadow">
-            <div  class="page-header-content d-lg-flex">
+            <div class="page-header-content d-lg-flex">
                 <div class="d-flex">
                     <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
                         <span class="fw-normal">@ViewData["Title"]</span>
@@ -82,6 +82,7 @@
                                     <th> Họ tên </th>
                                     <th> Buổi điểm danh</th>
                                     <th> Trạng thái </th>
+                                    <th> Sự kiện </th>
                                     <th> Thời gian diểm danh  </th>
                                     <th> Lớp </th>
                                     <th> Trường </th>
@@ -111,6 +112,13 @@
                                             <option selected value="">Tất cả</option>
                                             <option value="True">Đã đồng bộ</option>
                                             <option value="None">Đang chờ</option>
+                                        </select>
+                                    </th>
+                                    <th>
+                                        <select class="form-select" v-model="params.valueAbSent">
+                                            <option selected value="">Tất cả</option>
+                                            <option value="C">C - Có mặt</option>
+                                            <option value="X">X- Đi muộn</option>
                                         </select>
                                     </th>
                                     <th>
@@ -147,6 +155,9 @@
                                         <span style="cursor:pointer" v-else class='badge bg-warning bg-opacity-10 text-warning'>Đang chờ</span>
                                     </td>
                                     <td style=" white-space: nowrap;">
+                                        <span>{{ item.valueAbSent}}</span>
+                                    </td>
+                                    <td style=" white-space: nowrap;">
                                         <span>{{ formatDateTime(item.eventTime) }}</span>
                                     </td>
                                     <td><span>{{item.className}}</span></td>
@@ -166,7 +177,7 @@
                         <div class="fixed-table-pagination">
                             <div class="row">
                                 <div style="float:left" class="col-md-8">
-                                    <div style=" margin-top: 10px !important; overflow:hidden" class=" pagination">
+                                    <div style=" margin-top: 10px !important;font-size;13px " class=" pagination-detail">
                                         <ul id="pagingNumbers" class="pagination" style="margin: 0px !important;">  </ul>
                                     </div>
                                 </div>
@@ -174,7 +185,7 @@
                                 <div style="float: right;text-align: right;" class="col-md-4 ">
                                     <div style=" margin-top: 10px !important; " class=" pagination-detail">
                                         <span class="pagination-info">
-                                            Hiển thị {{firstRow}} đến {{totalDataRowNext}} trong tổng số {{totalRow}} hàng
+                                            Hiển thị {{firstRow}} đến {{totalDataRowNext}} trong số {{totalRow}} hàng
                                         </span>
                                         <span class="page-list">
                                             <select v-model:value="filter.RowsPerPage" id="RowsPerPage" class=" " v-on:change="renderRowOnPage()">
@@ -184,7 +195,7 @@
                                                 <option value="100">100</option>
                                                 <option value="250">250</option>
                                             </select>
-                                            hàng trên mỗi trang
+                                            hàng trên trang
                                         </span>
                                     </div>
                                 </div>
@@ -193,7 +204,6 @@
                     </div>
 
                     <div class="row ">
-                        <div class="text-danger fw-bold">Lưu ý:</div>
                         @* <div class="col-md-12" style=" justify-content: center;">
                         <ul style="list-style-type: none; padding-left: 0px;">
                         <li class="list-color"><span class="block-color ROW_WHITE"> C </span> Có mặt </li>
@@ -203,11 +213,17 @@
                         </ul>
                         </div> *@
 
-                        <div class="col-md-12" style=" justify-content: center;">
-                            <ul style="list-style-type: none; padding-left: 0px;">
+                        <div class="col-md-12" style=" justify-content: center;"> 
+                            <ul style="list-style-type: none; padding-left: 5px; font-size:13px">
+                                <li class="list-color"> <b class="text-danger"> Lưu ý:</b> </li>
+                                <li class="list-color"> <b> Buổi điểm danh:</b> </li>
                                 <li class="list-color"><span class="block-color bg-success"> 0 </span> Sáng  </li>
                                 <li class="list-color"><span class="block-color bg-primary">1 </span> Chiều </li>
                                 <li class="list-color"><span class="block-color bg-warning ">2 </span> Tối </li>
+                                <li class="list-color">  - </li>
+                                <li class="list-color"><b>  Sự kiện </b>  </li>
+                                <li class="list-color"><span class= "">C </span> Có mặt </li>
+                                <li class="list-color"><span class="">2 </span> Đi muộn </li>
                             </ul>
                         </div>
                     </div>
@@ -312,6 +328,7 @@
                 studentName: null,
                 deviceId: null,
                 eventType: "",
+                valueAbSent: "",
                 dateOfBirth: null,
                 className: null,
                 organizationName: null,
