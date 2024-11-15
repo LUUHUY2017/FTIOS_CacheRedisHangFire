@@ -26,7 +26,7 @@ namespace AMMS.ZkAutoPush.Applications.V1.Consummer
                 if (data == null || string.IsNullOrEmpty(data.Action) || string.IsNullOrEmpty(data.RequestType))
                     return;
 
-                  _ZK_SV_PUSHService.Process(data);
+                 await _ZK_SV_PUSHService.Process(data);
             }
             catch (Exception ex)
             {

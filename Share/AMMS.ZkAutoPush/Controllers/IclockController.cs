@@ -8,6 +8,7 @@ using Shared.Core.Caches.Redis;
 using AMMS.DeviceData.RabbitMq;
 using AMMS.ZkAutoPush.Applications.V1;
 using AMMS.ZkAutoPush.Applications;
+using MassTransit.Monitoring.Performance;
 
 namespace AMMS.ZkAutoPush.Controllers;
 
@@ -204,7 +205,7 @@ public class IclockController : ControllerBase
 
             string commanText = "";
             int i = 0;
-            int totalkb = 1000 * 1024;
+            int totalkb = 20 * 1024;
             int contentkb = 0;
             while (i < 200 || contentkb < totalkb)
             {
@@ -254,6 +255,9 @@ public class IclockController : ControllerBase
                     break;
                 i++;
             }
+
+            Console.WriteLine("So ban ghi da gui: " + i.ToString());
+
             if (string.IsNullOrEmpty(commanText))
             {
                 return Retval_OK;
@@ -287,7 +291,6 @@ public class IclockController : ControllerBase
             string content = "";
             using (StreamReader reader = new StreamReader(req.Body, Encoding.UTF8, true, 4096, true))
                 content = reader.ReadToEndAsync().Result;
-            Logger.Warning(content);
             if (string.IsNullOrEmpty(content))
                 return Retval_OK;
 

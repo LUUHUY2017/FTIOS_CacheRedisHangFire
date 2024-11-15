@@ -5,6 +5,7 @@ using AMMS.ZkAutoPush.Datas.Entities;
 using Microsoft.EntityFrameworkCore;
 using Shared.Core.Caches.Redis;
 using Shared.Core.Loggers;
+using System.Collections.Generic;
 
 namespace AMMS.ZkAutoPush.Applications;
 
@@ -180,10 +181,19 @@ public class DeviceCommandCacheService
 
     public async Task<List<IclockCommand>> Gets(string sn)
     {
+        List<IclockCommand> result = new List<IclockCommand>();
+        try
+        {
+            result = await _cacheService.Gets<IclockCommand>(GetKey(sn));
 
-        var listterminal = await _cacheService.Gets<IclockCommand>(GetKey(sn));
+        }
+        catch (Exception ex)
+        {
 
-        return listterminal;
+            Logger.Error(ex);
+        }
+
+        return result;
     }
     private string GetKey(string serialNumber)
     {

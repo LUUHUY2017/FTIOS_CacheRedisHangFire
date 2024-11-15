@@ -15,6 +15,7 @@ using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
 using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
+using SharpCompress.Common;
 using System.Drawing;
 using System.Globalization;
 
@@ -366,6 +367,11 @@ public class StudentService
                     /// Parse ảnh sàng base64
                     var rootFolder = Common.GetCurentFolder();
                     string fileNames = rootFolder + request.ImageSrc;
+
+                    //int queryIndex = fileNames.IndexOf('?');
+                    //if (queryIndex != -1)
+                    //    fileNames = fileNames.Substring(0, queryIndex);
+
                     request.ImageBase64 = Common.ConvertFileImageToBase64(fileNames);
                 }
             }
@@ -552,6 +558,7 @@ public class StudentService
                     RequestType = ServerRequestType.UserInfo,
                     RequestParam = param,
                     SchoolId = device.OrganizationId,
+                    RequestId = DateTime.Now.TimeOfDay.Ticks,
                 };
 
                 list_Sync.Add(list_SyncItem);
@@ -644,6 +651,7 @@ public class StudentService
                     DeviceModel = dev.DeviceModel,
                     RequestType = ServerRequestType.UserInfo,
                     RequestParam = param,
+                    RequestId = DateTime.Now.TimeOfDay.Ticks,
                 };
                 list_Sync.Add(list_SyncItem);
             }
@@ -727,6 +735,7 @@ public class StudentService
                 DeviceModel = dev.DeviceModel,
                 RequestType = ServerRequestType.UserInfo,
                 RequestParam = param,
+                RequestId = DateTime.Now.TimeOfDay.Ticks,
             };
             list_Sync.Add(list_SyncItem);
         }
