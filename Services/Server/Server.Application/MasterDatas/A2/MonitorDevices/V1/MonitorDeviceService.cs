@@ -109,7 +109,7 @@ public class MonitorDeviceService
             foreach (var device in allDevice)
             {
                 device.ConnectionStatus = false;
-                device.ConnectUpdateTime = DateTime.Now;
+                device.CheckConnectTime = DateTime.Now;
                 device.DisConnectUpdateTime = DateTime.Now;
             }
 

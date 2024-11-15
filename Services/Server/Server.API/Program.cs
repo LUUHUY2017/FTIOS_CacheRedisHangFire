@@ -478,6 +478,9 @@ using (var scope = app.Services.CreateScope())
         var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
         signalRClient.Init(AuthBaseController.AMMS_Master_HostAddress + "/ammshub");
         signalRClient.Start();
+
+        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
+        RecurringJob.AddOrUpdate($"Device_CheckDataReception_Cronjob", () => conJobService.CheckDataReception(), "*/5 * * * *", TimeZoneInfo.Local);
     }
     catch (Exception e) { Logger.Error(e); }
 

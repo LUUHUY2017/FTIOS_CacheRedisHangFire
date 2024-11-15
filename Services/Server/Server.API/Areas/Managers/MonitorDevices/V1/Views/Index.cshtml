@@ -63,7 +63,7 @@
                                         {{ option.organizationName }}
                                     </option>
                                 </select>
-                            </div> 
+                            </div>
                             <div class="col-lg-2">
                                 <label class="form-label">Tìm kiếm theo</label>
                                 <select class="form-select" v-model:value="filter.columnTable">
@@ -260,21 +260,7 @@
         console.error("Connection failed: ", err.toString());
     });
 
-    function offAllDevice() {
-        //console.log("Không nhận được dữ liệu trong vòng 10 phút.");
-        if (_mDevice.checkSignalR) {
-            //console.log("Đã vào");
-            _mDevice.offAllDeviceDb();
-            _mDevice.checkSignalR = false;
-        }
-        
-    }
-    let timeoutHandle;
-    const TIMEOUT_DURATION = 10 * 60 * 1000; // 10 phút
-    timeoutHandle = setInterval(offAllDevice, TIMEOUT_DURATION);
-
     connection.on("RefreshDevice", function (data) {
-        _mDevice.checkSignalR = true;
         var data1s = JSON.parse(data);
 
         var listUpdate = [];
@@ -286,17 +272,22 @@
             let deviceAllToUpdate = _mDevice.devicesAll.find(device => device.serialNumber === data1.serialNumber);
 
             //Update giao diện
-            if (deviceToUpdate && deviceToUpdate.connectionStatus !== data1.connectionStatus) {
+            //if (deviceToUpdate && deviceToUpdate.connectionStatus !== data1.connectionStatus) {
+            if (deviceToUpdate) {
+                //Update time check
+                let check = deviceToUpdate.connectionStatus !== data1.connectionStatus;
                 deviceToUpdate.connectionStatus = data1.connectionStatus;
                 deviceToUpdate.checkConnectTime = data1.connectUpdateTime;
-                if (data1.connectionStatus) {
-                    deviceToUpdate.connectUpdateTime = data1.time_online;
+                //Update time on/off
+                if (check) {
+                    if (data1.connectionStatus) {
+                        deviceToUpdate.connectUpdateTime = data1.time_online;
+                    }
+                    else {
+                        deviceToUpdate.disConnectUpdateTime = data1.time_offline;
+                    }
+                    listUpdate.push(data1);
                 }
-                else
-                {
-                    deviceToUpdate.disConnectUpdateTime = data1.time_offline;
-                }
-                listUpdate.push(data1);
             }
             if (deviceAllToUpdate && deviceAllToUpdate.connectionStatus !== data1.connectionStatus) {
                 deviceAllToUpdate.connectionStatus = data1.connectionStatus;
@@ -306,9 +297,6 @@
 
         drawChart(_mDevice.devicesAll, 'devices-online');
         drawChart(_mDevice.data, 'devices-online-filter');
-        //console.log("Đã đặt lại thời gian.");
-        clearInterval(timeoutHandle);
-        timeoutHandle = setInterval(offAllDevice, TIMEOUT_DURATION);
     });
 </script>
 
@@ -530,7 +518,6 @@
                 saveFile: false,
                 receivingData: false,
             },
-            checkSignalR: true,
         },
         methods: {
             loadData() {
@@ -539,6 +526,11 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+
                     this.devicesAll = response.data.data;
                     drawChart(this.devicesAll, 'devices-online');
                 }).catch(error => {
@@ -590,7 +582,7 @@
                 // }).catch(error => {
                 //     console.warn(error);
                 // });
-                 axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
+                axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }

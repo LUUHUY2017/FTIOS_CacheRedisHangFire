@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
 using Server.API.SignalRs;
+using Server.Application.CronJobs.Params;
 using Server.Application.MasterDatas.A2.MonitorDevices.V1;
 using Server.Application.MasterDatas.A2.MonitorDevices.V1.Models;
 using Server.Application.MasterDatas.A2.Organizations.V1;
@@ -63,32 +64,32 @@ public class MonitorDeviceController : AuthBaseAPIController
         return Ok(data);
     }
 
-    [HttpGet("Test")]
-    public async Task<IActionResult> Test()
-    {
-        Random random = new Random();
-        int randomNumber = random.Next(1, 5);
-        var device = new { serialNumber = "test", connectionStatus = true, connectUpdateTime = DateTime.Now };
-        switch (randomNumber)
-        {
-            case 2:
-                device = new { serialNumber = "test", connectionStatus = false, connectUpdateTime = DateTime.Now };
-                break;
-            case 3:
-                device = new { serialNumber = "test1", connectionStatus = false, connectUpdateTime = DateTime.Now };
-                break;
-            case 4:
-                device = new { serialNumber = "test1", connectionStatus = true, connectUpdateTime = DateTime.Now };
-                break;
-        }
+    //[HttpGet("Test")]
+    //public async Task<IActionResult> Test()
+    //{
+    //    Random random = new Random();
+    //    int randomNumber = random.Next(1, 5);
+    //    var device = new { serialNumber = "test", connectionStatus = true, connectUpdateTime = DateTime.Now };
+    //    switch (randomNumber)
+    //    {
+    //        case 2:
+    //            device = new { serialNumber = "test", connectionStatus = false, connectUpdateTime = DateTime.Now };
+    //            break;
+    //        case 3:
+    //            device = new { serialNumber = "test1", connectionStatus = false, connectUpdateTime = DateTime.Now };
+    //            break;
+    //        case 4:
+    //            device = new { serialNumber = "test1", connectionStatus = true, connectUpdateTime = DateTime.Now };
+    //            break;
+    //    }
 
-        //await _hubContext.Clients.All.SendAsync("RefreshDevice", "RefreshDevice", "", "Check kết nối");
-        if (_signalRService != null && _signalRService.Connection != null && _signalRService.Connection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connected)
-        {
-            await _signalRService.Connection.InvokeAsync("RefreshDevice", JsonConvert.SerializeObject(new List<object> { device }));
-        }
-        return Ok(device);
-    }
+    //    //await _hubContext.Clients.All.SendAsync("RefreshDevice", "RefreshDevice", "", "Check kết nối");
+    //    if (_signalRService != null && _signalRService.Connection != null && _signalRService.Connection.State == Microsoft.AspNetCore.SignalR.Client.HubConnectionState.Connected)
+    //    {
+    //        await _signalRService.Connection.InvokeAsync("RefreshDevice", JsonConvert.SerializeObject(new List<object> { device }));
+    //    }
+    //    return Ok(device);
+    //}
 
     [HttpPost("ChangeStatusDevice")]
     public async Task<IActionResult> ChangeStatusDevice(List<MDeviceStatusRequest> requests)
@@ -97,13 +98,14 @@ public class MonitorDeviceController : AuthBaseAPIController
         {
             await _signalRService.Connection.InvokeAsync("RefreshDevice", JsonConvert.SerializeObject(requests));
         }
-
+        DeviceParam.DataReception = true;
         return Ok(await _monitorDeviceService.UpdateStatusConnect(requests));
     }
 
-    [HttpGet("OffAllDevice")]
-    public async Task<IActionResult> OffAllDevice()
+    [HttpGet("ChangeStatusDataReception")]
+    public async Task<IActionResult> ChangeStatusDataReception()
     {
-        return Ok(await _monitorDeviceService.OffAllDevice());
+        DeviceParam.DataReception = !DeviceParam.DataReception;
+        return Ok(DeviceParam.DataReception);
     }
 }   

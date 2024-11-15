@@ -12,5 +12,6 @@ public interface ICronJobService
     Task Device_Warning_ScheduleSendMail(string sheduleId);
     Task CreateDeviceStatusWarningCronJob(List<ScheduleSendMail> scheduleLists);
     Task UpdateDeviceStatusWarningCronJob(string jobId, string sheduleId, string newCronExpression);
+    Task CheckDataReception();
 
 }

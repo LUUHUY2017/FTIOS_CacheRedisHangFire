@@ -381,6 +381,9 @@
                         window.location = window.location.href;
                     }
 
+                    if (response.status == 320 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     this.totalAmount = response.data.data.totalAmount;
                     this.totalFace = response.data.data.totalFace;
                     this.totalCurrent = response.data.data.totalCurrent;
@@ -388,7 +391,9 @@
 
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
-                    console.log(error);
+                    console.log("%c[_____Status Code:_____] " + error.response.status, "color: red;  font-size: 12px;");
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
 
@@ -403,6 +408,8 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+                    if (response.status == 320 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     if (response.data.succeeded) {
                         this.data = response.data.data.items;
@@ -423,6 +430,9 @@
                     $('.loader').delay(100).hide(0);
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
+                    console.log("%c[_____Status Code:_____] " + error.response.status, "color: red;  font-size: 12px;");
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
 
@@ -496,16 +506,21 @@
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
                     $('.loader').hide(0);
+
+                    if (response.status == 320 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     if (response.data.succeeded) {
                         this.onLoadUserSyncLog();
                     }
                     else {
                         alertify.notify(response.data.message, 'error', 6, function () { });
                     }
-
-
                 }).catch(error => {
                     $('.loader').hide(0);
+                    console.log("%c[_____Status Code:_____] " + error.response.status, "color: red;  font-size: 12px;");
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
 
@@ -517,6 +532,10 @@
                         window.location = window.location.href;
                     $('.loader').hide(0);
 
+
+                    if (response.status == 320 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     if (response.data.succeeded) {
                         let res = response.data.data;
                         // try { this.item.imageSrc = res.faceData != null ? "data:image/png;base64," + res.faceData : null } catch (Ex) { }
@@ -524,8 +543,13 @@
                         this.item = { ...this.item };
                     }
                     bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+
+
                 }).catch(error => {
                     $('.loader').hide(0);
+                    console.log("%c[_____Status Code:_____] " + error.response.status, "color: red;  font-size: 12px;");
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
 

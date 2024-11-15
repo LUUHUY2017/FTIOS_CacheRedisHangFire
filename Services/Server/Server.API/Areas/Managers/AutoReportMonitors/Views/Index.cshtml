@@ -54,10 +54,9 @@
                                 </datetime>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-3" hidden>
                                 <label class="form-label">Tổ chức</label>
-                                <select class="form-select select" required data-placeholder="Vui lòng chọn tổ chức" id="FOrganization">
-                                    <option selected value="0">Tất cả </option>
+                                <select class="form-control select" required data-placeholder="Vui lòng chọn tổ chức" id="FOrganization">
                                     <option v-for="option in combobox.organizations" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>
@@ -440,20 +439,44 @@
                 var fileName = row.attachFile
                 window.location.href = '/' + fileName;
             },
-
+            getCookie(name) {
+                const value = "; " + document.cookie;
+                const parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            },
             loadCombox() {
-                axios.get('/api/v1/ScheduleSendEmail/Organizations', this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login'))
-                        window.location = window.location.href;
+                // axios.get('/api/v1/ScheduleSendEmail/Organizations', this.object.config).then(response => {
+                //     if (response.request.responseURL.includes('~/Account/Login'))
+                //         window.location = window.location.href;
 
-                    this.combobox.organizations = response.data.items;
+                //     this.combobox.organizations = response.data.items;
+                // }).catch(error => {
+                //     console.log(error);
+                // });
+
+                axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.organizations = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
+                    if (this.getCookie("organizationId")) {
+
+                        this.filter.organizationId = this.getCookie("organizationId");
+                        $('#FOrganization').val(this.filter.organizationId);
+                    }
+                    else {
+                        this.filter.organizationId = this.combobox.organizations[0].id;
+                        $('#FOrganization').val(this.filter.organizationId);
+                    }
+
+                    this.loadData();
                 }).catch(error => {
-                    console.log(error);
+                    console.warn(error);
                 });
             },
         },
         mounted() {
-            this.loadData();
+            //this.loadData();
             this.loadCombox();
         },
     })

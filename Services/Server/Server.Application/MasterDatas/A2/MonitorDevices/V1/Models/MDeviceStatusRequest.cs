@@ -5,15 +5,15 @@ public class MDeviceStatusRequest
     /// <summary>
     /// Serrial number của thiết bị
     /// </summary>
-    public string serialNumber { get; set; } = "";
+    public string? serialNumber { get; set; } = "";
     /// <summary>
     /// Trạng thái thiết bị
     /// </summary>
-    public bool connectionStatus { get; set; } = false;
+    public bool? connectionStatus { get; set; } = false;
     /// <summary>
     /// Thời gian kiểm tra
     /// </summary>
-    public DateTime connectUpdateTime { get; set; } = DateTime.Now;
+    public DateTime? connectUpdateTime { get; set; } = DateTime.Now;
     /// <summary>
     /// Thời gian kết nối
     /// </summary>
