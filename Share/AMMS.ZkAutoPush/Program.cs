@@ -343,8 +343,8 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
-        var viettelDbContext = scope.ServiceProvider.GetRequiredService<DeviceAutoPushDbContext>();
-        await viettelDbContext.Database.MigrateAsync();
+        //var viettelDbContext = scope.ServiceProvider.GetRequiredService<DeviceAutoPushDbContext>();
+        //await viettelDbContext.Database.MigrateAsync();
 
 
         var signalRClient = scope.ServiceProvider.GetRequiredService<Shared.Core.SignalRs.ISignalRClientService>();
