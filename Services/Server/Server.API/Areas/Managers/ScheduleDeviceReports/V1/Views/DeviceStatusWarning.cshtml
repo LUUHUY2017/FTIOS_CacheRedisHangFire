@@ -189,7 +189,7 @@
                                         </div>
                                         <!--Định dạng gửi-->
                                         <div class="form-group row">
-                                            <label class="col-form-label col-md-3">Định dạng tệp báo cáo<span class="text-danger">*</span></label>
+                                            <label class="col-form-label col-md-3">Định dạng tệp<span class="text-danger">*</span></label>
                                             <div class="col-md-9">
                                                 <select data-dropdown-parent="#ModelAddEdit" required data-placeholder="Vui lòng chọn định dạng" id="scheduleExportType" class="form-control select">
                                                     <option v-for="option in combobox.exportTypes" v-bind:value="option.id">
@@ -604,7 +604,7 @@
             openFormAdd() {
                 this.object.editAction = false;
                 this.onResetForm();
-                this.item.scheduleTitleEmail = `AMMS.BI Device notification`;
+                this.item.scheduleTitleEmail = `AMMS.IOT Device notification`;
                 this.item.scheduleContentEmail = `Cảnh báo thiết bị mất kết nối`;
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
             },

@@ -19,6 +19,7 @@ using AMMS.ZkAutoPush.Helps.Authorizations;
 using Shared.Core.Loggers;
 using AMMS.ZkAutoPush.Datas.Databases;
 using Microsoft.EntityFrameworkCore;
+using AMMS.DeviceData.RabbitMq;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
@@ -356,7 +357,7 @@ using (var scope = app.Services.CreateScope())
 
 
         var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);
+        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}_{EventBusConstants.ZKTECO}_CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);
     }
     catch (Exception e)
     {

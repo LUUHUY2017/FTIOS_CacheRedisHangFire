@@ -136,6 +136,16 @@ public partial class PagesConst
         CategoryMenu = Category.TheoDoiGiamSat.Id,
     };
 
+    public static readonly PageObject URL_V1_MonitorAutoReport = new PageObject
+    {
+        Id = "5a1b7e0b-1cdc-4224-bb05-b36cd770606f",
+        Name = "Lịch sử gửi email",
+        Url = "V1/AutoReportMonitor",
+        Module = Module.Master,
+        RolePermission = RoleConst.SuperAdmin_Role,
+        CategoryMenu = Category.TheoDoiGiamSat.Id,
+    };
+
 
     public static readonly PageObject URL_V1_User = new PageObject
     {
@@ -201,6 +211,7 @@ public partial class PagesConst
             _ListMenu.Add(URL_V1_Organization);
             _ListMenu.Add(URL_V1_OrganizationAdmin);
             _ListMenu.Add(URL_V1_MonitorDevice);
+            _ListMenu.Add(URL_V1_MonitorAutoReport);
 
             _ListMenu.Add(URL_V1_Configuration);
             //_ListMenu.Add(URL_V1_SystemConfiguration);

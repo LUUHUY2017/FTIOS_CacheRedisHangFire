@@ -6,7 +6,7 @@ public class ScheduleSendEmailLogFilter
     public DateTime? EndDate { get; set; }
 
     public string? Sent { get; set; } = "";
-    public int? OrganizationId { get; set; } = 0;
+    public string? OrganizationId { get; set; } = "0";
 
 }
 

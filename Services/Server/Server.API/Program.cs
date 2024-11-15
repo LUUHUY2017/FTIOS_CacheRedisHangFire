@@ -31,7 +31,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
 IServiceCollection services = builder.Services;
-IConfiguration configuration = builder.Configuration; 
+IConfiguration configuration = builder.Configuration;
 
 
 services.AddOptions(); // Kích hoạt Options
@@ -498,17 +498,23 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    var runMigration = configuration["RunMigration"];
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
 
-
-    if (runMigration == "True")
+var runMigration = configuration["RunMigration"];
+if (runMigration == "True")
+{
+    try
     {
+
         using (var scope = app.Services.CreateScope())
         {
-            // Update DB automantic
-            //var dbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
-            //await dbContext.Database.MigrateAsync();
-
             await scope.ServiceProvider.GetRequiredService<IdentityContext>().Database.MigrateAsync();
             await scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>().Database.MigrateAsync();
             await scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.MigrateAsync();
@@ -641,24 +647,12 @@ if (app.Environment.IsDevelopment())
 
 
         }
-    }
-    else
-    {
-        using (var scope = app.Services.CreateScope())
-        {
-            // Update DB automantic
-            var dbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
-            await dbContext.Database.MigrateAsync();
-        }
-    }
 
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    }
+    catch (Exception e)
+    {
+        Logger.Error(e);
+    }
 }
 
 
