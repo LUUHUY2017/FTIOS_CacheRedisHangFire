@@ -201,7 +201,7 @@ public partial class TimeAttendenceSyncService
             var studentAbs = new List<StudentAbsence>();
             ExtraProperties extra = new ExtraProperties()
             {
-                isLate = item.IsLate,
+                isLate = item.IsLate != null ? item.IsLate : false,
                 lateTime = item.IsLate == true ? item.EventTime.Value.ToString("yyyy-MM-dd HH:mm:ss") : null,
                 absenceTime = item.EventTime.Value.ToString("yyyy-MM-dd HH:mm:ss")
             };
