@@ -390,6 +390,8 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     if (response.data.succeeded) {
                         this.data = response.data.data;
