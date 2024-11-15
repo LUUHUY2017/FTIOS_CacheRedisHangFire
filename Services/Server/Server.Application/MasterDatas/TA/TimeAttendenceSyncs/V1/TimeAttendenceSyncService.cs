@@ -177,7 +177,7 @@ public partial class TimeAttendenceSyncService
         {
             var _data = await (from _do in _dbContext.TimeAttendenceSync
                                where _do.TimeAttendenceEventId == id
-                               select _do).FirstOrDefaultAsync();
+                               select _do).OrderByDescending(o => o.CreatedDate).FirstOrDefaultAsync();
             return _data;
         }
         catch (Exception ex)

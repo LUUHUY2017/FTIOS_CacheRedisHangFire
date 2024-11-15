@@ -180,7 +180,7 @@ public partial class TimeAttendenceEventService
                 time.AttendenceSection = sectionTime;
                 time.LastModifiedDate = DateTime.Now;
 
-                time.TAMessage += timeOfDay.ToString("HH:mm:ss") + " | ";
+                time.TAMessage += timeOfDay + " | ";
                 time.DeviceIP = info.SerialNumber;
                 time.DeviceId = info.SerialNumber;
 

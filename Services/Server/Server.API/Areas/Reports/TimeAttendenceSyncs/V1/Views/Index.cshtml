@@ -150,7 +150,7 @@
                                             <span v-else class='badge bg-warning bg-opacity-10 text-warning'>Tối</span>
                                         </td>
                                         <td style=" white-space: nowrap;">
-                                            <span v-if="item.syncStatus ==true" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
+                                            <span v-if="item.syncStatus ==true" v-on:click="onSubmitSync(item)" class='badge bg-primary bg-opacity-10 text-primary'>Thành công</span>
                                             <span style="cursor:pointer" v-else-if="item.syncStatus ==false" v-on:click="onSubmitSync(item)" class='badge bg-warning  bg-opacity-10 text-warning'>Không thành công</span>
                                             <span style="cursor:pointer" v-else v-on:click="onSubmitSync(item)" class='badge bg-danger bg-opacity-10 text-danger'>Đang chờ</span>
                                         </td>
