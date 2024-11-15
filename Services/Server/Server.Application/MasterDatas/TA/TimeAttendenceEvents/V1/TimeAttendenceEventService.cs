@@ -136,7 +136,7 @@ public partial class TimeAttendenceEventService
                 // Gửi SMS Kiểu gửi tin nhắn: 1: Gửi tin nhắn qua SMS và EduOne 2: Gửi thông báo qua EduOne 3: Gửi tin nhắn qua SMS
                 int? formSendSMS = 1;
                 // Đi muộn
-                bool? isLate = null, isOffSoon = null;
+                bool? isLate = false, isOffSoon = false;
 
 
                 //if (config.BreakTime != null && timeOfDay >= config.BreakTime)
@@ -168,6 +168,7 @@ public partial class TimeAttendenceEventService
                     time.EventTime = info.TimeEvent;
                     addEvent = true;
                     time.IsLate = isLate;
+                    time.IsLate = isOffSoon;
                     time.ValueAbSent = valueAttendence;
                 }
 
@@ -179,7 +180,7 @@ public partial class TimeAttendenceEventService
                 time.AttendenceSection = sectionTime;
                 time.LastModifiedDate = DateTime.Now;
 
-                time.TAMessage += timeOfDay.ToString("HH:mm:ss") + " | ";
+                time.TAMessage += timeOfDay + " | ";
                 time.DeviceIP = info.SerialNumber;
                 time.DeviceId = info.SerialNumber;
 

@@ -95,8 +95,12 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
        .HasDatabaseName("IX_Org_Eventtype_Enroll");
 
         modelBuilder.Entity<TimeAttendenceEvent>()
-         .HasIndex(e => new { e.OrganizationId, e.EventType, e.EventTime })
-         .HasDatabaseName("IX_Org_Eventtype_Eventtime");
+            .HasIndex(e => new { e.OrganizationId, e.EventType, e.EventTime })
+            .HasDatabaseName("IX_Org_Eventtype_Eventtime");
+
+        modelBuilder.Entity<TimeAttendenceEvent>()
+         .HasIndex(e => new { e.OrganizationId, e.EventTime })
+         .HasDatabaseName("IX_Org_Eventtime");
 
 
         //Index TimeAttendenceSync

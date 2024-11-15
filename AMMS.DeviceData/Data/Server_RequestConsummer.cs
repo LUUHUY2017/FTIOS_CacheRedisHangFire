@@ -2,6 +2,7 @@
 using EventBus.Messages;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
+using Shared.Core.Loggers;
 
 namespace AMMS.DeviceData.Data
 {
@@ -25,6 +26,9 @@ namespace AMMS.DeviceData.Data
 
                 var data = context.Message;
 
+                if (data == null) return;
+
+
                 #region Zkteco
                 if (data.DeviceModel.ToUpper() == EventBusConstants.ZKTECO)
                 {
@@ -45,10 +49,9 @@ namespace AMMS.DeviceData.Data
 
                 return;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                Logger.Error(ex);
             }
         }
     }
