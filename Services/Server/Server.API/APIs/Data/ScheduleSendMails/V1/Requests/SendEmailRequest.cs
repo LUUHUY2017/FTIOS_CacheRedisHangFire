@@ -2,13 +2,13 @@
 
 public class SendEmailRequest
 {
-    public Guid? Id { get; set; }
+    public string? Id { get; set; }
 
-    public int? OrganizationId { get; set; }
+    public string? OrganizationId { get; set; }
 
-    public DateTime? CreateTime { get; set; }
+    public DateTime? CreatedDate { get; set; }
 
-    public int? EmailSenderId { get; set; }
+    public string? EmailSenderId { get; set; }
 
     public string? ToEmails { get; set; } = null!;
 

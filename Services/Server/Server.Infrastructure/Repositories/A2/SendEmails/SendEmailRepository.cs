@@ -1,5 +1,6 @@
 ﻿using AMMS.Shared.Commons;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Server.Core.Entities.A0;
 using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.ScheduleSendEmails.Requests;
@@ -12,9 +13,11 @@ namespace Server.Infrastructure.Repositories.A2.SendEmails;
 public class SendEmailRepository : ISendEmailRepository
 {
     private readonly IMasterDataDbContext _db;
-    public SendEmailRepository(IMasterDataDbContext biDbContext)
+    private readonly IConfiguration _configuration;
+    public SendEmailRepository(IMasterDataDbContext biDbContext, IConfiguration configuration)
     {
         _db = biDbContext;
+        _configuration = configuration;
     }
 
     public async Task<Result<List<Core.Entities.A2.SendEmails>>> GetAlls(ScheduleSendEmailLogModel request)
@@ -99,6 +102,15 @@ public class SendEmailRepository : ISendEmailRepository
         try
         {
             var _order = _db.EmailConfiguration.FirstOrDefault(o => o.OrganizationId == orgId);
+            if (_order == null)
+                _order = new EmailConfiguration()
+                {
+                    Email = _configuration["MailSettings:EmailFrom"],
+                    Server = _configuration["MailSettings:SmtpHost"],
+                    Port = int.Parse(_configuration["MailSettings:SmtpPort"]),
+                    PassWord = _configuration["MailSettings:SmtpPass"],
+                    UserName = _configuration["MailSettings:DisplayName"]
+                };
             return new Result<EmailConfiguration>(_order, message, true);
         }
         catch (Exception ex)

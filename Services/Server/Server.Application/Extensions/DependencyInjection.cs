@@ -388,10 +388,12 @@ public static class DependencyInjection
         //var xx = configuration.GetConnectionString("MasterDBConnection");
         //services.AddDbContext<BiDbContext>(options => options.UseSqlServer(xx, builder => builder.UseRowNumberForPaging()));
 
+        //var xxx = configuration.GetConnectionString("MasterDBConnection");
+        //services.AddDbContext<NotificationDbContext>(options => options.UseMySql(xxx, builder => builder.UseRowNumberForPaging()));
+
         var xxx = configuration.GetConnectionString("MasterDBConnection");
-        services.AddDbContext<NotificationDbContext>(options => options.UseSqlServer(xxx, builder => builder.UseRowNumberForPaging()));
-
-
+        services.AddDbContext<NotificationDbContext>(options =>
+            options.UseMySql(xxx, ServerVersion.AutoDetect(xxx)));
         //var yy = configuration.GetConnectionString("BiEventDbConnection");
         //services.AddDbContext<BiEventDbContext>(options => options.UseSqlServer(yy, builder => builder.UseRowNumberForPaging()));
 
