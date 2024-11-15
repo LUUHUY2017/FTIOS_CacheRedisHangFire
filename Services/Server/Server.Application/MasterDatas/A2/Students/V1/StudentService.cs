@@ -508,6 +508,7 @@ public class StudentService
                     item = new PersonSynToDevice()
                     {
                         DeviceId = device.Id,
+                        OrganizationId = stu.OrganizationId,
                         PersonId = stu.Id,
                         SynAction = ServerRequestAction.ActionAdd,
                         LastModifiedDate = DateTime.Now
@@ -517,6 +518,7 @@ public class StudentService
                 else
                 {
                     item.SynAction = ServerRequestAction.ActionAdd;
+                    item.OrganizationId = stu.OrganizationId;
                     item.SynStatus = null;
                     item.SynFaceStatus = null;
                     item.SynMessage = null;
@@ -587,6 +589,7 @@ public class StudentService
                     item = new PersonSynToDevice()
                     {
                         DeviceId = dev.Id,
+                        OrganizationId = stu.OrganizationId,
                         PersonId = stu.Id,
                         SynAction = ServerRequestAction.ActionAdd,
                         LastModifiedDate = DateTime.Now
@@ -595,6 +598,7 @@ public class StudentService
                 }
                 else
                 {
+                    item.OrganizationId = stu.OrganizationId;
                     item.SynAction = ServerRequestAction.ActionAdd;
                     item.SynStatus = null;
                     item.SynFaceStatus = null;
@@ -666,15 +670,18 @@ public class StudentService
                 item = new PersonSynToDevice()
                 {
                     DeviceId = dev.Id,
+                    OrganizationId = stu.OrganizationId,
                     PersonId = stu.Id,
                     SynAction = ServerRequestAction.ActionAdd,
-                    LastModifiedDate = DateTime.Now
+                    LastModifiedDate = DateTime.Now,
                 };
                 await _dbContext.PersonSynToDevice.AddAsync(item);
             }
             else
             {
+
                 item.SynAction = ServerRequestAction.ActionAdd;
+                item.OrganizationId = stu.OrganizationId;
                 item.SynStatus = null;
                 item.SynFaceStatus = null;
                 item.SynMessage = null;
