@@ -260,21 +260,7 @@
         console.error("Connection failed: ", err.toString());
     });
 
-    function offAllDevice() {
-        //console.log("Không nhận được dữ liệu trong vòng 10 phút.");
-        if (_mDevice.checkSignalR) {
-            //console.log("Đã vào");
-            _mDevice.offAllDeviceDb();
-            _mDevice.checkSignalR = false;
-        }
-        
-    }
-    let timeoutHandle;
-    const TIMEOUT_DURATION = 10 * 60 * 1000; // 10 phút
-    timeoutHandle = setInterval(offAllDevice, TIMEOUT_DURATION);
-
     connection.on("RefreshDevice", function (data) {
-        _mDevice.checkSignalR = true;
         var data1s = JSON.parse(data);
 
         var listUpdate = [];
@@ -286,17 +272,22 @@
             let deviceAllToUpdate = _mDevice.devicesAll.find(device => device.serialNumber === data1.serialNumber);
 
             //Update giao diện
-            if (deviceToUpdate && deviceToUpdate.connectionStatus !== data1.connectionStatus) {
+            //if (deviceToUpdate && deviceToUpdate.connectionStatus !== data1.connectionStatus) {
+            if (deviceToUpdate) {
+                //Update time check
+                let check = deviceToUpdate.connectionStatus !== data1.connectionStatus;
                 deviceToUpdate.connectionStatus = data1.connectionStatus;
                 deviceToUpdate.checkConnectTime = data1.connectUpdateTime;
-                if (data1.connectionStatus) {
-                    deviceToUpdate.connectUpdateTime = data1.time_online;
+                //Update time on/off
+                if (check) {
+                    if (data1.connectionStatus) {
+                        deviceToUpdate.connectUpdateTime = data1.time_online;
+                    }
+                    else {
+                        deviceToUpdate.disConnectUpdateTime = data1.time_offline;
+                    }
+                    listUpdate.push(data1);
                 }
-                else
-                {
-                    deviceToUpdate.disConnectUpdateTime = data1.time_offline;
-                }
-                listUpdate.push(data1);
             }
             if (deviceAllToUpdate && deviceAllToUpdate.connectionStatus !== data1.connectionStatus) {
                 deviceAllToUpdate.connectionStatus = data1.connectionStatus;
@@ -306,9 +297,6 @@
 
         drawChart(_mDevice.devicesAll, 'devices-online');
         drawChart(_mDevice.data, 'devices-online-filter');
-        //console.log("Đã đặt lại thời gian.");
-        clearInterval(timeoutHandle);
-        timeoutHandle = setInterval(offAllDevice, TIMEOUT_DURATION);
     });
 </script>
 
@@ -530,7 +518,6 @@
                 saveFile: false,
                 receivingData: false,
             },
-            checkSignalR: true,
         },
         methods: {
             loadData() {

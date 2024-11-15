@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Server.Application.MasterDatas.A2.DeviceNotifications.V1;
+using Server.Application.MasterDatas.A2.MonitorDevices.V1;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
@@ -25,6 +26,7 @@ public partial class CronJobService : ICronJobService
 
     private readonly SendEmailMessageService1 _sendEmailMessageService1;
     private readonly DeviceReportService _deviceReportService;
+    private readonly MonitorDeviceService _monitorDeviceService;
 
     public CronJobService(IMasterDataDbContext dbContext,
         SmartService smartService,
@@ -32,7 +34,8 @@ public partial class CronJobService : ICronJobService
         IConfiguration configuration,
         ISignalRClientService signalRClientService,
         SendEmailMessageService1 sendEmailMessageService1,
-        DeviceReportService deviceReportService
+        DeviceReportService deviceReportService,
+        MonitorDeviceService monitorDeviceService
         )
     {
         _dbContext = dbContext;
@@ -42,6 +45,7 @@ public partial class CronJobService : ICronJobService
         _signalRService = signalRClientService;
         _sendEmailMessageService1 = sendEmailMessageService1;
         _deviceReportService = deviceReportService;
+        _monitorDeviceService = monitorDeviceService;
         //var recurringJobs = JobStorage.Current.GetConnection().GetRecurringJobs();
     }
 

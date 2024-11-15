@@ -16,7 +16,7 @@ namespace Server.Application.CronJobs;
 public partial class CronJobService : ICronJobService
 {
     #region Cảnh báo thiết bị
-    //static bool Is_Run_Device_Warning_SendMailHourly = false;
+    static bool Is_CheckDeviceStatusWarning { get; set; } = false;
     public async Task CreateDeviceStatusWarningCronJob(List<ScheduleSendMail> scheduleLists)
     {
         foreach (var item in scheduleLists)
@@ -69,6 +69,11 @@ public partial class CronJobService : ICronJobService
     }
     public async Task ScheduleSendMailDeviceWarning(string sheduleId)
     {
+        if (Is_CheckDeviceStatusWarning)
+            return;
+
+        Is_CheckDeviceStatusWarning = true;
+
         DateTime now = DateTime.Now;
         try
         {
@@ -181,7 +186,10 @@ public partial class CronJobService : ICronJobService
         {
             Logger.Error(ex);
         }
-        //Is_Run_POC_Report_ScheduleSendMailReportDaily = false;
+        finally
+        {
+            Is_CheckDeviceStatusWarning = false;
+        }
 
     }
 
