@@ -69,7 +69,7 @@ public partial class CronJobService : ICronJobService
                         terminal.last_activity = d.last_activity;
                         terminal.last_checkconnection = d.last_checkconnection;
                         terminal.time_offline = d.time_offline;
-                        terminal.time_offline = d.time_online;
+                        terminal.time_online = d.time_online;
                         terminal.online_status = d.online_status;
                         terminal.change_time = d.change_time;
                         _dbContext.zk_terminal.Update(terminal);
