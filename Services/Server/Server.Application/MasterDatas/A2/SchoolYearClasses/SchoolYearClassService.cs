@@ -66,6 +66,7 @@ public class SchoolYearClassService
                 Start = new DateTime(now.Year, 1, 1),
                 End = new DateTime(now.Year, 12, 30),
                 OrganizationId = req.OrganizationId,
+                Depcription = req.OrganizationId,
             };
             var sc = await _scchoolYearRepository.SaveDataAsync(schoolYear);
             if (!sc.Succeeded)
@@ -74,8 +75,9 @@ public class SchoolYearClassService
             var classRoom = new ClassRoom()
             {
                 Actived = true,
+                ReferenceId = req.ClassId,
                 SchoolId = req.OrganizationId,
-                Name = req.Name,
+                Name = req.ClassName,
                 OrganizationId = req.OrganizationId,
             };
             var cl = await _classRoomRepository.SaveDataAsync(classRoom);
@@ -87,6 +89,7 @@ public class SchoolYearClassService
                 Actived = true,
                 Name = cl.Data.Name,
                 OrganizationId = req.OrganizationId,
+
                 SchoolId = req.OrganizationId,
                 ClassRoomId = cl.Data.Id,
                 SchoolYearId = sc.Data.Id,

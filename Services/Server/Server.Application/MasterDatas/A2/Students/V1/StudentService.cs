@@ -30,7 +30,7 @@ public class StudentService
 
     private readonly IPersonRepository _personRepository;
     private readonly IStudentRepository _studentRepository;
-    private readonly SchoolYearClassService _schoolYearClassService;
+
     private readonly IMasterDataDbContext _dbContext;
 
     public StudentService(
@@ -41,7 +41,7 @@ public class StudentService
         ISignalRClientService signalRClientService,
         IPersonRepository personRepository,
         IStudentRepository studentRepository,
-            SchoolYearClassService schoolYearClassService,
+     
         IMasterDataDbContext dbContext
 
         )
@@ -49,8 +49,7 @@ public class StudentService
         _map = map;
         _configuration = configuration;
         _eventBusAdapter = eventBusAdapter;
-        _signalRClientService = signalRClientService;
-        _schoolYearClassService = schoolYearClassService;
+        _signalRClientService = signalRClientService; 
         _personRepository = personRepository;
         _studentRepository = studentRepository;
 
@@ -400,11 +399,7 @@ public class StudentService
     public async Task<Result<DtoStudentRequest>> SaveFromService(Student request)
     {
         try
-        {
-            var resQ = await _schoolYearClassService.SaveFromService(request);
-            if (resQ.Succeeded)
-                request.StudentClassId = resQ.Data.Id;
-
+        { 
             var res = await _studentRepository.SaveDataAsync(request);
             if (!res.Succeeded)
                 return new Result<DtoStudentRequest>($"Cập nhật không thành công", false);
