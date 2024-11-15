@@ -27,7 +27,6 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
         private readonly IConfiguration _configuration;
 
-
         public ZK_SV_PUSHService(DeviceAutoPushDbContext deviceAutoPushDbContext, IConfiguration configuration, DeviceCacheService deviceCacheService, DeviceCommandCacheService deviceCommandCacheService)
         {
             _deviceAutoPushDbContext = deviceAutoPushDbContext;
@@ -37,16 +36,17 @@ namespace AMMS.ZkAutoPush.Applications.V1
         }
         public async Task Process(RB_ServerRequest rB_ServerRequest)
         {
+
             try
             {
                 IclockCommand command = null;
+                double requestId = DateTime.Now.TimeOfDay.Ticks;
+                if (rB_ServerRequest.RequestId != null)
+                    requestId = rB_ServerRequest.RequestId.Value;
 
                 var sn = rB_ServerRequest.SerialNumber.Trim();
                 if (sn == null)
                     return;
-                Logger.Warning("Data :" + rB_ServerRequest.SerialNumber + " " + rB_ServerRequest.Id);
-                Logger.Information("SV_RQ :" + rB_ServerRequest.SerialNumber + " : " + rB_ServerRequest.RequestParam);
-
                 IclockCommand command2 = null;
 
                 if (rB_ServerRequest.Action == ServerRequestAction.ActionAdd && rB_ServerRequest.RequestType == ServerRequestType.UserInfo)
@@ -57,12 +57,14 @@ namespace AMMS.ZkAutoPush.Applications.V1
                         return;
                     // await SaveUserInfo(data);
 
-                    command = IclockOperarion.CommandUploadUser(sn, data.PersonCode, data.FullName, "", "0", data.UserCard, rB_ServerRequest.Id);
+                    command = IclockOperarion.CommandUploadUser(requestId, sn, data.PersonCode, data.FullName, "", "0", data.UserCard, rB_ServerRequest.Id);
                     //Đẩy thêm ảnh
                     if (!string.IsNullOrEmpty(data.UserFace))
                     {
                         data.UserFace = ConvertBase64ToPngBase64(data.UserFace);
-                        command2 = IclockOperarion.CommandUploadUserFaceV3(sn, data.PersonCode, data.UserFace);
+                        double requestIdFace = DateTime.Now.TimeOfDay.Ticks;
+
+                        command2 = IclockOperarion.CommandUploadUserFaceV3(requestIdFace, sn, data.PersonCode, data.UserFace);
 
                         if (command2 != null)
                         {
@@ -80,7 +82,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                         return;
                     await DeleteUserInfo(data);
 
-                    command = IclockOperarion.CommandDeleteUser(sn, data.PersonCode);
+                    command = IclockOperarion.CommandDeleteUser(requestId, sn, data.PersonCode);
                 }
                 else if (rB_ServerRequest.Action == ServerRequestAction.ActionAdd && rB_ServerRequest.RequestType == ServerRequestType.UserFace)
                 {
@@ -88,7 +90,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     if (data == null)
                         return;
                     await SaveUserFace(data);
-                    command = IclockOperarion.CommandUploadUserFaceV3(sn, data.PersonCode, data.UserFace);
+                    command = IclockOperarion.CommandUploadUserFaceV3(requestId, sn, data.PersonCode, data.UserFace);
 
                 }
                 else if (rB_ServerRequest.Action == ServerRequestAction.ActionAdd && rB_ServerRequest.RequestType == ServerRequestType.Device)
@@ -123,7 +125,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 {
                     TA_Device? data = JsonConvert.DeserializeObject<TA_Device>(rB_ServerRequest.RequestParam);
 
-                    command = IclockOperarion.GetDeviceInfo(data.SerialNumber);
+                    command = IclockOperarion.GetDeviceInfo(requestId, data.SerialNumber);
                     return;
                 }
 
@@ -139,10 +141,10 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 }
 
                 //Kiểm tra thiết bị có online
-                var device = await _deviceCacheService.Get(sn);
-                
+                //var device = await _deviceCacheService.Get(sn);
+
                 //nếu thiết bị online
-               // if (device.online_status == true)
+                // if (device.online_status == true)
                 {
                     //Thêm lệnh vào caches
                     await _deviceCommandCacheService.Save(command);
@@ -155,7 +157,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
             }
             catch (Exception e)
             {
-                Logger.Warning(e.Message);
+                Logger.Error(e.Message);
                 throw;
             }
         }

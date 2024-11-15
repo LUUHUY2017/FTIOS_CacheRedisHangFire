@@ -25,6 +25,7 @@ public class ZK_DEVICE_RPService
         _deviceCacheService = deviceCacheService;
         _deviceCommandCacheService = deviceCommandCacheService;
     }
+    static int countData = 0;
     public async Task ProcessData(ZK_DEVICE_RP data)
     {
         try
@@ -55,13 +56,13 @@ public class ZK_DEVICE_RPService
                                     line = strReader.ReadLine();
                                     _ListParams.Add(line);
                                 } while (!string.IsNullOrEmpty(line));
-                                string ip = IclockOperarion.GetValueFromEqual("IPAddress", _ListParams);
-                                string mac = IclockOperarion.GetValueFromEqual("MAC", _ListParams);
-                                string userQty = IclockOperarion.GetValueFromEqual("UserCount", _ListParams);
-                                string fpQty = IclockOperarion.GetValueFromEqual("FPCount", _ListParams);
-                                string faceQty = IclockOperarion.GetValueFromEqual("FaceCount", _ListParams);
-                                string palmQty = IclockOperarion.GetValueFromEqual("PvCount", _ListParams);
-                                string transactionQty = IclockOperarion.GetValueFromEqual("TransactionCount", _ListParams);
+                                string ip = GetValueFromEqual("IPAddress", _ListParams);
+                                string mac = GetValueFromEqual("MAC", _ListParams);
+                                string userQty = GetValueFromEqual("UserCount", _ListParams);
+                                string fpQty = GetValueFromEqual("FPCount", _ListParams);
+                                string faceQty = GetValueFromEqual("FaceCount", _ListParams);
+                                string palmQty = GetValueFromEqual("PvCount", _ListParams);
+                                string transactionQty = GetValueFromEqual("TransactionCount", _ListParams);
 
                                 //Cập nhật vào CSDL
                                 try
@@ -115,7 +116,8 @@ public class ZK_DEVICE_RPService
                             var x = await _deviceCommandCacheService.GetByCode(data.SN, ID);
                             if (x != null)
                             {
-
+                                countData++;
+                                Console.WriteLine("Số bản ghi: " + countData.ToString());
                                 if (Return == "0")//Thiet bi thuc hien thanh cong lenh
                                 {
                                     x.returnCode = 0;
@@ -130,12 +132,15 @@ public class ZK_DEVICE_RPService
                                 }
 
                                 await UpdateCommand(x, elm);
-                                await _deviceCommandCacheService.Remove(data.SN, ID);
 
 
                                 //Đẩy dữ liệu lại rabbitmq cho sv
                                 if (x.DataId == null || x.ParentId != null)
+                                {
+                                    await _deviceCommandCacheService.Remove(data.SN, ID);
+
                                     return;
+                                }
                                 RB_ServerResponse response = new RB_ServerResponse()
                                 {
                                     Action = x.Action,
@@ -149,6 +154,9 @@ public class ZK_DEVICE_RPService
 
                                 var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}");
                                 await aa.Send(response);
+                                Console.WriteLine("Gửi rabitmq: " + countData.ToString());
+
+                                await _deviceCommandCacheService.Remove(data.SN, ID);
 
                             }
                         }
@@ -222,6 +230,30 @@ public class ZK_DEVICE_RPService
             Logger.Warning(ex.Message);
             return;
         }
+    }
+    public string GetValueFromEqual(string key, List<string> sources)
+    {
+        try
+        {
+            foreach (var x in sources)
+            {
+                if (!string.IsNullOrEmpty(x))
+                {
+                    var arr = x.Split('=');
+                    if (arr != null && arr.Length > 1)
+                    {
+                        if (key == arr[0])
+                        {
+                            return x.Replace(key + "=", "");
+                        }
+                    }
+                }
+            }
+        }
+        catch
+        {
+        }
+        return "";
     }
 
 }

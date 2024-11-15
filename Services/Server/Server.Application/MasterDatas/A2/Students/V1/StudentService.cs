@@ -541,6 +541,7 @@ public class StudentService
                     RequestType = ServerRequestType.UserInfo,
                     RequestParam = param,
                     SchoolId = device.OrganizationId,
+                    RequestId = DateTime.Now.TimeOfDay.Ticks,
                 };
 
                 list_Sync.Add(list_SyncItem);
@@ -631,6 +632,7 @@ public class StudentService
                     DeviceModel = dev.DeviceModel,
                     RequestType = ServerRequestType.UserInfo,
                     RequestParam = param,
+                    RequestId = DateTime.Now.TimeOfDay.Ticks,
                 };
                 list_Sync.Add(list_SyncItem);
             }
@@ -711,6 +713,7 @@ public class StudentService
                 DeviceModel = dev.DeviceModel,
                 RequestType = ServerRequestType.UserInfo,
                 RequestParam = param,
+                RequestId = DateTime.Now.TimeOfDay.Ticks,
             };
             list_Sync.Add(list_SyncItem);
         }

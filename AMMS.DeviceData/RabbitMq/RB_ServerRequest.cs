@@ -27,6 +27,7 @@
         ///  Json obj requet
         /// </summary>
         public string? RequestParam { get; set; }
+        public double? RequestId { get; set; }
         /// <summary>
         /// 
         /// </summary>
