@@ -357,7 +357,7 @@ using (var scope = app.Services.CreateScope())
 
 
         var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}_{EventBusConstants.ZKTECO}_CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/1 * * * *", TimeZoneInfo.Local);
+        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}_{EventBusConstants.ZKTECO}_CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);
     }
     catch (Exception e)
     {
