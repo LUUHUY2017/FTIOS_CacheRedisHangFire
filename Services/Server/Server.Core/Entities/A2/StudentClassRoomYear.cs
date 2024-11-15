@@ -30,7 +30,7 @@ public class StudentClassRoomYear : EntityBase
 
     public SchoolYear? SchoolYear { get; set; }
     public Organization? Organization { get; set; }
-    public Organization? ClassRoom { get; set; }
+    public ClassRoom? ClassRoom { get; set; }
 
     /// <summary>
     /// Tên lớp - năm học

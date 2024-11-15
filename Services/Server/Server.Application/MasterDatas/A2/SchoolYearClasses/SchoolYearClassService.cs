@@ -64,7 +64,7 @@ public class SchoolYearClassService
                 Actived = true,
                 Name = now.Year.ToString(),
                 Start = new DateTime(now.Year, 1, 1),
-                End = new DateTime(now.Year, 12, 30),
+                End = new DateTime(now.Year, 12, 28),
                 OrganizationId = req.OrganizationId,
                 Depcription = req.OrganizationId,
             };
@@ -93,6 +93,7 @@ public class SchoolYearClassService
                 SchoolId = req.OrganizationId,
                 ClassRoomId = cl.Data.Id,
                 SchoolYearId = sc.Data.Id,
+
             };
             var stdcl = await _stuClasRomYearRepository.SaveDataAsync(stuclsr);
             if (!stdcl.Succeeded)
