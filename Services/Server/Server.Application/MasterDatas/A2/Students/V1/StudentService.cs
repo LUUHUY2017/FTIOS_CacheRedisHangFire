@@ -326,16 +326,18 @@ public class StudentService
 
 
             DateTime dateStudent = DateTime.Now;
-            string dateString = stu.DateOfBirth;
-            string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
-            bool success = DateTime.TryParseExact(
-                dateString,
-                formats,
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.None,
-                out dateStudent
-            );
-
+            if (!string.IsNullOrWhiteSpace(stu.DateOfBirth))
+            {
+                string dateString = stu.DateOfBirth;
+                string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
+                bool success = DateTime.TryParseExact(
+                    dateString,
+                    formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out dateStudent
+                );
+            }
 
             var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
             var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
@@ -437,16 +439,19 @@ public class StudentService
 
 
             DateTime dateStudent = DateTime.Now;
-            string dateString = stu.DateOfBirth;
-            string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
-            bool success = DateTime.TryParseExact(
-                dateString,
-                formats,
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.None,
-                out dateStudent
-            );
 
+            if (!string.IsNullOrWhiteSpace(stu.DateOfBirth))
+            {
+                string dateString = stu.DateOfBirth;
+                string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
+                bool success = DateTime.TryParseExact(
+                    dateString,
+                    formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out dateStudent
+                );
+            }
             var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
             var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
 
@@ -503,6 +508,7 @@ public class StudentService
                     item = new PersonSynToDevice()
                     {
                         DeviceId = device.Id,
+                        OrganizationId = stu.OrganizationId,
                         PersonId = stu.Id,
                         SynAction = ServerRequestAction.ActionAdd,
                         LastModifiedDate = DateTime.Now
@@ -512,12 +518,12 @@ public class StudentService
                 else
                 {
                     item.SynAction = ServerRequestAction.ActionAdd;
+                    item.OrganizationId = stu.OrganizationId;
                     item.SynStatus = null;
                     item.SynFaceStatus = null;
                     item.SynMessage = null;
+                    item.LastModifiedDate = DateTime.Now;
                 }
-                await _dbContext.SaveChangesAsync();
-
                 var _TA_PersonInfo = new TA_PersonInfo()
                 {
                     Id = stu.Id,
@@ -529,7 +535,6 @@ public class StudentService
                     SerialNumber = device.SerialNumber,
                     UserFace = stu.ImageSrc
                 };
-
                 var param = JsonConvert.SerializeObject(_TA_PersonInfo);
                 var list_SyncItem = new RB_ServerRequest()
                 {
@@ -545,6 +550,8 @@ public class StudentService
 
                 list_Sync.Add(list_SyncItem);
             }
+
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -572,7 +579,6 @@ public class StudentService
             if (students == null || students.Count == 0)
                 return list_Sync;
 
-
             foreach (var stu in students)
             {
                 var item = _dbContext.PersonSynToDevice.FirstOrDefault(o => o.DeviceId == dev.Id && o.PersonId == stu.Id);
@@ -583,6 +589,7 @@ public class StudentService
                     item = new PersonSynToDevice()
                     {
                         DeviceId = dev.Id,
+                        OrganizationId = stu.OrganizationId,
                         PersonId = stu.Id,
                         SynAction = ServerRequestAction.ActionAdd,
                         LastModifiedDate = DateTime.Now
@@ -591,13 +598,13 @@ public class StudentService
                 }
                 else
                 {
+                    item.OrganizationId = stu.OrganizationId;
                     item.SynAction = ServerRequestAction.ActionAdd;
                     item.SynStatus = null;
                     item.SynFaceStatus = null;
                     item.SynMessage = null;
+                    item.LastModifiedDate = DateTime.Now;
                 }
-                await _dbContext.SaveChangesAsync();
-
 
                 string imageBase64 = string.Empty;
                 if (face != null && face.FaceUrl != null)
@@ -634,6 +641,7 @@ public class StudentService
                 };
                 list_Sync.Add(list_SyncItem);
             }
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -662,22 +670,24 @@ public class StudentService
                 item = new PersonSynToDevice()
                 {
                     DeviceId = dev.Id,
+                    OrganizationId = stu.OrganizationId,
                     PersonId = stu.Id,
                     SynAction = ServerRequestAction.ActionAdd,
-                    LastModifiedDate = DateTime.Now
+                    LastModifiedDate = DateTime.Now,
                 };
                 await _dbContext.PersonSynToDevice.AddAsync(item);
             }
             else
             {
+
                 item.SynAction = ServerRequestAction.ActionAdd;
+                item.OrganizationId = stu.OrganizationId;
                 item.SynStatus = null;
                 item.SynFaceStatus = null;
                 item.SynMessage = null;
+                item.LastModifiedDate = DateTime.Now;
             }
             await _dbContext.SaveChangesAsync();
-
-
 
             string imageBase64 = string.Empty;
             if (face != null && face.FaceUrl != null)

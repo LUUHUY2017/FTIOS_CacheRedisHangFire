@@ -20,10 +20,10 @@ public partial class TimeAttendenceEventService
                          from or in OG.DefaultIfEmpty()
 
                          where
-                          (request.StartDate != null ? _do.EventTime >= request.StartDate : true)
-                          && (request.EndDate != null ? _do.EventTime <= request.EndDate.Value.Date.AddDays(1).AddMilliseconds(-1) : true)
-                            && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? la.OrganizationId == request.OrganizationId : true)
-                          && (!string.IsNullOrWhiteSpace(request.ClassId) ? la.ClassId == request.ClassId : true)
+                              (request.StartDate != null ? _do.EventTime >= request.StartDate : true)
+                             && (request.EndDate != null ? _do.EventTime <= request.EndDate.Value.Date.AddDays(1).AddMilliseconds(-1) : true)
+                            && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
+
                          orderby _do.EventTime descending
                          select new AttendenceEventReportRes()
                          {

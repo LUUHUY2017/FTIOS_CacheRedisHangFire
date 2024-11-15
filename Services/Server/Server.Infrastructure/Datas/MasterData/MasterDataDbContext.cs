@@ -81,26 +81,28 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
 
         //Index TimeAttendenceEvent
         modelBuilder.Entity<TimeAttendenceEvent>()
-          .HasIndex(te => te.EventTime)
-          .HasDatabaseName("IX_TimeAttendenceEvent_EventTime");
-        //modelBuilder.Entity<TimeAttendenceEvent>()
-        //.HasIndex(te => te.CreatedDate)
-        //.HasDatabaseName("IX_TimeAttendenceEvent_CreatedDate");
+          .HasIndex(e => new { e.OrganizationId, e.EventTime })
+          .HasDatabaseName("IX_Org_Eventtime");
+
+        modelBuilder.Entity<TimeAttendenceEvent>()
+          .HasIndex(e => new { e.OrganizationId, e.EventTime, e.EnrollNumber })
+          .HasDatabaseName("IX_Org_Eventtype_Enroll");
+
+        modelBuilder.Entity<TimeAttendenceEvent>()
+           .HasIndex(e => new { e.OrganizationId, e.EventType, e.EventTime })
+           .HasDatabaseName("IX_Org_Eventtype_Eventtime");
+
+        //-- 
+        modelBuilder.Entity<TimeAttendenceEvent>()
+         .HasIndex(te => te.EventTime)
+         .HasDatabaseName("IX_TimeAttendenceEvent_EventTime");
+
         modelBuilder.Entity<TimeAttendenceEvent>()
         .HasIndex(te => te.OrganizationId)
         .HasDatabaseName("IX_TimeAttendenceEvent_OrganizationId");
 
-        modelBuilder.Entity<TimeAttendenceEvent>()
-       .HasIndex(e => new { e.OrganizationId, e.EventTime, e.EnrollNumber })
-       .HasDatabaseName("IX_Org_Eventtype_Enroll");
 
-        modelBuilder.Entity<TimeAttendenceEvent>()
-            .HasIndex(e => new { e.OrganizationId, e.EventType, e.EventTime })
-            .HasDatabaseName("IX_Org_Eventtype_Eventtime");
 
-        modelBuilder.Entity<TimeAttendenceEvent>()
-         .HasIndex(e => new { e.OrganizationId, e.EventTime })
-         .HasDatabaseName("IX_Org_Eventtime");
 
 
         //Index TimeAttendenceSync
@@ -110,6 +112,7 @@ public class MasterDataDbContext : BaseDbContext, IMasterDataDbContext
         modelBuilder.Entity<TimeAttendenceSync>()
         .HasIndex(te => te.OrganizationId)
         .HasDatabaseName("IX_TimeAttendenceSync_OrganizationId");
+
 
         //Index Student
         modelBuilder.Entity<Student>()
