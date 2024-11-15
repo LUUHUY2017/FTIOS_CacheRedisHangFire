@@ -204,7 +204,7 @@
                     </div>
 
                     <div class="row mt-1">
-                        <div class="col-md-12" style=" justify-content: center;"> 
+                        <div class="col-md-12" style=" justify-content: center;">
                             <ul style="list-style-type: none; padding-left: 5px; font-size:13px">
                                 <li class="list-color"> <b class="text-danger"> Lưu ý:</b> </li>
                                 <li class="list-color"> <b> Buổi điểm danh:</b> </li>
@@ -213,7 +213,7 @@
                                 <li class="list-color"><span class="block-color bg-warning ">2 </span> Tối </li>
                                 <li class="list-color">  - </li>
                                 <li class="list-color"><b>  Sự kiện </b>  </li>
-                                <li class="list-color"><span class= "">C </span> Có mặt </li>
+                                <li class="list-color"><span class="">C </span> Có mặt </li>
                                 <li class="list-color"><span class="">X </span> Đi muộn </li>
                             </ul>
                         </div>
@@ -360,24 +360,28 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
-                    $('.loader').delay(100).hide(0);
-                    this.data = response.data.data.items;
 
+                    $('.loader').delay(100).hide(0);
+null
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+
+                    this.data = response.data.data.items;
                     this.totalRow = parseInt(response.data.data.totalRow);
                     this.firstRow = parseInt((parseInt(this.filter.CurentPage) - 1) * parseInt(this.filter.RowsPerPage) + 1);
                     this.totalPage = parseInt(response.data.data.totalPage);
 
                     this.totalDataRowNext = parseInt(parseInt(this.firstRow) + parseInt(response.data.data.totalDataRow) - 1);
-
                     const pagingNumbers = $('#pagingNumbers');
                     this.renderPagination(pagingNumbers, this.totalPage, this.filter.CurentPage);
+
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
-                    console.log(error);
-                    if (error.response && (error.response.status == 401 || error.response.status == 302)) {
-                        console.log("Unauthorized: 401");
-                        // window.location.href = '/login';
-                    }
+                    console.log("%c[_____Status Code:_____] " + error.response.status, "color: red;  font-size: 12px;");
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                 });
             },
 
@@ -481,10 +485,15 @@
                         window.location = window.location.href;
 
                     $('.loader').delay(100).hide(0);
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
                     window.location.href = '/' + response.data;
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
-                    console.log(error);
+                    console.log("%c[_____Status Code:_____] " + error.response.status, "color: red;  font-size: 12px;");
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
 
