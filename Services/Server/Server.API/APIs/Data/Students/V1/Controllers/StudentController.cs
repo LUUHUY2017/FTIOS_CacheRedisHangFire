@@ -65,13 +65,9 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
             {
                 request.OrganizationId = GetOrganizationId();
                 var items = await _studentService.GetAlls(request);
-                if (request.FilterItems != null && request.FilterItems.Count > 0)
-                {
-                    foreach (var filter in request.FilterItems)
-                    {
-                        items = await _studentService.ApplyFilter(items, filter);
-                    }
-                }
+
+                items = await _studentService.ApplyFilter(items, request.FilterItems);
+                items = await ApplySort(items, request.SortItem);
 
 
                 int totalRow = await items.Select(o => o.Id).CountAsync();
@@ -84,6 +80,8 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
 
                 var datas = await items.Skip(skip).Take(request.RowsPerPage.Value).ToListAsync();
                 int totalDataRow = datas.Count();
+
+
 
                 var retVal = new
                 {
@@ -161,13 +159,7 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
                 request.OrganizationId = GetOrganizationId();
                 var datas = await _studentService.GetAlls(request);
 
-                if (request.FilterItems != null && request.FilterItems.Count > 0)
-                {
-                    foreach (var filter in request.FilterItems)
-                    {
-                        datas = await _studentService.ApplyFilter(datas, filter);
-                    }
-                }
+                datas = await _studentService.ApplyFilter(datas, request.FilterItems);
 
                 var items = await datas.ToListAsync();
 

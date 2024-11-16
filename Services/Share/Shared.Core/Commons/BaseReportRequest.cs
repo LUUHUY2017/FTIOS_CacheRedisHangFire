@@ -15,6 +15,7 @@
         public string EndDateTime { get; set; } = DateTime.Now.ToLocalTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59).ToString("dd/MM/yyyy HH:mm:ss");
 
         public List<FilterItems>? FilterItems { get; set; } = null;
+        public SortItem? SortItem { get; set; } = null;
     }
 
     public class FilterItems
@@ -22,6 +23,12 @@
         public string PropertyName { get; set; }
         public int Comparison { get; set; } // 0: Equal, 1: GreaterThan, 2: LessThan, etc.
         public string Value { get; set; }
+    }
+
+    public class SortItem
+    {
+        public string? SortColumn { get; set; }
+        public string? SortOrder { get; set; }
     }
 
 }
