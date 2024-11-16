@@ -12,30 +12,26 @@ public class StudentClassRoomYear : EntityBase
     /// ID trường học
     /// </summary>
     [MaxLength(50)]
-    public string SchoolId { get; set; }
+    public string? SchoolId { get; set; }
 
     /// <summary>
     /// Id lớp học
     /// </summary>
     [MaxLength(50)]
-    public string ClassRoomId { get; set; }
+    public string? ClassRoomId { get; set; }
 
     /// <summary>
     /// Id Năm học
     /// </summary>
     /// 
     [MaxLength(50)]
-    public string SchoolYearId { get; set; }
+    public string? SchoolYearId { get; set; }
 
-
-    public SchoolYear? SchoolYear { get; set; }
-    public Organization? Organization { get; set; }
-    public ClassRoom? ClassRoom { get; set; }
 
     /// <summary>
     /// Tên lớp - năm học
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 }
 
 ///// <summary>

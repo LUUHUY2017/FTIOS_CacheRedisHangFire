@@ -163,9 +163,9 @@ public partial class CronJobService : ICronJobService
                         SchoolCode = orgRes.OrganizationCode,
                     };
 
-                    var resQ = await _schoolYearClassService.SaveFromService(el);
-                    if (resQ.Succeeded)
-                        el.StudentClassId = resQ.Data.Id;
+                    //var resQ = await _schoolYearClassService.SaveFromService(el);
+                    //if (resQ.Succeeded)
+                    //    el.StudentClassId = resQ.Data.Id;
 
                     await _studentService.SaveFromService(el);
                 }
