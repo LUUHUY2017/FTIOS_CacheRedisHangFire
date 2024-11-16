@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Server.Application.MasterDatas.A2.DeviceNotifications.V1;
 using Server.Application.MasterDatas.A2.MonitorDevices.V1;
+using Server.Application.MasterDatas.A2.SchoolYearClasses.V1;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
@@ -24,6 +25,7 @@ public partial class CronJobService : ICronJobService
     private readonly IConfiguration _configuration;
     private readonly ISignalRClientService _signalRService;
 
+    private readonly SchoolYearClassService _schoolYearClassService;
     private readonly SendEmailMessageService1 _sendEmailMessageService1;
     private readonly DeviceReportService _deviceReportService;
     private readonly MonitorDeviceService _monitorDeviceService;
@@ -31,6 +33,7 @@ public partial class CronJobService : ICronJobService
     public CronJobService(IMasterDataDbContext dbContext,
         SmartService smartService,
         StudentService studentService,
+        SchoolYearClassService schoolYearClassService,
         IConfiguration configuration,
         ISignalRClientService signalRClientService,
         SendEmailMessageService1 sendEmailMessageService1,
@@ -41,6 +44,7 @@ public partial class CronJobService : ICronJobService
         _dbContext = dbContext;
         _smartService = smartService;
         _studentService = studentService;
+        _schoolYearClassService = schoolYearClassService;
         _configuration = configuration;
         _signalRService = signalRClientService;
         _sendEmailMessageService1 = sendEmailMessageService1;
@@ -158,6 +162,11 @@ public partial class CronJobService : ICronJobService
                         OrganizationId = orgRes.Id,
                         SchoolCode = orgRes.OrganizationCode,
                     };
+
+                    //var resQ = await _schoolYearClassService.SaveFromService(el);
+                    //if (resQ.Succeeded)
+                    //    el.StudentClassId = resQ.Data.Id;
+
                     await _studentService.SaveFromService(el);
                 }
 

@@ -5,6 +5,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Server.Application.MasterDatas.A2.SchoolYearClasses.V1;
 using Server.Application.MasterDatas.A2.Students.V1.Model;
 using Server.Core.Entities.A0;
 using Server.Core.Entities.A2;
@@ -40,6 +41,7 @@ public class StudentService
         ISignalRClientService signalRClientService,
         IPersonRepository personRepository,
         IStudentRepository studentRepository,
+     
         IMasterDataDbContext dbContext
 
         )
@@ -47,8 +49,7 @@ public class StudentService
         _map = map;
         _configuration = configuration;
         _eventBusAdapter = eventBusAdapter;
-        _signalRClientService = signalRClientService;
-
+        _signalRClientService = signalRClientService; 
         _personRepository = personRepository;
         _studentRepository = studentRepository;
 
@@ -398,7 +399,7 @@ public class StudentService
     public async Task<Result<DtoStudentRequest>> SaveFromService(Student request)
     {
         try
-        {
+        { 
             var res = await _studentRepository.SaveDataAsync(request);
             if (!res.Succeeded)
                 return new Result<DtoStudentRequest>($"Cập nhật không thành công", false);

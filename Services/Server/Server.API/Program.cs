@@ -502,29 +502,30 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-
-    try
-    {
-        using (var scope = app.Services.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
-            await dbContext.Database.MigrateAsync();
-        }
-    }
-    catch (Exception ex) { }
 }
 else
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts(); 
+    app.UseHsts();
 }
+
+
 
 var runMigration = configuration["RunMigration"];
 if (runMigration == "True")
 {
     try
     {
+        try
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
+                await dbContext.Database.MigrateAsync();
+            }
+        }
+        catch (Exception ex) { }
 
         using (var scope = app.Services.CreateScope())
         {

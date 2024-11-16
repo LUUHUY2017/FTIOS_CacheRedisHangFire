@@ -24,6 +24,7 @@ using Server.Application.MasterDatas.A2.DeviceNotifications.V1;
 using Server.Application.MasterDatas.A2.Devices;
 using Server.Application.MasterDatas.A2.MonitorDevices.V1;
 using Server.Application.MasterDatas.A2.Organizations.V1;
+using Server.Application.MasterDatas.A2.SchoolYearClasses.V1;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 using Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
@@ -31,13 +32,16 @@ using Server.Application.Services.VTSmart;
 using Server.Core.Identity.Interfaces.Accounts.Services;
 using Server.Core.Identity.Repositories;
 using Server.Core.Interfaces.A0;
+using Server.Core.Interfaces.A2.ClassRooms;
 using Server.Core.Interfaces.A2.DeviceNotifications;
 using Server.Core.Interfaces.A2.Devices;
 using Server.Core.Interfaces.A2.Organizations;
 using Server.Core.Interfaces.A2.Persons;
 using Server.Core.Interfaces.A2.ScheduleJobs;
 using Server.Core.Interfaces.A2.ScheduleSendEmails;
+using Server.Core.Interfaces.A2.SchoolYears;
 using Server.Core.Interfaces.A2.SendEmails;
+using Server.Core.Interfaces.A2.StudentClassRoomYears;
 using Server.Core.Interfaces.A2.Students;
 using Server.Core.Interfaces.GIO.VehicleInOuts;
 using Server.Core.Interfaces.TA.TimeAttendenceDetails;
@@ -49,6 +53,7 @@ using Server.Infrastructure.Repositories;
 using Server.Infrastructure.Repositories.A0.AttendanceConfigs;
 using Server.Infrastructure.Repositories.A0.AttendanceTimeConfigs;
 using Server.Infrastructure.Repositories.A0.TimeConfigs;
+using Server.Infrastructure.Repositories.A2.ClassRooms;
 using Server.Infrastructure.Repositories.A2.DeviceNotifications;
 using Server.Infrastructure.Repositories.A2.Devices;
 using Server.Infrastructure.Repositories.A2.Organizations;
@@ -56,7 +61,9 @@ using Server.Infrastructure.Repositories.A2.Persons;
 using Server.Infrastructure.Repositories.A2.ScheduleJobLogs;
 using Server.Infrastructure.Repositories.A2.ScheduleJobs;
 using Server.Infrastructure.Repositories.A2.ScheduleSendEmails;
+using Server.Infrastructure.Repositories.A2.SchoolYears;
 using Server.Infrastructure.Repositories.A2.SendEmails;
+using Server.Infrastructure.Repositories.A2.StudentClassRoomYears;
 using Server.Infrastructure.Repositories.A2.Students;
 using Server.Infrastructure.Repositories.GIO.VehicleInOuts;
 using Server.Infrastructure.Repositories.TA.TimeAttendenceDetails;
@@ -254,7 +261,11 @@ public static class DependencyInjection
 
         // Students
         service.AddScoped<IStudentRepository, StudentRepository>();
+        service.AddScoped<IClassRoomRepository, ClassRoomRepository>();
+        service.AddScoped<ISchoolYearRepository, SchoolYearRepository>();
+        service.AddScoped<IStudentClassRoomYearRepository, StudentClassRoomYearRepository>();
         service.AddScoped<StudentService>();
+        service.AddScoped<SchoolYearClassService>();
 
 
         //  TimeAttendenceEvents

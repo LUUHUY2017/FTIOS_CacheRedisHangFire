@@ -10,15 +10,15 @@ public class ClassRoom : EntityBase
     ///// </summary>
     //public string SchoolId { get;set; }
 
-    public Organization? Organization { get; set; }
+    //public Organization? Organization { get; set; }
 
     /// <summary>
     /// Tên lớp học
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [MaxLength(50)]
-    public string SchoolId { get; set; }
+    public string? SchoolId { get; set; }
 }
 
 ///// <summary>
