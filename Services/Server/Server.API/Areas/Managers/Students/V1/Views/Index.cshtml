@@ -77,7 +77,7 @@
                                 <tr>
                                     <th>Stt</th>
                                     <th> Thao tác </th>
-                                    <th v-on:click="applySort('StudentCode')" class="both" :class="getSortClass('StudentCode')"> Mã học sinh </th>
+                                    <th v-on:click="applySort('StudentCode')"  :class="getSortClass('StudentCode')"> Mã học sinh </th>
                                     <th v-on:click="applySort('Name')" :class="getSortClass('Name')"> Họ tên </th>
                                     <th v-on:click="applySort('DateOfBirth')" :class="getSortClass('DateOfBirth')"> Năm sinh </th>
                                     <th v-on:click="applySort('ClassName')" :class="getSortClass('ClassName')"> Lớp </th>
@@ -307,21 +307,6 @@
     @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
 </div>
 
-<style>
-    .sort-asc::after {
-        content: "▲"; /* Mũi tên lên */
-        font-size: 10px;
-        color: #e1e1e1;
-        margin-left: 5px;
-    }
-
-    .sort-desc::after {
-        content: "▼"; /* Mũi tên xuống */
-        font-size: 10px;
-        color: #e1e1e1;
-        margin-left: 5px;
-    }
-</style>
 <script>
     connection.on("RefreshStudent", function (data) {
         var data1 = JSON.parse(data);
@@ -389,6 +374,7 @@
             item: {},
             combobox: { organizations: [] },
             // phân trang
+            totalPage : 0,
             firstRow: 0,
             totalRow: 0,
             totalDataRowNext: 0,
@@ -436,7 +422,7 @@
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
 
-                    console.log("%c[_____Status Code:_____] " + error.response.status, "color: red;  font-size: 12px;");
+                    console.log("%c[_____Status Code:_____] " + error, "color: red;  font-size: 12px;");
                     if (error.response && (error.response.status == 401 || error.response.status == 302))
                         window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
@@ -483,9 +469,9 @@
                 if (this.filter.SortItem.SortColumn === column) {
                     return this.filter.SortItem.SortOrder === 'asc' ? 'sort-asc' : 'sort-desc';
                 }
-                return 'sort-asc';
+                return 'both';
             },
-            renderPagination(pagingNumbers, totatlPage, currentPage) {
+            renderPagination(pagingNumbers, totalPage, currentPage) {
                 pagingNumbers.empty(); // Clear previous content
 
                 if (currentPage > 6) {
