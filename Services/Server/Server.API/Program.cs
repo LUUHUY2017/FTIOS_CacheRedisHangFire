@@ -511,22 +511,22 @@ else
 }
 
 
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
+        await dbContext.Database.MigrateAsync();
+    }
+}
+catch (Exception ex) { }
+
 
 var runMigration = configuration["RunMigration"];
 if (runMigration == "True")
 {
     try
     {
-        try
-        {
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
-                await dbContext.Database.MigrateAsync();
-            }
-        }
-        catch (Exception ex) { }
-
         using (var scope = app.Services.CreateScope())
         {
             await scope.ServiceProvider.GetRequiredService<IdentityContext>().Database.MigrateAsync();
@@ -661,7 +661,6 @@ if (runMigration == "True")
 
 
         }
-
     }
     catch (Exception e)
     {
