@@ -64,7 +64,7 @@ public class SchoolYearClassService
                 Actived = true,
                 Name = now.Year.ToString(),
                 Start = new DateTime(now.Year, 1, 1),
-                End = new DateTime(now.Year, 12, 28),
+                End = new DateTime(now.Year, 12, 31),
                 OrganizationId = req.OrganizationId,
                 Depcription = req.OrganizationId,
             };
