@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Shared.Core.Commons;
 using System.Security.Claims;
 
 namespace Share.WebApp.Controllers;
@@ -64,6 +66,17 @@ public abstract class AuthBaseAPIController : ControllerBase
         var cookieValue = Request.Cookies["organizationId"];
         return cookieValue;
     }
+
+
+
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<IQueryable<T>> ApplySort<T>(IQueryable<T> query, SortItem sort)
+    {
+        if (!string.IsNullOrWhiteSpace(sort.SortColumn))
+            query = sort.SortOrder == "asc" ? query.OrderBy(x => EF.Property<object>(x, sort.SortColumn)) : query.OrderByDescending(x => EF.Property<object>(x, sort.SortColumn));
+        return query;
+    }
+
 
     //public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext filterContext)
     //{

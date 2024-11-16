@@ -5,7 +5,6 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Server.Application.MasterDatas.A2.SchoolYearClasses.V1;
 using Server.Application.MasterDatas.A2.Students.V1.Model;
 using Server.Core.Entities.A0;
 using Server.Core.Entities.A2;
@@ -15,7 +14,6 @@ using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
 using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
-using SharpCompress.Common;
 using System.Drawing;
 using System.Globalization;
 
@@ -41,7 +39,7 @@ public class StudentService
         ISignalRClientService signalRClientService,
         IPersonRepository personRepository,
         IStudentRepository studentRepository,
-     
+
         IMasterDataDbContext dbContext
 
         )
@@ -49,7 +47,7 @@ public class StudentService
         _map = map;
         _configuration = configuration;
         _eventBusAdapter = eventBusAdapter;
-        _signalRClientService = signalRClientService; 
+        _signalRClientService = signalRClientService;
         _personRepository = personRepository;
         _studentRepository = studentRepository;
 
@@ -212,62 +210,65 @@ public class StudentService
     /// <param name="query"></param>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public async Task<IQueryable<DtoStudentResponse>> ApplyFilter(IQueryable<DtoStudentResponse> query, FilterItems filter)
+    public async Task<IQueryable<DtoStudentResponse>> ApplyFilter(IQueryable<DtoStudentResponse> query, List<FilterItems>? filters)
     {
-        switch (filter.PropertyName.ToLower())
+        if (filters == null && filters.Count == 0)
+            return query;
+
+        foreach (var filter in filters)
         {
-            case "fullname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.FullName.Contains(filter.Value.Trim()));
-                break;
-            case "studentcode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
-                break;
-            case "classid":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.ClassId.Contains(filter.Value.Trim()));
-                break;
-            case "organizationid":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.OrganizationId.Contains(filter.Value.Trim()));
-                break;
-            case "classname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
-                break;
-            case "synccode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.SyncCode.Contains(filter.Value.Trim()));
-                break;
 
-            case "gradecode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.GradeCode.Contains(filter.Value.Trim()));
-                break;
+            switch (filter.PropertyName.ToLower())
+            {
+                case "fullname":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.FullName.Contains(filter.Value.Trim()));
+                    break;
+                case "studentcode":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
+                    break;
+                case "classid":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.ClassId.Contains(filter.Value.Trim()));
+                    break;
+                case "organizationid":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.OrganizationId.Contains(filter.Value.Trim()));
+                    break;
+                case "classname":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
+                    break;
+                case "synccode":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.SyncCode.Contains(filter.Value.Trim()));
+                    break;
 
-            case "status":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.Status.Contains(filter.Value.Trim()));
-                break;
+                case "gradecode":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.GradeCode.Contains(filter.Value.Trim()));
+                    break;
 
-            case "isfacename":
-                if (!string.IsNullOrWhiteSpace(filter.Value))
-                    query = query.Where(p => p.IsFaceName.Contains(filter.Value.Trim()));
-                break;
-            case "identifynumber":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.IdentifyNumber.Contains(filter.Value.Trim()));
-                break;
+                case "status":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.Status.Contains(filter.Value.Trim()));
+                    break;
 
-
-
-            default:
-                break;
+                case "isfacename":
+                    if (!string.IsNullOrWhiteSpace(filter.Value))
+                        query = query.Where(p => p.IsFaceName.Contains(filter.Value.Trim()));
+                    break;
+                case "identifynumber":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.IdentifyNumber.Contains(filter.Value.Trim()));
+                    break;
+                default:
+                    break;
+            }
         }
         return query;
     }
-
 
     /// <summary>
     /// Cập nhật trạng thái đồng bộ từ RabbitMQ
@@ -399,7 +400,7 @@ public class StudentService
     public async Task<Result<DtoStudentRequest>> SaveFromService(Student request)
     {
         try
-        { 
+        {
             var res = await _studentRepository.SaveDataAsync(request);
             if (!res.Succeeded)
                 return new Result<DtoStudentRequest>($"Cập nhật không thành công", false);

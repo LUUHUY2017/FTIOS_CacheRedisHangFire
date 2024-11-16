@@ -77,13 +77,13 @@
                                 <tr>
                                     <th>Stt</th>
                                     <th> Thao tác </th>
-                                    <th> Mã học sinh </th>
-                                    <th> Họ tên </th>
-                                    <th> Năm sinh </th>
-                                    <th> Lớp </th>
-                                    <th> Khuôn mặt </th>
-                                    <th> Mã CSDLN </th>
-                                    <th> Thời gian cập nhật  </th>
+                                    <th v-on:click="applySort('StudentCode')" :class="getSortClass('StudentCode')"> Mã học sinh </th>
+                                    <th v-on:click="applySort('Name')" :class="getSortClass('Name')"> Họ tên </th>
+                                    <th v-on:click="applySort('DateOfBirth')" :class="getSortClass('DateOfBirth')"> Năm sinh </th>
+                                    <th v-on:click="applySort('ClassName')" :class="getSortClass('ClassName')"> Lớp </th>
+                                    <th v-on:click="applySort('IsFace')" :class="getSortClass('IsFace')"> Khuôn mặt </th>
+                                    <th v-on:click="applySort('SyncCode')" :class="getSortClass('SyncCode')"> Mã CSDLN </th>
+                                    <th v-on:click="applySort('LastModifiedDate')" :class="getSortClass('LastModifiedDate')"> Thời gian cập nhật  </th>
                                 </tr>
                                 <tr>
                                     <th>
@@ -307,7 +307,21 @@
     @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
 </div>
 
+<style>
+    .sort-asc::after {
+        content: "▲"; /* Mũi tên lên */
+        font-size: 10px;
+        color: #e1e1e1;
+        margin-left: 5px;
+    }
 
+    .sort-desc::after {
+        content: "▼"; /* Mũi tên xuống */
+        font-size: 10px;
+        color: #e1e1e1;
+        margin-left: 5px;
+    }
+</style>
 <script>
     connection.on("RefreshStudent", function (data) {
         var data1 = JSON.parse(data);
@@ -349,6 +363,10 @@
                 CurentPage: 1,
                 Actived: "1",
                 FilterItems: [],
+                SortItem: {
+                    SortColumn: null,
+                    SortOrder: 'asc',
+                },
             },
             params: {
                 studentCode: null,
@@ -384,7 +402,6 @@
                 this.onLoadDataDetail(resetPage);
                 this.onLoadData_General();
             },
-
 
             onLoadDataDetail(resetPage) {
                 $('.loader').show();
@@ -453,7 +470,22 @@
                     }
                 });
             },
-            renderPagination(pagingNumbers, totalPage, currentPage) {
+            applySort(column) {
+                if (this.filter.SortItem.SortColumn === column) {
+                    this.filter.SortItem.SortOrder = this.filter.SortItem.SortOrder === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.filter.SortItem.SortColumn = column;
+                    this.filter.SortItem.SortOrder = 'asc';
+                }
+                this.onLoadDataDetail();
+            },
+            getSortClass(column) {
+                if (this.filter.SortItem.SortColumn === column) {
+                    return this.filter.SortItem.SortOrder === 'asc' ? 'sort-asc' : 'sort-desc';
+                }
+                return 'sort-asc';
+            },
+            renderPagination(pagingNumbers, totatlPage, currentPage) {
                 pagingNumbers.empty(); // Clear previous content
 
                 if (currentPage > 6) {
@@ -543,7 +575,7 @@
 
                 this.item = el;
                 try { this.item.dateOfBirth1 = ConvertDinhDangNgay(el.dateOfBirth); } catch (Ex) { }
-                const randomValue = Math.random(); 
+                const randomValue = Math.random();
                 try { this.item.imageSrc = el.faceUrl ? `${el.faceUrl}?r=${randomValue}` : "" } catch (Ex) { }
                 this.item = { ...this.item };
 
