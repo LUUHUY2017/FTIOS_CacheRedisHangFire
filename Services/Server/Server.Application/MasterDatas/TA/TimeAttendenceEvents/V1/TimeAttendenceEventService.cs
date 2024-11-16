@@ -172,7 +172,7 @@ public partial class TimeAttendenceEventService
                     time.ValueAbSent = valueAttendence;
                 }
 
-                time.EventType = null;
+                //time.EventType = null;
                 time.InOutMode = "1";
 
                 time.EnrollNumber = info.PersonCode;

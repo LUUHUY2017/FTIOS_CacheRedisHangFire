@@ -157,7 +157,7 @@
                                     <td style=" white-space: nowrap;">
                                         <span>{{ item.valueAbSent}}</span>
                                     </td>
-                                    <td style=" white-space: nowrap;">
+                                    <td v-bind:title="item.taMessage" style=" white-space: nowrap;cursor:pointer">
                                         <span>{{ formatDateTime(item.eventTime) }}</span>
                                     </td>
                                     <td><span>{{item.className}}</span></td>
