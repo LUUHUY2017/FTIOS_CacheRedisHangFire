@@ -145,8 +145,7 @@ public partial class CronJobService : ICronJobService
                 foreach (var item in res)
                 {
                     i = i + 1;
-
-                    string lastName = !string.IsNullOrWhiteSpace(item.StudentName) ? item.StudentName.Split(' ').Last() : "";
+                    string lastName = !string.IsNullOrWhiteSpace(item.StudentName) ? item.StudentName.Trim().Split(' ').Last() : "";
 
                     var el = new Student()
                     {
