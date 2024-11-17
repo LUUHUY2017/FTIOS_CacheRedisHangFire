@@ -166,8 +166,10 @@ public partial class CronJobService : ICronJobService
                     //var resQ = await _schoolYearClassService.SaveFromService(el);
                     //if (resQ.Succeeded)
                     //    el.StudentClassId = resQ.Data.Id;
+
                     var resS = await _studentService.SaveFromService(el);
-                    //if (resS.Succeeded)
+
+                    //if (resS.Succeeded && !string.IsNullOrWhiteSpace(el.ImageSrc))
                     //{
                     //    var stu = resS.Data;
                     //    stu.ImageSrc = el.ImageSrc;

@@ -511,15 +511,15 @@ else
 }
 
 
-try
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
-        await dbContext.Database.MigrateAsync();
-    }
-}
-catch (Exception ex) { }
+//try
+//{
+//    using (var scope = app.Services.CreateScope())
+//    {
+//        var dbContext = scope.ServiceProvider.GetRequiredService<MasterDataDbContext>();
+//        await dbContext.Database.MigrateAsync();
+//    }
+//}
+//catch (Exception ex) { }
 
 
 var runMigration = configuration["RunMigration"];
