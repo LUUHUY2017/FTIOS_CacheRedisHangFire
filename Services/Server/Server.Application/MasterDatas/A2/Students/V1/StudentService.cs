@@ -78,7 +78,7 @@ public class StudentService
         catch (Exception e)
         {
             Logger.Error(e);
-            return new Result<RB_ServerRequest>($"Gửi email lỗi: {e.Message}", false);
+            return new Result<RB_ServerRequest>($"Lỗi: {e.Message}", false);
         }
     }
     /// <summary>
@@ -104,7 +104,7 @@ public class StudentService
         catch (Exception e)
         {
             Logger.Error(e);
-            return new Result<RB_ServerRequest>($"Gửi email lỗi: {e.Message}", false);
+            return new Result<RB_ServerRequest>($"Lỗi: {e.Message}", false);
         }
     }
     /// <summary>
@@ -131,7 +131,7 @@ public class StudentService
         catch (Exception e)
         {
             Logger.Error(e);
-            return new Result<RB_ServerRequest>($"Gửi email lỗi: {e.Message}", false);
+            return new Result<RB_ServerRequest>($"Lỗi: {e.Message}", false);
         }
     }
 
@@ -388,7 +388,7 @@ public class StudentService
         catch (Exception e)
         {
             Logger.Warning(e.Message);
-            return new Result<DtoStudentRequest>($"Gửi email lỗi: {e.Message}", false);
+            return new Result<DtoStudentRequest>($"Lỗi: {e.Message}", false);
         }
 
     }
@@ -397,13 +397,13 @@ public class StudentService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<Result<DtoStudentRequest>> SaveFromService(Student request)
+    public async Task<Result<Student>> SaveFromService(Student request)
     {
         try
         {
             var res = await _studentRepository.SaveDataAsync(request);
             if (!res.Succeeded)
-                return new Result<DtoStudentRequest>($"Cập nhật không thành công", false);
+                return new Result<Student>($"Cập nhật không thành công", false);
 
             var per = new Person()
             {
@@ -415,13 +415,13 @@ public class StudentService
                 CitizenId = request.IdentifyNumber,
             };
             var data = await _personRepository.SaveAsync(per);
-            return new Result<DtoStudentRequest>($"Cập nhật thành công", true);
+            return new Result<Student>(res.Data, $"Cập nhật thành công", true);
 
         }
         catch (Exception e)
         {
             Logger.Error(e);
-            return new Result<DtoStudentRequest>($"Gửi email lỗi: {e.Message}", false);
+            return new Result<Student>($"Lỗi: {e.Message}", false);
         }
 
     }
@@ -485,11 +485,56 @@ public class StudentService
         catch (Exception e)
         {
             Logger.Error(e);
-            return new Result<DtoStudentRequest>($"Gửi email lỗi: {e.Message}", false);
+            return new Result<DtoStudentRequest>($"Lỗi: {e.Message}", false);
         }
 
     }
+    /// <summary>
+    /// Lưu thông tin học sinh vào AMMS, ảnh khuôn mặt
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<Result<Student>> SaveImageFromService(Student stu)
+    {
+        try
+        {
+            DateTime dateStudent = DateTime.Now;
+            if (!string.IsNullOrWhiteSpace(stu.DateOfBirth))
+            {
+                string dateString = stu.DateOfBirth;
+                string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
+                bool success = DateTime.TryParseExact(
+                    dateString,
+                    formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out dateStudent
+                );
+            }
 
+            var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
+            var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
+
+            string imageName = stu.Id + ".jpg";
+            string fileName = imageFullFolder + imageName;
+            string folderName = imageFolder + imageName;
+
+
+            if (!string.IsNullOrWhiteSpace(stu.ImageSrc))
+            {
+                // Lưu ảnh online
+                await Common.DownloadAndSaveImage(stu.ImageSrc, fileName);
+                await _personRepository.SaveImageAsync(stu.Id, "", folderName);
+            }
+
+            return new Result<Student>($"Cập nhật thành công", true);
+        }
+        catch (Exception e)
+        {
+            Logger.Warning(e.Message);
+            return new Result<Student>($"Lỗi: {e.Message}", false);
+        }
+    }
 
 
     /// <summary>
