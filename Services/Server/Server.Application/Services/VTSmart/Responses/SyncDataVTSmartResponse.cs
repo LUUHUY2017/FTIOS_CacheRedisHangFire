@@ -59,7 +59,7 @@
         /// </summary>
         public string? SyncCodeSSO { get; set; }
         /// <summary>
-        /// Mã CSDL ngành
+        /// Mã CSDL ngành: đang sử dụng
         /// </summary>
         public string? SyncCode { get; set; }
         public string? StudentCode { get; set; }
@@ -67,6 +67,7 @@
         public string? ClassName { get; set; }
         public string? ClassId { get; set; }
         public string? BirthDay { get; set; }
+        public string? ImageSrc { get; set; }
     }
 
     public class StudentDataApiResponse
