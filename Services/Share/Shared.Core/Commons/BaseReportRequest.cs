@@ -6,16 +6,15 @@
         public DateTime? EndDate { get; set; }
         public string? OrganizationId { get; set; }
 
-        public int Export { get; set; } = 0;
         public string Actived { get; set; } = "1";
         public int? RowsPerPage { get; set; } = 25;
         public int? CurentPage { get; set; } = 1;
 
-        public string StartDateTime { get; set; } = DateTime.Now.ToLocalTime().Date.ToString("dd/MM/yyyy HH:mm:ss");
-        public string EndDateTime { get; set; } = DateTime.Now.ToLocalTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59).ToString("dd/MM/yyyy HH:mm:ss");
+        //public string StartDateTime { get; set; } = DateTime.Now.ToLocalTime().Date.ToString("dd/MM/yyyy HH:mm:ss");
+        //public string EndDateTime { get; set; } = DateTime.Now.ToLocalTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59).ToString("dd/MM/yyyy HH:mm:ss");
 
-        public List<FilterItems>? FilterItems { get; set; } = null;
-        public SortItem? SortItem { get; set; } = null;
+        public List<FilterItems>? FilterItems { get; set; } = new List<FilterItems>();
+        public SortItem? SortItem { get; set; } = new SortItem();
     }
 
     public class FilterItems

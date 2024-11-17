@@ -73,6 +73,7 @@ public partial class SyncDeviceServerService
                              PersonId = _do.PersonId,
                              StudentCode = la != null ? la.StudentCode : "",
                              StudentName = la != null ? la.FullName : "",
+                             Name = la != null ? la.Name : "",
                              ClassName = la != null ? la.ClassName : "",
 
 
@@ -99,66 +100,70 @@ public partial class SyncDeviceServerService
             return null;
         }
     }
-    public async Task<IQueryable<SyncDeviceServerReportRes>> ApplyFilter(IQueryable<SyncDeviceServerReportRes> query, FilterItems filter)
+    public async Task<IQueryable<SyncDeviceServerReportRes>> ApplyFilter(IQueryable<SyncDeviceServerReportRes> query, List<FilterItems>? filters)
     {
-        switch (filter.PropertyName.ToLower())
+        if (filters == null && filters.Count == 0)
+            return query;
+
+        foreach (var filter in filters)
         {
-            case "studentname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.StudentName.Contains(filter.Value.Trim()));
-                break;
-            case "studentcode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
-                break;
+            switch (filter.PropertyName.ToLower())
+            {
+                case "studentname":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.StudentName.Contains(filter.Value.Trim()));
+                    break;
+                case "studentcode":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
+                    break;
 
-            case "devicename":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.DeviceName.Contains(filter.Value.Trim()));
-                break;
+                case "devicename":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.DeviceName.Contains(filter.Value.Trim()));
+                    break;
 
-            case "synaction":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.SynAction.Contains(filter.Value.Trim()));
-                break;
+                case "synaction":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.SynAction.Contains(filter.Value.Trim()));
+                    break;
 
-            case "synstatus":
-                if (!string.IsNullOrWhiteSpace(filter.Value))
-                {
-                    var statusValue = filter.Value.ToLower();
-                    if (statusValue == "true")
-                        query = query.Where(p => p.SynStatus == true);
-                    else if (statusValue == "false")
-                        query = query.Where(p => p.SynStatus == false);
-                    else
-                        query = query.Where(p => p.SynStatus == null);
-                }
-                break;
+                case "synstatus":
+                    if (!string.IsNullOrWhiteSpace(filter.Value))
+                    {
+                        var statusValue = filter.Value.ToLower();
+                        if (statusValue == "true")
+                            query = query.Where(p => p.SynStatus == true);
+                        else if (statusValue == "false")
+                            query = query.Where(p => p.SynStatus == false);
+                        else
+                            query = query.Where(p => p.SynStatus == null);
+                    }
+                    break;
 
-            case "organizationid":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.OrganizationId.Contains(filter.Value.Trim()));
-                break;
-            case "classname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
-                break;
+                case "organizationid":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.OrganizationId.Contains(filter.Value.Trim()));
+                    break;
+                case "classname":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
+                    break;
 
-            case "synmessage":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.SynMessage.Contains(filter.Value.Trim()));
-                break;
+                case "synmessage":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.SynMessage.Contains(filter.Value.Trim()));
+                    break;
 
-            case "synfacemessage":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.SynFaceMessage.Contains(filter.Value.Trim()));
-                break;
-            default:
-                break;
+                case "synfacemessage":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.SynFaceMessage.Contains(filter.Value.Trim()));
+                    break;
+                default:
+                    break;
+            }
         }
         return query;
     }
-
-
 }
 

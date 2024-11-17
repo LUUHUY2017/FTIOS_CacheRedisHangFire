@@ -4,6 +4,7 @@ namespace Server.Core.Interfaces.TimeAttendenceEvents.Responses;
 
 public class AttendenceEventReportRes : TimeAttendenceEvent
 {
+    public string? Name { get; set; }
     public string? StudentName { get; set; }
     public string? ClassName { get; set; }
     public string? DateOfBirth { get; set; }

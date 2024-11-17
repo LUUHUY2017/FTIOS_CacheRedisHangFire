@@ -63,14 +63,9 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
             {
                 request.OrganizationId = GetOrganizationId();
                 var items = await _syncDeviceService.GetAlls(request);
-                if (request.FilterItems != null && request.FilterItems.Count > 0)
-                {
-                    foreach (var filter in request.FilterItems)
-                    {
-                        items = await _syncDeviceService.ApplyFilter(items, filter);
-                    }
-                }
 
+                items = await _syncDeviceService.ApplyFilter(items, request.FilterItems);
+                items = await ApplySort(items, request.SortItem);
 
                 int totalRow = await items.Select(o => o.Id).CountAsync();
                 // phân trang
@@ -112,13 +107,9 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
                 request.OrganizationId = GetOrganizationId();
                 var items = await _syncDeviceService.GetAlls(request);
 
-                if (request.FilterItems != null && request.FilterItems.Count > 0)
-                {
-                    foreach (var filter in request.FilterItems)
-                    {
-                        items = await _syncDeviceService.ApplyFilter(items, filter);
-                    }
-                }
+                items = await _syncDeviceService.ApplyFilter(items, request.FilterItems);
+                items = await ApplySort(items, request.SortItem);
+
 
                 int totalAmount = await items.Select(o => o.Id).CountAsync();
                 int totalFace = await items.CountAsync(o => o.SynStatus == true);

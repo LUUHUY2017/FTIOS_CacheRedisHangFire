@@ -117,7 +117,7 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
             {
                 request.OrganizationId = GetOrganizationId();
                 var items = await _studentService.GetAlls(request);
-
+          
 
                 int totalAmount = await items.Select(o => o.Id).CountAsync();
                 int totalFace = await items.CountAsync(o => o.IsFace == true);
@@ -160,6 +160,7 @@ namespace Server.API.APIs.Data.StudentSmas.V1.Controllers
                 var datas = await _studentService.GetAlls(request);
 
                 datas = await _studentService.ApplyFilter(datas, request.FilterItems);
+                datas = await ApplySort(datas, request.SortItem);
 
                 var items = await datas.ToListAsync();
 

@@ -34,6 +34,7 @@ public partial class TimeAttendenceEventService
 
                              StudentCode = _do.StudentCode,
                              StudentName = la != null ? la.FullName : "",
+                             Name = la != null ? la.Name : "",
                              ClassName = la != null ? la.ClassName : "",
                              DateOfBirth = la != null ? la.DateOfBirth : "",
 
@@ -46,7 +47,6 @@ public partial class TimeAttendenceEventService
                              OrganizationCode = or != null ? or.OrganizationCode : "",
                              OrganizationName = or != null ? or.OrganizationName : "",
 
-                             CreatedBy = _do.CreatedBy,
                              Description = _do.Description,
 
                              EnrollNumber = _do.EnrollNumber,
@@ -87,70 +87,74 @@ public partial class TimeAttendenceEventService
         }
     }
 
-    public async Task<IQueryable<AttendenceEventReportRes>> ApplyFilter(IQueryable<AttendenceEventReportRes> query, FilterItems filter)
+    public async Task<IQueryable<AttendenceEventReportRes>> ApplyFilter(IQueryable<AttendenceEventReportRes> query, List<FilterItems>? filters)
     {
-        switch (filter.PropertyName.ToLower())
+        if (filters == null && filters.Count == 0)
+            return query;
+
+        foreach (var filter in filters)
         {
-            case "studentname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.StudentName.Contains(filter.Value.Trim()));
-                break;
-            case "studentcode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
-                break;
+            switch (filter.PropertyName.ToLower())
+            {
+                case "studentname":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.StudentName.Contains(filter.Value.Trim()));
+                    break;
+                case "studentcode":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
+                    break;
 
-            case "devicename":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.DeviceName.Contains(filter.Value.Trim()));
-                break;
+                case "devicename":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.DeviceName.Contains(filter.Value.Trim()));
+                    break;
 
 
-            case "attendencesection":
-                if (!string.IsNullOrWhiteSpace(filter.Value))
-                {
-                    int section = int.Parse(filter.Value);
-                    query = query.Where(p => p.AttendenceSection == section);
-                }
-                break;
+                case "attendencesection":
+                    if (!string.IsNullOrWhiteSpace(filter.Value))
+                    {
+                        int section = int.Parse(filter.Value);
+                        query = query.Where(p => p.AttendenceSection == section);
+                    }
+                    break;
 
-            case "eventtype":
-                if (!string.IsNullOrWhiteSpace(filter.Value))
-                {
-                    var statusValue = filter.Value.ToLower();
-                    if (statusValue == "true")
-                        query = query.Where(p => p.EventType == true);
-                    else
-                        query = query.Where(p => p.EventType == null);
-                }
-                break;
+                case "eventtype":
+                    if (!string.IsNullOrWhiteSpace(filter.Value))
+                    {
+                        var statusValue = filter.Value.ToLower();
+                        if (statusValue == "true")
+                            query = query.Where(p => p.EventType == true);
+                        else
+                            query = query.Where(p => p.EventType == null);
+                    }
+                    break;
 
-            case "valueabsent":
-                if (!string.IsNullOrWhiteSpace(filter.Value))
-                {
-                    query = query.Where(p => p.ValueAbSent == filter.Value);
-                }
-                break;
-            case "classname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
-                break;
-            case "organizationname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.OrganizationName.Contains(filter.Value.Trim()));
-                break;
+                case "valueabsent":
+                    if (!string.IsNullOrWhiteSpace(filter.Value))
+                    {
+                        query = query.Where(p => p.ValueAbSent == filter.Value);
+                    }
+                    break;
+                case "classname":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
+                    break;
+                case "organizationname":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.OrganizationName.Contains(filter.Value.Trim()));
+                    break;
 
-            case "deviceid":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.DeviceId.Contains(filter.Value.Trim()));
-                break;
+                case "deviceid":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.DeviceId.Contains(filter.Value.Trim()));
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
         return query;
     }
-
-
 }
 

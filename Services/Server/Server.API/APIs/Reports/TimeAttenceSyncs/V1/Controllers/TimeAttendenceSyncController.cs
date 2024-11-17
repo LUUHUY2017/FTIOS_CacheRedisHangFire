@@ -50,13 +50,9 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
         {
             request.OrganizationId = GetOrganizationId();
             var items = await _timeService.GetAlls(request);
-            if (request.FilterItems != null && request.FilterItems.Count > 0)
-            {
-                foreach (var filter in request.FilterItems)
-                {
-                    items = await _timeService.ApplyFilter(items, filter);
-                }
-            }
+
+            items = await _timeService.ApplyFilter(items, request.FilterItems);
+            items = await ApplySort(items, request.SortItem);
 
             int totalRow = await items.Select(o => o.Id).CountAsync();
             // phân trang
@@ -133,13 +129,9 @@ public class TimeAttendenceSyncController : AuthBaseAPIController
         {
             request.OrganizationId = GetOrganizationId();
             var datas = await _timeService.GetAlls(request);
-            if (request.FilterItems != null && request.FilterItems.Count > 0)
-            {
-                foreach (var filter in request.FilterItems)
-                {
-                    datas = await _timeService.ApplyFilter(datas, filter);
-                }
-            }
+
+            datas = await _timeService.ApplyFilter(datas, request.FilterItems);
+            datas = await ApplySort(datas, request.SortItem);
 
             var items = await datas.ToListAsync();
 

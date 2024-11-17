@@ -78,16 +78,16 @@
                             <thead class="">
                                 <tr>
                                     <th>Stt</th>
-                                    <th> Mã học sinh </th>
-                                    <th> Họ tên </th>
-                                    <th> Buổi điểm danh</th>
-                                    <th> Trạng thái </th>
-                                    <th> Sự kiện </th>
-                                    <th> Thời gian diểm danh  </th>
-                                    <th> Lớp </th>
-                                    <th> Trường </th>
-                                    <th> Thiết bị </th>
-                                    <th> Năm sinh </th>
+                                    <th v-on:click="applySort('StudentCode')" :class="getSortClass('StudentCode')"> Mã học sinh </th>
+                                    <th v-on:click="applySort('Name')" :class="getSortClass('Name')"> Họ tên </th>
+                                    <th v-on:click="applySort('AttendenceSection')" :class="getSortClass('AttendenceSection')"> Buổi điểm danh</th>
+                                    <th v-on:click="applySort('EventType')" :class="getSortClass('EventType')"> Trạng thái </th>
+                                    <th v-on:click="applySort('ValueAbSent')" :class="getSortClass('ValueAbSent')"> Sự kiện </th>
+                                    <th v-on:click="applySort('EventTime')" :class="getSortClass('EventTime')"> Thời gian diểm danh  </th>
+                                    <th v-on:click="applySort('ClassName')" :class="getSortClass('ClassName')"> Lớp </th>
+                                    <th v-on:click="applySort('OrganizationName')" :class="getSortClass('OrganizationName')"> Trường </th>
+                                    <th v-on:click="applySort('DeviceId')" :class="getSortClass('DeviceId')"> Thiết bị </th>
+                                    <th v-on:click="applySort('DateOfBirth')" :class="getSortClass('DateOfBirth')"> Năm sinh </th>
                                 </tr>
                                 <tr>
                                     <th>
@@ -302,16 +302,16 @@
         },
         data: {
             filter: {
-                classId: null,
-                schoolYearId: null,
-
                 startDate: formatDateTime(new Date()),
                 endDate: formatDateTime(new Date()),
 
                 RowsPerPage: 50,
                 CurentPage: 1,
-                Actived: "1",
                 FilterItems: [],
+                SortItem: {
+                    SortColumn: null,
+                    SortOrder: 'asc',
+                },
             },
 
             params: {
@@ -338,6 +338,7 @@
             },
             combobox: { schools: [], schoolYears: [], classes: [] },
             // phân trang
+            totalPage: 0,
             firstRow: 0,
             totalRow: 0,
             totalDataRowNext: 0,
@@ -414,6 +415,21 @@
                         });
                     }
                 });
+            },
+            applySort(column) {
+                if (this.filter.SortItem.SortColumn === column) {
+                    this.filter.SortItem.SortOrder = this.filter.SortItem.SortOrder === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.filter.SortItem.SortColumn = column;
+                    this.filter.SortItem.SortOrder = 'asc';
+                }
+                this.onLoadDataDetail();
+            },
+            getSortClass(column) {
+                if (this.filter.SortItem.SortColumn === column) {
+                    return this.filter.SortItem.SortOrder === 'asc' ? 'sort-asc' : 'sort-desc';
+                }
+                return 'both';
             },
             renderPagination(pagingNumbers, totalPage, currentPage) {
                 pagingNumbers.empty(); // Clear previous content

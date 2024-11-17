@@ -72,8 +72,14 @@ public abstract class AuthBaseAPIController : ControllerBase
     [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IQueryable<T>> ApplySort<T>(IQueryable<T> query, SortItem sort)
     {
-        if (!string.IsNullOrWhiteSpace(sort.SortColumn))
-            query = sort.SortOrder == "asc" ? query.OrderBy(x => EF.Property<object>(x, sort.SortColumn)) : query.OrderByDescending(x => EF.Property<object>(x, sort.SortColumn));
+        if (string.IsNullOrWhiteSpace(sort.SortColumn))
+            return query;
+
+        var propertyInfo = typeof(T).GetProperty(sort.SortColumn);
+        if (propertyInfo == null)
+            return query;
+
+        query = sort.SortOrder == "asc" ? query.OrderBy(x => EF.Property<object>(x, sort.SortColumn)) : query.OrderByDescending(x => EF.Property<object>(x, sort.SortColumn));
         return query;
     }
 

@@ -88,15 +88,15 @@
                                         <tr>
                                             <th>Stt</th>
                                             <th> Thao tác </th>
-                                            <th> Mã học sinh </th>
-                                            <th> Họ tên </th>
-                                            <th> Thiết bị </th>
-                                            <th> Thao tác </th>
-                                            <th> Trạng thái </th>
-                                            <th> Trạng thái khuôn mặt </th>
-                                            <th> Thông báo </th>
-                                            <th> Nội dung </th>
-                                            <th> Thời gian cập nhật  </th>
+                                            <th v-on:click="applySort('StudentCode')" :class="getSortClass('StudentCode')"> Mã học sinh </th>
+                                            <th v-on:click="applySort('Name')" :class="getSortClass('Name')"> Họ tên </th>
+                                            <th v-on:click="applySort('DeviceName')" :class="getSortClass('DeviceName')"> Thiết bị </th>
+                                            <th v-on:click="applySort('SynAction')" :class="getSortClass('SynAction')"> Thao tác </th>
+                                            <th v-on:click="applySort('SynStatus')" :class="getSortClass('SynStatus')"> Trạng thái </th>
+                                            <th v-on:click="applySort('SynFaceStatus')" :class="getSortClass('SynFaceStatus')"> Trạng thái khuôn mặt </th>
+                                            <th v-on:click="applySort('SynMessage')" :class="getSortClass('SynMessage')"> Thông báo </th>
+                                            <th v-on:click="applySort('SynFaceMessage')" :class="getSortClass('SynFaceMessage')"> Nội dung </th>
+                                            <th v-on:click="applySort('LastModifiedDate')" :class="getSortClass('LastModifiedDate')"> Thời gian cập nhật  </th>
                                         </tr>
                                         <tr>
                                             <th>
@@ -329,15 +329,13 @@
             totalWait: 0,
 
             filter: {
-                Export: 0,
-                ClassId: null,
-                SchoolYearId: null,
-                DeviceId: null,
-
                 RowsPerPage: 50,
                 CurentPage: 1,
-                Actived: "1",
                 FilterItems: [],
+                SortItem: {
+                    SortColumn: null,
+                    SortOrder: 'asc',
+                },
                 StartDate: formatDateTime(new Date()),
                 EndDate: formatDateTime(new Date()),
             },
@@ -447,6 +445,21 @@
                         });
                     }
                 });
+            },
+            applySort(column) {
+                if (this.filter.SortItem.SortColumn === column) {
+                    this.filter.SortItem.SortOrder = this.filter.SortItem.SortOrder === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.filter.SortItem.SortColumn = column;
+                    this.filter.SortItem.SortOrder = 'asc';
+                }
+                this.onLoadDataDetail();
+            },
+            getSortClass(column) {
+                if (this.filter.SortItem.SortColumn === column) {
+                    return this.filter.SortItem.SortOrder === 'asc' ? 'sort-asc' : 'sort-desc';
+                }
+                return 'both';
             },
             renderPagination(pagingNumbers, totalPage, currentPage) {
                 pagingNumbers.empty(); // Clear previous content

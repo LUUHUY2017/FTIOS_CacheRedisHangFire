@@ -5,6 +5,7 @@ namespace Server.Core.Interfaces.TimeAttendenceSyncs.Responses;
 public class AttendenceSyncReportRes : TimeAttendenceSync
 {
     public string? StudentCode { get; set; }
+    public string? Name { get; set; }
     public string? StudentName { get; set; }
     public string? ClassName { get; set; }
     public string? OrganizationCode { get; set; }

@@ -76,8 +76,6 @@ public partial class TimeAttendenceSyncService
                              CreatedDate = _do.CreatedDate,
                              LastModifiedDate = la != null ? la.CreatedDate : _do.LastModifiedDate,
 
-                             CreatedBy = _do.CreatedBy,
-                             ReferenceId = _do.ReferenceId,
                              TimeAttendenceEventId = _do.Id,
                              AbsenceDate = _do.AbsenceDate,
                              EventTime = _do.EventTime,
@@ -86,6 +84,7 @@ public partial class TimeAttendenceSyncService
 
                              StudentCode = st != null ? st.StudentCode : "",
                              StudentName = st != null ? st.FullName : "",
+                             Name = st != null ? st.Name : "",
                              ClassName = st != null ? st.ClassName : "",
 
                              OrganizationCode = or != null ? or.OrganizationCode : "",
@@ -112,62 +111,68 @@ public partial class TimeAttendenceSyncService
             return null;
         }
     }
-    public async Task<IQueryable<AttendenceSyncReportRes>> ApplyFilter(IQueryable<AttendenceSyncReportRes> query, FilterItems filter)
+    public async Task<IQueryable<AttendenceSyncReportRes>> ApplyFilter(IQueryable<AttendenceSyncReportRes> query, List<FilterItems>? filters)
     {
-        switch (filter.PropertyName.ToLower())
+        if (filters == null && filters.Count == 0)
+            return query;
+
+        foreach (var filter in filters)
         {
-            case "studentname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.StudentName.Contains(filter.Value.Trim()));
-                break;
-            case "studentcode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
-                break;
+            switch (filter.PropertyName.ToLower())
+            {
+                case "studentname":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.StudentName.Contains(filter.Value.Trim()));
+                    break;
+                case "studentcode":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
+                    break;
 
-            case "attendencesection":
-                if (!string.IsNullOrWhiteSpace(filter.Value))
-                {
-                    int section = int.Parse(filter.Value);
-                    query = query.Where(p => p.AttendenceSection == section);
-                }
-                break;
-            case "valueabsent":
-                if (!string.IsNullOrWhiteSpace(filter.Value))
-                {
-                    query = query.Where(p => p.ValueAbSent == filter.Value);
-                }
-                break;
+                case "attendencesection":
+                    if (!string.IsNullOrWhiteSpace(filter.Value))
+                    {
+                        int section = int.Parse(filter.Value);
+                        query = query.Where(p => p.AttendenceSection == section);
+                    }
+                    break;
+                case "valueabsent":
+                    if (!string.IsNullOrWhiteSpace(filter.Value))
+                    {
+                        query = query.Where(p => p.ValueAbSent == filter.Value);
+                    }
+                    break;
 
-            case "classname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
-                break;
-            case "organizationname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.OrganizationName.Contains(filter.Value.Trim()));
-                break;
+                case "classname":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
+                    break;
+                case "organizationname":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.OrganizationName.Contains(filter.Value.Trim()));
+                    break;
 
-            case "message":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.Message.Contains(filter.Value.Trim()));
-                break;
+                case "message":
+                    if (filter.Comparison == 0)
+                        query = query.Where(p => p.Message.Contains(filter.Value.Trim()));
+                    break;
 
-            case "syncstatus":
-                if (!string.IsNullOrWhiteSpace(filter.Value))
-                {
-                    var statusValue = filter.Value.ToLower();
-                    if (statusValue == "true")
-                        query = query.Where(p => p.SyncStatus == true);
-                    else if (statusValue == "false")
-                        query = query.Where(p => p.SyncStatus == false);
-                    else
-                        query = query.Where(p => p.SyncStatus == null);
-                }
-                break;
+                case "syncstatus":
+                    if (!string.IsNullOrWhiteSpace(filter.Value))
+                    {
+                        var statusValue = filter.Value.ToLower();
+                        if (statusValue == "true")
+                            query = query.Where(p => p.SyncStatus == true);
+                        else if (statusValue == "false")
+                            query = query.Where(p => p.SyncStatus == false);
+                        else
+                            query = query.Where(p => p.SyncStatus == null);
+                    }
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
         return query;
     }
