@@ -80,7 +80,7 @@ public class StudentRepository : RepositoryBaseMasterData<Student>, IStudentRepo
                 _order.DateOfBirth = data.DateOfBirth;
                 _order.GenderCode = data.GenderCode;
                 _order.GradeCode = data.GradeCode;
-
+                _order.ImageSrc = data.ImageSrc;
 
                 _dbContext.Student.Update(_order);
                 message = "Cập nhật thành công";
