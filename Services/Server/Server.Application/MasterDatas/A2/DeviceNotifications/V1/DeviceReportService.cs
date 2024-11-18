@@ -2,6 +2,7 @@
 using Server.Application.MasterDatas.A2.DeviceNotifications.V1.Models.Reports;
 using Server.Core.Entities.A2;
 using Server.Infrastructure.Datas.MasterData;
+using Shared.Core.Loggers;
 using System.Security.Cryptography;
 
 namespace Server.Application.MasterDatas.A2.DeviceNotifications.V1;
@@ -67,6 +68,7 @@ public class DeviceReportService
         }
         catch (Exception ex)
         {
+            Logger.Error(ex);
             return new List<DeviceStatusWarningModel>();
         }
     }

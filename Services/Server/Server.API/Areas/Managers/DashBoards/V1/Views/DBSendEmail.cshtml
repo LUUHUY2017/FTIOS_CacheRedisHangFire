@@ -1,41 +1,52 @@
-﻿@{
-    ViewData["Title"] = "Lịch sử gửi Email";
-    Layout = "~/Views/Shared/_LayoutManage.cshtml";
-}
-
-<!-- Main content -->
-<div class="content-wrapper" id="webui">
-
-    <!-- Inner content -->
-    <div class="content-inner">
-
-        <!-- Page header -->
-        <div class="page-header page-header-light shadow">
-            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
-                <div class="d-flex">
-                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
-                        <span class="fw-normal">@ViewData["Title"]</span>
-                    </h4>
-                </div>
-
-                <div class=" d-lg-block my-lg-auto ms-lg-auto" id="page_header">
-                    <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
-                        <div class="d-inline-flex mt-3 mt-sm-0">
-                            <div class="pull-right">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+﻿<!--Email-->
+<div class="card shadow-sm" id="webui_dBSendEmail">
+    <div class="card-body">
+        <!--Tilte-->
+        <h2 class="text-start">Thống kê gửi email</h2>
+        <div class="row mt-3">
+            <!-- Dòng thống kê tổng số email đã gửi -->
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Tổng số email đã gửi</span>
+                <span class="dots"></span>
+                <span class="fw-bold" v-on:click="onClickCell(null)" style="cursor: pointer;">{{data_Total.totalSendEmail}}</span>
             </div>
-
+            <!-- Dòng thống kê email thành công -->
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>Số email gửi thành công</span>
+                <span class="dots"></span>
+                <span>
+                    <span class="fw-bold text-success" v-on:click="onClickCell('1')" style="cursor: pointer;">{{data_Total.totalSendSuccess}}</span>
+                    ({{(data_Total.totalSendSuccess / data_Total.totalSendEmail * 100).toFixed(2)}}%)
+                </span>
+            </div>
+            <!-- Dòng thống kê email thất bại -->
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>Số email gửi thất bại</span>
+                <span class="dots"></span>
+                <span>
+                    <span class="fw-bold text-danger" v-on:click="onClickCell('0')" style="cursor: pointer;">{{data_Total.totalSendFail}}</span>
+                    ({{(data_Total.totalSendFail / data_Total.totalSendEmail * 100).toFixed(2)}}%)
+                </span>
+            </div>
+            <!-- Nút See More -->
+            <div class="col text-start mt-2">
+                <a href="/V1/AutoReportMonitor" class="text-end">Xem thêm</a>
+            </div>
         </div>
+    </div>
 
-        <!-- Content area -->
-        <div class="content">
-            <div class="card">
+    <!--ModelForm-->
+    <!-- Modal -->
+    <div class="modal hide fade" id="ModelInfo_SendEmail" role="dialog" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">Lịch sử gửi email</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"> </button>
+                </div>
+
                 <div class="card-body">
-
-                    <form v-on:submit.prevent="loadData">
+                    <form v-on:submit.prevent="onFilter">
                         <div class="row mb-3  ">
                             <div class="col-md-3">
                                 <label class="form-label">Từ ngày</label>
@@ -53,10 +64,9 @@
                                           placeholder="Vui lòng chọn thời gian...">
                                 </datetime>
                             </div>
-
-                            <div class="col-md-3" hidden>
-                                <label class="form-label">Tổ chức</label>
-                                <select class="form-control select" required data-placeholder="Vui lòng chọn tổ chức" id="FOrganization">
+                            <div class="col-md-3">
+                                <label class="form-label">Trường học</label>
+                                <select class="form-select select" required data-placeholder="Vui lòng chọn trường học" id="FOrganization">
                                     <option v-for="option in combobox.organizations" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>
@@ -65,7 +75,7 @@
                             <div class="col-md-3">
                                 <label class="form-label">Trạng thái</label>
                                 <select id="FSent" class="form-control select">
-                                    <option selected value="">Tất cả </option>
+                                    <option selected :value="null">Tất cả </option>
                                     <option value="1">Thành công </option>
                                     <option value="2">Đang chờ </option>
                                     <option value="0">Lỗi </option>
@@ -81,23 +91,25 @@
                     </form>
 
                 </div>
-            </div>
 
-            <div class="card">
                 <div class="card-body">
-                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                    <div class=" row">
+                        <div class="col-md-12">
+                            <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 
     <!-- Modal -->
-    <div class="modal hide  fade" id="ModelAddEdit" role="dialog" aria-hidden="true">
+    <div class="modal hide fade" id="ModelAddEdit_SendEmail" role="dialog" aria-hidden="true">
         <div id="waitDialog" class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}} @ViewData["Title"]</h5>
+                    <h5 id="staticBackdropLabel" class="modal-title">Chi tiết gửi</h5>
                     <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"> </button>
                 </div>
                 <div class="modal-body">
@@ -113,37 +125,21 @@
             </div>
         </div>
     </div>
-    @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
-</div>
+    <!--/ModelForm-->
 
+</div>
+<!--/Email-->
 <script>
     $(document).ready(function () {
-        $('#scheduleExportType').on("change", function () {
-            _schLog.item.scheduleExportType = $(this).val();
-        });
-        $('#scheduleSequentialSending').on("change", function () {
-            _schLog.item.scheduleSequentialSending = $(this).val();
-        });
-        $('#scheduleReportType').on("change", function () {
-            _schLog.item.scheduleReportType = $(this).val();
-        });
-        $('#organizationId').on("change", function () {
-            _schLog.item.organizationId = $(this).val();
-            _schLog.item.organizationName = $(this).find("option:selected").text()?.trim();
-        });
-
         $("#FSent").on("change", function () {
-            _schLog.filter.sent = $(this).val();
+            _dBSendEmail.filter.sent = $(this).val();
         });
-
         $('#FOrganization').on("change", function () {
-            _schLog.filter.organizationId = $(this).val();
+            _dBSendEmail.filter.organizationId = $(this).val();
         });
     });
-
-
-    var _schLog = new Vue({
-        el: '#webui',
+    var _dBSendEmail = new Vue({
+        el: '#webui_dBSendEmail',
         components: {
             'BootstrapTable': BootstrapTable
         },
@@ -167,33 +163,12 @@
                         var ele = `<div style="white-space: nowrap;">`;
                         ele += `<a href = "javascript:" class= "btn btn-sm btn-info view" title = "Xem chi tiết" > <i class="fa fa-info-circle" ></i></a > &nbsp;`;
                         ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit" title = "Gửi lại " > <i class="fa fa-repeat" > </i> </a > &nbsp;`;
-                        ele += `<a href="javascript:" class="btn btn-danger btn-sm delete-asset delete" title="Delete "> <i class="fa fa-trash" ></i> </a>&nbsp;`;
                         ele += ` </div>`;
                         return ele;
                     },
                     events: {
                         'click .view': function (e, value, row) {
-                            _schLog.onPopupModelEdit(row);
-                        },
-                        'click .delete': function (e, value, row) {
-                            var question = "Bạn có chắc chắn muốn xóa dòng này khỏi cơ sở dữ liệu không? sau khi xóa không khôi phục lại được!";
-                            var content = "Nhập nội dung xóa (không quá 250 kí tự)";
-                            alertify.prompt(question, content, ''
-                                , function (evt, value) {
-                                    axios.post('/api/v1/SendEmail/Delete', { id: row.id, reason: value }, _schLog.object.bearerAuthorization).then(response => {
-                                        if (response.data.succeeded) {
-                                            alertify.success(response.data.message);
-                                            _schLog.loadData();
-                                        }
-                                        else {
-                                            alertify.warning(response.data.message || "Có lỗi xảy ra!");
-                                        }
-                                    }).catch(error => {
-                                        alert("Lỗi: " + error.response.data.message);
-                                    });
-                                }, function () {
-                                    //alertify.error('Cancel')
-                                });
+                            _dBSendEmail.onPopupModelEdit(row);
                         },
                         'click .edit': function (e, value, row) {
                             var question = "Bạn có chắc chắn muốn kích hoạt dòng này không?";
@@ -201,10 +176,10 @@
                                 row.sent = null;
                                 row.timeSent = null;
                                 row.numberOfResend = null;
-                                axios.put('/api/v1/SendEmail/Edit', row, _schLog.object.bearerAuthorization).then(response => {
+                                axios.put('/api/v1/SendEmail/Edit', row, _dBSendEmail.object.bearerAuthorization).then(response => {
                                     if (response.data.succeeded) {
                                         alertify.success(response.data.message);
-                                        _schLog.loadData();
+                                        _dBSendEmail.onFilter()
                                     }
                                     else {
                                         alertify.warning(response.data.message || "Có lỗi xảy ra!");
@@ -283,13 +258,13 @@
                     },
                     events: {
                         'click .download': function (e, value, row) {
-                            _schLog.download(row);
+                            _dBSendEmail.download(row);
                         },
                     }
                 },
             ],
             data: [],
-
+            
             columns_selected: [
                 {
                     title: "Stt",
@@ -332,41 +307,74 @@
             ],
             data_selected: [],
 
-            item: {},
-            item_add: {},
-            combobox: {
-                exportTypes: [],
-                sequentialSendings: [],
-                exportTypes: [],
-                organizations: [],
-            },
             options: {
                 search: true,
                 pagination: true,
                 showExtendedPagination: true,
                 sortable: true,
                 searchAlign: 'right',
-                paginationHAlign: 'right',
+                paginationHAlign: 'left',
                 paginationDetailHAlign: 'right',
                 pageSize: 25,
                 pageList: [10, 25, 50, 100, 200],
             },
+
             filter: {
-                Sent: null,
+                columnTable: "",
+                actived: "1",
+                key: "",
                 organizationId: "0",
+                export: "0",
+                dateTimeFilter: formatDateTime(new Date()),
                 startDate: formatDateTime(new Date()),
                 endDate: formatDateTime(new Date()),
             },
+
             object: {
                 dateNow: formatDateTime(new Date()),
+                form_tile: '',
                 editAction: false,
+                infoAction: false,
                 bearerAuthorization: {
                     headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
                 }
             },
+
+            data_Total: {},
+            item: {},
+            combobox: { organizations: [], },
         },
         methods: {
             loadData() {
+                $('.loader').show();
+                axios.post('/api/v1/DashBoard/GetTotalSendEmail', this.filter.sendEmail, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+                    $('.loader').delay(100).hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+                    this.data = [];
+                    if (response.data.succeeded) {
+                        this.data_Total = response.data.data;
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+            onClickCell(status) {
+                this.filter.Sent = status;
+                $('#FSent').val(status).trigger('change');
+                this.onFilter();
+            },
+            onFilter() {
                 $('.loader').show();
                 axios.post('/api/v1/SendEmail/Gets', this.filter, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
@@ -375,28 +383,16 @@
 
 
                     this.data = response.data.data;
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelInfo_SendEmail')).show();
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
                     console.log(error);
                 });
-            },
 
-            openFormAdd() {
-                this.object.editAction = false;
-                this.onResetForm();
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
             },
-
-            onResetForm() {
-                this.item = { actived: true };
-                this.data_selected = [];
-                this.item_add = {};
-                resetFormJs();
-            },
-
             onPopupModelEdit(row, editAction) {
                 this.item = row;
-                axios.get('/api/v1/SendEmailLog/Detail?id=' + this.item.id, this.object.config).then(response => {
+                axios.get('/api/v1/SendEmailLog/Detail?id=' + this.item.id, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 
@@ -408,77 +404,22 @@
                     $('.loader').delay(100).hide(0);
                     console.log(error);
                 });
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
-            },
-
-            onClickSaveData() {
-                if (!validateForm("#FormAddEdit")) {
-                    return true;
-                }
-
-                $('.loader').show();
-                axios.put('/api/v1/SendEmail/Edit', this.item, this.object.config).then(response => {
-                    $('.loader').hide(0);
-                    if (response.data.succeeded) {
-                        _schLog.object.editAction = true;
-
-                        _schLog.item = response.data.data;
-                        alertify.success(response.data.message);
-                        _schLog.loadData();
-                    }
-                    else {
-                        alertify.notify(response.data.message, 'error', 6, function () { });
-                    }
-                }).catch(error => {
-                    $('.loader').hide(0);
-                    console.log(error);
-                });
-            },
-
-            download(row) {
-                var fileName = row.attachFile
-                window.location.href = '/' + fileName;
-            },
-            getCookie(name) {
-                const value = "; " + document.cookie;
-                const parts = value.split("; " + name + "=");
-                if (parts.length === 2) return parts.pop().split(";").shift();
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit_SendEmail')).show();
             },
             loadCombox() {
-                // axios.get('/api/v1/ScheduleSendEmail/Organizations', this.object.config).then(response => {
-                //     if (response.request.responseURL.includes('~/Account/Login'))
-                //         window.location = window.location.href;
-
-                //     this.combobox.organizations = response.data.items;
-                // }).catch(error => {
-                //     console.log(error);
-                // });
-
                 axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('Auth/Login')) {
                         window.location = window.location.href;
                     }
                     this.combobox.organizations = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
-                    if (this.getCookie("organizationId")) {
-
-                        this.filter.organizationId = this.getCookie("organizationId");
-                        $('#FOrganization').val(this.filter.organizationId);
-                    }
-                    else {
-                        this.filter.organizationId = this.combobox.organizations[0].id;
-                        $('#FOrganization').val(this.filter.organizationId);
-                    }
-
-                    this.loadData();
                 }).catch(error => {
                     console.warn(error);
                 });
             },
         },
         mounted() {
-            //this.loadData();
-            this.loadCombox();
+            this.loadData();
+            this.loadCombox()
         },
     })
 </script>
-

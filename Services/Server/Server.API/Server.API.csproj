@@ -23,7 +23,6 @@
     <Compile Remove="Areas\Managers\AutoNotiDevices\**" />
     <Compile Remove="Areas\Managers\AutoReportInOuts\**" />
     <Compile Remove="Areas\Managers\Caching\**" />
-    <Compile Remove="Areas\Managers\Dashboards\**" />
     <Compile Remove="Areas\Managers\DataCacheDetails\**" />
     <Compile Remove="Areas\Managers\DataInOutAvgs\**" />
     <Compile Remove="Areas\Managers\DataInOutEvents\**" />
@@ -43,7 +42,6 @@
     <Content Remove="Areas\Managers\AutoNotiDevices\**" />
     <Content Remove="Areas\Managers\AutoReportInOuts\**" />
     <Content Remove="Areas\Managers\Caching\**" />
-    <Content Remove="Areas\Managers\Dashboards\**" />
     <Content Remove="Areas\Managers\DataCacheDetails\**" />
     <Content Remove="Areas\Managers\DataInOutAvgs\**" />
     <Content Remove="Areas\Managers\DataInOutEvents\**" />
@@ -63,7 +61,6 @@
     <EmbeddedResource Remove="Areas\Managers\AutoNotiDevices\**" />
     <EmbeddedResource Remove="Areas\Managers\AutoReportInOuts\**" />
     <EmbeddedResource Remove="Areas\Managers\Caching\**" />
-    <EmbeddedResource Remove="Areas\Managers\Dashboards\**" />
     <EmbeddedResource Remove="Areas\Managers\DataCacheDetails\**" />
     <EmbeddedResource Remove="Areas\Managers\DataInOutAvgs\**" />
     <EmbeddedResource Remove="Areas\Managers\DataInOutEvents\**" />
@@ -83,7 +80,6 @@
     <None Remove="Areas\Managers\AutoNotiDevices\**" />
     <None Remove="Areas\Managers\AutoReportInOuts\**" />
     <None Remove="Areas\Managers\Caching\**" />
-    <None Remove="Areas\Managers\Dashboards\**" />
     <None Remove="Areas\Managers\DataCacheDetails\**" />
     <None Remove="Areas\Managers\DataInOutAvgs\**" />
     <None Remove="Areas\Managers\DataInOutEvents\**" />
@@ -101,6 +97,8 @@
     <Compile Include="APIs\Data\AttendanceConfigs\V1\Controllers\AttendanceConfigController.cs" />
 
     <Compile Include="APIs\Data\AttendanceTimeConfigs\V1\Models\AttendanceTimeTypeConst.cs" />
+
+    <Compile Include="APIs\Data\DashBoards\V1\Controllers\DashBoardController.cs" />
 
     <Compile Include="APIs\Data\DeviceNotifications\V1\Controllers\DeviceNotificationController.cs" />
 

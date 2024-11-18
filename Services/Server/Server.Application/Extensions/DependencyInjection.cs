@@ -20,6 +20,7 @@ using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
+using Server.Application.MasterDatas.A2.DashBoards.V1;
 using Server.Application.MasterDatas.A2.DeviceNotifications.V1;
 using Server.Application.MasterDatas.A2.Devices;
 using Server.Application.MasterDatas.A2.MonitorDevices.V1;
@@ -317,6 +318,9 @@ public static class DependencyInjection
         service.AddScoped<IDeviceNotificationRepository, DeviceNotificationRepository>();
         service.AddScoped<DeviceNotificationService>();
         service.AddScoped<DeviceReportService>();
+
+        //DashBoard
+        service.AddScoped<DashBoardService>();
     }
 
     public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)

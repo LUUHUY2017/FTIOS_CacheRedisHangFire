@@ -1,0 +1,136 @@
+﻿@{
+    ViewData["Title"] = "DashBoard";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+
+<!-- Main content -->
+<div class="content-wrapper" id="webui_dashboard">
+
+    <!-- Inner content -->
+    <div class="content-inner">
+
+        <!-- Page header -->
+        <div class="page-header page-header-light shadow">
+            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+                <div class="d-flex">
+                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
+                        <span class="fw-normal">@ViewData["Title"]</span>
+                    </h4>
+                </div>
+            </div>
+
+        </div>
+        <!-- /page header -->
+        <!-- Content area -->
+
+        @* <div class="content">
+            <div class="card">
+                <div class="card-body">
+                      
+                </div>
+            </div>
+
+        </div> *@
+
+        <div class="container mt-4">
+            <div class="row">
+                <!-- Cột 1 -->
+                <div class="col-md-4 p-3 border">
+                    @* <h5>Column 1</h5>
+                    <p>Content for the first column.</p> *@
+                    @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBSendEmail.cshtml")
+                </div>
+            </div>
+        </div>
+                            
+    </div>
+
+    @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
+</div>
+
+
+@* <script>
+    var _dashBoard = new Vue({
+        el: '#webui_dashboard',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [],
+            data: [],
+
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                sortable: true,
+                searchAlign: 'right',
+                paginationHAlign: 'left',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+                pageList: [10, 25, 50, 100, 200],
+            },
+
+            filter: {
+                columnTable: "",
+                actived: "1",
+                key: "",
+                dateTimeFilter: null,
+                export: "0",
+            },
+
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                editAction: false,
+                infoAction: false,
+                config: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+            item: {},
+            combobox: { schools: [], },
+        },
+        methods: {
+            getCookie(name) {
+                const value = "; " + document.cookie;
+                const parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            },
+            loadCombox() {
+                axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.schools = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
+                    if (this.getCookie("organizationId")) {
+
+                        this.filter.organizationId = this.getCookie("organizationId");
+                        $('#FilterOrganization').val(this.filter.organizationId);
+                    }
+                    else {
+                        this.filter.organizationId = this.combobox.schools[0].id;
+                        $('#FilterOrganization').val(this.filter.organizationId);
+                    }
+
+                    //this.loadData();
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+        },
+        mounted() {
+            this.loadCombox();
+        },
+    })
+</script>
+
+<style scoped>
+    .container {
+      max-width: 1200px;
+    }
+
+    h5 {
+      margin-bottom: 10px;
+    }
+</style> *@
