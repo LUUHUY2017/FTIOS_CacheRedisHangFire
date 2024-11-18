@@ -160,7 +160,7 @@ public partial class CronJobService : ICronJobService
                         Name = lastName,
                         OrganizationId = orgRes.Id,
                         SchoolCode = orgRes.OrganizationCode,
-                        //ImageSrc = orgRes.ImageSrc,
+                        ImageSrc = item.ImageSrc,
                     };
 
                     //var resQ = await _schoolYearClassService.SaveFromService(el);

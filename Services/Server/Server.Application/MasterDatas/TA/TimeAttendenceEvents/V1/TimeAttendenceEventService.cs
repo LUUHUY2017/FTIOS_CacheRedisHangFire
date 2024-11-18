@@ -172,6 +172,12 @@ public partial class TimeAttendenceEventService
                     time.ValueAbSent = valueAttendence;
                 }
 
+                if (info.TimeEvent < time.EventTime)
+                {
+                    time.EventTime = info.TimeEvent;
+                    time.EventType = null;
+                }
+
                 //time.EventType = null;
                 time.InOutMode = "1";
 
