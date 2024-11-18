@@ -2,6 +2,7 @@
 using Server.Application.MasterDatas.A2.DeviceNotifications.V1.Models.Reports;
 using Server.Core.Entities.A2;
 using Server.Infrastructure.Datas.MasterData;
+using System.Security.Cryptography;
 
 namespace Server.Application.MasterDatas.A2.DeviceNotifications.V1;
 
@@ -56,7 +57,8 @@ public class DeviceReportService
             }
             var result = (from d in data
                           join o in _dbContext.Organization
-                          on d.OrganizationId equals o.Id
+                          on d.OrganizationId equals o.Id into orgGroup
+                          from o in orgGroup.DefaultIfEmpty() // Left join
                           select new DeviceStatusWarningModel(d, o))
                           .OrderBy(x => x.OrganizationName)
                           .ThenBy(x => x.SerialNumber)

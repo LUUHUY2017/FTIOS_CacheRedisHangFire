@@ -32,15 +32,15 @@ public class DeviceStatusWarningModel
 
     public DeviceStatusWarningModel(Device d, Organization o)
     {
-        OrganizationId = d.OrganizationId;
-        SerialNumber = d.SerialNumber;
-        DeviceName = d.DeviceName;
-        IPAddress = d.IPAddress;
-        CheckConnectTime = d.CheckConnectTime;
-        ConnectUpdateTime = d.ConnectUpdateTime;
-        DisConnectUpdateTime = d.DisConnectUpdateTime;
-        ConnectionStatus = d.ConnectionStatus;
-        DeviceModel = d.DeviceModel;
-        OrganizationName = o.OrganizationName;
+        OrganizationId = d?.OrganizationId;
+        SerialNumber = d?.SerialNumber;
+        DeviceName = d?.DeviceName;
+        IPAddress = d?.IPAddress;
+        CheckConnectTime = d?.CheckConnectTime;
+        ConnectUpdateTime = d?.ConnectUpdateTime;
+        DisConnectUpdateTime = d?.DisConnectUpdateTime;
+        ConnectionStatus = d?.ConnectionStatus;
+        DeviceModel = d?.DeviceModel;
+        OrganizationName = o?.OrganizationName;
     }
 }
