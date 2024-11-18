@@ -43,6 +43,13 @@
         public string? ImageBase64 { get; set; }
 
     }
+
+    public class TA_AttendenceHistoryRequest
+    {
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+    }
+
     /// <summary>
     /// Loại chấm công
     /// </summary>
@@ -54,4 +61,5 @@
         Finger = 3,
         Pass = 4,
     }
+
 }

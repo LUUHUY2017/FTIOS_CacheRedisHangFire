@@ -77,42 +77,38 @@ namespace AMMS.Hanet.Applications.V1.Service
             try
             {
                 #region Gửi lên RBMQ
-                try
+
+                TA_AttendenceHistory tA_AttendenceHistory = new TA_AttendenceHistory()
                 {
-                    TA_AttendenceHistory tA_AttendenceHistory = new TA_AttendenceHistory()
-                    {
-                        Id = data.id,
-                        DeviceId = data.deviceID,
-                        PersonCode = student.StudentCode,
-                        SerialNumber = data.deviceName,
-                        TimeEvent = data.date,
-                        Type = (int)TA_AttendenceType.Face,
-                    };
+                    Id = data.id,
+                    DeviceId = data.deviceID,
+                    PersonCode = student.StudentCode,
+                    SerialNumber = data.deviceName,
+                    TimeEvent = data.date,
+                    Type = (int)TA_AttendenceType.Face,
+                };
 
-                    RB_DataResponse rB_Response = new RB_DataResponse()
-                    {
-                        Id = tA_AttendenceHistory.Id,
-                        Content = JsonConvert.SerializeObject(tA_AttendenceHistory),
-                        ReponseType = RB_DataResponseType.AttendenceHistory,
-                    };
-
-                    var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
-
-                    await aa.Send(rB_Response);
-
-
-                    if (string.IsNullOrEmpty(data.detected_image_url))
-                    {
-                        return;
-                    }
-
-                    await AddATTImage(data, student);
-                }
-                catch (Exception e)
+                RB_DataResponse rB_Response = new RB_DataResponse()
                 {
-                    Logger.Warning(e.Message);
+                    Id = tA_AttendenceHistory.Id,
+                    Content = JsonConvert.SerializeObject(tA_AttendenceHistory),
+                    ReponseType = RB_DataResponseType.AttendenceHistory,
+                };
+                Logger.Error("SEND RBMQ TA_DATA" + student.StudentCode);
 
+                //Gửi RBMQ
+                var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
+
+                await aa.Send(rB_Response);
+ 
+                //Nếu có ảnh đi kèm
+                if (string.IsNullOrEmpty(data.detected_image_url))
+                {
+                    return;
                 }
+
+                await AddATTImage(data, student);
+
 
 
                 #endregion
@@ -120,7 +116,7 @@ namespace AMMS.Hanet.Applications.V1.Service
             catch (Exception ex)
             {
 
-                Logger.Warning(ex.Message);
+                Logger.Error(ex);
             }
         }
 
@@ -153,7 +149,7 @@ namespace AMMS.Hanet.Applications.V1.Service
             }
             catch (Exception ex)
             {
-                Logger.Warning(ex.Message);
+                Logger.Error(ex);
             }
         }
         /// <summary>
@@ -197,7 +193,7 @@ namespace AMMS.Hanet.Applications.V1.Service
             }
             catch (Exception ex)
             {
-                Logger.Warning(ex.Message);
+                Logger.Error(ex);
             }
         }
         /// <summary>
@@ -205,16 +201,16 @@ namespace AMMS.Hanet.Applications.V1.Service
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public async Task<Student> FindUserFromHanet(string code)
+        public async Task<Student?> FindUserFromHanet(string code)
         {
             try
             {
-                var user = await _viettelDbContext.Student.FirstOrDefaultAsync(x => x.SyncCode == code || x.StudentCode == code);
+                var user = await _viettelDbContext.Student.OrderByDescending(m => m.CreatedDate).FirstOrDefaultAsync(x => x.SyncCode == code || x.StudentCode == code);
                 return user;
             }
             catch (Exception ex)
             {
-                Logger.Warning(ex.Message);
+                Logger.Error(ex);
                 return null;
             }
         }

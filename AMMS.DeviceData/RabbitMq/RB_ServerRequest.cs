@@ -44,6 +44,7 @@
     public class ServerRequestType
     {
         public static string UserInfo = "UserInfo";
+        public static string TAData = "TAData";
         public static string UserFace = "UserFace";
         public static string UserFinger = "UserFinger";
         public static string Device = "Device";

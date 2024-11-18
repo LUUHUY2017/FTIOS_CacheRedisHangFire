@@ -33,4 +33,9 @@ public class TerminalCommandLogController : ControllerBase
     {
         return Ok(await _terminalCommandLogService.Delete(request));
     }
+    [HttpPost("ReSend")]
+    public async Task<IActionResult> ReSend(DeleteRequest request)
+    {
+        return Ok(await _terminalCommandLogService.Resend(request));
+    }
 }
