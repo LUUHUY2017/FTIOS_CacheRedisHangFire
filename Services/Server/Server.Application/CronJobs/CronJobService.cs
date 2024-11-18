@@ -168,13 +168,16 @@ public partial class CronJobService : ICronJobService
                     //    el.StudentClassId = resQ.Data.Id;
 
                     var resS = await _studentService.SaveFromService(el);
-
-                    //if (resS.Succeeded && !string.IsNullOrWhiteSpace(el.ImageSrc))
-                    //{
-                    //    var stu = resS.Data;
-                    //    stu.ImageSrc = el.ImageSrc;
-                    //    await _studentService.SaveImageFromService(stu);
-                    //}
+                    try
+                    {
+                        if (resS.Succeeded && !string.IsNullOrWhiteSpace(el.ImageSrc))
+                        {
+                            var stu = resS.Data;
+                            stu.ImageSrc = el.ImageSrc;
+                            await _studentService.SaveImageFromService(stu);
+                        }
+                    }
+                    catch (Exception ex) { Logger.Warning(ex.Message); }
                 }
 
                 logSchedule.ScheduleJobStatus = true;
@@ -194,7 +197,7 @@ public partial class CronJobService : ICronJobService
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            Logger.Warning(ex.Message);
         }
         Is_Run_SyncStudentSmasDaily = false;
 
