@@ -9,7 +9,7 @@ public partial class PagesConst
     {
         Id = "A2F5D3C2-955B-4D01-AAB9-97110CDF5477",
         Name = "Dashboard",
-        Url = "Home",
+        Url = "V1/DashBoard",
         Module = Module.Master,
         RolePermission = RoleConst.SuperAdmin_Role,
         CategoryMenu = Category.Dashboard.Id,
@@ -196,7 +196,7 @@ public partial class PagesConst
         {
             var _ListMenu = new List<PageObject>();
 
-            //_ListMenu.Add(URL_Dashboard);
+            _ListMenu.Add(URL_Dashboard);
             _ListMenu.Add(URL_V1_TimeAttenceEvent);
             _ListMenu.Add(URL_V1_TimeAttendenceSync);
 
