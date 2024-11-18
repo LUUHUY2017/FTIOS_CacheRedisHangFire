@@ -79,23 +79,28 @@ public class DeviceController : ControllerBase
     [HttpPost("testAPI")]
     public async Task<IActionResult> TestAPI()
     {
-        TA_PersonInfo user = new TA_PersonInfo()
+        //TA_PersonInfo user = new TA_PersonInfo()
+        //{
+        //    PersonCode = "47916397",
+        //    FullName = @"Lê Hoàng Bảo",
+
+        //};
+
+        TA_AttendenceHistoryRequest user = new TA_AttendenceHistoryRequest()
         {
-            PersonCode = "47916397",
-            FullName = @"Lê Hoàng Bảo",
+            StartDate = DateTime.Now.AddMinutes(-30),
+            EndDate = DateTime.Now,
 
         };
-
         RB_ServerRequest request = new RB_ServerRequest
         {
-            Action = ServerRequestAction.ActionAdd,
-            RequestType = ServerRequestType.UserInfo,
+            Action = ServerRequestAction.ActionGetData,
+            RequestType = ServerRequestType.TAData,
             Id = Guid.NewGuid().ToString(),
             DeviceId = Guid.NewGuid().ToString(),
             DeviceModel = "Hanet",
             RequestParam = JsonConvert.SerializeObject(user)
         };
-
 
         await _HANET_Process_Service.ProcessDataServerPush(request);
 

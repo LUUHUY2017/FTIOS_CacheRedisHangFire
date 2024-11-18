@@ -47,6 +47,22 @@
                                     <option value="0">Thất bại</option>
                                 </select>
                             </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Từ ngày</label>
+                                <datetime type="date"
+                                          v-model="filter.startDate"
+                                          class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                          placeholder="Vui lòng chọn thời gian...">
+                                </datetime>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Đến ngày</label>
+                                <datetime type="date"
+                                          v-model="filter.endDate"
+                                          class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                          placeholder="Vui lòng chọn thời gian...">
+                                </datetime>
+                            </div>
                             @* <div class="col-lg-3">
                             <label class="form-label">Tổ chức</label>
                             <select id="organization" class="form-select" v-model:value="filter.organizationId">
@@ -166,6 +182,25 @@
                         // 'click .edit': function (e, value, row) {
                         //     _terminalCommand.onPopupModelEdit(row, true);
                         // },
+                        'click .resend': function (e, value, row) {
+                            var question = "Bạn có chắc chắn gửi lại lệnh này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/TerminalCommandLog/Resend', { id: row.id, reason: "" }, _terminalCommand.object.bearerAuthorization).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _terminalCommand.data = [];
+                                        _terminalCommand.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
                         'click .info': function (e, value, row) {
                             $('.loader').show();
                             axios.get('/api/v1/TerminalCommandLog/GetDetail?id=' + row.id, _terminalCommand.object.bearerAuthorization).then(response => {
@@ -184,7 +219,7 @@
                             });
                         },
                         'click .delete': function (e, value, row) {
-                            var question = "Bạn có chắc chắn xóa thiết bị này không?";
+                            var question = "Bạn có chắc chắn xóa lệnh này không?";
                             alertify.confirm('Thông báo!', question, function () {
                                 axios.post('/api/v1/TerminalCommandLog/delete', { id: row.id, reason: "" }, _terminalCommand.object.bearerAuthorization).then(response => {
                                     if (response.data.succeeded) {
@@ -230,6 +265,11 @@
                     },
                 },
                 {
+                    title: "Nội dung trả về",
+                    field: 'return_content',
+                    sortable: true,
+                },
+                {
                     title: "Hành động",
                     field: 'command_ation',
                     sortable: true,
@@ -255,6 +295,8 @@
                 pageList: [10, 25, 50, 100, 200],
             },
             filter: {
+                startDate: formatDateTime(new Date()),
+                endDate: formatDateTime(new Date()),
                 columnTable: "serial_number",
                 actived: true,
                 status: "",
