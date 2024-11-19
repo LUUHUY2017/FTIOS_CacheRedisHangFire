@@ -50,10 +50,10 @@ public class AppConfigController : ControllerBase
         var token = await _appConfigService.GetToken();
         if (token == null)
         {
-            return Ok(new Result<app_config>(null, $"Có lỗi khi lấy token", false));
+            return Ok(new Result<hanet_app_config>(null, $"Có lỗi khi lấy token", false));
         }
 
-        return Ok(new Result<app_config>(token, $"Thành công", true));
+        return Ok(new Result<hanet_app_config>(token, $"Thành công", true));
  
     }
     [HttpGet("Test")]

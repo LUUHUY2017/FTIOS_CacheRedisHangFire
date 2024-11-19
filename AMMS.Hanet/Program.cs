@@ -346,7 +346,8 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}_{EventBusConstants.HANET}_CheckDeviceOnline", () => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);
+        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}_{EventBusConstants.HANET}_CheckDeviceOnline", () => conJobService.CheckDeviceOnline(),"*/5 * * * *", TimeZoneInfo.Local);
+        RecurringJob.AddOrUpdate($"{configuration["DataArea"]}_{EventBusConstants.HANET}_DeleteLog", () => conJobService.DeleteLog(), Cron.Monthly(1), TimeZoneInfo.Local);
 
     }
     catch (Exception ex)

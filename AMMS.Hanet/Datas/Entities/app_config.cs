@@ -5,7 +5,7 @@ namespace AMMS.Hanet.Datas.Entities;
 
 [Table("hanet_app_config", Schema = "Hanet")]
 
-public class app_config
+public class hanet_app_config
 {
     [Key]
     public string Id { get; set; }

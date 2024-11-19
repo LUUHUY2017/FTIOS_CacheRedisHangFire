@@ -21,7 +21,7 @@ public class AppConfigService
         _mapper = mapper;
     }
 
-    public async Task<Result<app_config>> GetFirstOrDefault()
+    public async Task<Result<hanet_app_config>> GetFirstOrDefault()
     {
         var data = await _dbContext.app_config.FirstOrDefaultAsync();
         if (data != null)
@@ -40,30 +40,30 @@ public class AppConfigService
         }
         else
         {
-            data = new app_config();
+            data = new hanet_app_config();
             data.GrantType = "refresh_token";
         }
-        return new Result<app_config>(data, "Thành công!", true);
+        return new Result<hanet_app_config>(data, "Thành công!", true);
     }
 
-    public async Task<Result<app_config>> AddOrEdit(AppConfigRequest request)
+    public async Task<Result<hanet_app_config>> AddOrEdit(AppConfigRequest request)
     {
         try
         {
             var dataUpdate = await _dbContext.app_config.FirstOrDefaultAsync();
             if (dataUpdate == null)
             {
-                var dataAdd = _mapper.Map<app_config>(request);
+                var dataAdd = _mapper.Map<hanet_app_config>(request);
                 dataAdd.Id = Guid.NewGuid().ToString();
                 var result = await _dbContext.app_config.AddAsync(dataAdd);
                 var check = await _dbContext.SaveChangesAsync();
                 if (check != 0)
                 {
-                    return new Result<app_config>(result.Entity, "Thành công", true);
+                    return new Result<hanet_app_config>(result.Entity, "Thành công", true);
                 }
                 else
                 {
-                    return new Result<app_config>(null, "Có lỗi xảy ra!", false);
+                    return new Result<hanet_app_config>(null, "Có lỗi xảy ra!", false);
                 }
             }
             else
@@ -83,17 +83,17 @@ public class AppConfigService
                 var check = await _dbContext.SaveChangesAsync();
                 if (check != 0)
                 {
-                    return new Result<app_config>(result.Entity, "Thành công", true);
+                    return new Result<hanet_app_config>(result.Entity, "Thành công", true);
                 }
                 else
                 {
-                    return new Result<app_config>(null, "Có lỗi xảy ra!", false);
+                    return new Result<hanet_app_config>(null, "Có lỗi xảy ra!", false);
                 }
             }
         }
         catch (Exception ex)
         {
-            return new Result<app_config>(null, $"Có lỗi: {ex.Message}", false);
+            return new Result<hanet_app_config>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
     /// <summary>
@@ -101,7 +101,7 @@ public class AppConfigService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<app_config> GetToken()
+    public async Task<hanet_app_config> GetToken()
     {
         try
         {
