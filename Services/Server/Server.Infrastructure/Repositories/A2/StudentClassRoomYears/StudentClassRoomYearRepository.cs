@@ -135,6 +135,7 @@ public class StudentClassRoomYearRepository : RepositoryBaseMasterData<StudentCl
                                from or in OT.DefaultIfEmpty()
                                where _do.Actived == active
                                  && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
+                                 && ((!string.IsNullOrWhiteSpace(request.SchoolYearId) && request.SchoolYearId != "0") ? _do.SchoolYearId == request.SchoolYearId : true)
                                && (!string.IsNullOrWhiteSpace(request.Key) && request.ColumnTable == "Name" ? _do.Name.Contains(request.Key) : true)
                                select new ClassRoomYearReportResponse()
                                {

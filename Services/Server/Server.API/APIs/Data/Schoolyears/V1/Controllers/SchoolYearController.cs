@@ -37,6 +37,21 @@ public class SchoolYearController : AuthBaseAPIController
 
     }
 
+
+
+
+    /// <summary>
+    /// Lấy danh sách
+    /// </summary>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpGet("Gets")]
+    public async Task<IActionResult> Gets()
+    {
+        var data = await _SchoolYearRepository.Gets();
+        var items = new Result<List<SchoolYear>>(data, "Thành công", true);
+        return Ok(items);
+    }
     /// <summary>
     /// Lấy danh sách
     /// </summary>
