@@ -49,14 +49,14 @@
                                 </select>
                             </div>
 
-                           @*  <div class="col-md-2">
-                                <select class="form-select select" required data-placeholder="Vui lòng chọn trường" id="FOrganization">
+                            <div class="col-md-2">
+                                <select class="form-select select"   id="FOrganization">
                                     <option selected value="">Tất cả </option>
                                     <option v-for="option in combobox.organizations" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>
                                 </select>
-                            </div> *@
+                            </div>
                             <div class="col-md-2">
                                 <input type="text" id="key" name="key" placeholder="Nhập từ khóa tìm kiếm" class="form-control" v-model="filter.key">
                             </div>
@@ -81,7 +81,7 @@
 
     <!-- Modal -->
     <div class="modal hide  fade" id="ModelAddEdit" role="dialog" aria-hidden="true">
-        <div id="waitDialog" class="modal-dialog modal-xl">
+        <div id="waitDialog" class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}} @ViewData["Title"]</h5>
@@ -93,8 +93,8 @@
                             <p>Thông tin</p>
                             <form class="needs-validation" novalidate id="FormAddEdit">
                                 <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
+                                    <div class="col-md-10">
+                                        <div class="form-group row mb-2  ">
                                             <label class="col-form-label col-md-3">Trường học<span class="text-danger">*</span></label>
                                             <div class="col-md-9">
                                                 <select data-dropdown-parent="#ModelAddEdit" required data-placeholder="Vui lòng chọn trường" id="organizationId" class="form-control select">
@@ -106,12 +106,7 @@
                                                 <div class="valid-feedback"> </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-2  ">
                                             <label class="col-form-label col-lg-3">Tên lịch gửi<span class="text-danger">*</span></label>
                                             <div class="col-lg-9">
                                                 <input type="text" class="form-control" required placeholder="Vui lòng nhập tên lịch " v-model="item.scheduleJobName">
@@ -119,10 +114,7 @@
                                                 <div class="valid-feedback"></div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-2">
                                             <label class="col-form-label col-md-3">Đồng bộ<span class="text-danger">*</span></label>
                                             <div class="col-md-9">
                                                 <select data-dropdown-parent="#ModelAddEdit" required data-placeholder="Vui lòng chọn đồng bộ" id="scheduleType" class="form-control select">
@@ -134,23 +126,7 @@
                                                 <div class="valid-feedback"> </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-md-3">Thời gian chạy đồng bộ</label>
-                                            <div class="col-md-9">
-                                                <input type="time" id="scheduleTime" required v-model:value="item.scheduleTime" class="form-control" />
-                                                <div class="invalid-feedback">Vui lòng nhập thời gian</div>
-                                                <div class="valid-feedback"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-2">
                                             <label class="col-form-label col-md-3">Tuần suất <span class="text-danger">*</span></label>
                                             <div class="col-md-9">
                                                 <select data-dropdown-parent="#ModelAddEdit" data-placeholder="Vui lòng chọn tuần suất " required id="scheduleSequential" class="form-control select">
@@ -163,12 +139,15 @@
                                                 <div class="valid-feedback"> </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="row mb-4">
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-2" v-if="object.isShow">
+                                            <label class="col-form-label col-md-3">Thời gian chạy đồng bộ</label>
+                                            <div class="col-md-9">
+                                                <input type="time" id="scheduleTime" v-model:value="item.scheduleTime" class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row mb-2">
                                             <label class="col-form-label col-md-3">Hoạt động</label>
                                             <div class="col-lg-9">
                                                 <div class="form-check-horizontal">
@@ -178,8 +157,13 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
+
                                 </div>
+
+
+
 
                                 <div class="row mb-3">
                                     <div class="text-end">
@@ -194,13 +178,39 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal hide  fade" id="ModelViewLog" role="dialog" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title"> Lịch sử đồng bộ gần nhất</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"> </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class=" row">
+                            <div class="col-md-12">
+                                <bootstrap-table :columns=" columnsLog" :data="dataLog" :options="options"></bootstrap-table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
 </div>
 
 <script>
     $(document).ready(function () {
         $('#scheduleSequential').on("change", function () {
-            _Schedule.item.scheduleSequential = $(this).val();
+            _Schedule.item.scheduleSequential = $(this).val() ?? null;
+            const seq = _Schedule.combobox.sequentials.find(o => o.id === $(this).val());
+            _Schedule.object.isShow = (seq != null && seq.type == "1");
+
+
         });
         $('#scheduleType').on("change", function () {
             _Schedule.item.scheduleType = $(this).val();
@@ -213,6 +223,7 @@
 
         $('#FOrganization').on("change", function () {
             _Schedule.filter.organizationId = $(this).val() ?? null;
+            _Schedule.loadData();
         });
         $('#FActived').on("change", function () {
             _Schedule.filter.actived = $(this).val();
@@ -220,7 +231,6 @@
         $('#FcolumnTable').on("change", function () {
             _Schedule.filter.columnTable = $(this).val();
         });
-
     });
 
 
@@ -248,9 +258,10 @@
                     formatter: (value, row, index) => {
                         var ele = `<div style="white-space: nowrap;">`;
                         if (row.actived) {
-                            ele += `<a href = "javascript:" class= "btn btn-sm btn-info resend"  title = "Chạy lại đồng bộ" > <i class="fa fa-repeat" > </i>  </a > &nbsp;`;
                             ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit"  title = "Cập nhật " > <i class="fa fa-pencil" > </i>  </a > &nbsp;`;
                             ele += `<a href = "javascript:" class= "btn btn-danger btn-sm delete-asset inactive" title="Inactive "> <i class="fa fa-minus-circle" ></i> </a> &nbsp;`;
+                            ele += `<a href = "javascript:" class= "btn btn-sm btn-info resend"  title = "Chạy lại đồng bộ" > <i class="fa fa-repeat" > </i>  </a > &nbsp;`;
+                            ele += `<a href = "javascript:" class= "btn btn-sm btn-success detail"  title = "Lịch sử đồng bộ" > <i class="fa fa-history" > </i>  </a > &nbsp;`;
                         }
                         else
                             ele += `<a href="javascript:" class="btn btn-info btn-sm delete-asset active" title="Active "> <i class="fa fa-plus-square" ></i><span class="sr-only">Active</span></a> &nbsp;`;
@@ -262,7 +273,14 @@
                             _Schedule.onPopupModelEdit(row);
                         },
                         'click .resend': function (e, value, row) {
-                            _Schedule.onResend(row);
+
+                            var question = "Bạn có chắc chắn muốn đồng bộ học sinh về ngay bây giờ không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                _Schedule.onResend(row);
+                            }, function () { });
+                        },
+                        'click .detail': function (e, value, row) {
+                            _Schedule.onViewLog(row);
                         },
                         'click .inactive': function (e, value, row) {
                             var question = "Bạn có chắc chắn muốn ẩn dòng này không?";
@@ -327,9 +345,57 @@
                     title: "Thời gian chạy ",
                     field: "scheduleTime",
                     sortable: true,
-                },  
+                },
             ],
+
+            columnsLog: [
+                {
+                    title: "Stt",
+                    field: 'sothutu',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        var stt = index + 1;
+                        return "<span class ='black'> " + stt + "  </span>";
+                    },
+                },
+                {
+                    title: "Trạng thái",
+                    field: "scheduleJobStatus",
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.scheduleJobStatus == true)
+                            return "<span class='badge bg-success bg-opacity-10 text-success'>Thành công</span>";
+                        else if (row.scheduleJobStatus == false)
+                            return "<span class='badge bg-danger  bg-opacity-10 text-danger'>Lỗi</span>";
+                        else
+                            return "<span class='badge bg-secondary  bg-opacity-10 text-secondary'>Đang chờ</span>";
+                    },
+                },
+                {
+                    title: 'Thời gian',
+                    field: 'lastModifiedDate',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.lastModifiedDate) {
+                            var lastModifiedDate = moment(row.lastModifiedDate).format('DD/MM/YYYY HH:mm:ss');
+                            return "<span class ='black'> " + lastModifiedDate + "  </span>";
+                        }
+                    },
+                },
+                {
+                    title: 'Nội dung',
+                    field: 'message',
+                    sortable: true,
+                },
+                {
+                    title: 'Thông báo',
+                    field: 'scheduleLogNote',
+                    sortable: true,
+                },
+            ],
+
             data: [],
+            dataLog: [],
             filter: {
                 columnTable: "ScheduleJobName",
                 actived: "1",
@@ -359,6 +425,7 @@
             object: {
                 dateNow: formatDateTime(new Date()),
                 editAction: false,
+                isShow: false,
                 config: {
                     headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
                 }
@@ -371,7 +438,11 @@
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
+
                     $('.loader').delay(100).hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     this.data = response.data.items;
                 }).catch(error => {
@@ -389,7 +460,8 @@
             onResetForm() {
                 this.item = {
                     actived: true,
-                    scheduleNote: "LAPLICHDONGBO"
+                    scheduleNote: "LAPLICHDONGBO",
+                    scheduleTime: "00:00:00",
                 };
                 resetFormJs();
 
@@ -418,9 +490,14 @@
                 this.item.scheduleNote = "LAPLICHDONGBO";
                 axios.put('/api/v1/ScheduleJob/Edit', this.item, this.object.config).then(response => {
                     $('.loader').hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+
                     if (response.data.succeeded) {
-                        _Schedule.object.editAction = true; 
-                        _Schedule.item = response.data.data; 
+                        _Schedule.object.editAction = true;
+                        _Schedule.item = response.data.data;
                         alertify.success(response.data.message);
 
                         bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
@@ -437,11 +514,12 @@
             },
 
             onResend(row) {
-                $('.loader').show();
                 axios.get('/api/v1/ScheduleJob/Resend?id=' + row.id, this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
-                    $('.loader').delay(100).hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     if (response.data.succeeded)
                         alertify.success("Thao tác thành công!");
@@ -452,16 +530,39 @@
                 });
             },
 
+            onViewLog(row) {
+                $('.loader').show();
+                axios.get('/api/v1/ScheduleJobLog/GetByScheduleJobId?scheduleJobId=' + row.id, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+                    $('.loader').delay(100).hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+                    if (response.data.succeeded) {
+                        _Schedule.dataLog = response.data.data;
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelViewLog')).show();
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+
 
             loadCombox() {
-                // axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
-                //     if (response.request.responseURL.includes('~/Account/Login'))
-                //         window.location = window.location.href;
+                axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
 
-                //     this.combobox.organizations = response.data.data;
-                // }).catch(error => {
-                //     console.log(error);
-                // });
+                    this.combobox.organizations = response.data.data;
+                }).catch(error => {
+                    console.log(error);
+                });
 
                 axios.get('/api/v1/ScheduleJob/ScheduleOptions', this.object.config).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))

@@ -4,9 +4,7 @@ using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs.Requests;
 using AutoMapper;
-using Hangfire;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
@@ -16,14 +14,13 @@ namespace AMMS.VIETTEL.SMAS.APIControllers.ScheduleJobs.V1;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-[Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+//[Authorize("Bearer")]
+//[AuthorizeClient]
 public class ScheduleJobController : AuthBaseAPIController
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
     private readonly IScheduleJobRepository _scheduleJobRepository;
-    private readonly IRecurringJobManager _recurringJobManager;
     private readonly ICronJobService _cronJobService;
 
 
@@ -32,14 +29,12 @@ public class ScheduleJobController : AuthBaseAPIController
         IMediator mediator,
         IMapper mapper,
         IScheduleJobRepository scheduleJobRepository,
-        IRecurringJobManager recurringJobManager,
         ICronJobService cronJobService
         )
     {
         _mediator = mediator;
         _mapper = mapper;
         _scheduleJobRepository = scheduleJobRepository;
-        _recurringJobManager = recurringJobManager;
         _cronJobService = cronJobService;
 
     }
@@ -59,7 +54,7 @@ public class ScheduleJobController : AuthBaseAPIController
             foreach (var item in data)
             {
                 item.ScheduleTypeName = ListScheduleCategory.ScheduleTypes.FirstOrDefault(o => o.Id == item.ScheduleType)?.Name;
-                item.ScheduleSequentialName = ListScheduleCategory.Sequentials.FirstOrDefault(o => o.Id == item.ScheduleSequential)?.Name;
+                item.ScheduleSequentialName = ListScheduleCategory.SequentialTypes.FirstOrDefault(o => o.Id == item.ScheduleSequential)?.Name;
             }
         }
         return Ok(new { items = data });
@@ -114,7 +109,7 @@ public class ScheduleJobController : AuthBaseAPIController
             if (retVal.Data.ScheduleType == "DONGBODIEMDANH")
                 await _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
         }
-        return Ok();
+        return Ok(new Result<object>("Thành công", true));
     }
 
     /// <summary>
@@ -163,7 +158,8 @@ public class ScheduleJobController : AuthBaseAPIController
     [HttpGet("ScheduleOptions")]
     public async Task<ActionResult> ScheduleOptions()
     {
-        var sequentials = ListScheduleCategory.Sequentials.ToList();
+        var sequentials = ListScheduleCategory.SequentialTypes.ToList();
+        var sequentialMaxTypes = ListScheduleCategory.SequentialMaxTypes.ToList();
         var scheduleTypes = ListScheduleCategory.ScheduleTypes.ToList();
         return Ok(new
         {

@@ -12,7 +12,6 @@ public class StudentRepository : RepositoryBase<Student>, IStudentRepository
     public StudentRepository(ViettelDbContext dbContext) : base(dbContext)
     {
     }
-
     public string UserId { get; set; }
     public async Task<Result<Student>> SaveAsync(Student data)
     {
@@ -64,16 +63,23 @@ public class StudentRepository : RepositoryBase<Student>, IStudentRepository
             if (_order != null)
             {
                 _order.ReferenceId = data.Id;
+                _order.LastModifiedDate = DateTime.Now;
+
+                _order.SyncCode = data.SyncCode;
+
+                _order.StudentCode = data.StudentCode;
+                _order.EthnicCode = data.EthnicCode;
+                _order.FullName = data.FullName;
+                _order.Name = data.Name;
+
                 _order.ClassId = data.ClassId;
+                _order.StudentClassId = data.StudentClassId;
                 _order.ClassName = data.ClassName;
                 _order.OrganizationId = data.OrganizationId;
-                _order.StudentCode = data.StudentCode;
-                _order.Name = data.Name;
-                _order.FullName = data.FullName;
                 _order.DateOfBirth = data.DateOfBirth;
                 _order.GenderCode = data.GenderCode;
                 _order.GradeCode = data.GradeCode;
-
+                _order.ImageSrc = data.ImageSrc;
 
                 _dbContext.Student.Update(_order);
                 message = "Cập nhật thành công";
@@ -90,7 +96,6 @@ public class StudentRepository : RepositoryBase<Student>, IStudentRepository
             try
             {
                 var retVal = await _dbContext.SaveChangesAsync();
-
             }
             catch (Exception ex)
             {

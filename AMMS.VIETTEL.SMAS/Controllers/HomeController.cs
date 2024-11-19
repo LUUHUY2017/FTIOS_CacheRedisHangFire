@@ -8,8 +8,10 @@ namespace AMMS.VIETTEL.SMAS.Controllers;
 [AuthorizeClient]
 public class HomeController : AuthBaseController
 {
+
     public IActionResult Index()
     {
+        var access_token = Request.Cookies["amms.master.webapp.access_token"];
         return View();
     }
 }
