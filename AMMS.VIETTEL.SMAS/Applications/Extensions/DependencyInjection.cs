@@ -1,11 +1,12 @@
-﻿using AMMS.DeviceData.Data;
-using AMMS.DeviceData.RabbitMq;
+﻿using AMMS.DeviceData.RabbitMq;
 using AMMS.VIETTEL.SMAS.Applications.CronJobs;
 using AMMS.VIETTEL.SMAS.Applications.Services.AccountVTSmarts.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.AppConfigs.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.SchoolYearClasses;
 using AMMS.VIETTEL.SMAS.Applications.Services.Students.V1;
+using AMMS.VIETTEL.SMAS.Applications.Services.TimeAttendenceSyncs;
+using AMMS.VIETTEL.SMAS.Applications.Services.TimeAttendenceSyncs.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.TimeConfigs.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.AppConfigs;
@@ -97,17 +98,16 @@ public static class DependencyInjection
         service.AddScoped<StudentService>();
         service.AddScoped<SchoolYearClassService>();
 
-        //ScheduleJo
+        //ScheduleJob
         service.AddScoped<IScheduleJobRepository, ScheduleJobRepository>();
         service.AddScoped<IScheduleJobLogRepository, ScheduleJobLogRepository>();
 
         ////  TimeAttendenceEvents
+        service.AddScoped<TimeAttendenceSyncService>();
+
         //service.AddScoped<ITATimeAttendenceEventRepository, TATimeAttendenceEventRepository>();
         //service.AddScoped<ITATimeAttendenceDetailRepository, TATimeAttendenceDetailRepository>();
         //service.AddScoped<ITATimeAttendenceSyncRepository, TATimeAttendenceSyncRepository>();
-        //service.AddScoped<TimeAttendenceSyncService>();
-
-
 
 
     }
@@ -205,108 +205,32 @@ public static class DependencyInjection
         services.AddScoped<IEventBusAdapter, EventBusAdapter>();
         // Kết nối RabbitMQ
         services.Configure<EventBusSettings>(eventBusSettings);
+        // Đăng ký dịch vụ SyncDevice&Ta
+        services.AddScoped<TimeAttendenceSyncServiceConsumer>();
 
-
-        //services.AddMassTransit(config =>
-        //{
-
-
-        //    config.UsingRabbitMq((ct, cfg) =>
-        //    {
-        //        //cfg.Host(configuration["EventBusSettings:HostAddress"], h =>
-        //        //{
-        //        //    h.Username("guest");
-        //        //    h.Password("guest");
-        //        //});
-
-        //        cfg.Host(configuration["EventBusSettings:HostAddress"]);
-
-
-        //        //provide the queue name with consumer settings
-        //        //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Hanet_Auto_Push_D2S}", c =>
-        //        //{
-        //        //    c.ConfigureConsumer<HANET_Checkin_DataConsummer>(ct);
-        //        //}); 
-
-        //        cfg.ConfigureEndpoints(ct);
-        //    });
-        //});
         services.AddMassTransit(config =>
         {
-            // Đăng ký dịch vụ nghe vào Rabbbit
-            //config.AddConsumer<EmailRabbitMQConsummerV1>();
-            //config.AddConsumer<SendEmailMessageResponseConsumer1>();
-
-
-            ////Đăng ký xử lý bản tin data XML của Brickstream
-            config.AddConsumer<StudentConsumer>();
-            //config.AddConsumer<TimeAttendenceEventConsumer>();
-            //config.AddConsumer<TimeAttendenceSyncSmasConsumer>();
-            //Đăng ký xử lý bản tin xuống thiết bị
-            config.AddConsumer<Server_RequestConsummer>();
+            ////Đăng ký xử lý bản tin 
+            config.AddConsumer<TimeAttendenceSyncServiceConsumer>();
 
             config.UsingRabbitMq((ct, cfg) =>
             {
-                //cfg.Host(configuration["EventBusSettings:HostAddress"], h =>
-                //{
-                //    h.Username("guest");
-                //    h.Password("guest");
-                //});
-
                 cfg.Host(configuration["EventBusSettings:HostAddress"]);
 
-                #region  Device
+                #region  Nhận lệnh đồng bộ điểm danh sang Smas 1 học sinh từ MasterData
                 //// Nhận Response từ Sự kiện đồng bộ thiết bị trả về
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}", c =>
-                //cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Server_Auto_Push_S2D}", c =>
+                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}", c =>
                 {
-                    c.ConfigureConsumer<StudentConsumer>(ct);
+                    c.ConfigureConsumer<TimeAttendenceSyncServiceConsumer>(ct);
                 });
                 #endregion
-
-                #region  Report
-                //// Nhận Response từ Sự kiện đồng bộ thiết bị trả về
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}", c =>
-                //{
-                //    c.ConfigureConsumer<TimeAttendenceEventConsumer>(ct);
-                //});
-
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}", c =>
-                //{
-                //    c.ConfigureConsumer<TimeAttendenceSyncSmasConsumer>(ct);
-                //});
-                #endregion
-
-                #region Gửi request xuống máy trạm
-                //Request from SV
-                cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}", c =>
-                {
-                    c.ConfigureConsumer<Server_RequestConsummer>(ct);
-                });
-                #endregion
-
-
-
-                #region Email 
-                ////Email Sending
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EmailConst.EventBusChanelSendEmail}", c =>
-                //{
-                //    c.ConfigureConsumer<EmailRabbitMQConsummerV1>(ct);
-                //});
-                ////Email Receiving
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EmailConst.EventBusChanelSendEmailResponse}", c =>
-                //{
-                //    c.ConfigureConsumer<SendEmailMessageResponseConsumer1>(ct);
-                //});
-                #endregion
-
-
-
                 cfg.ConfigureEndpoints(ct);
             });
             services.AddMassTransitHostedService();
         });
     }
+
+
     public static void AddCaheService(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<ICacheService, CacheService>();

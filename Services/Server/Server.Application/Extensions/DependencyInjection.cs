@@ -166,9 +166,7 @@ public static class DependencyInjection
                 });
                 #endregion
 
-
-
-                #region Gửi request xuống máy trạm
+                #region Trung tâm điều hướng đến loại thiết bị khi được ra lệnh đồng bộ
                 //Request from SV
                 cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}", c =>
                 {

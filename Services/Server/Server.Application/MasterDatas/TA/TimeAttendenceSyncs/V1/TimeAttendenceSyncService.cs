@@ -1,4 +1,5 @@
-﻿using EventBus.Messages;
+﻿using AMMS.DeviceData.RabbitMq;
+using EventBus.Messages;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +13,6 @@ using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
 using Server.Core.Interfaces.TimeAttendenceSyncs.Responses;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
-using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
 
 namespace Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
@@ -220,7 +220,7 @@ public partial class TimeAttendenceSyncService
 
             var req = new SyncDataRequest()
             {
-                id = Guid.NewGuid().ToString(),
+                id = item.Id.ToString(),
                 schoolCode = orgRes.OrganizationCode,
                 absenceDate = DateTime.Now,
                 section = 0,
@@ -229,52 +229,58 @@ public partial class TimeAttendenceSyncService
                 studentAbsenceByDevices = studentAbs,
             };
 
-            Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
-            var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
-            Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
+            //Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
+            //var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
+            //Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
 
+            RB_DataResponse rB_Response = new RB_DataResponse()
+            {
+                Id = item.Id,
+                Content = JsonConvert.SerializeObject(req),
+                ReponseType = RB_DataResponseType.AttendencePush,
+            };
+            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}");
+            await aa.Send(rB_Response);
 
-            if (res == null || !res.IsSuccess)
-                return new Result<TimeAttendenceEvent>($"Lỗi đồng bộ: Đồng bộ không thành công", false);
+            //if (res == null || !res.IsSuccess)
+            //    return new Result<TimeAttendenceEvent>($"Lỗi đồng bộ: Đồng bộ không thành công", false);
 
             item.EventType = true;
 
-            try
-            {
-                var _listLog = new List<TimeAttendenceSync>();
-                foreach (var ite in res.Responses)
-                {
-                    var sync = await GetByEventIdAsync(item.Id);
-                    if (sync != null)
-                    {
-                        if (sync.SyncStatus != true)
-                            sync.SyncStatus = ite.status;
+            //try
+            //{
+            //    var _listLog = new List<TimeAttendenceSync>();
+            //    foreach (var ite in res.Responses)
+            //    {
+            //        var sync = await GetByEventIdAsync(item.Id);
+            //        if (sync != null)
+            //        {
+            //            if (sync.SyncStatus != true)
+            //                sync.SyncStatus = ite.status;
 
-                        sync.Message += $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}\r\n";
-                        sync.LastModifiedDate = DateTime.Now;
-                    }
-                    else
-                    {
-                        var log = new TimeAttendenceSync()
-                        {
-                            TimeAttendenceEventId = item.Id,
-                            SyncStatus = ite.status,
-                            Message = $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}\r\n",
-                            CreatedDate = DateTime.Now,
-                            LastModifiedDate = DateTime.Now,
-                        };
-                        await _dbContext.TimeAttendenceSync.AddAsync(log);
-                    }
-                }
-            }
-            catch (Exception ext)
-            {
-                Logger.Error(ext);
-            }
+            //            sync.Message += $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}\r\n";
+            //            sync.LastModifiedDate = DateTime.Now;
+            //        }
+            //        else
+            //        {
+            //            var log = new TimeAttendenceSync()
+            //            {
+            //                TimeAttendenceEventId = item.Id,
+            //                SyncStatus = ite.status,
+            //                Message = $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}\r\n",
+            //                CreatedDate = DateTime.Now,
+            //                LastModifiedDate = DateTime.Now,
+            //            };
+            //            await _dbContext.TimeAttendenceSync.AddAsync(log);
+            //        }
+            //    }
+            //}
+            //catch (Exception ext)
+            //{
+            //    Logger.Error(ext);
+            //}
+
             await _dbContext.SaveChangesAsync();
-
-
-
             return new Result<TimeAttendenceEvent>($"Đồng bộ thành công", true);
         }
         catch (Exception ex)

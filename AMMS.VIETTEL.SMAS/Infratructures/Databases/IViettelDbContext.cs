@@ -10,6 +10,7 @@ public interface IViettelDbContext
     public DbSet<AttendanceConfig> AttendanceConfig { get; set; }
     public DbSet<TimeConfig> TimeConfig { get; set; }
     public DbSet<Organization> Organization { get; set; }
+    public DbSet<Device> Device { get; set; }
 
     //
     public DbSet<ScheduleSendMail> ScheduleSendMail { get; set; }

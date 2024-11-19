@@ -7,24 +7,28 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Applications\CronJobs\Reponses\**" />
 	  <Compile Remove="Cores\Interfaces\ClassRooms\Requests\**" />
 	  <Compile Remove="Cores\Interfaces\ClassRooms\Responses\**" />
 	  <Compile Remove="Cores\Interfaces\SchoolYears\Requests\**" />
 	  <Compile Remove="Cores\Interfaces\SchoolYears\Responses\**" />
 	  <Compile Remove="Cores\Interfaces\StudentClassRoomYears\Requests\**" />
 	  <Compile Remove="Cores\Interfaces\StudentClassRoomYears\Responses\**" />
+	  <Content Remove="Applications\CronJobs\Reponses\**" />
 	  <Content Remove="Cores\Interfaces\ClassRooms\Requests\**" />
 	  <Content Remove="Cores\Interfaces\ClassRooms\Responses\**" />
 	  <Content Remove="Cores\Interfaces\SchoolYears\Requests\**" />
 	  <Content Remove="Cores\Interfaces\SchoolYears\Responses\**" />
 	  <Content Remove="Cores\Interfaces\StudentClassRoomYears\Requests\**" />
 	  <Content Remove="Cores\Interfaces\StudentClassRoomYears\Responses\**" />
+	  <EmbeddedResource Remove="Applications\CronJobs\Reponses\**" />
 	  <EmbeddedResource Remove="Cores\Interfaces\ClassRooms\Requests\**" />
 	  <EmbeddedResource Remove="Cores\Interfaces\ClassRooms\Responses\**" />
 	  <EmbeddedResource Remove="Cores\Interfaces\SchoolYears\Requests\**" />
 	  <EmbeddedResource Remove="Cores\Interfaces\SchoolYears\Responses\**" />
 	  <EmbeddedResource Remove="Cores\Interfaces\StudentClassRoomYears\Requests\**" />
 	  <EmbeddedResource Remove="Cores\Interfaces\StudentClassRoomYears\Responses\**" />
+	  <None Remove="Applications\CronJobs\Reponses\**" />
 	  <None Remove="Cores\Interfaces\ClassRooms\Requests\**" />
 	  <None Remove="Cores\Interfaces\ClassRooms\Responses\**" />
 	  <None Remove="Cores\Interfaces\SchoolYears\Requests\**" />
@@ -35,7 +39,6 @@
 
 	<ItemGroup>
 		<Folder Include="APIControllers\ScheduleJobs\V1\Responses\" />
-		<Folder Include="Applications\CronJobs\Reponses\" />
 		<Folder Include="Cores\Interfaces\Students\Requests\" />
 		<Folder Include="Cores\Interfaces\Students\Responses\" />
 		<Folder Include="Infratructures\Databases\" />
