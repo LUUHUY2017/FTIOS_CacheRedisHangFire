@@ -168,4 +168,33 @@ public class DashBoardService
             return new Result<List<DashBoardDevice>>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
+
+    //StudentFace
+    //public async Task<Result<List<DashBoardDevice>>> GetTotalStudentFace()
+    //{
+    //    try
+    //    {
+    //        var dataDevice = await (from s in _dbContext.Student
+    //                                join pf in _dbContext.PersonFace
+    //                                on s.Id equals pf.PersonId into personFaceGroup
+    //                                from pfLeftJoin in personFaceGroup.DefaultIfEmpty()
+    //                                where (d.Actived == true
+    //                                    && ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? d.OrganizationId == filter.OrganizationId : true)
+    //                                    && ((!string.IsNullOrEmpty(filter.DeviceModel) && filter.DeviceModel != "0") ? d.DeviceModel == filter.DeviceModel : true)
+    //                                    && ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable != "device_name") ? d.DeviceName.Contains(filter.Key) : true)
+    //                                    && ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable != "device_serial") ? d.SerialNumber.Contains(filter.Key) : true)
+    //                                    && ((!string.IsNullOrEmpty(filter.Status)) ? d.ConnectionStatus == status : true)
+    //                                    )
+    //                                select new DashBoardDevice(d, o)
+    //                                )
+    //                                .ToListAsync();
+
+    //        return new Result<List<DashBoardDevice>>(dataDevice.OrderBy(x => x.OrganizationName).ToList(), $"Thành công!", true);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        //Logger.Error(ex);
+    //        return new Result<List<DashBoardDevice>>(null, $"Có lỗi: {ex.Message}", false);
+    //    }
+    //}
 }
