@@ -95,8 +95,6 @@ public partial class CronJobService : ICronJobService
         {
             Logger.Error(ex);
         }
-        Is_Run_SyncStudentSmasDaily = false;
-
     }
 
 }

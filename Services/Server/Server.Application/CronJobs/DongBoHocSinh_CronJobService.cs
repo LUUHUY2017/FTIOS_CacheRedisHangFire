@@ -42,18 +42,15 @@ public partial class CronJobService : ICronJobService
                     _ => throw new ArgumentException("Invalid ScheduleSequential value")
                 };
 
-                if (item.ScheduleType == "DONGBOHOCSINH")
-                    await UpdateScheduleSyncStudentCronJob("CronJobSyncSmas[*]" + item.ScheduleType, item.Id, newCronExpression);
-                if (item.ScheduleType == "DONGBODIEMDANH")
-                    await UpdateScheduleSyncAttendenceCronJob("CronJobSyncSmas[*]" + item.ScheduleType, item.Id, newCronExpression);
+                //if (item.ScheduleType == "DONGBOHOCSINH")
+                //    await UpdateScheduleSyncStudentCronJob("CronJobSyncSmas[*]" + item.ScheduleType, item.Id, newCronExpression);
+                //if (item.ScheduleType == "DONGBODIEMDANH")
+                //    await UpdateScheduleSyncAttendenceCronJob("CronJobSyncSmas[*]" + item.ScheduleType, item.Id, newCronExpression);
+
+                RecurringJob.RemoveIfExists("CronJobSyncSmas[*]" + item.ScheduleType + "_" + item.Id);
             }
         }
-        //var recurringJobs = JobStorage.Current.GetConnection().GetRecurringJobs();
-        //foreach (var job in recurringJobs)
-        //{
-        //    if (job.Id.StartsWith("CronJobSyncSmas[*]"))
-        //        RecurringJob.RemoveIfExists(job.Id);
-        //}
+
     }
     public async Task UpdateScheduleSyncStudentCronJob(string jobId, string sheduleId, string newCronExpression)
     {
