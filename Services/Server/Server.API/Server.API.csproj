@@ -200,6 +200,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Areas\Managers\DashBoards\V1\Views\DBDevice1.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="Areas\Managers\OrganizationsAdmin\V1\Views\Index.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

@@ -1,0 +1,145 @@
+﻿<!--School-->
+<div class="card shadow-sm" id="_dBDevice1">
+    <div class="card-body">
+        <!--Tilte-->
+        <h2 class="text-start">Thiết bị</h2>
+        <div class="row mt-3">
+            <!-- Dòng thống kê tổng số lượng trường -->
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Tổng số thiết bị</span>
+                <span class="dots"></span>
+                <span class="fw-bold">{{item.totalDevice}}</span>
+            </div>
+            <!-- Số lượng thiết bị ZKTeco-->
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>Số thiết bị ZKTeco ({{(item.totalZK / item.totalDevice * 100).toFixed(2)}}%)</span>
+                <span class="dots"></span>
+                <span>
+                    <span class="fw-bold">{{item.totalZK}}</span>
+                </span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Online</span>
+                <span class="dots"></span>
+                <span>
+                    <span class="fw-bold text-success">{{item.totalZKOn}}</span>
+                    ({{(item.totalZKOn / item.totalZK * 100).toFixed(2)}}%)
+                </span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OffLine</span>
+                <span class="dots"></span>
+                <span>
+                    <span class="fw-bold text-danger">{{item.totalZKOff}}</span>
+                    ({{(item.totalZKOff / item.totalZK * 100).toFixed(2)}}%)
+                </span>
+            </div>
+            <!-- Số lượng thiết bị Hanet-->
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>Số thiết bị Hanet ({{(item.totalHN / item.totalDevice * 100).toFixed(2)}}%)</span>
+                <span class="dots"></span>
+                <span>
+                    <span class="fw-bold">{{item.totalHN}}</span>
+                </span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Online</span>
+                <span class="dots"></span>
+                <span>
+                    <span class="fw-bold text-success">{{item.totalHNOn}}</span>
+                    ({{(item.totalHNOn / item.totalHN * 100).toFixed(2)}}%)
+                </span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OffLine</span>
+                <span class="dots"></span>
+                <span>
+                    <span class="fw-bold text-danger">{{item.totalHNOn}}</span>
+                    ({{(item.totalHNOff / item.totalHN * 100).toFixed(2)}}%)
+                </span>
+            </div>
+            
+            <!-- Nút See More -->
+            <div class="col text-start mt-2">
+                <a href="/V1/MonitorDevice" class="text-end">Xem thêm</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    var _dBSendSchool1 = new Vue({
+        el: '#_dBDevice1',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [],
+            data: [],
+            
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                sortable: true,
+                searchAlign: 'right',
+                paginationHAlign: 'left',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+                pageList: [10, 25, 50, 100, 200],
+            },
+
+            filter: {
+                columnTable: "",
+                actived: "1",
+                key: "",
+                organizationId: "0",
+                export: "0",
+                dateTimeFilter: formatDateTime(new Date()),
+                startDate: formatDateTime(new Date()),
+                endDate: formatDateTime(new Date()),
+            },
+
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                editAction: false,
+                infoAction: false,
+                bearerAuthorization: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+
+            data_Total: {},
+            item: {},
+            combobox: { organizations: [], },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.get('/api/v1/DashBoard/GetToTalDevice1', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+                    $('.loader').delay(100).hide(0);
+
+                    if (response.data.succeeded) {
+                        this.item = response.data.data;
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+        },
+        mounted() {
+            this.loadData();
+        },
+    })
+</script>
