@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Server.Application.MasterDatas.A2.Devices;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
-using Server.Application.Services.VTSmart;
 using Server.Core.Interfaces.A2.Persons;
 using Server.Core.Interfaces.A2.Students;
 using Server.Core.Interfaces.A2.SyncDeviceServers.Requests;
@@ -24,7 +23,6 @@ namespace Server.API.APIs.Data.SyncDeviceServers.V1.Controllers
     public class SyncDeviceServerController : AuthBaseAPIController
     {
         private readonly IMapper _mapper;
-        private readonly SmartService _smartService;
         private readonly IStudentRepository _studentRepository;
 
         private readonly StudentService _studentService;

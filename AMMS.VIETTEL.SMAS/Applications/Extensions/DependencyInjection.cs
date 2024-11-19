@@ -4,26 +4,30 @@ using AMMS.VIETTEL.SMAS.Applications.CronJobs;
 using AMMS.VIETTEL.SMAS.Applications.Services.AccountVTSmarts.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.AppConfigs.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1;
+using AMMS.VIETTEL.SMAS.Applications.Services.SchoolYearClasses;
 using AMMS.VIETTEL.SMAS.Applications.Services.Students.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.TimeConfigs.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
-using AMMS.VIETTEL.SMAS.Cores.Interfaces;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.AppConfigs;
+using AMMS.VIETTEL.SMAS.Cores.Interfaces.ClassRooms;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Organizations;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Persons;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs;
-using AMMS.VIETTEL.SMAS.Cores.Interfaces.SendEmails;
+using AMMS.VIETTEL.SMAS.Cores.Interfaces.SchoolYears;
+using AMMS.VIETTEL.SMAS.Cores.Interfaces.StudentClassRoomYears;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Students;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.TimeConfigs;
 using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using AMMS.VIETTEL.SMAS.Infratructures.Identity;
-using AMMS.VIETTEL.SMAS.Infratructures.Repositories;
 using AMMS.VIETTEL.SMAS.Infratructures.Repositories.AppConfigs;
+using AMMS.VIETTEL.SMAS.Infratructures.Repositories.ClassRooms;
 using AMMS.VIETTEL.SMAS.Infratructures.Repositories.Organizations;
 using AMMS.VIETTEL.SMAS.Infratructures.Repositories.Persons;
 using AMMS.VIETTEL.SMAS.Infratructures.Repositories.ScheduleJobs;
-using AMMS.VIETTEL.SMAS.Infratructures.Repositories.SendEmails;
+using AMMS.VIETTEL.SMAS.Infratructures.Repositories.SchoolYears;
+using AMMS.VIETTEL.SMAS.Infratructures.Repositories.StudentClassRoomYears;
 using AMMS.VIETTEL.SMAS.Infratructures.Repositories.Students;
+using AMMS.VIETTEL.SMAS.Infratructures.Repositories.TimeConfigs;
 using EventBus.Messages;
 using MassTransit;
 using MediatR;
@@ -32,6 +36,7 @@ using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Shared.Core.Caches.Redis;
 using Shared.Core.Repositories;
+using Shared.Core.SignalRs;
 using System.Reflection;
 
 namespace AMMS.VIETTEL.SMAS.Applications.Extensions;
@@ -43,6 +48,7 @@ public static class DependencyInjection
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         return services;
     }
+
     public static void AddVersion(this IServiceCollection service)
     {
         service.AddApiVersioning(options =>
@@ -58,7 +64,6 @@ public static class DependencyInjection
 
         });
     }
-
     public static void AddScopedServices(this IServiceCollection service)
     {
         //Oranization
@@ -75,32 +80,26 @@ public static class DependencyInjection
 
         //VTSmart
         service.AddScoped<SmartService>();
-
-        //AccountVTSmart
         service.AddScoped<AccountVTSmartService>();
-
-        //////////////////////////
-        ///// ScheduleSendMail
-        service.AddScoped<IScheduleSendEmailDetailRepository, ScheduleSendEmailDetailRepository>();
-        service.AddScoped<IScheduleSendMailRepository, ScheduleSendEmailRepository>();
-
 
         // Person
         service.AddScoped<IPersonRepository, PersonRepository>();
         //service.AddScoped<SyncDeviceServerService>();
-
-        //SendEmail
-        service.AddScoped<ISendEmailRepository, SendEmailRepository>();
-        service.AddScoped<ISendEmailLogRepository, SendEmailLogRepository>();
-        service.AddScoped<IScheduleJobRepository, ScheduleJobRepository>();
 
         //Cache
         service.AddScoped<ICacheService, CacheService>();
 
         // Students
         service.AddScoped<IStudentRepository, StudentRepository>();
+        service.AddScoped<IClassRoomRepository, ClassRoomRepository>();
+        service.AddScoped<ISchoolYearRepository, SchoolYearRepository>();
+        service.AddScoped<IStudentClassRoomYearRepository, StudentClassRoomYearRepository>();
         service.AddScoped<StudentService>();
+        service.AddScoped<SchoolYearClassService>();
 
+        //ScheduleJo
+        service.AddScoped<IScheduleJobRepository, ScheduleJobRepository>();
+        service.AddScoped<IScheduleJobLogRepository, ScheduleJobLogRepository>();
 
         ////  TimeAttendenceEvents
         //service.AddScoped<ITATimeAttendenceEventRepository, TATimeAttendenceEventRepository>();
@@ -109,11 +108,6 @@ public static class DependencyInjection
         //service.AddScoped<TimeAttendenceSyncService>();
 
 
-        //// AMMS. Notification -  SendEmail
-        //service.AddScoped<INSendEmailRepository, NSendEmailRepository>();
-        //service.AddScoped<INSendEmailLogRepository, NSendEmailLogRepository>();
-
-        //service.AddScoped<IAccountService, AccountService>();
 
 
     }
@@ -133,9 +127,7 @@ public static class DependencyInjection
         services.AddScoped<ICronJobService, CronJobService>();
         return services;
     }
-
-    public static IServiceCollection AddDbContext(this IServiceCollection services,
-      IConfiguration configuration)
+    public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<IdentityContext>(options =>
                 options.UseMySql(
@@ -149,7 +141,7 @@ public static class DependencyInjection
                     //.EnableSensitiveDataLogging()
                     //.EnableDetailedErrors()
                     , ServiceLifetime.Scoped
-                    );services.AddDbContext<IdentityContext>(options =>
+                    ); services.AddDbContext<IdentityContext>(options =>
                 options.UseMySql(
                         configuration.GetConnectionString("DefaultConnection")
                         , ServerVersion.AutoDetect(configuration.GetConnectionString("DefaultConnection"))
@@ -205,7 +197,8 @@ public static class DependencyInjection
     }
 
     public static void AddEventBusService(this IServiceCollection services, IConfiguration configuration)
-    {;
+    {
+        ;
         // Đọc Config AppSetting
         var eventBusSettings = configuration.GetSection("EventBusSettings");
         // Đăng ký EventBusAdapter
@@ -318,5 +311,15 @@ public static class DependencyInjection
     {
         services.AddSingleton<ICacheService, CacheService>();
     }
-
+    public static void AddSignalRService(this IServiceCollection service, IConfiguration configuration)
+    {
+        service.AddSignalR(o =>
+        {
+            o.EnableDetailedErrors = true;
+            o.MaximumReceiveMessageSize = 4 * 1024 * 1024; // 4MB
+        });
+        service.AddSingleton<ISignalRAdapter, SignalRAdapter>();
+        service.AddScoped<ISignalRService, SignalRService>();
+        service.AddSingleton<ISignalRClientService, SignalRClientService>();
+    }
 }

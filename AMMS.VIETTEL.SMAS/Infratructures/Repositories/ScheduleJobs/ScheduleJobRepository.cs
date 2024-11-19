@@ -1,6 +1,7 @@
 ﻿using AMMS.Shared.Commons;
 using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs;
+using AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs.Reponses;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs.Requests;
 using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +11,8 @@ namespace AMMS.VIETTEL.SMAS.Infratructures.Repositories.ScheduleJobs;
 
 public class ScheduleJobRepository : IScheduleJobRepository
 {
-    private readonly IViettelDbContext _db;
-    public ScheduleJobRepository(IViettelDbContext biDbContext)
+    private readonly ViettelDbContext _db;
+    public ScheduleJobRepository(ViettelDbContext biDbContext)
     {
         _db = biDbContext;
     }
@@ -65,8 +66,9 @@ public class ScheduleJobRepository : IScheduleJobRepository
                                join _or in _db.Organization on _do.OrganizationId equals _or.Id into OT
                                from or in OT.DefaultIfEmpty()
                                where _do.Actived == active
-                               && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
+                                 && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
                                && (!string.IsNullOrWhiteSpace(request.Key) && request.ColumnTable == "ScheduleJobName" ? _do.ScheduleJobName.Contains(request.Key) : true)
+                               && (!string.IsNullOrWhiteSpace(request.Key) && request.ColumnTable == "ScheduleNote" ? _do.ScheduleNote.Contains(request.Key) : true)
                                && (!string.IsNullOrWhiteSpace(request.ScheduleNote) ? _do.ScheduleNote == request.ScheduleNote || _do.ScheduleNote == null : true)
                                select new ScheduleJobReportResponse()
                                {
@@ -83,7 +85,7 @@ public class ScheduleJobRepository : IScheduleJobRepository
                                    ScheduleType = _do.ScheduleType,
                                    OrganizationName = or != null ? or.OrganizationName : null,
 
-                               }).ToListAsync();
+                               }).OrderBy(o => o.ScheduleType).ToListAsync();
             return _data;
         }
         catch (Exception e)
