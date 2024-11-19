@@ -8,7 +8,7 @@ public class AutoMapper : Profile
 {
     public AutoMapper()
     {
-        CreateMap<app_config, AppConfigRequest>().ReverseMap();
-        CreateMap<app_config, AppConfigResponse>().ReverseMap();
+        CreateMap<hanet_app_config, AppConfigRequest>().ReverseMap();
+        CreateMap<hanet_app_config, AppConfigResponse>().ReverseMap();
     }
 }

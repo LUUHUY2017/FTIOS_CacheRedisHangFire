@@ -62,6 +62,8 @@ public partial class TimeAttendenceEventService
     {
         try
         {
+            Logger.Information(data.PersonCode + " điểm danh lúc: " + data.TimeEvent);
+
             var employee1 = _dbContext.Student.FirstOrDefault(o => o.StudentCode == data.PersonCode);
             if (employee1 == null)
             {
@@ -83,8 +85,8 @@ public partial class TimeAttendenceEventService
         }
         catch (Exception e)
         {
-            return false;
             Logger.Error(e);
+            return false;
         }
 
     }
@@ -200,7 +202,7 @@ public partial class TimeAttendenceEventService
 
 
                 if (addEvent)
-                    _dbContext.TimeAttendenceEvent.Add(time);
+                    await _dbContext.TimeAttendenceEvent.AddAsync(time);
                 else
                     _dbContext.TimeAttendenceEvent.Update(time);
 

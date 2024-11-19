@@ -16,7 +16,7 @@ public partial class CronJobService : ICronJobService
     /// </summary>
 
     static bool Is_CheckDeviceOnline { get; set; } = false;
-    static string HanetServer { get; set; } = "https://partner.hanet.ai";
+    static string HanetServer { get; set; } = "https://partner.hanet.ai/";
     public async Task CheckDeviceOnline()
     {
         if (Is_CheckDeviceOnline)
@@ -25,7 +25,7 @@ public partial class CronJobService : ICronJobService
         Is_CheckDeviceOnline = true;
         try
         {
-            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss dd/MM/yyy") + ": Check device online");
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy") + ": Check device online");
             var connection_status = await CheckServerOnline(HanetServer);
 
             //Danh sách từ CSDL
@@ -103,58 +103,109 @@ public partial class CronJobService : ICronJobService
         }
     }
     //Kiem tra có mạng
-    public async Task<bool> CheckServerOnline(string server)
+    public async Task<bool> CheckServerOnline(string url)
     {
         try
         {
-            if (string.IsNullOrEmpty(server))
+            if (string.IsNullOrEmpty(url))
                 return false;
-
-            return true;
-            WebRequest request = WebRequest.Create(server);
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (HttpClient client = new HttpClient())
             {
-                if (response == null || response.StatusCode != HttpStatusCode.OK)
-                    return false;
-                else
-                    return true;
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response != null)
+                    {
+                        Console.WriteLine($"{url} is online.");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{url} is offline or there was an error.");
+                    }
+                }
+                catch (HttpRequestException e)
+                {
+                    Console.WriteLine($"Request error: {e.Message}");
+                }
             }
-
-
+            return false;
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Logger.Error(ex);
+            Logger.Error(e);
             return false;
         }
     }
+    static bool Is_DeleteLog { get; set; } = false;
 
     /// <summary>
-    /// Trạng thái thiết bị
+    /// Xoá dữ liệu log
     /// </summary>
-    public class terminal_status
+    /// <returns></returns>
+    public async Task DeleteLog()
     {
-        /// <summary>
-        /// Serrial number của thiết bị
-        /// </summary>
-        public string serialNumber { get; set; } = "";
-        /// <summary>
-        /// Trạng thái thiết bị
-        /// </summary>
-        public bool connectionStatus { get; set; } = false;
-        /// <summary>
-        /// Thời gian kiểm tra
-        /// </summary>
-        public DateTime connectUpdateTime { get; set; } = DateTime.Now;
-        /// <summary>
-        /// Thời gian kết nối
-        /// </summary>
-        public DateTime? time_online { get; set; }
-        /// <summary>
-        /// Thời gian mất kết nôi
-        /// </summary>
-        public DateTime? time_offline { get; set; }
+        if (Is_DeleteLog)
+            return;
+
+        Is_DeleteLog = true;
+        try
+        {
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy") + ": Xoá dữ liệu");
+            //Danh sách từ CSDL
+
+            var deleteDate = DateTime.Now.AddMonths(-1);
+
+
+            var listRemove = await _dbContext.hanet_transaction.Where(x => x.created_time < deleteDate).ToListAsync();
+            if (listRemove != null && listRemove.Count > 0)
+            {
+                int count = listRemove.Count;
+
+                _dbContext.hanet_transaction.RemoveRange(listRemove);
+                await _dbContext.SaveChangesAsync();
+                Logger.Warning("Xoá " + count + " bản ghi sau " + deleteDate.ToString("HH:mm:ss dd/MM/yyyy"));
+
+            }
+
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+        finally
+        {
+            Is_DeleteLog = false;
+        }
     }
 
     #endregion
 }
+/// <summary>
+/// Trạng thái thiết bị
+/// </summary>
+public class terminal_status
+{
+    /// <summary>
+    /// Serrial number của thiết bị
+    /// </summary>
+    public string serialNumber { get; set; } = "";
+    /// <summary>
+    /// Trạng thái thiết bị
+    /// </summary>
+    public bool connectionStatus { get; set; } = false;
+    /// <summary>
+    /// Thời gian kiểm tra
+    /// </summary>
+    public DateTime connectUpdateTime { get; set; } = DateTime.Now;
+    /// <summary>
+    /// Thời gian kết nối
+    /// </summary>
+    public DateTime? time_online { get; set; }
+    /// <summary>
+    /// Thời gian mất kết nôi
+    /// </summary>
+    public DateTime? time_offline { get; set; }
+}
+
+

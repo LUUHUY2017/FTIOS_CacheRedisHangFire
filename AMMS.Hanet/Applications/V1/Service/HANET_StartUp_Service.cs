@@ -1,4 +1,5 @@
 ﻿using AMMS.DeviceData.RabbitMq;
+using AMMS.Hanet.Applications.CronJobs;
 using AMMS.Hanet.Datas.Databases;
 using AMMS.Hanet.Datas.Entities;
 using Microsoft.EntityFrameworkCore;

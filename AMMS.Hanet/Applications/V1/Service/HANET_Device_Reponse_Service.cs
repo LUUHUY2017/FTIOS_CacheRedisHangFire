@@ -38,38 +38,45 @@ namespace AMMS.Hanet.Applications.V1.Service
         /// <returns></returns>
         public async Task ProcessData(Hanet_Device_Data reponse)
         {
-            if (reponse == null || string.IsNullOrEmpty(reponse.data))
+            try
             {
-                return;
-            }
-
-            string datatype = JObject.Parse(reponse.data)["data_type"].ToString();
-            //Chỉ sử lý dạng log
-            if (datatype == "log")
-            {
-                Logger.Warning(reponse.data);
-                var data = JsonConvert.DeserializeObject<Hanet_Checkin_Data>(reponse.data);
-
-                if (data == null)
+                if (reponse == null || string.IsNullOrEmpty(reponse.data))
                 {
                     return;
                 }
 
-                if (string.IsNullOrEmpty(data.aliasID))
-                    return;
+                string datatype = JObject.Parse(reponse.data)["data_type"].ToString();
+                //Chỉ sử lý dạng log
+                if (datatype == "log")
+                {
+                    Logger.Warning(reponse.data);
+                    var data = JsonConvert.DeserializeObject<Hanet_Checkin_Data>(reponse.data);
 
-                //Tìm học sinh
-                var user = await FindUserFromHanet(data.aliasID);
-                //Lưu thông tin 
-                await AddTransactionLog(data, reponse);
+                    if (data == null)
+                    {
+                        return;
+                    }
 
-                if (user == null) return;
+                    if (string.IsNullOrEmpty(data.aliasID))
+                        return;
 
-                //Đẩy sang SV
-                await AddATTLOG(data, user);
+                    //Tìm học sinh
+                    var user = await FindUserFromHanet(data.aliasID);
+                    //Lưu thông tin 
+                    await AddTransactionLog(data, reponse);
 
+                    if (user == null) return;
+
+                    //Đẩy sang SV
+                    await AddATTLOG(data, user);
+
+                }
             }
+            catch (Exception ex)
+            {
 
+                Logger.Error(ex);
+            }
         }
 
         private async Task AddATTLOG(Hanet_Checkin_Data data, Student? student)
@@ -94,13 +101,13 @@ namespace AMMS.Hanet.Applications.V1.Service
                     Content = JsonConvert.SerializeObject(tA_AttendenceHistory),
                     ReponseType = RB_DataResponseType.AttendenceHistory,
                 };
-                Logger.Error("SEND RBMQ TA_DATA" + student.StudentCode);
+                Logger.Error("SEND RBMQ TA_DATA " + student.StudentCode);
 
                 //Gửi RBMQ
                 var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}");
 
                 await aa.Send(rB_Response);
- 
+
                 //Nếu có ảnh đi kèm
                 if (string.IsNullOrEmpty(data.detected_image_url))
                 {
