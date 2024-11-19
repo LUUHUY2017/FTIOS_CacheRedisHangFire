@@ -1,0 +1,380 @@
+﻿@{
+    ViewData["Title"] = "Quản lý lớp năm học";
+    Layout = "~/Views/Shared/_LayoutManage.cshtml";
+}
+
+<!-- Main content -->
+<div class="content-wrapper" id="webui">
+
+    <!-- Inner content -->
+    <div class="content-inner">
+
+        <!-- Page header -->
+        <div class="page-header page-header-light shadow">
+            <div style="padding: 3px 18px !important; " class="page-header-content d-lg-flex">
+                <div class="d-flex">
+                    <h4 class="page-title mb-0" style="padding: 10px 8px !important; ">
+                        <span class="fw-normal">@ViewData["Title"]</span>
+                    </h4>
+                </div>
+
+                <div class=" d-lg-block my-lg-auto ms-lg-auto" id="page_header">
+                    <div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
+                        <div class="d-inline-flex mt-3 mt-sm-0">
+                            <div class="pull-right">
+                                <a v-on:click="openFormAdd()" class="btn btn-primary " style="margin-right: 5px;"> Thêm mới</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Content area -->
+        <div class="content">
+            <div class="card">
+                <div class="card-body">
+                    <form v-on:submit.prevent="loadData">
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <select class="form-select select" id="FcolumnTable">
+                                    <option value="Name">Tên lớp </option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select select" id="FActived">
+                                    <option value="1">Hoạt động</option>
+                                    <option value="0">Ngừng hoạt động</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" id="key" name="key" placeholder="Nhập từ khóa tìm kiếm" class="form-control" v-model="filter.key">
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal hide  fade" id="ModelAddEdit" role="dialog" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}} @ViewData["Title"]</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"> </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body  mb-3">
+                        <div class="row_info row">
+                            <p>Thông tin</p>
+                            <form class="needs-validation" novalidate id="FormAddEdit">
+                                <div class="row mb-3">
+                                    <div class="col-md-10">
+                                        <div class="form-group row mb-2  ">
+                                            <label class="col-form-label col-md-3">Trường học<span class="text-danger">*</span></label>
+                                            <div class="col-md-9">
+                                                <select data-dropdown-parent="#ModelAddEdit" required data-placeholder="Vui lòng chọn trường" id="organizationId" class="form-control select">
+                                                    <option v-for="option in combobox.organizations" v-bind:value="option.id">
+                                                        {{ option.organizationName }}
+                                                    </option>
+                                                </select>
+                                                <div class="invalid-feedback">Vui lòng chọn trường </div>
+                                                <div class="valid-feedback"> </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-2  ">
+                                            <label class="col-form-label col-lg-3">Tên lớp<span class="text-danger">*</span></label>
+                                            <div class="col-lg-9">
+                                                <input type="text" class="form-control" required placeholder="Vui lòng nhập tên lịch " v-model="item.name">
+                                                <div class="invalid-feedback">Vui lòng nhập tên lớp</div>
+                                                <div class="valid-feedback"></div>
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="form-group row mb-2">
+                                            <label class="col-form-label col-md-3">Hoạt động</label>
+                                            <div class="col-lg-9">
+                                                <div class="form-check-horizontal">
+                                                    <label class="form-check form-switch mb-0">
+                                                        <input type="checkbox" class="form-check-input" v-model="item.actived">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="text-end">
+                                        <button type="button" class="btn btn-primary" v-on:click="onClickSaveData()">Lưu dữ liệu</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#organizationId').on("change", function () {
+            _clss.item.organizationId = $(this).val() ?? null;
+            _clss.item.organizationName = $(this).find("option:selected").text()?.trim() ?? null;
+        });
+
+
+        $('#FOrganization').on("change", function () {
+            _clss.filter.organizationId = $(this).val() ?? null;
+        });
+        $('#FActived').on("change", function () {
+            _clss.filter.actived = $(this).val();
+        });
+        $('#FcolumnTable').on("change", function () {
+            _clss.filter.columnTable = $(this).val();
+        });
+    });
+
+
+    var _clss = new Vue({
+        el: '#webui',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [
+                {
+                    title: "Stt",
+                    field: 'sothutu',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        var stt = index + 1;
+                        return "<span class ='black'> " + stt + "  </span>";
+                    },
+                },
+                {
+                    field: 'Xử lý',
+                    title: 'Xử lý',
+                    sortable: true,
+                    align: 'center',
+                    formatter: (value, row, index) => {
+                        var ele = `<div style="white-space: nowrap;">`;
+                        if (row.actived) {
+                            ele += `<a href = "javascript:" class= "btn btn-sm btn-warning edit"  title = "Cập nhật " > <i class="fa fa-pencil" > </i>  </a > &nbsp;`;
+                            ele += `<a href = "javascript:" class= "btn btn-danger btn-sm delete-asset inactive" title="Inactive "> <i class="fa fa-minus-circle" ></i> </a> &nbsp;`;
+                        }
+                        else
+                            ele += `<a href="javascript:" class="btn btn-info btn-sm delete-asset active" title="Active "> <i class="fa fa-plus-square" ></i><span class="sr-only">Active</span></a> &nbsp;`;
+                        ele += ` </div>`;
+                        return ele;
+                    },
+                    events: {
+                        'click .edit': function (e, value, row) {
+                            _clss.onPopupModelEdit(row);
+                        },
+                        'click .inactive': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn ẩn dòng này không?";
+                            var content = "Nhập nội dung xóa (không quá 250 kí tự)";
+                            alertify.prompt(question, content, '', function (evt, value) {
+                                axios.post('/api/v1/ClassRoomYear/Inactive', { id: row.id, reason: value }, _clss.object.config).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _clss.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message || "Có lỗi xảy ra!");
+                                    }
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+                        'click .active': function (e, value, row) {
+                            var question = "Bạn có chắc chắn muốn kích hoạt dòng này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/ClassRoomYear/Active', { id: row.id, reason: 'Kích hoạt lại bản ghi' }, _clss.object.config).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _clss.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message || "Có lỗi xảy ra!");
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+                    }
+                },
+                {
+                    title: "Tên lớp",
+                    field: "name",
+                    sortable: true,
+                },
+                {
+                    title: "Trường",
+                    field: 'organizationName',
+                    sortable: true,
+                },
+                {
+                    title: 'Thời gian',
+                    field: 'lastModifiedDate',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (row.lastModifiedDate) {
+                            var lastModifiedDate = moment(row.lastModifiedDate).format('DD/MM/YYYY HH:mm:ss');
+                            return "<span class ='black'> " + lastModifiedDate + "  </span>";
+                        }
+                    },
+                },
+            ],
+            data: [],
+            filter: {
+                columnTable: "Name",
+                actived: "1",
+                key: "",
+                export: "0",
+                organizationId: null,
+            },
+            item: {},
+            combobox: {
+                organizations: [],
+            },
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                sortable: true,
+                searchAlign: 'right',
+                paginationHAlign: 'left',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+                pageList: [10, 25, 50, 100, 200],
+            },
+            object: {
+                dateNow: formatDateTime(new Date()),
+                editAction: false,
+                config: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.post('/api/v1/ClassRoomYear/Gets', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    $('.loader').delay(100).hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+                    this.data = response.data.items;
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+
+            openFormAdd() {
+                this.object.editAction = false;
+                this.onResetForm();
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+            },
+
+            onResetForm() {
+                this.item = {
+                    actived: true,
+                };
+                resetFormJs();
+
+                $('#organizationId').val(null).trigger('change');
+            },
+
+
+            onPopupModelEdit(row, editAction) {
+                this.object.editAction = true;
+                this.item = row;
+
+                $('#organizationId').val(this.item.organizationId).trigger('change');
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
+            },
+
+            onClickSaveData() {
+                if (!validateForm("#FormAddEdit")) {
+                    return true;
+                }
+
+                $('.loader').show();
+                axios.put('/api/v1/ClassRoomYear/Edit', this.item, this.object.config).then(response => {
+                    $('.loader').hide(0);
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+
+                    if (response.data.succeeded) {
+                        _clss.object.editAction = true;
+                        _clss.item = response.data.data;
+                        alertify.success(response.data.message);
+
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).hide();
+
+                        _clss.loadData();
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+                    console.log(error);
+                });
+            },
+
+           
+            loadCombox() {
+                axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    this.combobox.organizations = response.data.data;
+                }).catch(error => {
+                    console.log(error);
+                });
+            },
+        },
+        mounted() {
+            this.loadData();
+            this.loadCombox();
+        },
+    })
+</script>
+

@@ -102,6 +102,10 @@
 
     <Compile Include="APIs\Data\AttendanceTimeConfigs\V1\Models\AttendanceTimeTypeConst.cs" />
 
+    <Compile Include="APIs\Data\ClassRoomYears\V1\Controllers\ClassRoomYearController.cs" />
+
+    <Compile Include="APIs\Data\Schoolyears\V1\Controllers\SchoolYearController.cs" />
+
     <Compile Include="APIs\Data\DeviceNotifications\V1\Controllers\DeviceNotificationController.cs" />
 
     <Compile Include="APIs\Data\Devices\V1\Controllers\DeviceAdminController.cs" />
@@ -109,6 +113,8 @@
     <Compile Include="APIs\Data\MonitorDevices\V1\Controllers\MonitorDeviceController.cs" />
 
     <Compile Include="APIs\Data\AttendanceTimeConfigs\V1\Controllers\AttendanceTimeConfigController.cs" />
+
+    <Compile Include="APIs\Data\ClassRooms\V1\Controllers\ClassRoomController.cs" />
 
     <Compile Include="APIs\Data\ScheduleJobs\V1\Controllers\ScheduleJobLogController.cs" />
 
@@ -179,6 +185,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="APIs\Data\ClassRoomYears\V1\Requests\" />
+    <Folder Include="APIs\Data\Schoolyears\V1\Requests\" />
+    <Folder Include="APIs\Data\ClassRooms\V1\Requests\" />
     <Folder Include="APIs\Data\ScheduleJobs\V1\Responses\" />
     <Folder Include="APIs\Data\Students\V1\Requests\" />
     <Folder Include="APIs\Data\SyncDeviceServers\V1\Requests\" />
