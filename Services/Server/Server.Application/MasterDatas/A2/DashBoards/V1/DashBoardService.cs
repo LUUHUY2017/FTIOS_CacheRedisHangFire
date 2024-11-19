@@ -61,6 +61,29 @@ public class DashBoardService
     }
 
     //Device
+    public async Task<Result<DBDeviceModel1>> GetToTalDevice1()
+    {
+        try
+        {
+            var dataDevice = await _dbContext.Device.Where(x => x.Actived == true).ToListAsync();
+            var data = new DBDeviceModel1()
+            {
+                TotalDevice = dataDevice.Count,
+                TotalHN = dataDevice.Count(x => x.DeviceModel == DeviceBrandConst.Hanet),
+                TotalHNOn = dataDevice.Count(x => x.DeviceModel == DeviceBrandConst.Hanet && x.ConnectionStatus == true),
+                TotalHNOff = dataDevice.Count(x => x.DeviceModel == DeviceBrandConst.Hanet && x.ConnectionStatus != true),
+                TotalZK = dataDevice.Count(x => x.DeviceModel == DeviceBrandConst.ZKTeco),
+                TotalZKOn = dataDevice.Count(x => x.DeviceModel == DeviceBrandConst.ZKTeco && x.ConnectionStatus == true),
+                TotalZKOff = dataDevice.Count(x => x.DeviceModel == DeviceBrandConst.ZKTeco && x.ConnectionStatus != true),
+            };
+            return new Result<DBDeviceModel1>(data, $"Thành công!", true);
+        }
+        catch (Exception ex)
+        {
+            //Logger.Error(ex);
+            return new Result<DBDeviceModel1>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
     public async Task<Result<List<TotalDeviceModel>>> GetToTalDevice(DateTime? dateTimeFilter)
     {
         try
