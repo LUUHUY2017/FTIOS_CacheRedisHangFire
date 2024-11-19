@@ -127,7 +127,6 @@ public static class DependencyInjection
 
         services.AddScoped<TimeAttendenceEventService>();
         services.AddScoped<TimeAttendenceEventConsumer>();
-        //services.AddScoped<TimeAttendenceSyncSmasConsumer>();
         services.AddScoped<Server_RequestConsummer>();
 
 
@@ -142,7 +141,6 @@ public static class DependencyInjection
             ////Đăng ký xử lý bản tin data XML của Brickstream
             config.AddConsumer<StudentConsumer>();
             config.AddConsumer<TimeAttendenceEventConsumer>();
-            //config.AddConsumer<TimeAttendenceSyncSmasConsumer>();
             //Đăng ký xử lý bản tin xuống thiết bị
             config.AddConsumer<Server_RequestConsummer>();
 
@@ -156,27 +154,19 @@ public static class DependencyInjection
 
                 cfg.Host(configuration["EventBusSettings:HostAddress"]);
 
-                #region  Device
+                #region  Giao tiếp với thiết bị: nhận status đồng bộ học sinh, nhận response dữ liệu diểm danh
                 //// Nhận Response từ Sự kiện đồng bộ thiết bị trả về
                 cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}", c =>
-                //cfg.ReceiveEndpoint($"{EventBusConstants.DataArea}{EventBusConstants.Server_Auto_Push_S2D}", c =>
                 {
                     c.ConfigureConsumer<StudentConsumer>(ct);
                 });
-                #endregion
-
-                #region  Report
-                //// Nhận Response từ Sự kiện đồng bộ thiết bị trả về
                 cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}", c =>
                 {
                     c.ConfigureConsumer<TimeAttendenceEventConsumer>(ct);
                 });
-
-                //cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}", c =>
-                //{
-                //    c.ConfigureConsumer<TimeAttendenceSyncSmasConsumer>(ct);
-                //});
                 #endregion
+
+
 
                 #region Gửi request xuống máy trạm
                 //Request from SV
@@ -185,7 +175,6 @@ public static class DependencyInjection
                     c.ConfigureConsumer<Server_RequestConsummer>(ct);
                 });
                 #endregion
-
 
 
                 #region Email 
