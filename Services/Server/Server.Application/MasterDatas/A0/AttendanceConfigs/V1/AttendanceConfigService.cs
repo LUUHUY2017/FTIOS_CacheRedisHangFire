@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Server.Application.MasterDatas.A0.AttendanceConfigs.V1.Models;
-using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A0;
 using Server.Core.Entities.A2;
@@ -19,14 +18,12 @@ public class AttendanceConfigService
 {
     private readonly IAttendanceConfigRepository _attendanceConfigRepository;
     private readonly IMapper _mapper;
-    private readonly SmartService _smartService;
     private readonly IOrganizationRepository _organizationRepository;
     private readonly ITimeConfigRepository _timeConfigRepository;
     private readonly IMasterDataDbContext _dBContext;
     public AttendanceConfigService(
         IAttendanceConfigRepository attendanceConfigRepository,
         IMapper mapper,
-        SmartService smartService,
         IOrganizationRepository organizationRepository,
         ITimeConfigRepository timeConfigRepository,
         IMasterDataDbContext dBContext
@@ -34,7 +31,6 @@ public class AttendanceConfigService
     {
         _attendanceConfigRepository = attendanceConfigRepository;
         _mapper = mapper;
-        _smartService = smartService;
         _organizationRepository = organizationRepository;
         _timeConfigRepository = timeConfigRepository;
         _dBContext = dBContext;
