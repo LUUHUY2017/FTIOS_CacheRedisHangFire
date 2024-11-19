@@ -7,16 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\A2\ClassRooms\Responses\**" />
+    <Compile Remove="Interfaces\A2\SchoolYears\Responses\**" />
+    <Compile Remove="Interfaces\A2\StudentClassRoomYears\Responses\**" />
     <Compile Remove="Interfaces\TA\TimeAttendenceDetails\Requests\**" />
     <Compile Remove="Interfaces\TA\TimeAttendenceDetails\Responses\**" />
     <Compile Remove="MasterDatas\**" />
     <Compile Remove="Sites\**" />
     <Compile Remove="Terminals\**" />
+    <EmbeddedResource Remove="Interfaces\A2\ClassRooms\Responses\**" />
+    <EmbeddedResource Remove="Interfaces\A2\SchoolYears\Responses\**" />
+    <EmbeddedResource Remove="Interfaces\A2\StudentClassRoomYears\Responses\**" />
     <EmbeddedResource Remove="Interfaces\TA\TimeAttendenceDetails\Requests\**" />
     <EmbeddedResource Remove="Interfaces\TA\TimeAttendenceDetails\Responses\**" />
     <EmbeddedResource Remove="MasterDatas\**" />
     <EmbeddedResource Remove="Sites\**" />
     <EmbeddedResource Remove="Terminals\**" />
+    <None Remove="Interfaces\A2\ClassRooms\Responses\**" />
+    <None Remove="Interfaces\A2\SchoolYears\Responses\**" />
+    <None Remove="Interfaces\A2\StudentClassRoomYears\Responses\**" />
     <None Remove="Interfaces\TA\TimeAttendenceDetails\Requests\**" />
     <None Remove="Interfaces\TA\TimeAttendenceDetails\Responses\**" />
     <None Remove="MasterDatas\**" />
@@ -37,12 +46,6 @@
 
   <ItemGroup>
     <Folder Include="Entities\A1\" />
-    <Folder Include="Interfaces\A2\SchoolYears\Requests\" />
-    <Folder Include="Interfaces\A2\SchoolYears\Responses\" />
-    <Folder Include="Interfaces\A2\StudentClassRoomYears\Requests\" />
-    <Folder Include="Interfaces\A2\StudentClassRoomYears\Responses\" />
-    <Folder Include="Interfaces\A2\ClassRooms\Requests\" />
-    <Folder Include="Interfaces\A2\ClassRooms\Responses\" />
     <Folder Include="Interfaces\A2\Students\Requests\" />
     <Folder Include="Interfaces\A2\Students\Responses\" />
     <Folder Include="Interfaces\A3\" />

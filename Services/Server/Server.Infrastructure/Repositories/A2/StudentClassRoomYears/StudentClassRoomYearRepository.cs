@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.StudentClassRoomYears;
+using Server.Core.Interfaces.A2.StudentClassRoomYears.Reponses;
+using Server.Core.Interfaces.A2.StudentClassRoomYears.Requests;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;
 
@@ -9,8 +11,10 @@ namespace Server.Infrastructure.Repositories.A2.StudentClassRoomYears;
 
 public class StudentClassRoomYearRepository : RepositoryBaseMasterData<StudentClassRoomYear>, IStudentClassRoomYearRepository
 {
+    private readonly IMasterDataDbContext _db;
     public StudentClassRoomYearRepository(MasterDataDbContext dbContext) : base(dbContext)
     {
+        _db = dbContext;
     }
 
     public string UserId { get; set; }
@@ -42,7 +46,6 @@ public class StudentClassRoomYearRepository : RepositoryBaseMasterData<StudentCl
             return new Result<StudentClassRoomYear>(data, "Lỗi: " + ex.ToString(), false);
         }
     }
-
     public async Task<Result<StudentClassRoomYear>> SaveDataAsync(StudentClassRoomYear data)
     {
         string message = "";
@@ -74,6 +77,145 @@ public class StudentClassRoomYearRepository : RepositoryBaseMasterData<StudentCl
             }
             var retVal = await _dbContext.SaveChangesAsync();
 
+            return new Result<StudentClassRoomYear>(_order, message, true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<StudentClassRoomYear>(data, "Lỗi: " + ex.ToString(), false);
+        }
+    }
+
+    public async Task<Result<StudentClassRoomYear>> ActiveAsync(ActiveRequest data)
+    {
+        string message = "";
+        try
+        {
+            var _order = _db.StudentClassRoomYear.FirstOrDefault(o => o.Id == data.Id);
+            if (_order != null)
+            {
+                _order.Actived = true;
+                _db.StudentClassRoomYear.Update(_order);
+                message = "Cập nhật thành công";
+            }
+            var retVal = await _db.SaveChangesAsync();
+            return new Result<StudentClassRoomYear>(_order, message, true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<StudentClassRoomYear>("Lỗi: " + ex.ToString(), false);
+        }
+    }
+    public async Task<Result<StudentClassRoomYear>> InActiveAsync(InactiveRequest data)
+    {
+        string message = "";
+        try
+        {
+            var _order = _db.StudentClassRoomYear.FirstOrDefault(o => o.Id == data.Id);
+            if (_order != null)
+            {
+                _order.Actived = false;
+                _db.StudentClassRoomYear.Update(_order);
+                message = "Cập nhật thành công";
+            }
+            var retVal = await _db.SaveChangesAsync();
+            return new Result<StudentClassRoomYear>(_order, message, true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<StudentClassRoomYear>("Lỗi: " + ex.ToString(), false);
+        }
+    }
+    public async Task<List<ClassRoomYearReportResponse>> GetAlls(ClassRoomYearFilterRequest request)
+    {
+        try
+        {
+            bool active = request.Actived == "1";
+            var _data = await (from _do in _db.StudentClassRoomYear
+                               join _or in _db.Organization on _do.OrganizationId equals _or.Id into OT
+                               from or in OT.DefaultIfEmpty()
+
+                               join _cl in _db.ClassRoom on _do.ClassRoomId equals _cl.Id into OTS
+                               from cl in OTS.DefaultIfEmpty()
+
+                               join _sc in _db.SchoolYear on _do.SchoolYearId equals _sc.Id into OTSS
+                               from sc in OTSS.DefaultIfEmpty()
+
+                               where _do.Actived == active
+                                 && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
+                                 && ((!string.IsNullOrWhiteSpace(request.SchoolYearId) && request.SchoolYearId != "0") ? _do.SchoolYearId == request.SchoolYearId : true)
+                               && (!string.IsNullOrWhiteSpace(request.Key) && request.ColumnTable == "Name" ? _do.Name.Contains(request.Key) : true)
+                               select new ClassRoomYearReportResponse()
+                               {
+                                   Id = _do.Id,
+                                   CreatedBy = _do.CreatedBy,
+                                   Actived = _do.Actived,
+                                   CreatedDate = _do.CreatedDate,
+                                   LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
+
+                                   SchoolId = _do.SchoolId,
+                                   ClassRoomId = _do.ClassRoomId,
+                                   SchoolYearId = _do.SchoolYearId,
+                                   OrganizationId = _do.OrganizationId,
+
+                                   Name = _do.Name,
+                                   OrganizationName = or != null ? or.OrganizationName : null,
+                                   SchoolYearName = sc != null ? sc.Name : null,
+                                   ClassRoomName = cl != null ? cl.Name : null,
+
+                               }).OrderBy(o => o.OrganizationName).ThenBy(o => o.Name).ToListAsync();
+            return _data;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    public async Task<List<StudentClassRoomYear>> Gets(bool actived = true)
+    {
+        try
+        {
+            var _data = await (from _do in _db.StudentClassRoomYear where _do.Actived == actived select _do).ToListAsync();
+            return _data;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    public async Task<Result<StudentClassRoomYear>> GetById(string id)
+    {
+        string message = "";
+        try
+        {
+            var _order = _db.StudentClassRoomYear.FirstOrDefault(o => o.Id == id);
+            return new Result<StudentClassRoomYear>(_order, message, true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<StudentClassRoomYear>("Lỗi: " + ex.ToString(), false);
+        }
+    }
+    public async Task<Result<StudentClassRoomYear>> UpdateAsync(StudentClassRoomYear data)
+    {
+        string message = "";
+        try
+        {
+            var _order = _db.StudentClassRoomYear.FirstOrDefault(o => o.Id == data.Id);
+            if (_order != null)
+            {
+                data.CopyPropertiesTo(_order);
+                _db.StudentClassRoomYear.Update(_order);
+                message = "Cập nhật thành công";
+            }
+            else
+            {
+                _order = new StudentClassRoomYear();
+                data.CopyPropertiesTo(_order);
+                _db.StudentClassRoomYear.Add(_order);
+                message = "Thêm mới thành công";
+            }
+
+            var retVal = await _db.SaveChangesAsync();
             return new Result<StudentClassRoomYear>(_order, message, true);
         }
         catch (Exception ex)

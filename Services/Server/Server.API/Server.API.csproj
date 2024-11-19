@@ -108,6 +108,8 @@
 
     <Compile Include="APIs\Data\AttendanceTimeConfigs\V1\Controllers\AttendanceTimeConfigController.cs" />
 
+    <Compile Include="APIs\Data\ClassRooms\V1\Controllers\ClassRoomController.cs" />
+
     <Compile Include="APIs\Data\ScheduleJobs\V1\Controllers\ScheduleJobLogController.cs" />
 
     <Compile Include="APIs\Data\ScheduleJobs\V1\Controllers\ScheduleJobController.cs" />
@@ -177,6 +179,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="APIs\Data\ClassRoomYears\V1\Requests\" />
+    <Folder Include="APIs\Data\Schoolyears\V1\Requests\" />
+    <Folder Include="APIs\Data\ClassRooms\V1\Requests\" />
     <Folder Include="APIs\Data\ScheduleJobs\V1\Responses\" />
     <Folder Include="APIs\Data\Students\V1\Requests\" />
     <Folder Include="APIs\Data\SyncDeviceServers\V1\Requests\" />
