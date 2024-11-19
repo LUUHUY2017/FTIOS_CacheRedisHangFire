@@ -41,7 +41,7 @@ public class PersonRepository : RepositoryBase<Person>, IPersonRepository
             return new Result<Person>("Lỗi: " + ex.ToString(), false);
         }
     }
-    public async Task<Result<PersonFace>> SaveImageAsync(string personId, string base64String)
+    public async Task<Result<PersonFace>> SaveImageAsync(string personId, string base64String, string folderName)
     {
         string message = "";
         try
@@ -49,7 +49,8 @@ public class PersonRepository : RepositoryBase<Person>, IPersonRepository
             var org = await _dbContext.PersonFace.FirstOrDefaultAsync(o => o.PersonId == personId);
             if (org != null)
             {
-                org.FaceData = base64String;
+                //org.FaceData = base64String;
+                org.FaceUrl = folderName;
                 _dbContext.PersonFace.Update(org);
                 message = "Cập nhật thành công";
             }
@@ -58,7 +59,8 @@ public class PersonRepository : RepositoryBase<Person>, IPersonRepository
                 org = new PersonFace();
                 org.PersonId = personId;
                 org.FaceIndex = 1;
-                org.FaceData = base64String;
+                org.FaceUrl = folderName;
+                //org.FaceData = base64String;
                 _dbContext.PersonFace.Add(org);
                 message = "Thêm mới thành công";
             }

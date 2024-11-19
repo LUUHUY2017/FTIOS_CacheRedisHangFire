@@ -8,8 +8,11 @@ namespace AMMS.VIETTEL.SMAS.Controllers;
 [AuthorizeClient]
 public class HomeController : AuthBaseController
 {
+    const string pathUrl = "~/Areas/Managers/ScheduleJobs/V1/Views/";
     public IActionResult Index()
     {
-        return View();
+        var access_token = Request.Cookies["amms.master.webapp.access_token"];
+        return View(pathUrl + "Index.cshtml", access_token);
+        //return View();
     }
 }

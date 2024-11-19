@@ -16,11 +16,13 @@ public sealed class SmartService
 {
     private readonly UserManager<ApplicationUser> _userMgr;
     private readonly ViettelDbContext _dbContext;
+    private readonly IConfiguration _configuration;
     public string UserId { get; set; }
 
     public SmartService(
         UserManager<ApplicationUser> userMgr,
-        ViettelDbContext dbContext
+        ViettelDbContext dbContext,
+        IConfiguration configuration
         )
     {
         _userMgr = userMgr;
@@ -28,12 +30,9 @@ public sealed class SmartService
     }
 
     public static string urlServerName = "https://gateway.vtsmas.vn";
-    public static string urlSSO = "https://sso.vtsmas.vn/connect/token";
-    public static AccessToken _accessToken;
-
-    public static string key { get; set; } = "r0QQKLBa3x9KN/8el8Q/HQ==";
+    public static string key = "r0QQKLBa3x9KN/8el8Q/HQ==";
     public static string keyIV = "8bCNmt1+RHBNkXRx8MlKDA==";
-    public static string secretKey = "SMas$#3/*/lsn_diem_danh";
+    public static string secretKey = "SMas$#@$20@4/*/lsn-diem-danh-app-client";
 
 
     public async Task<AccessToken> GetToken1(string orgId)
@@ -107,8 +106,6 @@ public sealed class SmartService
         }
         return retval;
     }
-
-    //DEV TEST khi chưa có V2
     public async Task<AccessToken> GetToken(string id)
     {
         AccessToken accessToken = null;
@@ -323,25 +320,47 @@ public sealed class SmartService
 
 
     #region POST V2
-    public async Task<List<StudenSmasApiResponse>> PostListStudents(string provinceCode, string schoolCode, string schoolYearCode)
+
+    public async Task<AttendanceConfig> GetConfig()
+    {
+        AttendanceConfig retval = null;
+        try
+        {
+            retval = await _dbContext.AttendanceConfig.Where(o => o.Actived == true).FirstOrDefaultAsync();
+            if (retval == null)
+            {
+                retval = new AttendanceConfig()
+                {
+                    EndpointGateway = urlServerName,
+                    SecretKey = secretKey,
+                    Key = key,
+                    KeyIV = keyIV,
+                };
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+        return retval;
+    }
+
+
+    public async Task<List<StudenSmasApiResponse>> PostListStudents(string schoolCode)
     {
         List<StudenSmasApiResponse> retval = new List<StudenSmasApiResponse>();
         try
         {
-            //var accessToken = await GetToken(orgId);
-
-            //if (accessToken != null)
+            var accessToken = await GetConfig();
+            if (accessToken != null)
             {
-                string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, schoolCode); //  "20186511"
+                string _secretKey = GetSecretKeySMAS(accessToken.SecretKey.Trim(), accessToken.Key.Trim(), accessToken.KeyIV.Trim(), schoolCode); //  "20186511"
                 var req = new StudentSmasApiRequest()
                 {
                     secretKey = _secretKey,
-                    provinceCode = provinceCode,
                     schoolCode = schoolCode,
-                    schoolYearCode = schoolYearCode,
                 };
-
-                var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/lay-danh-sach-hoc-sinh-diem-danh-thiet-bi", urlServerName);
+                var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/lay-danh-sach-hoc-sinh-diem-danh-thiet-bi", accessToken.EndpointGateway);
                 var parameter = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
                 using (HttpClient client = new HttpClient())
                 {
@@ -349,16 +368,20 @@ public sealed class SmartService
                     //client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _accessToken.access_token);
 
                     var result = await client.PostAsync(api, parameter);
+                    //Logger.Warning("Lỗi: " + JsonConvert.SerializeObject(result));
                     if (result.IsSuccessStatusCode)
                     {
                         var data = await result.Content.ReadAsStringAsync();
                         var res = JsonConvert.DeserializeObject<StudentDataApiResponse>(data);
+                        //var res1 = JsonConvert.DeserializeObject<dynamic>(data);
+                        //Logger.Warning("res: " + JsonConvert.SerializeObject(res1));
                         if (res.IsSuccess)
                         {
                             retval = res.Responses;
                         }
                         else
                         {
+                            Logger.Warning(res.Message);
                             throw new InvalidOperationException(res.Message);
                         }
                     }
@@ -367,7 +390,7 @@ public sealed class SmartService
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            Logger.Warning("Lỗi: " + ex.Message.ToString());
             throw new Exception("Error occurred while fetching student data.", ex);
         }
         return retval;
@@ -377,12 +400,12 @@ public sealed class SmartService
         SyncDataResponse retval = null;
         try
         {
-            //var _accessToken = await GetToken(orgId);
-            //if (_accessToken != null)
+            var accessToken = await GetConfig();
+            if (accessToken != null)
             {
-                string _secretKey = GetSecretKeySMAS(secretKey, key, keyIV, schoolCode); //"20186511"
-                req.SecretKey = _secretKey;
-                var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/diem-danh-tich-hop-thiet-bi", urlServerName);
+                string _secretKey = GetSecretKeySMAS(accessToken.SecretKey.Trim(), accessToken.Key.Trim(), accessToken.KeyIV.Trim(), schoolCode); //"20186511"
+                req.secretKey = _secretKey;
+                var api = string.Format("{0}/api/hoc-tap/diem-danh-hoc-sinh/diem-danh-tich-hop-thiet-bi", accessToken.EndpointGateway);
                 var parameter = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
                 using (HttpClient client = new HttpClient())
                 {
@@ -394,6 +417,7 @@ public sealed class SmartService
                     {
                         var data = await result.Content.ReadAsStringAsync();
                         retval = JsonConvert.DeserializeObject<SyncDataResponse>(data);
+
 
                     }
                 }
@@ -445,73 +469,8 @@ public sealed class SmartService
     }
     #endregion
 
-    public static async Task<StudentResponse1> GetStudents(string schoolCode)
-    {
-        string _secretKey = GetSecretKeyVMSAS("SMas$#@$20@4/*/lsn-diem-danh-app-client", key, keyIV, schoolCode);
 
-        var api = string.Format("https://gateway.vtsmas.vn/api/hoc-tap/diem-danh-hoc-sinh/lay-danh-sach-hoc-sinh-diem-danh-thiet-bi");
-        var parameter = new StringContent(JsonConvert.SerializeObject(new
-        {
-            secretKey = _secretKey,
-            schoolCode
 
-        }), Encoding.UTF8, "application/json");
-        using (HttpClient client = new HttpClient())
-        {
-            //client.DefaultRequestHeaders.Accept.Clear();
-            //client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _accessToken.access_token);
 
-            var result = await client.PostAsync(api, parameter);
-            if (result.IsSuccessStatusCode)
-            {
-                var data = await result.Content.ReadAsStringAsync();
-                var retval = JsonConvert.DeserializeObject<StudentResponse1>(data);
-                return retval;
-            }
-            else
-            {
-                return new StudentResponse1()
-                {
-                    isSuccess = false,
-                    message = await result.Content.ReadAsStringAsync(),
-                };
-            }
-        }
-    }
-    public static string EncryptStringVSMAS(string plaintext, byte[] key, byte[] iv)
-    {
-        using (Aes aes = Aes.Create())
-        {
-            aes.Key = key;
-            aes.IV = iv;
-            aes.Mode = CipherMode.CBC;
-            aes.Padding = PaddingMode.PKCS7;
 
-            using (ICryptoTransform encryptor = aes.CreateEncryptor())
-            {
-                byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
-                byte[] ciphertextBytes = encryptor.TransformFinalBlock(plaintextBytes, 0, plaintextBytes.Length);
-                return Convert.ToBase64String(ciphertextBytes);
-            }
-        }
-    }
-    public static string GetSecretKeyVMSAS(string secretKey, string keyHas, string keyIV, string schoolCode)
-    {
-        TimeZoneInfo timezone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); // UTC+7 (Indochina Time)
-        DateTime currentDateTime = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
-
-        string dateTimeFormatted = currentDateTime.ToString("yyyy-MM-dd HH:mm:ss");
-        // $plaintext cần phải đúng định dạng <SecretKey>||<Mã trường CSDL>||<Ngày hiện tại> ví dụ: “Abc@123||TH00001||2024-07-30 HH:mm:ss”
-        // Ngày hiện tại được tính là ngày của thời điểm call api, định dạng yyyy-MM-dd HH:mm:ss
-        // Bắt buộc truyền đúng plaintext sau đó encrypt plaintext để có kết quả đầu ra
-        // SecretKey sẽ được cấp thông qua đầu mối tích hợp
-
-        string plaintext = $"{secretKey}||{schoolCode}||{dateTimeFormatted}";
-
-        byte[] key = Convert.FromBase64String(keyHas);
-        byte[] iv = Convert.FromBase64String(keyIV);
-        string encryptedString = EncryptStringVSMAS(plaintext, key, iv);
-
-        return encryptedString;
-    }
 }
