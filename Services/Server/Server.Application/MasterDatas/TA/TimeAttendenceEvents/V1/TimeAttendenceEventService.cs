@@ -200,7 +200,7 @@ public partial class TimeAttendenceEventService
 
 
                 if (addEvent)
-                    _dbContext.TimeAttendenceEvent.Add(time);
+                    await _dbContext.TimeAttendenceEvent.AddAsync(time);
                 else
                     _dbContext.TimeAttendenceEvent.Update(time);
 
