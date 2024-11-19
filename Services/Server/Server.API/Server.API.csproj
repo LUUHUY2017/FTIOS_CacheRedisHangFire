@@ -120,8 +120,6 @@
 
     <Compile Include="APIs\Data\Students\V1\Controllers\StudentController.cs" />
 
-    <Compile Include="APIs\Data\StudentSmas\V1\Controllers\StudentSmasController.cs" />
-
     <Compile Include="APIs\Data\Lanes\V1\Controllers\LaneController.cs" />
     <Compile Include="APIs\Data\Devices\V1\Controllers\DeviceController.cs" />
     <Compile Include="APIs\Data\Organizations\V1\Controllers\OrganizationController.cs" />
@@ -137,7 +135,6 @@
     <Compile Include="APIs\Data\ScheduleSendMails\V1\Responses\ScheduleSendEmailResponse.cs" />
     <Compile Include="APIs\Data\SendEmails\V1\Controllers\SendEmailController.cs" />
     <Compile Include="APIs\Data\SendEmails\V1\Controllers\SendEmailLogController.cs" />
-    <Compile Include="APIs\Data\StudentSmas\V1\Requests\ClassSearchRequest.cs" />
     <Compile Include="APIs\Data\SyncDeviceServers\V1\Controllers\SyncDeviceServerController.cs" />
 
     <Compile Include="APIs\Data\TimeConfigs\V1\Controllers\TimeConfigController.cs" />

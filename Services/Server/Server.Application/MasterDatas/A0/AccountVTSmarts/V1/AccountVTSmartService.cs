@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.A0;
 using Server.Core.Identity.Entities;
@@ -15,18 +14,15 @@ public sealed class AccountVTSmartService
 {
     private readonly UserManager<ApplicationUser> _userMgr;
     private readonly MasterDataDbContext _dbContext;
-    private readonly SmartService _smartService;
     public string UserId { get; set; }
 
     public AccountVTSmartService(
         UserManager<ApplicationUser> userMgr,
-        MasterDataDbContext dbContext,
-        SmartService smartService
+        MasterDataDbContext dbContext
         )
     {
         _userMgr = userMgr;
         _dbContext = dbContext;
-        _smartService = smartService;
     }
 
     public static string urlServerName = "https://gateway.vtsmas.vn";

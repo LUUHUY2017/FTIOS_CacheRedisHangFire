@@ -233,6 +233,7 @@ public partial class TimeAttendenceSyncService
             var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
             Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
 
+
             if (res == null || !res.IsSuccess)
                 return new Result<TimeAttendenceEvent>($"Lỗi đồng bộ: Đồng bộ không thành công", false);
 
@@ -271,6 +272,8 @@ public partial class TimeAttendenceSyncService
                 Logger.Error(ext);
             }
             await _dbContext.SaveChangesAsync();
+
+
 
             return new Result<TimeAttendenceEvent>($"Đồng bộ thành công", true);
         }
