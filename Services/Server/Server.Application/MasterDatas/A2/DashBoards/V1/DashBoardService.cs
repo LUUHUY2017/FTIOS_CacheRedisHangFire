@@ -1,8 +1,13 @@
 ﻿using AutoMapper;
+using IdentityServer4.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Server.Application.CronJobs.Params;
+using Server.Application.MasterDatas.A2.DashBoards.V1.Models.Devices;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.SendEmail;
+using Server.Application.MasterDatas.A2.Devices.Models.Commons;
 using Server.Core.Interfaces.A2.SendEmails;
 using Server.Infrastructure.Datas.MasterData;
+using Shared.Core;
 using Shared.Core.Commons;
 using Shared.Core.Loggers;
 
@@ -30,13 +35,14 @@ public class DashBoardService
         _sendEmailLogRepository = sendEmailLogRepository;
     }
 
-    public async Task<Result<TotalSendEmailModel>> GetToTalSendEmail(DateTime? dateTimeFilter)
+    //Send Email
+    public async Task<Result<TotalSendEmailModel>> GetToTalSendEmail()
     {
         try
         {
             var dataSendEmail = await _dbContext.SendEmail
                                     .Where(x => (x.Actived == true)
-                                            && (dateTimeFilter != null ? ((DateTime)dateTimeFilter).Date == ((DateTime)x.TimeSent).Date : true)
+                                            && (DateTime.Now.Date == ((DateTime)x.TimeSent).Date)
                                     )
                                     .ToListAsync();
             var data = new TotalSendEmailModel()
@@ -49,8 +55,94 @@ public class DashBoardService
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            //Logger.Error(ex);
             return new Result<TotalSendEmailModel>(null, $"Có lỗi: {ex.Message}", false); 
+        }
+    }
+
+    //Device
+    public async Task<Result<List<TotalDeviceModel>>> GetToTalDevice(DateTime? dateTimeFilter)
+    {
+        try
+        {
+            var dataDevice = await (from d in _dbContext.Device
+                                    join o in _dbContext.Organization
+                                    on d.OrganizationId equals o.Id
+                                    where d.Actived == true
+                                    group d by new { o.Id, o.OrganizationName } into g
+                                    select new TotalDeviceModel
+                                    {
+                                        OrganizationId = g.Key.Id,
+                                        OrganizationName = g.Key.OrganizationName,
+                                        TotalSchool = 1, 
+                                        TotalDevice = g.Count(), 
+                                        TotalOnline = g.Count(x => x.ConnectionStatus == true), 
+                                        TotalOffline = g.Count(x => x.ConnectionStatus != true) 
+                                    })
+                                    .ToListAsync();
+
+            return new Result<List<TotalDeviceModel>> (dataDevice.OrderBy(x => x.OrganizationName).ToList(), $"Thành công!", true);
+        }
+        catch (Exception ex)
+        {
+            //Logger.Error(ex);
+            return new Result<List<TotalDeviceModel>> (null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
+    public async Task<Result<List<TotalDeviceOrgModel>>> GetToTalDeviceOrg(string orgId)
+    {
+        try
+        {
+            var dataDevice = await (from d in _dbContext.Device
+                                    join o in _dbContext.Organization
+                                    on d.OrganizationId equals o.Id
+                                    where (d.Actived == true && d.OrganizationId == orgId)
+                                    group d by new { o.Id, o.OrganizationName } into g
+                                    select new TotalDeviceOrgModel
+                                    {
+                                        OrganizationId = g.Key.Id,
+                                        OrganizationName = g.Key.OrganizationName,
+                                        TotalDevice = g.Count(),
+                                        TotalHN = g.Count(x => x.DeviceModel == DeviceBrandConst.Hanet),
+                                        TotalZK = g.Count(x => x.DeviceModel == DeviceBrandConst.ZKTeco),
+                                    })
+                                    .ToListAsync();
+
+            return new Result<List<TotalDeviceOrgModel>>(dataDevice, $"Thành công!", true);
+        }
+        catch (Exception ex)
+        {
+            //Logger.Error(ex);
+            return new Result<List<TotalDeviceOrgModel>>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
+    public async Task<Result<List<DashBoardDevice>>> GetDeviceForStatus(DBDeviceFilter filter)
+    {
+        try
+        {
+            var status = filter.Status == "1";
+            var dataDevice = await (from d in _dbContext.Device
+                                    join o in _dbContext.Organization
+                                    on d.OrganizationId equals o.Id
+                                    where (d.Actived == true
+                                        && ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? d.OrganizationId == filter.OrganizationId : true)
+                                        && ((!string.IsNullOrEmpty(filter.DeviceModel) && filter.DeviceModel != "0") ? d.DeviceModel == filter.DeviceModel : true)
+                                        && ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable != "device_name") ? d.DeviceName.Contains(filter.Key) : true)
+                                        && ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable != "device_serial") ? d.SerialNumber.Contains(filter.Key) : true)
+                                        && ((!string.IsNullOrEmpty(filter.Status)) ? d.ConnectionStatus == status : true)
+                                        )
+                                    select new DashBoardDevice(d, o)
+                                    )
+                                    .ToListAsync();
+
+            return new Result<List<DashBoardDevice>>(dataDevice.OrderBy(x => x.OrganizationName).ToList(), $"Thành công!", true);
+        }
+        catch (Exception ex)
+        {
+            //Logger.Error(ex);
+            return new Result<List<DashBoardDevice>>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
 }
