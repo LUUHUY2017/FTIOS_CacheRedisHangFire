@@ -140,25 +140,17 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     await AddCommand(rB_ServerRequest, command);
                 }
 
-                //Kiểm tra thiết bị có online
-                //var device = await _deviceCacheService.Get(sn);
-
-                //nếu thiết bị online
-                // if (device.online_status == true)
+                //Thêm lệnh vào caches
+                await _deviceCommandCacheService.Save(command);
+                //Thêm lệnh ảnh nếu có
+                if (command2 != null)
                 {
-                    //Thêm lệnh vào caches
-                    await _deviceCommandCacheService.Save(command);
-                    //Thêm lệnh ảnh nếu có
-                    if (command2 != null)
-                    {
-                        await _deviceCommandCacheService.Save(command2);
-                    }
+                    await _deviceCommandCacheService.Save(command2);
                 }
             }
             catch (Exception e)
             {
-                Logger.Error(e.Message);
-                throw;
+                Logger.Error(e);
             }
         }
         public async Task SaveUserInfo(TA_PersonInfo tA_Person)

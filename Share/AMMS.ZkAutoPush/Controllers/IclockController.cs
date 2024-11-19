@@ -174,10 +174,13 @@ public class IclockController : ControllerBase
             if (thietBiUpdate != null)
             {
                 thietBiUpdate.last_activity = DateTime.Now;
+                //Thiết bị online
                 if (thietBiUpdate.online_status == false)
                 {
                     thietBiUpdate.time_online = DateTime.Now;
                     thietBiUpdate.online_status = true;
+                    //Lấy lại lệnh sau khi online
+                    await _deviceCommandCacheService.AddCommandNotRuning(sn);
                 }
                 await _deviceCacheService.Save(thietBiUpdate);
 
