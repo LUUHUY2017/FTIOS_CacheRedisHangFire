@@ -108,6 +108,8 @@
 
     <Compile Include="APIs\Data\AttendanceTimeConfigs\V1\Controllers\AttendanceTimeConfigController.cs" />
 
+    <Compile Include="APIs\Data\ClassRooms\V1\Controllers\ClassRoomController.cs" />
+
     <Compile Include="APIs\Data\ScheduleJobs\V1\Controllers\ScheduleJobLogController.cs" />
 
     <Compile Include="APIs\Data\ScheduleJobs\V1\Controllers\ScheduleJobController.cs" />
@@ -117,8 +119,6 @@
     <Compile Include="APIs\Data\ScheduleSendMails\V1\Mappers\AutoMappers.cs" />
 
     <Compile Include="APIs\Data\Students\V1\Controllers\StudentController.cs" />
-
-    <Compile Include="APIs\Data\StudentSmas\V1\Controllers\StudentSmasController.cs" />
 
     <Compile Include="APIs\Data\Lanes\V1\Controllers\LaneController.cs" />
     <Compile Include="APIs\Data\Devices\V1\Controllers\DeviceController.cs" />
@@ -135,7 +135,6 @@
     <Compile Include="APIs\Data\ScheduleSendMails\V1\Responses\ScheduleSendEmailResponse.cs" />
     <Compile Include="APIs\Data\SendEmails\V1\Controllers\SendEmailController.cs" />
     <Compile Include="APIs\Data\SendEmails\V1\Controllers\SendEmailLogController.cs" />
-    <Compile Include="APIs\Data\StudentSmas\V1\Requests\ClassSearchRequest.cs" />
     <Compile Include="APIs\Data\SyncDeviceServers\V1\Controllers\SyncDeviceServerController.cs" />
 
     <Compile Include="APIs\Data\TimeConfigs\V1\Controllers\TimeConfigController.cs" />
@@ -177,6 +176,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="APIs\Data\ClassRoomYears\V1\Requests\" />
+    <Folder Include="APIs\Data\Schoolyears\V1\Requests\" />
+    <Folder Include="APIs\Data\ClassRooms\V1\Requests\" />
     <Folder Include="APIs\Data\ScheduleJobs\V1\Responses\" />
     <Folder Include="APIs\Data\Students\V1\Requests\" />
     <Folder Include="APIs\Data\SyncDeviceServers\V1\Requests\" />
@@ -198,6 +200,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Areas\Managers\DashBoards\V1\Views\DBDevice1.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="Areas\Managers\OrganizationsAdmin\V1\Views\Index.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

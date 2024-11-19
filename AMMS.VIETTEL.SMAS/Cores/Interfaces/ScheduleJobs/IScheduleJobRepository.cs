@@ -1,4 +1,5 @@
 ﻿using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
+using AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs.Reponses;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs.Requests;
 using Shared.Core.Commons;
 

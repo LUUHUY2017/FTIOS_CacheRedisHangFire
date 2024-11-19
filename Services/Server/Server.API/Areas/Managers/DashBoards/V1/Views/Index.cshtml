@@ -35,14 +35,20 @@
         <div class="container mt-4">
             <div class="row">
                 <!-- Cột 1 -->
-                <div class="col-md-4 p-3 border">
+                <div class="col-md-6 col-lg-4 border">
                     @* <h5>Column 1</h5>
                     <p>Content for the first column.</p> *@
                     @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBSendEmail.cshtml")
+                    @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBDevice1.cshtml")
+                </div>
+
+                <!-- Cột 2 -->
+                <div class="col-md-6 col-lg-4 border">
+                    @* <h5>Column 1</h5>
+                    <p>Content for the first column.</p> *@
                 </div>
             </div>
         </div>
-                            
     </div>
 
     @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")

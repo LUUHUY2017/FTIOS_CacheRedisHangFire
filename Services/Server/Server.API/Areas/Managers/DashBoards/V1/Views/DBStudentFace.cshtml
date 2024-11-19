@@ -1,0 +1,115 @@
+﻿<!--StudentFace-->
+<div class="card shadow-sm" id="_dBStudentFace">
+    <div class="card-body">
+        <!--Tilte-->
+        <h2 class="text-start">Đồng bộ khuôn mặt</h2>
+        <div class="row mt-3">
+            <!-- Số lượng học sinh -->
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Số lượng học sinh</span>
+                <span class="dots"></span>
+                <span class="fw-bold">{{item.totalDevice}}</span>
+            </div>
+            <!-- Số lượng học sinh đã có khuôn mặt-->
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>Số học sinh đã có khuôn mặt</span>
+                <span class="dots"></span>
+                <span>
+                    <span class="fw-bold text-success">{{item.totalZK}}</span>
+                    ({{(item.totalZK / item.totalDevice * 100).toFixed(2)}}%)
+                </span>
+            </div>
+            <!-- Số lượng học sinh chưa có khuôn mặt-->
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>Số học sinh chưa có khuôn mặt</span>
+                <span class="dots"></span>
+                <span>
+                    <span class="fw-bold text-danger">{{item.totalHN}}</span>
+                    ({{(item.totalHN / item.totalDevice * 100).toFixed(2)}}%)
+                </span>
+            </div>
+            
+            <!-- Nút See More -->
+            <div class="col text-start mt-2">
+                <a href="/V1/MonitorDevice" class="text-end">Xem thêm</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    var _dBStudentFace = new Vue({
+        el: '#_dBStudentFace',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            columns: [],
+            data: [],
+            
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                sortable: true,
+                searchAlign: 'right',
+                paginationHAlign: 'left',
+                paginationDetailHAlign: 'right',
+                pageSize: 25,
+                pageList: [10, 25, 50, 100, 200],
+            },
+
+            filter: {
+                columnTable: "",
+                actived: "1",
+                key: "",
+                organizationId: "0",
+                export: "0",
+                dateTimeFilter: formatDateTime(new Date()),
+                startDate: formatDateTime(new Date()),
+                endDate: formatDateTime(new Date()),
+            },
+
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                editAction: false,
+                infoAction: false,
+                bearerAuthorization: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+
+            data_Total: {},
+            item: {},
+            combobox: { organizations: [], },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.get('/api/v1/DashBoard/GetToTalDevice1', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+                    $('.loader').delay(100).hide(0);
+
+                    if (response.data.succeeded) {
+                        this.item = response.data.data;
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+
+
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                });
+            },
+        },
+        mounted() {
+            this.loadData();
+        },
+    })
+</script>

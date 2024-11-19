@@ -1,0 +1,373 @@
+﻿
+<div class="card shadow-sm" id="webui_dBDevicedashboard">
+    <div class="card-body">
+        <h2 class="text-start">Thống kê thiết bị</h2>
+        <div style="max-height: 300px; overflow-y: auto;">
+            <table class="text-center border mb-2 mx-auto">
+                <tr>
+                    <th class="p-2 border text-start border">Trường học</th>
+                    <th class="p-2 border text-start">Thiết bị</th>
+                    <th class="p-2 border text-start">Online</th>
+                    <th class="p-2 border text-start">Offline</th>
+                </tr>
+                <tr class="fw-bold">
+                    <td v-on:click="showDevicesOrgPopup(null)" class="p-2 border text-start" style="cursor: pointer;">{{data_sum.totalSchool}}</td>
+                    <td v-on:click="onShowDevicesTotalDetailPopup('0', '')" class="p-2 border text-start" style="cursor: pointer;">{{data_sum.totalDevice}}</td>
+                    <td v-on:click="onShowDevicesTotalDetailPopup('0', '1')" class="p-2 border text-start text-success" style="cursor: pointer;">{{data_sum.totalOnline}}</td>
+                    <td v-on:click="onShowDevicesTotalDetailPopup('0', '0')" class="p-2 border text-start text-danger" style="cursor: pointer;">{{data_sum.totalOffline}}</td>
+                </tr>
+                <tr v-for="(itemD, index) in data" :key="index">
+                    <td v-on:click="showDevicesOrgPopup(itemD.organizationId)" class="p-2 border text-start" style="cursor: pointer;">{{itemD.organizationName}}</td>
+                    <td v-on:click="onShowDevicesTotalDetailPopup(itemD.organizationId, '')" class="p-2 border text-start" style="cursor: pointer;">{{itemD.totalDevice}}</td>
+                    <td v-on:click="onShowDevicesTotalDetailPopup(itemD.organizationId, '1')" class="p-2 border text-success text-start" style="cursor: pointer;">{{itemD.totalOnline}}</td>
+                    <td v-on:click="onShowDevicesTotalDetailPopup(itemD.organizationId, '0')" class="p-2 border text-danger text-start" style="cursor: pointer;">{{itemD.totalOffline}}</td>
+                </tr>
+            </table>
+        </div>
+        <a href="/V1/MonitorDevice" class="text-start mt-3">Xem thêm</a>
+    </div>
+
+    <div class="modal fade" id="DevicesOrgInfo" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">Trường {{data_DeviceModel[0]?.organizationName}}</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <bootstrap-table :columns="column_DeviceModel" :data="data_DeviceModel" :options="options"></bootstrap-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="DevicesTotalDetailPopup" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">Thiết bị</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <form v-on:submit.prevent="showDevicesTotalDetailPopup(filter_deviceClickCell.organizationId, filter_deviceClickCell.status)">
+                            <div class="row mb-3">
+                                <div class="col-lg-3">
+                                    <label class="form-label">Trường học</label>
+                                    <select id="organizationF_clickCell" data-dropdown-parent="#DevicesTotalDetailPopup" class="form-control select" v-model:value="filter_deviceClickCell.organizationId">
+                                        <option v-for="option in combobox.organizations" v-bind:value="option.id">
+                                            {{ option.organizationName }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label class="form-label">Nhãn hiệu</label>
+                                    <select id="deviceBrandF_clickCell" data-dropdown-parent="#DevicesTotalDetailPopup" class="form-control select" v-model:value="filter_deviceClickCell.deviceModel">
+                                        <option v-for="option in combobox.deviceBrands" v-bind:value="option.id">
+                                            {{ option.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2">
+                                    <label class="form-label">Trạng thái</label>
+                                    <select class="form-select" v-model:value="filter_deviceClickCell.status">
+                                        <option value="">Tất cả</option>
+                                        <option value="1">Online</option>
+                                        <option value="0">Offline</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2">
+                                    <label class="form-label">Tìm kiếm theo</label>
+                                    <select class="form-select" v-model:value="filter_deviceClickCell.columnTable">
+                                        <option value="device_name">Tên thiết bị</option>
+                                        <option value="device_serial">Số sê ri</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label class="form-label">Từ khóa tìm kiếm</label>
+                                    <input type="text" id="key" name="key" placeholder="Nhập từ khóa tìm kiếm" class="form-control" v-model="filter_deviceClickCell.key">
+                                </div>
+                                <div class="col-lg-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
+                                </div>
+
+                            </div>
+                        </form>
+                        <bootstrap-table :columns="column_clickCell" :data="data_clickCell" :options="options"></bootstrap-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="DevicesOrgPopup" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">Tổng quan</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <bootstrap-table :columns="column_DeviceOrg" :data="data_DeviceOrg" :options="options"></bootstrap-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#organizationF_clickCell').on("change", function () {
+            _dBDevice.filter_deviceClickCell.organizationId = $(this).val() || "0";
+        });
+        $('#deviceBrandF_clickCell').on("change", function () {
+            _dBDevice.filter_deviceClickCell.deviceModel = $(this).val() || "0";
+        });
+    });
+    var _dBDevice = new Vue({
+        el: '#webui_dBDevicedashboard',
+        components: {
+            'BootstrapTable': BootstrapTable
+        },
+        data: {
+            data: [],
+            data_sum: {
+                totalSchool: 0,
+                totalDevice: 0,
+                totalOnline: 0,
+                totalOffline: 0,
+            },
+            columns: [],
+            filter: {
+                dateTimeFilter: formatDateTime(new Date()),
+            },
+
+            column_DeviceModel: [
+                {
+                    title: 'Trường học',
+                    field: 'organizationName',
+                    sortable: true,
+                    align: 'left',
+                },
+                {
+                    title: 'Số lượng thiết bị',
+                    field: 'totalDevice',
+                    sortable: true,
+                },
+                {
+                    title: 'Thiết bị Hanet',
+                    field: 'totalHN',
+                    sortable: true,
+                },
+                {
+                    title: 'Thiết bị ZKTeco',
+                    field: 'totalZK',
+                    sortable: true,
+                },
+            ],
+            data_DeviceModel: [],
+            
+            column_DeviceOrg: [
+                {
+                    title: 'Trường học',
+                    field: 'organizationName',
+                    sortable: true,
+                    align: 'left',
+                },
+                {
+                    title: 'Số lượng thiết bị',
+                    field: 'totalDevice',
+                    sortable: true,
+                },
+                {
+                    title: 'Online',
+                    field: 'totalOnline',
+                    sortable: true,
+                },
+                {
+                    title: 'Offline',
+                    field: 'totalOffline',
+                    sortable: true,
+                },
+            ],
+            data_DeviceOrg: [],
+
+            options: {
+                search: true,
+                pagination: true,
+                showExtendedPagination: true,
+                showExport: false,
+                sortable: true,
+                groupBy: true,
+                paginationHAlign: 'left',
+                paginationDetailHAlign: 'right',
+                pageSize: 10,
+                pageList: [10, 25, 50, 100, 200],
+            },
+
+            column_clickCell: [
+                {
+                    title: 'Trường học ',
+                    field: 'organizationName',
+                    formatter: (value, row) => {
+                        return `<strong>${value}</strong>`;
+                    },
+                    align: 'left',
+                    sortable: true,
+                },
+                {
+                    title: "Số sê ri",
+                    field: 'serialNumber',
+                    sortable: true,
+                },
+                {
+                    title: "Tên thiết bị",
+                    field: "deviceName",
+                    sortable: true,
+                },
+                {
+                    title: "Nhãn hiệu",
+                    field: "deviceModel",
+                    sortable: true,
+                },
+                {
+                    title: 'Trạng thái',
+                    field: 'connectionStatus',
+                    sortable: true,
+                    formatter: (data) => {
+                        return `<span class='fw-bold' style="color: ${data === true ? 'green' : 'red'};">${data === true ? 'Online' : 'Offline'}</span>`;
+                    }
+                },
+            ],
+            data_clickCell: [],
+            filter_deviceClickCell: {
+                columnTable: "device_name",
+                organizationId: "0",
+                deviceModel: "0",
+                status: "",
+                key: "",
+                export: "0",
+            },
+
+            object: {
+                dateNow: formatDateTime(new Date()),
+                form_tile: '',
+                editAction: false,
+                infoAction: false,
+                bearerAuthorization: {
+                    headers: { Authorization: `Bearer @Model`, 'Content-Type': 'application/json' }
+                }
+            },
+
+            combobox: {
+                organizations: [],
+                deviceBrands: [],
+            },
+        },
+        methods: {
+            loadData() {
+                $('.loader').show();
+                axios.post('/api/v1/DashBoard/GetToTalDevice', this.filter, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+                    $('.loader').delay(100).hide(0);
+                    if (response.data.succeeded) {
+                        this.data = response.data.data;
+                        this.data_sum = {
+                            totalSchool: _dBDevice.data.reduce((sum, item) => sum + (item.totalSchool || 0), 0),
+                            totalDevice: _dBDevice.data.reduce((sum, item) => sum + (item.totalDevice || 0), 0),
+                            totalOnline: _dBDevice.data.reduce((sum, item) => sum + (item.totalOnline || 0), 0),
+                            totalOffline: _dBDevice.data.reduce((sum, item) => sum + (item.totalOffline || 0), 0),
+                        }
+
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+
+            onShowDevicesTotalDetailPopup(orgId, status) {
+                this.filter_deviceClickCell.key = "";
+                this.filter_deviceClickCell.deviceModel = "";
+                this.filter_deviceClickCell.columnTable = "device_name";
+                this.showDevicesTotalDetailPopup(orgId, status);
+            },
+            showDevicesTotalDetailPopup(orgId, status) {
+                $('.loader').show();
+                this.filter_deviceClickCell.organizationId = orgId;
+                this.filter_deviceClickCell.status = status;
+                console.log(this.filter_deviceClickCell);
+                $('#organizationF_clickCell').val(orgId).trigger('change');
+                axios.post('/api/v1/DashBoard/GetDeviceForStatus', this.filter_deviceClickCell, this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.data_clickCell = [...response.data.data];
+
+                    $('.loader').delay(100).hide(0);
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('DevicesTotalDetailPopup')).show();
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
+                });
+            },
+            showDevicesOrgPopup(orgId) {
+                $('.loader').show();
+                if (orgId === null) {
+                    this.data_DeviceOrg = [...this.data];
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('DevicesOrgPopup')).show();
+                    $('.loader').delay(100).hide(0);
+                }
+                else {
+                    axios.get('/api/v1/DashBoard/GetToTalDeviceOrg?orgId=' + orgId, this.object.bearerAuthorization).then(response => {
+                        if (response.request.responseURL.includes('~/Account/Login')) {
+                            window.location = window.location.href;
+                        }
+
+                        this.data_DeviceModel = [...response.data.data];
+                        $('.loader').delay(100).hide(0);
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('DevicesOrgInfo')).show();
+                    }).catch(error => {
+                        $('.loader').delay(100).hide(0);
+                        console.log(error);
+                    });
+                }
+            },
+            loadCombox() {
+                axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.organizations = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
+                    
+                }).catch(error => {
+                    console.warn(error);
+                });
+
+                axios.get('/api/v1/device/GetDeviceBrands', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.deviceBrands = [{ id: "0", name: "Tất cả" }, ...response.data.data];
+                }).catch(error => {
+                    console.warn(error);
+                });
+            },
+        },
+        mounted() {
+            this.loadData();
+            this.loadCombox();
+        },
+    })
+</script>
+

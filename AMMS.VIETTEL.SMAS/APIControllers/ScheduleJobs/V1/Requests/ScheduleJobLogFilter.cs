@@ -1,4 +1,4 @@
-﻿namespace AMMS.VIETTEL.SMAS.APIControllers.ScheduleJobs.V1;
+﻿namespace Server.API.APIs.Data.ScheduleJobs.V1.Requests;
 
 public class ScheduleJobLogFilter
 {

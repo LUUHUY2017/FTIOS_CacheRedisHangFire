@@ -1,12 +1,11 @@
 ﻿using AMMS.DeviceData.RabbitMq;
-using AMMS.VIETTEL.SMAS.Applications.Services.Students.V1.Model;
 using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Persons;
 using AMMS.VIETTEL.SMAS.Cores.Interfaces.Students;
 using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using AutoMapper;
 using EventBus.Messages;
-using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Shared.Core.Commons;
 using Shared.Core.Loggers;
@@ -16,53 +15,46 @@ using System.Globalization;
 
 namespace AMMS.VIETTEL.SMAS.Applications.Services.Students.V1;
 
+
 public class StudentService
 {
     private readonly IMapper _map;
     private readonly IEventBusAdapter _eventBusAdapter;
-    //private readonly ISignalRClientService _signalRClientService;
+    private readonly ISignalRClientService _signalRClientService;
     private readonly IConfiguration _configuration;
 
     private readonly IPersonRepository _personRepository;
     private readonly IStudentRepository _studentRepository;
 
-    private readonly IViettelDbContext _dbContext;
+    private readonly ViettelDbContext _dbContext;
 
     public StudentService(
-        IBus bus,
         IMapper map,
         IConfiguration configuration,
         IEventBusAdapter eventBusAdapter,
-        //ISignalRClientService signalRClientService,
+        ISignalRClientService signalRClientService,
+
         IPersonRepository personRepository,
         IStudentRepository studentRepository,
-        IViettelDbContext dbContext
+        ViettelDbContext dbContext
 
         )
     {
         _map = map;
         _configuration = configuration;
         _eventBusAdapter = eventBusAdapter;
-        //_signalRClientService = signalRClientService;
+        _signalRClientService = signalRClientService;
 
         _personRepository = personRepository;
         _studentRepository = studentRepository;
-
-
         _dbContext = dbContext;
     }
 
-    /// <summary>
-    /// RabbitMQ: Gửi thông tin đồng bộ học sinh  qua RabbitMQ
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    public async Task<Result<RB_ServerRequest>> PushPersonByEventBusAsync(Student data)
+    public async Task<Result<RB_ServerRequest>> PushStudentsByEventBusAsync(Student data)
     {
         try
         {
-            var retval = await SyncToDevice(data);
-
+            var retval = await Sync1Student2Devices(data);
             if (retval.Any())
             {
                 foreach (var item in retval)
@@ -76,163 +68,9 @@ public class StudentService
         catch (Exception e)
         {
             Logger.Error(e);
-            return new Result<RB_ServerRequest>($"Gửi email lỗi: {e.Message}", false);
+            return new Result<RB_ServerRequest>($"Lỗi: {e.Message}", false);
         }
     }
-
-    /// <summary>
-    /// Lưu thông tin học sinh vào AMMS
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    public async Task<Result<DtoStudentRequest>> SaveFromWeb(DtoStudentRequest request)
-    {
-        try
-        {
-            var stu = _map.Map<Student>(request);
-            var res = await _studentRepository.SaveDataAsync(stu);
-            if (res.Succeeded)
-            {
-                var per = new Person()
-                {
-                    Id = res.Data.Id,
-                    Actived = true,
-                    PersonCode = request.StudentCode,
-                    FirstName = request.Name,
-                    LastName = request.FullName,
-                    CitizenId = request.IdentifyNumber,
-                };
-                var data = await _personRepository.SaveAsync(per);
-            }
-
-            try
-            {
-                DateTime dateStudent = DateTime.Now;
-                string dateString = stu.DateOfBirth;
-                string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
-                bool success = DateTime.TryParseExact(
-                    dateString,
-                    formats,
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.None,
-                    out dateStudent
-                );
-
-                var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
-                var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
-
-                string imageName = stu.Id + ".jpg";
-                string fileName = imageFullFolder + imageName;
-
-                if (!string.IsNullOrWhiteSpace(request.ImageBase64))
-                {
-                    Image img = Common.Base64ToImage(request.ImageBase64);
-                    if (File.Exists(fileName))
-                        File.Delete(fileName);
-                    //img.Save(fileName);
-                    Common.SaveJpeg1(fileName, img, 100);
-                }
-                else
-                {
-                    if (!string.IsNullOrWhiteSpace(request.ImageSrc))
-                    {
-                        await Common.DownloadAndSaveImage(request.ImageSrc, fileName);
-                        request.ImageBase64 = Common.ConvertFileImageToBase64(fileName);
-                    }
-                }
-                await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
-
-            stu.ImageSrc = request.ImageBase64;
-            var revt = await PushPersonByEventBusAsync(stu);
-            return new Result<DtoStudentRequest>($"Cập nhật thành công", true);
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e);
-            return new Result<DtoStudentRequest>($"Gửi email lỗi: {e.Message}", false);
-        }
-
-    }
-
-    /// <summary>
-    /// Lấy thông tin thiết bị đồng bộ
-    /// </summary>
-    /// <param name="stu"></param>
-    /// <returns></returns>
-    public async Task<List<RB_ServerRequest>> SyncToDevice(Student stu)
-    {
-        List<PersonSynToDevice> list = new List<PersonSynToDevice>();
-        List<RB_ServerRequest> list_Sync = new List<RB_ServerRequest>();
-
-        try
-        {
-            // orrgniaztionId
-            var _devis = _dbContext.Device.Where(o => o.Actived == true).ToList();
-            if (_devis.Any())
-            {
-                foreach (var device in _devis)
-                {
-                    var item = _dbContext.PersonSynToDevice.FirstOrDefault(o => o.DeviceId == device.Id && o.PersonId == stu.Id);
-                    if (item == null)
-                    {
-                        item = new PersonSynToDevice()
-                        {
-                            DeviceId = device.Id,
-                            PersonId = stu.Id,
-                            SynAction = ServerRequestAction.ActionAdd,
-                            LastModifiedDate = DateTime.Now
-                        };
-                        await _dbContext.PersonSynToDevice.AddAsync(item);
-                    }
-                    else
-                    {
-                        item.SynAction = ServerRequestAction.ActionAdd;
-                        item.SynStatus = null;
-                    }
-                    await _dbContext.SaveChangesAsync();
-                    list.Add(item);
-
-                    var _TA_PersonInfo = new TA_PersonInfo()
-                    {
-                        Id = stu.Id,
-                        DeviceId = device.Id,
-                        DeviceModel = device.DeviceModel,
-                        FisrtName = stu.Name,
-                        FullName = stu.FullName,
-                        PersonCode = stu.StudentCode,
-                        SerialNumber = device.SerialNumber,
-                        UserFace = stu.ImageSrc
-                    };
-                    var param = JsonConvert.SerializeObject(_TA_PersonInfo);
-
-
-                    var list_SyncItem = new RB_ServerRequest()
-                    {
-                        Id = item.Id,
-                        Action = ServerRequestAction.ActionAdd,
-                        SerialNumber = device.SerialNumber,
-                        DeviceId = device.Id,
-                        DeviceModel = device.DeviceModel,
-                        RequestType = ServerRequestType.UserInfo,
-                        RequestParam = param,
-                        SchoolId = device.OrganizationId,
-                    };
-                    list_Sync.Add(list_SyncItem);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-        return list_Sync;
-    }
-
     /// <summary>
     /// Cập nhật trạng thái đồng bộ từ RabbitMQ
     /// </summary>
@@ -243,7 +81,7 @@ public class StudentService
         bool statusSync = false;
         try
         {
-            var _devis = _dbContext.PersonSynToDevice.FirstOrDefault(o => o.Id == request.Id);
+            var _devis = await _dbContext.PersonSynToDevice.FirstOrDefaultAsync(o => o.Id == request.Id);
             if (_devis != null)
             {
                 _devis.SynStatus = request.IsSuccessed;
@@ -261,120 +99,78 @@ public class StudentService
         }
         return statusSync;
     }
-
-
-
-
     /// <summary>
-    /// Lấy danh sách học sinh AMMS
+    /// Lưu thông tin học sinh vào AMMS, ảnh khuôn mặt
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<IQueryable<DtoStudentResponse>> GetAlls(StudentSearchRequest request)
-    {
-        try
-        {
-            var _data = from _do in _dbContext.Student
-
-                        join _la in _dbContext.PersonFace on _do.Id equals _la.PersonId into K
-                        from la in K.DefaultIfEmpty()
-                        orderby _do.CreatedDate descending
-                        select new DtoStudentResponse()
-                        {
-                            Id = _do.Id,
-                            Actived = _do.Actived,
-                            CreatedDate = _do.CreatedDate,
-                            LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
-                            StudentCode = _do.StudentCode,
-                            ReferenceId = _do.ReferenceId,
-
-                            FullName = _do.FullName,
-                            DateOfBirth = _do.DateOfBirth,
-                            GenderCode = _do.GenderCode,
-                            ImageSrc = _do.ImageSrc,
-                            ClassId = _do.ClassId,
-                            ClassName = _do.ClassName,
-                            IsExemptedFull = _do.IsExemptedFull,
-                            StatusCode = _do.StatusCode,
-                            Status = _do.Status,
-                            FullNameOther = _do.FullNameOther,
-                            EthnicCode = _do.EthnicCode,
-                            PolicyTargetCode = _do.PolicyTargetCode,
-                            PriorityEncourageCode = _do.PriorityEncourageCode,
-                            SyncCode = _do.SyncCode,
-                            SyncCodeClass = _do.SyncCodeClass,
-                            IdentifyNumber = _do.IdentifyNumber,
-                            StudentClassId = _do.StudentClassId,
-                            SortOrder = _do.SortOrder,
-                            Name = _do.Name,
-                            SortOrderByClass = _do.SortOrderByClass,
-                            GradeCode = _do.GradeCode,
-                            ImageBase64 = la != null ? !string.IsNullOrWhiteSpace(la.FaceData) ? la.FaceData : null : null
-                        };
-
-            return _data;
-        }
-        catch (Exception ex)
-        {
-            return null;
-        }
-    }
-    public async Task<IQueryable<DtoStudentResponse>> ApplyFilter(IQueryable<DtoStudentResponse> query, FilterItems filter)
-    {
-        switch (filter.PropertyName.ToLower())
-        {
-            case "fullname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.FullName.Contains(filter.Value.Trim()));
-                break;
-            case "studentcode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.StudentCode.Contains(filter.Value.Trim()));
-                break;
-            case "classid":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.ClassId.Contains(filter.Value.Trim()));
-                break;
-            case "classname":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.ClassName.Contains(filter.Value.Trim()));
-                break;
-
-            case "gradecode":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.GradeCode.Contains(filter.Value.Trim()));
-                break;
-
-            case "status":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.Status.Contains(filter.Value.Trim()));
-                break;
-            case "identifynumber":
-                if (filter.Comparison == 0)
-                    query = query.Where(p => p.IdentifyNumber.Contains(filter.Value.Trim()));
-                break;
-
-
-
-            default:
-                break;
-        }
-        return query;
-    }
-
-
-
-
-    public async Task<Result<DtoStudentRequest>> SaveFromService(DtoStudentRequest request)
+    public async Task<Result<DtoStudentRequest>> SaveFromSmasWeb(DtoStudentRequest request)
     {
         try
         {
             var stu = _map.Map<Student>(request);
-            await _studentRepository.SaveDataAsync(stu);
+
+            DateTime dateStudent = DateTime.Now;
+            if (!string.IsNullOrWhiteSpace(stu.DateOfBirth))
+            {
+                string dateString = stu.DateOfBirth;
+                string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
+                bool success = DateTime.TryParseExact(
+                    dateString,
+                    formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out dateStudent
+                );
+            }
+
+            var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
+            var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
+
+            string imageName = stu.Id + ".jpg";
+            string fileName = imageFullFolder + imageName;
+            string folderName = imageFolder + imageName;
+
+
+            if (!string.IsNullOrWhiteSpace(request.ImageSrc))
+            {
+                // Lưu ảnh online
+                await Common.DownloadAndSaveImage(request.ImageSrc, fileName);
+                request.ImageBase64 = Common.ConvertFileImageToBase64(folderName);
+            }
+
+
+            if (!string.IsNullOrWhiteSpace(request.ImageBase64))
+                await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64, folderName);
+
+            stu.ImageSrc = request.ImageBase64;
+            var revt = await PushStudentsByEventBusAsync(stu);
+
+            return new Result<DtoStudentRequest>($"Cập nhật thành công", true);
+        }
+        catch (Exception e)
+        {
+            Logger.Warning(e.Message);
+            return new Result<DtoStudentRequest>($"Lỗi: {e.Message}", false);
+        }
+
+    }
+    /// <summary>
+    /// Lưu thông tin học sinh từ SMAS
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<Result<Student>> SaveFromService(Student request)
+    {
+        try
+        {
+            var res = await _studentRepository.SaveDataAsync(request);
+            if (!res.Succeeded)
+                return new Result<Student>($"Cập nhật không thành công", false);
 
             var per = new Person()
             {
-                Id = request.Id,
+                Id = res.Data.Id,
                 Actived = true,
                 PersonCode = request.StudentCode,
                 FirstName = request.Name,
@@ -382,18 +178,197 @@ public class StudentService
                 CitizenId = request.IdentifyNumber,
             };
             var data = await _personRepository.SaveAsync(per);
+            return new Result<Student>(res.Data, $"Cập nhật thành công", true);
+
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+            return new Result<Student>($"Lỗi: {e.Message}", false);
+        }
+
+    }
+    /// <summary>
+    /// Lưu ảnh học sinh từ Hanet
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<Result<DtoStudentRequest>> SaveImagePerson(TA_PersonInfo request)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(request.PersonCode))
+                return new Result<DtoStudentRequest>($"Phải có mã học sinh", false);
+
+            var stu = await _dbContext.Student.FirstOrDefaultAsync(o => o.StudentCode == request.PersonCode.ToString());
+            if (stu == null)
+                return new Result<DtoStudentRequest>($"Không tìm thấy thông tin học sinh", false);
+
+            var per = await _dbContext.Person.FirstOrDefaultAsync(o => o.Id == stu.Id);
+            if (per == null)
+                return new Result<DtoStudentRequest>($"Không tìm thấy thông tin người", false);
+
+
+            DateTime dateStudent = DateTime.Now;
+
+            if (!string.IsNullOrWhiteSpace(stu.DateOfBirth))
+            {
+                string dateString = stu.DateOfBirth;
+                string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
+                bool success = DateTime.TryParseExact(
+                    dateString,
+                    formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out dateStudent
+                );
+            }
+            var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
+            var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
+
+            string imageName = stu.Id + ".jpg";
+            string fileName = imageFullFolder + imageName;
+            string folderName = imageFolder + imageName;
+
+            if (!string.IsNullOrWhiteSpace(request.UserFace))
+            {
+                Image img = Common.Base64ToImage(request.UserFace);
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+                //img.Save(fileName);
+                Common.SaveJpeg1(fileName, img, 100);
+            }
+            await _personRepository.SaveImageAsync(stu.Id, request.UserFace, folderName);
+
+            //stu.ImageSrc = request.UserFace;
+            //var revt = await PushPersonByEventBusAsync(stu);
+
             return new Result<DtoStudentRequest>($"Cập nhật thành công", true);
         }
         catch (Exception e)
         {
             Logger.Error(e);
-            return new Result<DtoStudentRequest>($"Gửi email lỗi: {e.Message}", false);
+            return new Result<DtoStudentRequest>($"Lỗi: {e.Message}", false);
         }
 
     }
+    /// <summary>
+    /// Lưu thông tin học sinh vào AMMS, ảnh khuôn mặt
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<Result<Student>> SaveImageFromService(Student stu)
+    {
+        try
+        {
+            DateTime dateStudent = DateTime.Now;
+            if (!string.IsNullOrWhiteSpace(stu.DateOfBirth))
+            {
+                string dateString = stu.DateOfBirth;
+                string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
+                bool success = DateTime.TryParseExact(
+                    dateString,
+                    formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out dateStudent
+                );
+            }
+
+            var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
+            var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
+
+            string imageName = stu.Id + ".jpg";
+            string fileName = imageFullFolder + imageName;
+            string folderName = imageFolder + imageName;
+
+
+            if (!string.IsNullOrWhiteSpace(stu.ImageSrc))
+            {
+                // Lưu ảnh online
+                await Common.DownloadAndSaveImage(stu.ImageSrc, fileName);
+                await _personRepository.SaveImageAsync(stu.Id, "", folderName);
+            }
+
+            return new Result<Student>($"Cập nhật thành công", true);
+        }
+        catch (Exception e)
+        {
+            Logger.Warning(e.Message);
+            return new Result<Student>($"Lỗi: {e.Message}", false);
+        }
+    }
+    public async Task<List<RB_ServerRequest>> Sync1Student2Devices(Student stu)
+    {
+        List<RB_ServerRequest> list_Sync = new List<RB_ServerRequest>();
+
+        try
+        {
+            var _devis = _dbContext.Device.Where(o => o.Actived == true && stu.OrganizationId == o.OrganizationId).ToList();
+            if (_devis == null || _devis.Count == 0)
+                return list_Sync;
+
+            foreach (var device in _devis)
+            {
+                var item = await _dbContext.PersonSynToDevice.Where(o => o.DeviceId == device.Id && o.PersonId == stu.Id).FirstOrDefaultAsync();
+
+                if (item == null)
+                {
+                    item = new PersonSynToDevice()
+                    {
+                        DeviceId = device.Id,
+                        OrganizationId = stu.OrganizationId,
+                        PersonId = stu.Id,
+                        SynAction = ServerRequestAction.ActionAdd,
+                        LastModifiedDate = DateTime.Now
+                    };
+                    await _dbContext.PersonSynToDevice.AddAsync(item);
+                }
+                else
+                {
+                    item.SynAction = ServerRequestAction.ActionAdd;
+                    item.OrganizationId = stu.OrganizationId;
+                    item.SynStatus = null;
+                    item.SynFaceStatus = null;
+                    item.SynMessage = null;
+                    item.LastModifiedDate = DateTime.Now;
+                }
+                var _TA_PersonInfo = new TA_PersonInfo()
+                {
+                    Id = stu.Id,
+                    DeviceId = device.Id,
+                    DeviceModel = device.DeviceModel,
+                    FisrtName = stu.Name,
+                    FullName = stu.FullName,
+                    PersonCode = stu.StudentCode,
+                    SerialNumber = device.SerialNumber,
+                    UserFace = stu.ImageSrc
+                };
+                var param = JsonConvert.SerializeObject(_TA_PersonInfo);
+                var list_SyncItem = new RB_ServerRequest()
+                {
+                    Id = item.Id,
+                    Action = ServerRequestAction.ActionAdd,
+                    SerialNumber = device.SerialNumber,
+                    DeviceId = device.Id,
+                    DeviceModel = device.DeviceModel,
+                    RequestType = ServerRequestType.UserInfo,
+                    RequestParam = param,
+                    SchoolId = device.OrganizationId,
+                    RequestId = DateTime.Now.TimeOfDay.Ticks,
+                };
+
+                list_Sync.Add(list_SyncItem);
+            }
+
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return list_Sync;
+    }
 }
-
-
-
 
 

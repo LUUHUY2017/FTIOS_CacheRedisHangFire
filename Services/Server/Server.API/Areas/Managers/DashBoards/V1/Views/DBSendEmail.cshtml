@@ -347,14 +347,11 @@
         methods: {
             loadData() {
                 $('.loader').show();
-                axios.post('/api/v1/DashBoard/GetTotalSendEmail', this.filter.sendEmail, this.object.bearerAuthorization).then(response => {
+                axios.get('/api/v1/DashBoard/GetTotalSendEmail', this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
                     $('.loader').delay(100).hide(0);
-
-                    if (response.status == 302 || response.status == 401)
-                        window.location.href = '/Account/login?ReturnUrl=%2F';
 
                     this.data = [];
                     if (response.data.succeeded) {
