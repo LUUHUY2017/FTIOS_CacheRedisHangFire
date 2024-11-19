@@ -161,7 +161,7 @@ public class ClassRoomRepository : RepositoryBaseMasterData<ClassRoom>, IClassRo
                                    Name = _do.Name,
                                    OrganizationName = or != null ? or.OrganizationName : null,
 
-                               }).OrderBy(o => o.Name).ToListAsync();
+                               }).OrderBy(o => o.OrganizationName).ThenBy(o => o.Name).ToListAsync();
             return _data;
         }
         catch (Exception e)

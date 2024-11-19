@@ -133,6 +133,13 @@ public class StudentClassRoomYearRepository : RepositoryBaseMasterData<StudentCl
             var _data = await (from _do in _db.StudentClassRoomYear
                                join _or in _db.Organization on _do.OrganizationId equals _or.Id into OT
                                from or in OT.DefaultIfEmpty()
+
+                               join _cl in _db.ClassRoom on _do.ClassRoomId equals _cl.Id into OTS
+                               from cl in OTS.DefaultIfEmpty()
+
+                               join _sc in _db.SchoolYear on _do.SchoolYearId equals _sc.Id into OTSS
+                               from sc in OTSS.DefaultIfEmpty()
+
                                where _do.Actived == active
                                  && ((!string.IsNullOrWhiteSpace(request.OrganizationId) && request.OrganizationId != "0") ? _do.OrganizationId == request.OrganizationId : true)
                                  && ((!string.IsNullOrWhiteSpace(request.SchoolYearId) && request.SchoolYearId != "0") ? _do.SchoolYearId == request.SchoolYearId : true)
@@ -144,11 +151,18 @@ public class StudentClassRoomYearRepository : RepositoryBaseMasterData<StudentCl
                                    Actived = _do.Actived,
                                    CreatedDate = _do.CreatedDate,
                                    LastModifiedDate = _do.LastModifiedDate != null ? _do.LastModifiedDate : _do.CreatedDate,
+
+                                   SchoolId = _do.SchoolId,
+                                   ClassRoomId = _do.ClassRoomId,
+                                   SchoolYearId = _do.SchoolYearId,
                                    OrganizationId = _do.OrganizationId,
+
                                    Name = _do.Name,
                                    OrganizationName = or != null ? or.OrganizationName : null,
+                                   SchoolYearName = sc != null ? sc.Name : null,
+                                   ClassRoomName = cl != null ? cl.Name : null,
 
-                               }).OrderBy(o => o.Name).ToListAsync();
+                               }).OrderBy(o => o.OrganizationName).ThenBy(o => o.Name).ToListAsync();
             return _data;
         }
         catch (Exception e)

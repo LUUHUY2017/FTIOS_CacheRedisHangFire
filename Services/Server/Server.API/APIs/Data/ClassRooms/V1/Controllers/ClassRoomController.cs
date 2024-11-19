@@ -37,6 +37,22 @@ public class ClassRoomController : AuthBaseAPIController
 
     }
 
+
+
+    /// <summary>
+    /// Lấy danh sách
+    /// </summary>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpGet("Gets")]
+    public async Task<IActionResult> Gets()
+    {
+        var data = await _ClassRoomRepository.Gets();
+        var items = new Result<List<ClassRoom>>(data, "Thành công", true);
+        return Ok(items);
+    }
+
+
     /// <summary>
     /// Lấy danh sách
     /// </summary>

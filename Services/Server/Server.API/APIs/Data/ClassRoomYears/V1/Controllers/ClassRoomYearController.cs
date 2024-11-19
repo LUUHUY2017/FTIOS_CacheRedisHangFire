@@ -3,7 +3,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Application.MasterDatas.A2.ClassRooms.V1.Models;
+using Server.Application.MasterDatas.A2.ClassRoomYears.V1.Models;
 using Server.Core.Entities.A2;
 using Server.Core.Interfaces.A2.StudentClassRoomYears;
 using Server.Core.Interfaces.A2.StudentClassRoomYears.Requests;
@@ -56,11 +56,12 @@ public class ClassRoomYearController : AuthBaseAPIController
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPut("Edit")]
-    public async Task<ActionResult> Edit(ClassRoomRequest request)
+    public async Task<ActionResult> Edit(ClassRoomYearRequest request)
     {
         try
         {
             var model = _mapper.Map<StudentClassRoomYear>(request);
+            request.SchoolId = request.OrganizationId;
             var retVal = await _ClassRoomYearRepository.UpdateAsync(model);
 
             return Ok(retVal);
@@ -71,18 +72,6 @@ public class ClassRoomYearController : AuthBaseAPIController
         }
     }
 
-
-    /// <summary>
-    /// Gửi lại báo cáo
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpGet("Resend")]
-    public async Task<ActionResult> Resend(string id)
-    {
-        var retVal = await _ClassRoomYearRepository.GetById(id);
-        return Ok(new Result<object>("Thành công", true));
-    }
 
     /// <summary>
     /// Kích hoạt

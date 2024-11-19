@@ -108,6 +108,31 @@
                                             </div>
                                         </div>
                                         <div class="form-group row mb-2  ">
+                                            <label class="col-form-label col-md-3">Năm học<span class="text-danger">*</span></label>
+                                            <div class="col-md-9">
+                                                <select data-dropdown-parent="#ModelAddEdit" required data-placeholder="Vui lòng chọn năm học" id="schoolYearId" class="form-control select">
+                                                    <option v-for="option in combobox.schoolYears" v-bind:value="option.id">
+                                                        {{ option.name }}
+                                                    </option>
+                                                </select>
+                                                <div class="invalid-feedback">Vui lòng chọn năm học </div>
+                                                <div class="valid-feedback"> </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-2  ">
+                                            <label class="col-form-label col-md-3">Lớp học<span class="text-danger">*</span></label>
+                                            <div class="col-md-9">
+                                                <select data-dropdown-parent="#ModelAddEdit" required data-placeholder="Vui lòng chọn lớp học" id="classRoomId" class="form-control select">
+                                                    <option v-for="option in combobox.classRooms" v-bind:value="option.id">
+                                                        {{ option.name }}
+                                                    </option>
+                                                </select>
+                                                <div class="invalid-feedback">Vui lòng chọn lớp học </div>
+                                                <div class="valid-feedback"> </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row mb-2  ">
                                             <label class="col-form-label col-lg-3">Tên lớp<span class="text-danger">*</span></label>
                                             <div class="col-lg-9">
                                                 <input type="text" class="form-control" required placeholder="Vui lòng nhập tên lịch " v-model="item.name">
@@ -250,10 +275,16 @@
                     sortable: true,
                 },
                 {
+                    title: "Năm học",
+                    field: 'schoolYearName',
+                    sortable: true,
+                },
+                {
                     title: "Trường",
                     field: 'organizationName',
                     sortable: true,
-                },
+                }, 
+               
                 {
                     title: 'Thời gian',
                     field: 'lastModifiedDate',
@@ -273,12 +304,14 @@
                 key: "",
                 export: "0",
                 organizationId: null,
+                classRoomId: null,
                 schoolYearId: null,
             },
             item: {},
             combobox: {
                 organizations: [],
                 schoolYears: [],
+                classRooms: [],
             },
             options: {
                 search: true,
@@ -331,6 +364,8 @@
                 };
                 resetFormJs();
 
+                $('#schoolYearId').val(null).trigger('change');
+                $('#classRoomId').val(null).trigger('change');
                 $('#organizationId').val(null).trigger('change');
             },
 
@@ -339,6 +374,8 @@
                 this.object.editAction = true;
                 this.item = row;
 
+                $('#schoolYearId').val(this.item.schoolYearId).trigger('change');
+                $('#classRoomId').val(this.item.classRoomId).trigger('change');
                 $('#organizationId').val(this.item.organizationId).trigger('change');
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
             },
@@ -390,6 +427,15 @@
                         window.location = window.location.href;
 
                     this.combobox.schoolYears = response.data.data;
+                }).catch(error => {
+                    console.log(error);
+                });
+
+                axios.get('/api/v1/ClassRoom/Gets', this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    this.combobox.classRooms = response.data.data;
                 }).catch(error => {
                     console.log(error);
                 });

@@ -5,4 +5,7 @@ public class ClassRoomYearReportResponse : StudentClassRoomYear
 {
     public string? OrganizationName { get; set; }
 
+    public string? SchoolYearName { get; set; }
+    public string? ClassRoomName { get; set; }
+
 }
