@@ -1,6 +1,6 @@
 ﻿using AMMS.VIETTEL.SMAS.Cores.Entities.A2;
 
-namespace AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs;
+namespace AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs.Reponses;
 public class ScheduleJobReportResponse : ScheduleJob
 {
     /// <summary>

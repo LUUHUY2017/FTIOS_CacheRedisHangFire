@@ -5,15 +5,16 @@ using AMMS.VIETTEL.SMAS.Cores.Entities.A0;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Share.WebApp.Controllers;
+using Share.WebApp.Helps;
 using Shared.Core.Commons;
 
-namespace Server.API.APIs.Data.AttendanceConfigs.V1.Controllers;
+namespace AMMS.VIETTEL.SMAS.APIControllers.AppConfigs.V1.Controllers;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[Authorize("Bearer")]
-//[AuthorizeMaster(Roles = RoleConst.MasterDataPage)]
+[Authorize("Bearer")]
+[AuthorizeClient]
 public class AppConfigurationController : AuthBaseAPIController
 {
     private readonly AppConfigService _attendanceConfigService;

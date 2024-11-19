@@ -1,5 +1,7 @@
+using AMMS.VIETTEL.SMAS.Applications.CronJobs;
 using AMMS.VIETTEL.SMAS.Applications.Extensions;
 using AMMS.VIETTEL.SMAS.Cores.Identity.Entities;
+using AMMS.VIETTEL.SMAS.Cores.Interfaces.ScheduleJobs;
 using AMMS.VIETTEL.SMAS.Helps.Authorizations;
 using AMMS.VIETTEL.SMAS.Infratructures.Databases;
 using Hangfire;
@@ -23,7 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
 
 IServiceCollection services = builder.Services;
-IConfiguration configuration = builder.Configuration; 
+IConfiguration configuration = builder.Configuration;
 
 services.AddOptions(); //Kích hoạt Options
 services.AddCors(options =>
@@ -44,6 +46,9 @@ services.AddVersion();// Versioning
 
 services.AddApplicationServices();
 services.AddDbContext(configuration);
+
+//SignalR
+services.AddSignalRService(configuration);
 
 AppSettings appSettings = new AppSettings();
 configuration.Bind(appSettings);
@@ -309,6 +314,9 @@ app.UseEndpoints(endpoints =>
 });
 
 
+//Seriglog
+//app.UseSerilogRequestLogging();
+
 if (builder.Configuration["Hangfire:Enable"] == "True")
 {
     //Tạo các job chạy tự động, theo dõi trạng thái của các job     
@@ -322,7 +330,6 @@ if (builder.Configuration["Hangfire:Enable"] == "True")
     app.UseHangfireServer();
 }
 
-
 using (var scope = app.Services.CreateScope())
 {
     try
@@ -330,9 +337,15 @@ using (var scope = app.Services.CreateScope())
         var viettelDbContext = scope.ServiceProvider.GetRequiredService<ViettelDbContext>();
         await viettelDbContext.Database.MigrateAsync();
 
-        //var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        //RecurringJob.AddOrUpdate("Test", () => conJobService.Write(), "*/1 * * * *", TimeZoneInfo.Local);
-        //RecurringJob.AddOrUpdate("CheckDeviceOnline" ,() => conJobService.CheckDeviceOnline(), "*/5 * * * *", TimeZoneInfo.Local);
+
+        try
+        {
+            var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
+            var scheduleJob = scope.ServiceProvider.GetRequiredService<IScheduleJobRepository>();
+            var scheduleLists = await scheduleJob.Gets(true);
+            await conJobService.CreateScheduleCronJob(scheduleLists);
+        }
+        catch (Exception e) { Logger.Error(e); }
     }
     catch (Exception e)
     {

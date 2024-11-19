@@ -55,6 +55,36 @@ public partial class PagesConst
         CategoryMenu = Category.KhaiBaoDuLieu.Id,
     };
 
+    public static readonly PageObject URL_V1_ClassRoom = new PageObject
+    {
+        Id = "d007301c-f2fc-401e-a833-781f272dcfa9",
+        Name = "Khối lớp",
+        Url = "V1/ClassRoom",
+        Module = Module.Master,
+        RolePermission = RoleConst.SuperAdmin_Role,
+        CategoryMenu = Category.KhaiBaoDuLieu.Id,
+    };
+
+    public static readonly PageObject URL_V1_SchoolYear = new PageObject
+    {
+        Id = "21b63ecf-aa05-441a-81ed-7fab4a3c516a",
+        Name = "Năm học",
+        Url = "V1/SchoolYear",
+        Module = Module.Master,
+        RolePermission = RoleConst.SuperAdmin_Role,
+        CategoryMenu = Category.KhaiBaoDuLieu.Id,
+    };
+
+    public static readonly PageObject URL_V1_ClassRoomYear = new PageObject
+    {
+        Id = "7084de58-1d64-4db7-ac86-2e584a1780cd",
+        Name = "Lớp ",
+        Url = "V1/ClassRoomYear",
+        Module = Module.Master,
+        RolePermission = RoleConst.SuperAdmin_Role,
+        CategoryMenu = Category.KhaiBaoDuLieu.Id,
+    };
+
     public static readonly PageObject URL_V1_SyncDeviceServer = new PageObject
     {
         Id = "a027e68b-b638-47f8-83de-7f0daedb0b45",
@@ -203,6 +233,10 @@ public partial class PagesConst
             //_ListMenu.Add(URL_V1_StudentSmas);
             _ListMenu.Add(URL_V1_Student);
             _ListMenu.Add(URL_V1_SyncDeviceServer);
+
+            _ListMenu.Add(URL_V1_ClassRoom);
+            _ListMenu.Add(URL_V1_SchoolYear);
+            _ListMenu.Add(URL_V1_ClassRoomYear);
 
             _ListMenu.Add(URL_V1_ScheduleJob);
             _ListMenu.Add(URL_V1_ScheduleReport);
