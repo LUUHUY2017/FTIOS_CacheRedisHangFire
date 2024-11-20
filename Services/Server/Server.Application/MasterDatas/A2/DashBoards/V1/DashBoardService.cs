@@ -1,18 +1,14 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Spreadsheet;
-using IdentityServer4.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Server.Application.CronJobs.Params;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.Devices;
+using Server.Application.MasterDatas.A2.DashBoards.V1.Models.Schools;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.SendEmail;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.StudentAttendances;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.StudentFaces;
 using Server.Application.MasterDatas.A2.Devices.Models.Commons;
 using Server.Core.Interfaces.A2.SendEmails;
 using Server.Infrastructure.Datas.MasterData;
-using Shared.Core;
 using Shared.Core.Commons;
-using Shared.Core.Loggers;
 
 namespace Server.Application.MasterDatas.A2.DashBoards.V1;
 
@@ -227,6 +223,27 @@ public class DashBoardService
         {
             //Logger.Error(ex);
             return new Result<DBStudentAttendaceModel>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
+    //DBSchools
+    public async Task<Result<TotalSchoolModel>> GetTotalSchool()
+    {
+        try
+        {
+            var data = new TotalSchoolModel()
+            {
+                TotalSchool = await _dbContext.Organization.CountAsync(),
+                TotalClass = await _dbContext.ClassRoom.CountAsync(),
+                TotalStudent = await _dbContext.Student.CountAsync(),
+            };
+
+            return new Result<TotalSchoolModel>(data, $"Thành công!", true);
+        }
+        catch (Exception ex)
+        {
+            //Logger.Error(ex);
+            return new Result<TotalSchoolModel>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
 }

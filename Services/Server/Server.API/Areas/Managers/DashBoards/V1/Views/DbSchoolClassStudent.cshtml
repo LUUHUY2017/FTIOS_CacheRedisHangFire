@@ -1,38 +1,32 @@
 ﻿<!--StudentAttendace-->
-<div class="card shadow-sm" id="_dBStudentAttendace" style="min-height: 215px;">
+<div class="card shadow-sm" id="webUI_dBSchoolClassStudent" style="min-height: 215px;">
     <div class="card-body">
         <!--Tilte-->
-        <h5 class="text-start">Điểm danh</h5>
+        <h5 class="text-start">Trường học</h5>
         <div class="row mt-2 px-2">
-            <!-- Tổng số học sinh điểm danh -->
+            <!-- Tổng số trường học -->
             <div class="d-flex justify-content-between align-items-center underline-dashed px-0">
-                <span>Tổng số học sinh điểm danh</span>
+                <span>Tổng số trường</span>
                 <span class="dots"></span>
-                <span class="fw-bold">{{item.totalAmount}}</span>
+                <span class="fw-bold">{{item.totalSchool}}</span>
             </div>
             <!-- Tổng số học sinh đã đồng bộ -->
             <div class="d-flex justify-content-between align-items-center mt-2 underline-dashed px-0">
-                <span>Đã đồng bộ</span>
+                <span>Tổng số lớp</span>
                 <span class="dots"></span>
-                <span>
-                    <span class="fw-bold text-success">{{item.totalFace}}</span>
-                    ({{(item.totalFace / item.totalAmount * 100).toFixed(2)}}%)
-                </span>
+                <span class="fw-bold">{{item.totalClass}}</span>
             </div>
             <!-- Tổng số học sinh chưa đồng bộ-->
             <div class="d-flex justify-content-between align-items-center mt-2 underline-dashed px-0">
-                <span>Chưa đồng bộ</span>
+                <span>Tổng số học sinh</span>
                 <span class="dots"></span>
-                <span>
-                    <span class="fw-bold text-danger">{{item.totalCurrent}}</span>
-                    ({{(item.totalCurrent / item.totalAmount * 100).toFixed(2)}}%)
-                </span>
+                <span class="fw-bold">{{item.totalStudent}}</span>
             </div>
             
             <!-- Nút See More -->
-            <div class="col text-start mt-2 px-0">
+           @*  <div class="col text-start mt-2">
                 <a href="/V1/TimeAttenceEvent" class="text-end">Xem thêm</a>
-            </div>
+            </div> *@
         </div>
     </div>
 
@@ -40,8 +34,8 @@
 
 <script>
 
-    var _dBStudentAttendace = new Vue({
-        el: '#_dBStudentAttendace',
+    var _dBSchoolClassStudent = new Vue({
+        el: '#webUI_dBSchoolClassStudent',
         components: {
             'BootstrapTable': BootstrapTable
         },
@@ -89,7 +83,7 @@
         methods: {
             loadData() {
                 $('.loader').show();
-                axios.get('/api/v1/DashBoard/GetTotalStudentAttendance', this.object.bearerAuthorization).then(response => {
+                axios.get('/api/v1/DashBoard/GetTotalSchool', this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }

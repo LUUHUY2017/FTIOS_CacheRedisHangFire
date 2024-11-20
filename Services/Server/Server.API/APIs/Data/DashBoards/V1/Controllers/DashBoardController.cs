@@ -86,4 +86,14 @@ public class DashBoardController : AuthBaseAPIController
     {
         return Ok(await _dashBoardService.GetTotalStudentAttendance());
     }
+
+    /// <summary>
+    /// Lấy tổng quan trường, lớp, học sinh
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("GetTotalSchool")]
+    public async Task<IActionResult> GetTotalSchool()
+    {
+        return Ok(await _dashBoardService.GetTotalSchool());
+    }
 }
