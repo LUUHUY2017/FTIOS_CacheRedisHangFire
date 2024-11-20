@@ -56,6 +56,22 @@
                             </option>
                             </select>
                             </div> *@
+                            <div class="col-md-2">
+                                <label class="form-label">Từ ngày</label>
+                                <datetime type="date"
+                                          v-model="filter.startDate"
+                                          class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                          placeholder="Vui lòng chọn thời gian...">
+                                </datetime>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Đến ngày</label>
+                                <datetime type="date"
+                                          v-model="filter.endDate"
+                                          class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                          placeholder="Vui lòng chọn thời gian...">
+                                </datetime>
+                            </div>
                             <div class="col-lg-2">
                                 <label class="form-label">Tìm kiếm theo</label>
                                 <select class="form-select" v-model:value="filter.columnTable">
@@ -184,7 +200,7 @@
                             });
                         },
                         'click .delete': function (e, value, row) {
-                            var question = "Bạn có chắc chắn xóa thiết bị này không?";
+                            var question = "Bạn có chắc chắn xóa lệnh này không?";
                             alertify.confirm('Thông báo!', question, function () {
                                 axios.post('/api/v1/TerminalCommandLog/delete', { id: row.id, reason: "" }, _terminalCommand.object.bearerAuthorization).then(response => {
                                     if (response.data.succeeded) {
@@ -202,6 +218,26 @@
                                 });
                             }, function () { });
                         },
+                        'click .resend': function (e, value, row) {
+                            var question = "Bạn có chắc chắn gửi lại lệnh này không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/TerminalCommandLog/resend', { id: row.id, reason: "" }, _terminalCommand.object.bearerAuthorization).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                        _terminalCommand.data = [];
+                                        _terminalCommand.loadData();
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+
                     }
                 },
                 {
@@ -234,11 +270,26 @@
                     field: 'command_ation',
                     sortable: true,
                 },
-                // {
-                //     title: "Nội dung",
-                //     field: 'content',
-                //     sortable: true,
-                // },
+                {
+                    title: "Ngày tạo",
+                    field: 'transfer_time',
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                     },
+                },
 
             ],
             data: [],
@@ -255,6 +306,8 @@
                 pageList: [10, 25, 50, 100, 200],
             },
             filter: {
+                startDate: formatDateTime(new Date()),
+                endDate: formatDateTime(new Date()),
                 columnTable: "serial_number",
                 actived: true,
                 status: "",

@@ -2,6 +2,7 @@
 using AutoMapper;
 using EventBus.Messages;
 using MassTransit;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -494,48 +495,6 @@ public class StudentService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<Result<Student>> SaveImageFromService(Student stu)
-    {
-        try
-        {
-            DateTime dateStudent = DateTime.Now;
-            if (!string.IsNullOrWhiteSpace(stu.DateOfBirth))
-            {
-                string dateString = stu.DateOfBirth;
-                string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
-                bool success = DateTime.TryParseExact(
-                    dateString,
-                    formats,
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.None,
-                    out dateStudent
-                );
-            }
-
-            var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
-            var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
-
-            string imageName = stu.Id + ".jpg";
-            string fileName = imageFullFolder + imageName;
-            string folderName = imageFolder + imageName;
-
-
-            if (!string.IsNullOrWhiteSpace(stu.ImageSrc))
-            {
-                // Lưu ảnh online
-                await Common.DownloadAndSaveImage(stu.ImageSrc, fileName);
-                await _personRepository.SaveImageAsync(stu.Id, "", folderName);
-            }
-
-            return new Result<Student>($"Cập nhật thành công", true);
-        }
-        catch (Exception e)
-        {
-            Logger.Warning(e.Message);
-            return new Result<Student>($"Lỗi: {e.Message}", false);
-        }
-    }
-
 
     /// <summary>
     /// Đẩy 1 học sinh xuống toàn bộ thiết bị
@@ -804,4 +763,64 @@ public class StudentService
             return new Result<PersonFace>($"Lỗi: " + ex.Message, false);
         }
     }
+
+    public async Task<Result<Student>> SaveImageFromService(Student stu)
+    {
+        try
+        {
+            DateTime dateStudent = DateTime.Now;
+            if (!string.IsNullOrWhiteSpace(stu.DateOfBirth))
+            {
+                string dateString = stu.DateOfBirth;
+                string[] formats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "dd/MM/yyyy", "MM/dd/yyyy", "dd/MM/yyyy", };
+                bool success = DateTime.TryParseExact(
+                    dateString,
+                    formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out dateStudent
+                );
+            }
+
+            var imageFolder = Common.GetImageDatePathFolder(dateStudent, "images\\students");
+            var imageFullFolder = Common.GetImageDateFullFolder(dateStudent, "images\\students");
+
+            string imageName = stu.Id + ".jpg";
+            string fileName = imageFullFolder + imageName;
+            string folderName = imageFolder + imageName;
+
+
+            if (!string.IsNullOrWhiteSpace(stu.ImageSrc))
+            {
+                // Lưu ảnh online
+                await Common.DownloadAndSaveImage(stu.ImageSrc, fileName);
+                await _personRepository.SaveImageAsync(stu.Id, "", folderName);
+            }
+
+            return new Result<Student>($"Cập nhật thành công", true);
+        }
+        catch (Exception e)
+        {
+            Logger.Warning(e.Message);
+            return new Result<Student>($"Lỗi: {e.Message}", false);
+        }
+    }
+
+    public async Task<bool> RefreshSyncPage(string request)
+    {
+        bool statusSync = false;
+        try
+        {
+            if (_signalRClientService.Connection != null && _signalRClientService.Connection.State == HubConnectionState.Connected)
+            {
+                _signalRClientService.Connection.SendAsync("RefreshSyncPage", "TimeAttendenceSync", request);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return statusSync;
+    }
+
 }

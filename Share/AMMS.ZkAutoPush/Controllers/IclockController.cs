@@ -113,6 +113,8 @@ public class IclockController : ControllerBase
     [HttpPost("cdata")]
     public async Task<string> cdata(string sn, string table)
     {
+        Logger.Warning($"cdata: method: {Request.Method}, sn: {sn}");
+
         try
         {
             var req = HttpContext.Request;

@@ -101,7 +101,7 @@ public partial class CronJobService : ICronJobService
                         Name = lastName,
                         OrganizationId = orgRes.Id,
                         SchoolCode = orgRes.OrganizationCode,
-                        ImageSrc = item.ImageSrc,
+                        ImageSrc = item.ImgSrc,
                     };
 
                     // Lưu thông tin lớp
@@ -129,7 +129,7 @@ public partial class CronJobService : ICronJobService
                             {
                                 var stu = resS.Data;
                                 stu.ImageSrc = el.ImageSrc;
-                                await _studentService.SaveImageFromService(stu);
+                                await _studentService.PushImageToRabbit(stu);
                             }
                         }
                     }

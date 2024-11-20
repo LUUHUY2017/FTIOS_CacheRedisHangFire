@@ -128,6 +128,11 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     command = IclockOperarion.GetDeviceInfo(requestId, data.SerialNumber);
                     return;
                 }
+                else if (rB_ServerRequest.Action == ServerRequestAction.ActionGetData && rB_ServerRequest.RequestType == ServerRequestType.TAData)
+                {
+                    await GetDataByTime(rB_ServerRequest);
+                    return;
+                }
 
                 if (command == null)
                     return;
@@ -153,6 +158,33 @@ namespace AMMS.ZkAutoPush.Applications.V1
                 Logger.Error(e);
             }
         }
+        /// <summary>
+        /// Lấy lại dữ liệu theo thời gian
+        /// </summary>
+        /// <param name="rB_ServerRequest"></param>
+        /// <returns></returns>
+        public async Task GetDataByTime(RB_ServerRequest rB_ServerRequest)
+        {
+            try
+            {
+                TA_AttendenceHistoryRequest? request = JsonConvert.DeserializeObject<TA_AttendenceHistoryRequest>(rB_ServerRequest.RequestParam);
+                if (request == null || request.StartDate == null || request.EndDate == null)
+                {
+                    return;
+                }
+                else
+                {
+                    var command = IclockOperarion.GetAttData(rB_ServerRequest.RequestId.Value, rB_ServerRequest.SerialNumber, request.StartDate.Value, request.EndDate.Value);
+                    if (command == null) return;
+                    await _deviceCommandCacheService.Save(command);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        }
+
         public async Task SaveUserInfo(TA_PersonInfo tA_Person)
         {
             try
