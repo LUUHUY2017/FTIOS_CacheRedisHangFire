@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using IdentityServer4.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Server.Application.CronJobs.Params;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.Devices;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.SendEmail;
+using Server.Application.MasterDatas.A2.DashBoards.V1.Models.StudentAttendances;
+using Server.Application.MasterDatas.A2.DashBoards.V1.Models.StudentFaces;
 using Server.Application.MasterDatas.A2.Devices.Models.Commons;
 using Server.Core.Interfaces.A2.SendEmails;
 using Server.Infrastructure.Datas.MasterData;
@@ -170,31 +173,60 @@ public class DashBoardService
     }
 
     //StudentFace
-    //public async Task<Result<List<DashBoardDevice>>> GetTotalStudentFace()
-    //{
-    //    try
-    //    {
-    //        var dataDevice = await (from s in _dbContext.Student
-    //                                join pf in _dbContext.PersonFace
-    //                                on s.Id equals pf.PersonId into personFaceGroup
-    //                                from pfLeftJoin in personFaceGroup.DefaultIfEmpty()
-    //                                where (d.Actived == true
-    //                                    && ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? d.OrganizationId == filter.OrganizationId : true)
-    //                                    && ((!string.IsNullOrEmpty(filter.DeviceModel) && filter.DeviceModel != "0") ? d.DeviceModel == filter.DeviceModel : true)
-    //                                    && ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable != "device_name") ? d.DeviceName.Contains(filter.Key) : true)
-    //                                    && ((!string.IsNullOrEmpty(filter.ColumnTable) && filter.ColumnTable != "device_serial") ? d.SerialNumber.Contains(filter.Key) : true)
-    //                                    && ((!string.IsNullOrEmpty(filter.Status)) ? d.ConnectionStatus == status : true)
-    //                                    )
-    //                                select new DashBoardDevice(d, o)
-    //                                )
-    //                                .ToListAsync();
+    public async Task<Result<DBStudentFaceModel>> GetTotalStudentFace()
+    {
+        try
+        {
+            var data = await (from s in _dbContext.Student
+                              join pf in _dbContext.PersonFace
+                              on s.Id equals pf.PersonId into personFaceGroup
+                              from pfLeftJoin in personFaceGroup.DefaultIfEmpty() 
+                              where s.Actived == true
+                              group new { s, pfLeftJoin } by 1 into g 
+                              select new DBStudentFaceModel
+                              {
+                                  TotalStudent = g.Count(x => x.s != null), 
+                                  TotalHasFace = g.Count(x => x.pfLeftJoin != null && !string.IsNullOrEmpty(x.pfLeftJoin.FaceUrl)), 
+                                  TotalHasNoFace = g.Count(x => x.pfLeftJoin == null || string.IsNullOrEmpty(x.pfLeftJoin.FaceUrl)) 
+                              })
+                    .FirstOrDefaultAsync();
 
-    //        return new Result<List<DashBoardDevice>>(dataDevice.OrderBy(x => x.OrganizationName).ToList(), $"Thành công!", true);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        //Logger.Error(ex);
-    //        return new Result<List<DashBoardDevice>>(null, $"Có lỗi: {ex.Message}", false);
-    //    }
-    //}
+            return new Result<DBStudentFaceModel>(data, $"Thành công!", true);
+        }
+        catch (Exception ex)
+        {
+            //Logger.Error(ex);
+            return new Result<DBStudentFaceModel>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
+    //DBStudentAttendace
+    public async Task<Result<DBStudentAttendaceModel>> GetTotalStudentAttendance()
+    {
+        try
+        {
+            var data = await _dbContext.TimeAttendenceEvent
+                        .Where(t => t.Actived == true && ((DateTime)t.EventTime).Date == DateTime.Now.Date)
+                        .GroupBy(t => true) 
+                        .Select(g => new DBStudentAttendaceModel
+                        {
+                            totalAmount = g.Count(),
+                            totalFace = g.Count(t => t.EventType == true),
+                            totalCurrent = g.Count() - g.Count(t => t.EventType == true)
+                        })
+                        .FirstOrDefaultAsync();
+
+            return new Result<DBStudentAttendaceModel>(data ?? new DBStudentAttendaceModel()
+            {
+                totalAmount = 0,
+                totalFace = 0,
+                totalCurrent = 0,
+            }, $"Thành công!", true);
+        }
+        catch (Exception ex)
+        {
+            //Logger.Error(ex);
+            return new Result<DBStudentAttendaceModel>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
 }

@@ -1,37 +1,37 @@
-﻿<!--StudentFace-->
-<div class="card shadow-sm" id="_dBStudentFace">
+﻿<!--StudentAttendace-->
+<div class="card shadow-sm" id="_dBStudentAttendace">
     <div class="card-body">
         <!--Tilte-->
-        <h2 class="text-start">Đồng bộ khuôn mặt</h2>
+        <h2 class="text-start">Điểm danh</h2>
         <div class="row mt-3">
-            <!-- Số lượng học sinh -->
+            <!-- Tổng số học sinh điểm danh -->
             <div class="d-flex justify-content-between align-items-center">
-                <span>Số lượng học sinh</span>
+                <span>Tổng số học sinh điểm danh</span>
                 <span class="dots"></span>
-                <span class="fw-bold">{{item.totalStudent}}</span>
+                <span class="fw-bold">{{item.totalAmount}}</span>
             </div>
-            <!-- Số lượng học sinh đã có khuôn mặt-->
+            <!-- Tổng số học sinh đã đồng bộ -->
             <div class="d-flex justify-content-between align-items-center mt-2">
-                <span>Số học sinh đã có khuôn mặt</span>
+                <span>Tổng số học sinh đã đồng bộ</span>
                 <span class="dots"></span>
                 <span>
-                    <span class="fw-bold text-success">{{item.totalHasFace}}</span>
-                    ({{(item.totalHasFace / item.totalStudent * 100).toFixed(2)}}%)
+                    <span class="fw-bold text-success">{{item.totalFace}}</span>
+                    ({{(item.totalFace / item.totalAmount * 100).toFixed(2)}}%)
                 </span>
             </div>
-            <!-- Số lượng học sinh chưa có khuôn mặt-->
+            <!-- Tổng số học sinh chưa đồng bộ-->
             <div class="d-flex justify-content-between align-items-center mt-2">
-                <span>Số học sinh chưa có khuôn mặt</span>
+                <span>Tổng số học sinh chưa đồng bộ</span>
                 <span class="dots"></span>
                 <span>
-                    <span class="fw-bold text-danger">{{item.totalHasNoFace}}</span>
-                    ({{(item.totalHasNoFace / item.totalStudent * 100).toFixed(2)}}%)
+                    <span class="fw-bold text-danger">{{item.totalCurrent}}</span>
+                    ({{(item.totalCurrent / item.totalAmount * 100).toFixed(2)}}%)
                 </span>
             </div>
             
             <!-- Nút See More -->
             <div class="col text-start mt-2">
-                <a href="/V1/Student" class="text-end">Xem thêm</a>
+                <a href="/V1/TimeAttenceEvent" class="text-end">Xem thêm</a>
             </div>
         </div>
     </div>
@@ -40,8 +40,8 @@
 
 <script>
 
-    var _dBStudentFace = new Vue({
-        el: '#_dBStudentFace',
+    var _dBStudentAttendace = new Vue({
+        el: '#_dBStudentAttendace',
         components: {
             'BootstrapTable': BootstrapTable
         },
@@ -89,7 +89,7 @@
         methods: {
             loadData() {
                 $('.loader').show();
-                axios.get('/api/v1/DashBoard/GetTotalStudentFace', this.object.bearerAuthorization).then(response => {
+                axios.get('/api/v1/DashBoard/GetTotalStudentAttendance', this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }

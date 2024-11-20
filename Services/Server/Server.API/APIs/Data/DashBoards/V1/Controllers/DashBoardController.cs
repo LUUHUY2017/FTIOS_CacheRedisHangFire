@@ -68,4 +68,22 @@ public class DashBoardController : AuthBaseAPIController
     {
         return Ok(await _dashBoardService.GetDeviceForStatus(filter));
     }
+    /// <summary>
+    /// Lấy tổng quan đồng bộ khuôn mặt
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("GetTotalStudentFace")]
+    public async Task<IActionResult> GetTotalStudentFace()
+    {
+        return Ok(await _dashBoardService.GetTotalStudentFace());
+    }
+    /// <summary>
+    /// Lấy tổng quan điểm danh
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("GetTotalStudentAttendance")]
+    public async Task<IActionResult> GetTotalStudentAttendance()
+    {
+        return Ok(await _dashBoardService.GetTotalStudentAttendance());
+    }
 }
