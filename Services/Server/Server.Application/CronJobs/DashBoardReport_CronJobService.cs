@@ -18,7 +18,7 @@ public partial class CronJobService : ICronJobService
     #region Báo cáo tổng quan (DashBoard)
     static bool Is_CheckDashBoardReport { get; set; } = false;
 
-    public void CreateDashBoardReportCronJob(List<ScheduleSendMail> scheduleLists)
+    public async Task CreateDashBoardReportCronJob(List<ScheduleSendMail> scheduleLists)
     {
         foreach (var item in scheduleLists)
         {

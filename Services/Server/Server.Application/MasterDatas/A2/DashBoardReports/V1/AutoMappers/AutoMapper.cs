@@ -9,7 +9,7 @@ namespace Server.Application.MasterDatas.A2.DashBoardReports.V1.AutoMappers
         public AutoMapper()
         {
             CreateMap<DashBoardReportRequest, ScheduleSendMail>().ReverseMap();
-            CreateMap<DashBoardReportRequestResponse, ScheduleSendMail>().ReverseMap();
+            CreateMap<DashBoardReportResponse, ScheduleSendMail>().ReverseMap();
         }
     }
 }

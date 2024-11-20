@@ -15,4 +15,7 @@ public interface ICronJobService
     Task UpdateDeviceStatusWarningCronJob(string jobId, string sheduleId, string newCronExpression);
     Task CheckDataReception();
 
+    Task CreateDashBoardReportCronJob(List<ScheduleSendMail> scheduleLists);
+    Task UpdateDashBoardReportCronJob(string jobId, string sheduleId, string newCronExpression);
+    Task DashBoard_Report_ScheduleSendMail(string sheduleId);
 }

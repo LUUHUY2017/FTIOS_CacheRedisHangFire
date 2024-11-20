@@ -2,7 +2,7 @@
 
 namespace Server.Application.MasterDatas.A2.DashBoardReports.V1.Models
 {
-    public class DashBoardReportRequestResponse : ScheduleSendMail
+    public class DashBoardReportResponse : ScheduleSendMail
     {
         /// <summary>
         /// Loại file xuất báo cáo
