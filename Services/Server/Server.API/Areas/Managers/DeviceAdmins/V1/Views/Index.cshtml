@@ -219,6 +219,55 @@
         </div>
     </div>
 
+
+    <div class="modal fade" id="ModelSyncAgain" aria-hidden="true">
+        <div id="waitDialog" class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="staticBackdropLabel" class="modal-title">Đọc lại dữ liệu điểm danh {{itemSync.deviceName}}</h5>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate id="FormSyncAgain">
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Thời gian bắt đầu</label>
+                                <div class="col-lg-7">
+                                    <datetime input-id="date_input"
+                                              type="datetime"
+                                              v-model:value="itemSync.startDate"
+                                              class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                              placeholder="Vui lòng chọn thời gian..."
+                                              required></datetime>
+                                    <div class="invalid-feedback">Vui lòng nhập ngày bắt đầu</div>
+                                    <div class="valid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-form-label text-end col-lg-3">Thời gian bắt đầu</label>
+                                <div class="col-lg-7">
+                                    <datetime input-id="date_input"
+                                              type="datetime"
+                                              v-model:value="itemSync.endDate"
+                                              class="form-control p-0" input-class="w-100 py-12 px-2 border-0"
+                                              placeholder="Vui lòng chọn thời gian..."
+                                              required></datetime>
+                                    <div class="invalid-feedback">Vui lòng nhập ngày kết thúc</div>
+                                    <div class="valid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-primary" v-on:click="onSubmitSyncAttAgain()">Lưu dữ liệu</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @await Html.PartialAsync("/Views/Shared/Components/_FooterPartial.cshtml")
 </div>
 
@@ -259,6 +308,7 @@
                             ele += `<a href="javascript: " class="btn btn-sm btn-warning edit" title="Cập nhật đăng ký "><i class="fa fa-pencil" > </i> </a> &nbsp `;
                             ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset inactive " title="Ngừng hoạt động "> <i class="fa fa-minus-circle" ></i> </a> &nbsp; `;
                             ele += `<a href="javascript: " class="btn btn-sm btn-info syncDevice" title="Đồng bộ học sinh "><i class="fa fa-refresh" > </i> </a> &nbsp `;
+                            ele += `<a href="javascript: " class="btn btn-sm btn-success  syncAttendenceAgain" title="Đọc lại dữ liệu điểm danh "><i class="fa fa-history" > </i> </a> &nbsp `;
 
                         }
                         if (!row.actived) {
@@ -335,6 +385,9 @@
                             alertify.confirm('Thông báo!', question, function () {
                                 _deviceAdmin.onSubmitSync(row);
                             }, function () { });
+                        },
+                        'click .syncAttendenceAgain': function (e, value, row) {
+                            _deviceAdmin.onOpenFormSyncAgain(row);
                         },
                     }
                 },
@@ -478,6 +531,11 @@
                 }
             },
             item: { actived: true, },
+            itemSync: {
+                actived: true,
+                startDate: formatDateTime(new Date()),
+                endDate: formatDateTime(new Date()),
+            },
             combobox: { schools: [], },
             addModel: false,
         },
@@ -504,6 +562,8 @@
 
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
             onPopupModelAddDevice() {
@@ -589,6 +649,38 @@
                     $('.loader').hide(0);
                 });
             },
+            onOpenFormSyncAgain(row) {
+                resetFormJs();
+
+                this.itemSync = row;
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelSyncAgain')).show();
+            },
+            onSubmitSyncAttAgain() {
+                if (!validateForm("#FormSyncAgain"))
+                    return true;
+
+                axios.post('/api/v1/deviceAdmin/PostSyncAttAgain', this.itemSync, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+                    if (response.data.succeeded) {
+                        alertify.success(response.data.message);
+                        bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelSyncAgain')).hide();
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+                });
+            },
+
+
             onAddDevice(row) {
                 axios.post('/api/v1/deviceAdmin/Update', row, this.object.config).then(response => {
                     if (response.data.succeeded) {
@@ -602,6 +694,7 @@
                     alert("Lỗi: " + error.response.data.message);
                 });
             },
+
             getCookie(name) {
                 const value = "; " + document.cookie;
                 const parts = value.split("; " + name + "=");
