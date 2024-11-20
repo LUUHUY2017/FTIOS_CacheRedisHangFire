@@ -5,8 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <AssemblyVersion>1.0.0.5</AssemblyVersion>
-    <FileVersion>1.0.0.5</FileVersion>
+    <AssemblyVersion>1.0.0.6</AssemblyVersion>
+    <FileVersion>1.0.0.6</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
@@ -97,6 +97,8 @@
     <Compile Include="APIs\Data\AttendanceTimeConfigs\V1\Models\AttendanceTimeTypeConst.cs" />
 
     <Compile Include="APIs\Data\ClassRoomYears\V1\Controllers\ClassRoomYearController.cs" />
+
+    <Compile Include="APIs\Data\DashBoardReports\V1\Controllers\DashBoardReportController.cs" />
 
     <Compile Include="APIs\Data\DashBoards\V1\Controllers\DashBoardController.cs" />
 

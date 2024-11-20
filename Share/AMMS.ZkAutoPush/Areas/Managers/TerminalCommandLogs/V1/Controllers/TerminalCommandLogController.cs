@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Share.WebApp.Controllers;
+using Share.WebApp.Helps;
 
 namespace AMMS.ZkAutoPush.Areas.Managers.TerminalCommandLogs.V1;
 
 [Route("v1/[controller]")]
-//[AuthorizeClient]
+[AuthorizeClient]
 
 public class TerminalCommandLogController : AuthBaseController
 {

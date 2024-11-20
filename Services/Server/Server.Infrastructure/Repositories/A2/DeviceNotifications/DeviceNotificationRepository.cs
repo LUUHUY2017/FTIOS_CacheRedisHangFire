@@ -1,6 +1,7 @@
 ﻿using AMMS.Shared.Commons;
 using Microsoft.EntityFrameworkCore;
 using Server.Core.Entities.A2;
+using Server.Core.Interfaces.A2.DashBoardReports.Models;
 using Server.Core.Interfaces.A2.DeviceNotifications;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.Commons;

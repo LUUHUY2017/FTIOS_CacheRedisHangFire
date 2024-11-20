@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Server.Application.MasterDatas.A2.DashBoards.V1.Models;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.Devices;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.Schools;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.SendEmail;
@@ -244,6 +245,29 @@ public class DashBoardService
         {
             //Logger.Error(ex);
             return new Result<TotalSchoolModel>(null, $"Có lỗi: {ex.Message}", false);
+        }
+    }
+
+    //DashBoardReport
+    public async Task<Result<TotalDashBoardModel>> DashBoardReport()
+    {
+        try
+        {
+            var data = new TotalDashBoardModel()
+            {
+                TotalSchoolModel = (await GetTotalSchool()).Data,
+                TotalSendEmailModel = (await GetToTalSendEmail()).Data,
+                DBDeviceModel1 = (await GetToTalDevice1()).Data,    
+                DBStudentFaceModel = (await GetTotalStudentFace()).Data,
+                StudentAttendaceModel = (await GetTotalStudentAttendance()).Data,
+            };
+
+            return new Result<TotalDashBoardModel>(data, $"Thành công!", true);
+        }
+        catch (Exception ex)
+        {
+            //Logger.Error(ex);
+            return new Result<TotalDashBoardModel>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
 }
