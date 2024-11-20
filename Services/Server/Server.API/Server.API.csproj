@@ -96,6 +96,8 @@
 
     <Compile Include="APIs\Data\AttendanceTimeConfigs\V1\Models\AttendanceTimeTypeConst.cs" />
 
+    <Compile Include="APIs\Data\ClassRoomYears\V1\Controllers\ClassRoomYearController.cs" />
+
     <Compile Include="APIs\Data\DashBoards\V1\Controllers\DashBoardController.cs" />
 
     <Compile Include="APIs\Data\DeviceNotifications\V1\Controllers\DeviceNotificationController.cs" />
@@ -115,6 +117,8 @@
     <Compile Include="APIs\Data\ScheduleJobs\V1\Requests\ScheduleJobLogFilter.cs" />
 
     <Compile Include="APIs\Data\ScheduleSendMails\V1\Mappers\AutoMappers.cs" />
+
+    <Compile Include="APIs\Data\Schoolyears\V1\Controllers\SchoolYearController.cs" />
 
     <Compile Include="APIs\Data\Students\V1\Controllers\StudentController.cs" />
 
