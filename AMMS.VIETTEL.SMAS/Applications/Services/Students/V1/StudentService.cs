@@ -369,6 +369,33 @@ public class StudentService
         }
         return list_Sync;
     }
+
+    /// <summary>
+    /// Lưu thông tin học sinh vào AMMS, ảnh khuôn mặt
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<Result<Student>> PushImageToRabbit(Student stu)
+    {
+        try
+        {
+            RB_DataResponse rB_Response = new RB_DataResponse()
+            {
+                Id = stu.Id.ToString(),
+                Content = JsonConvert.SerializeObject(stu),
+                ReponseType = RB_DataResponseType.UserInfo,
+            };
+            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.SMAS_Auto_Push_Server}");
+            await aa.Send(rB_Response);
+
+            return new Result<Student>($"Cập nhật thành công", true);
+        }
+        catch (Exception e)
+        {
+            Logger.Warning(e.Message);
+            return new Result<Student>($"Lỗi: {e.Message}", false);
+        }
+    }
 }
 
 
