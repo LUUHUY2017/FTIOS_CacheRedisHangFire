@@ -408,8 +408,8 @@ namespace AMMS.Hanet.Applications.V1.Service
                 var client = new RestClient(options);
                 var request = new RestRequest("/person/getCheckinByPlaceIdInTimestamp", Method.Post);
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-                request.AddParameter("token", HanetParamTest.Token.access_token);
-                request.AddParameter("placeID", HanetParamTest.PlaceId);
+                request.AddParameter("token", HanetParam.Token.access_token);
+                request.AddParameter("placeID", HanetParam.PlaceId);
                 request.AddParameter("page", page);
                 request.AddParameter("size", pagesize);
                 request.AddParameter("from", fromDate);
