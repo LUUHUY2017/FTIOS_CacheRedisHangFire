@@ -129,7 +129,7 @@ public partial class CronJobService : ICronJobService
                             {
                                 var stu = resS.Data;
                                 stu.ImageSrc = el.ImageSrc;
-                                await _studentService.SaveImageFromService(stu);
+                                await _studentService.PushImageToRabbit(stu);
                             }
                         }
                     }

@@ -1,7 +1,6 @@
 ﻿using AMMS.DeviceData.RabbitMq;
 using EventBus.Messages;
 using MassTransit;
-using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Server.Core.Entities.A2;
@@ -221,22 +220,7 @@ public partial class TimeAttendenceEventService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<bool> SaveStatuSyncSmas(TimeAttendenceSync request)
-    {
-        bool statusSync = false;
-        try
-        {
-            if (_signalRClientService.Connection != null && _signalRClientService.Connection.State == HubConnectionState.Connected)
-            {
-                _signalRClientService.Connection.SendAsync("RefreshSyncPage", "TimeAttendenceSync", request);
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-        return statusSync;
-    }
+
     /// <summary>
     /// Xử lý hình ảnh điểm danh
     /// </summary>
@@ -268,6 +252,29 @@ public partial class TimeAttendenceEventService
             Logger.Error(e);
         }
         return "";
+    }
+
+    /// <summary>
+    /// Cập nhật trạng thái đồng bộ api điểm danh
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<bool> UpdateStatusAsync(TimeAttendenceSync request)
+    {
+        bool statusSync = false;
+        try
+        {
+            var data = await _timeAttendenceSyncRepository.UpdateStatusAsync(request);
+            if (data.Succeeded)
+            {
+                statusSync = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return statusSync;
     }
 
 }
