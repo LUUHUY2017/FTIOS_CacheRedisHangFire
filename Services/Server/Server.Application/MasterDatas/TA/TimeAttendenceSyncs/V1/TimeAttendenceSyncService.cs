@@ -4,7 +4,6 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Server.Application.Services.VTSmart;
 using Server.Application.Services.VTSmart.Responses;
 using Server.Core.Entities.TA;
 using Server.Core.Interfaces.TA.TimeAttendenceEvents;
@@ -24,7 +23,7 @@ public partial class TimeAttendenceSyncService
     private readonly IMasterDataDbContext _dbContext;
     private readonly ITATimeAttendenceSyncRepository _timeAttendenceSyncRepository;
     private readonly ITATimeAttendenceEventRepository _timeAttendenceEventRepository;
-    private readonly SmartService _smartService;
+    //private readonly SmartService _smartService;
 
 
     public TimeAttendenceSyncService(
@@ -34,15 +33,15 @@ public partial class TimeAttendenceSyncService
         ISignalRClientService signalRClientService,
         IMasterDataDbContext dbContext,
         ITATimeAttendenceSyncRepository timeAttendenceSyncRepository,
-        ITATimeAttendenceEventRepository timeAttendenceEventRepository,
-        SmartService smartService
+        ITATimeAttendenceEventRepository timeAttendenceEventRepository
+        //SmartService smartService
         )
     {
         _configuration = configuration;
         _eventBusAdapter = eventBusAdapter;
         _signalRClientService = signalRClientService;
         _dbContext = dbContext;
-        _smartService = smartService;
+        //_smartService = smartService;
         _timeAttendenceSyncRepository = timeAttendenceSyncRepository;
         _timeAttendenceEventRepository = timeAttendenceEventRepository;
     }

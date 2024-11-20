@@ -4,7 +4,6 @@ using Server.Application.MasterDatas.A2.DeviceNotifications.V1;
 using Server.Application.MasterDatas.A2.MonitorDevices.V1;
 using Server.Application.MasterDatas.A2.SchoolYearClasses.V1;
 using Server.Application.MasterDatas.A2.Students.V1;
-using Server.Application.Services.VTSmart;
 using Server.Infrastructure.Datas.MasterData;
 using Shared.Core.SignalRs;
 
@@ -13,7 +12,7 @@ namespace Server.Application.CronJobs;
 public partial class CronJobService : ICronJobService
 {
     private readonly IMasterDataDbContext _dbContext;
-    private readonly SmartService _smartService;
+    //private readonly SmartService _smartService;
     private readonly StudentService _studentService;
     private readonly IConfiguration _configuration;
     private readonly ISignalRClientService _signalRService;
@@ -24,7 +23,7 @@ public partial class CronJobService : ICronJobService
     private readonly MonitorDeviceService _monitorDeviceService;
 
     public CronJobService(IMasterDataDbContext dbContext,
-        SmartService smartService,
+        //SmartService smartService,
         StudentService studentService,
         SchoolYearClassService schoolYearClassService,
         IConfiguration configuration,
@@ -35,7 +34,7 @@ public partial class CronJobService : ICronJobService
         )
     {
         _dbContext = dbContext;
-        _smartService = smartService;
+        //_smartService = smartService;
         _studentService = studentService;
         _schoolYearClassService = schoolYearClassService;
         _configuration = configuration;

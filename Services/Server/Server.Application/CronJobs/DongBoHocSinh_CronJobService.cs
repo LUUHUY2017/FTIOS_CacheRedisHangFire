@@ -68,8 +68,6 @@ public partial class CronJobService : ICronJobService
         RecurringJob.RemoveIfExists(JobName);
     }
 
-
-
     public async Task SyncStudentFromSmas(string sheduleId)
     {
         DateTime now = DateTime.Now;

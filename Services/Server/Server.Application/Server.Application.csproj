@@ -52,6 +52,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="CronJobs\DongBoDiemDanh_CronJobService.cs" />
+    <Compile Remove="CronJobs\DongBoHocSinh_CronJobService.cs" />
     <Compile Remove="MasterDatas\A2\AutoReportInOut\V1\AutoReportInOutService.cs" />
     <Compile Remove="MasterDatas\TA\TimeAttendenceEvents\V1\TimeAttendenceSyncSmasConsumer.cs" />
     <Compile Remove="Services\PeopleCounttingService.cs" />
