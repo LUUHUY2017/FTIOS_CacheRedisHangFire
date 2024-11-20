@@ -1,5 +1,6 @@
 ﻿using AMMS.ZkAutoPush.Applications.MonitorDevices.V1.Models;
 using Microsoft.AspNetCore.Mvc;
+using Share.WebApp.Helps;
 using Shared.Core.Commons;
 
 namespace AMMS.ZkAutoPush.APIControllers.MonitorDevices.V1.Controllers;
@@ -7,6 +8,7 @@ namespace AMMS.ZkAutoPush.APIControllers.MonitorDevices.V1.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
+[AuthorizeClient]
 
 public class MonitorDeviceController : ControllerBase
 {
