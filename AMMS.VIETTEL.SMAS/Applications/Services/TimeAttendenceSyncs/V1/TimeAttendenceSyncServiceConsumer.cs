@@ -34,7 +34,16 @@ public class TimeAttendenceSyncServiceConsumer : IConsumer<RB_DataResponse>
             {
                 var dataAte = JsonConvert.DeserializeObject<SyncDataRequest>(dataRes.Content);
                 if (dataAte != null)
-                    await _timeAttendenceSyncService.ProcessAtendenceData(dataAte);
+                {
+                    var da = await _timeAttendenceSyncService.ProcessAtendenceData(dataAte);
+                    //if (da.Succeeded)
+                    //{
+                    //    if (_signalRClientService.Connection != null && _signalRClientService.Connection.State == HubConnectionState.Connected)
+                    //    {
+                    //        await _signalRClientService.Connection.SendAsync("RefreshSyncPage", "TimeAttendenceSync", dataRes.Content);
+                    //    } 
+                    //}
+                }
             }
         }
         catch (Exception ex)

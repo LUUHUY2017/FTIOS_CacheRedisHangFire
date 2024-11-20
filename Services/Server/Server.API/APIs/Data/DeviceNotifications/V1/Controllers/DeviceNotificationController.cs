@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Application.CronJobs;
 using Server.Application.MasterDatas.A2.DeviceNotifications.V1;
 using Server.Application.MasterDatas.A2.DeviceNotifications.V1.Models;
+using Server.Core.Interfaces.A2.DashBoardReports.Models;
 using Server.Core.Interfaces.A2.DeviceNotifications;
 using Server.Core.Interfaces.A2.ScheduleSendEmails;
 using Share.WebApp.Controllers;

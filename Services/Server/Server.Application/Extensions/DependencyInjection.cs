@@ -18,6 +18,7 @@ using Server.Application.CronJobs;
 using Server.Application.MasterDatas.A0.Accounts.V1;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
+using Server.Application.MasterDatas.A2.DashBoardReports.V1;
 using Server.Application.MasterDatas.A2.DashBoards.V1;
 using Server.Application.MasterDatas.A2.DeviceNotifications.V1;
 using Server.Application.MasterDatas.A2.Devices;
@@ -31,6 +32,7 @@ using Server.Core.Identity.Interfaces.Accounts.Services;
 using Server.Core.Identity.Repositories;
 using Server.Core.Interfaces.A0;
 using Server.Core.Interfaces.A2.ClassRooms;
+using Server.Core.Interfaces.A2.DashBoardReports;
 using Server.Core.Interfaces.A2.DeviceNotifications;
 using Server.Core.Interfaces.A2.Devices;
 using Server.Core.Interfaces.A2.Organizations;
@@ -52,6 +54,7 @@ using Server.Infrastructure.Repositories.A0.AttendanceConfigs;
 using Server.Infrastructure.Repositories.A0.AttendanceTimeConfigs;
 using Server.Infrastructure.Repositories.A0.TimeConfigs;
 using Server.Infrastructure.Repositories.A2.ClassRooms;
+using Server.Infrastructure.Repositories.A2.DashBoardReports;
 using Server.Infrastructure.Repositories.A2.DeviceNotifications;
 using Server.Infrastructure.Repositories.A2.Devices;
 using Server.Infrastructure.Repositories.A2.Organizations;
@@ -119,8 +122,8 @@ public static class DependencyInjection
 
         // Đăng ký dịch vụ SyncDevice&Ta
         services.AddScoped<TimeAttendenceEventService>();
-        services.AddScoped<StudentConsumer>();
-        services.AddScoped<StudentImageConsumer>();
+        services.AddScoped<StudentDeviceConsumer>();
+        services.AddScoped<StudentReceivedConsumer>();
 
 
         services.AddScoped<TimeAttendenceEventService>();
@@ -136,9 +139,9 @@ public static class DependencyInjection
             config.AddConsumer<SendEmailMessageResponseConsumer1>();
 
             ////Đăng ký xử lý bản tin data XML của Brickstream
-            config.AddConsumer<StudentConsumer>();
+            config.AddConsumer<StudentDeviceConsumer>();
             // Đăng ký xử lý ảnh từ học sinh đồng bộ
-            config.AddConsumer<StudentImageConsumer>();
+            config.AddConsumer<StudentReceivedConsumer>();
             // Đăng ký nhận dữ liệu điểm danh thiết bị
             config.AddConsumer<TimeAttendenceEventConsumer>();
             //Đăng ký xử lý bản tin xuống thiết bị
@@ -158,7 +161,7 @@ public static class DependencyInjection
                 //// Nhận Response từ Sự kiện đồng bộ thiết bị trả về
                 cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}", c =>
                 {
-                    c.ConfigureConsumer<StudentConsumer>(ct);
+                    c.ConfigureConsumer<StudentDeviceConsumer>(ct);
                 });
                 cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Data_Auto_Push_D2S}", c =>
                 {
@@ -170,7 +173,7 @@ public static class DependencyInjection
                 //// Nhận Response từ Sự kiện đồng bộ thiết bị trả về
                 cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.SMAS_Auto_Push_Server}", c =>
                 {
-                    c.ConfigureConsumer<StudentImageConsumer>(ct);
+                    c.ConfigureConsumer<StudentReceivedConsumer>(ct);
                 });
                 #endregion
 
@@ -317,6 +320,10 @@ public static class DependencyInjection
 
         //DashBoard
         service.AddScoped<DashBoardService>();
+
+        //DashBoardReport
+        service.AddScoped<IDashBoardReportRepository, DashBoardReportRepository>();
+        service.AddScoped<DashBoardReportService>();
     }
 
     public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
@@ -417,6 +424,7 @@ public static class DependencyInjection
         {
             o.EnableDetailedErrors = true;
             o.MaximumReceiveMessageSize = 4 * 1024 * 1024; // 4MB
+            o.KeepAliveInterval = TimeSpan.FromMinutes(1);
         });
         service.AddSingleton<ISignalRAdapter, SignalRAdapter>();
         service.AddScoped<ISignalRService, SignalRService>();

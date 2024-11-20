@@ -112,6 +112,11 @@ public class ZK_DEVICE_RPService
 
 
                             }
+                            else if (CMD == "DATA")
+                            {
+                                var strData = "";
+                            }
+
                             //Xoá lệnh khỏi danh sách
                             var x = await _deviceCommandCacheService.GetByCode(data.SN, ID);
                             if (x != null)

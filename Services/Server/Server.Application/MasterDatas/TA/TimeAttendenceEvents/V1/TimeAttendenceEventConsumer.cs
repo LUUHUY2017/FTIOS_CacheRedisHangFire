@@ -3,7 +3,6 @@ using EventBus.Messages;
 using MassTransit;
 using Newtonsoft.Json;
 using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
-using Server.Core.Entities.TA;
 using Shared.Core.Loggers;
 
 namespace Server.Application.MasterDatas.A2.Students.V1;
@@ -60,15 +59,6 @@ public class TimeAttendenceEventConsumer : IConsumer<RB_DataResponse>
                 if (dataAte != null)
                 {
                     await _studentService.SaveImagePerson(dataAte);
-                }
-            }
-
-            if (dataRes != null && dataRes.ReponseType == RB_DataResponseType.AttendencePush)
-            {
-                var dataAte = JsonConvert.DeserializeObject<TimeAttendenceSync>(dataRes.Content);
-                if (dataAte != null)
-                {
-                    await _timeAttendenceEventService.SaveStatuSyncSmas(dataAte);
                 }
             }
         }

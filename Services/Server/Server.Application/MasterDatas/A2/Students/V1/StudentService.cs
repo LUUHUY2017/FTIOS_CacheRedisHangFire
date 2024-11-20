@@ -2,6 +2,7 @@
 using AutoMapper;
 using EventBus.Messages;
 using MassTransit;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -804,4 +805,22 @@ public class StudentService
             return new Result<Student>($"Lỗi: {e.Message}", false);
         }
     }
+
+    public async Task<bool> RefreshSyncPage(string request)
+    {
+        bool statusSync = false;
+        try
+        {
+            if (_signalRClientService.Connection != null && _signalRClientService.Connection.State == HubConnectionState.Connected)
+            {
+                _signalRClientService.Connection.SendAsync("RefreshSyncPage", "TimeAttendenceSync", request);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return statusSync;
+    }
+
 }

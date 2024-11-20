@@ -1,4 +1,5 @@
-﻿using Shared.Core.Loggers;
+﻿using MassTransit;
+using Shared.Core.Loggers;
 
 namespace AMMS.ZkAutoPush.Applications.V1;
 
@@ -65,9 +66,9 @@ public class IclockOperarion
     public const string ActionUpdate = "Update";
 
 
-    public static IclockCommand GenerateCommand(double id,string sn, string cmd, bool isSystemCommand, IclockDataTable dataTable, string userId, string action = "")
+    public static IclockCommand GenerateCommand(double id, string sn, string cmd, bool isSystemCommand, IclockDataTable dataTable, string userId, string action = "")
     {
-        
+        sn = sn.Trim();
         return new IclockCommand()
         {
             SerialNumber = sn,
@@ -101,7 +102,7 @@ public class IclockOperarion
 
             string cmd = string.Format("DATA UPDATE USERINFO PIN={0}\tName={1}\tPri={2}\tPasswd={3}\tCard={4}\tGrp=1\tTZ=0000000100000000\tVerify=-1\tViceCard=", userId, name, privileges, password, cardConver);
 
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.A2NguoiIclockSyn, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.A2NguoiIclockSyn, userId);
         }
         catch (Exception e)
         {
@@ -116,7 +117,7 @@ public class IclockOperarion
             int fpSize = templateFp.Length;
             int valid = 1;
             string cmd = string.Format("DATA FP PIN={0}\tFID={1}\tSize={2}\tValid={3}\tTMP={4}", userId, fpIndex, fpSize, valid, templateFp);
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.A2VanTayIclockSyn, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.A2VanTayIclockSyn, userId);
         }
         catch (Exception e)
         {
@@ -132,7 +133,7 @@ public class IclockOperarion
             int size = bytearr.Count();
             string cmd = string.Format("DATA UPDATE USERPIC PIN={0}\tSize={1}\tContent={2}", userId, size, tmpUserPicBase64);
             //C:123:DATA UPDATE USERPIC PIN=3	Size={0}	Content={1}
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.A2NguoiIclockUserPicSyn, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.A2NguoiIclockUserPicSyn, userId);
         }
         catch (Exception e)
         {
@@ -148,7 +149,7 @@ public class IclockOperarion
             int size = bytearr.Count();
             string cmd = string.Format("DATA UPDATE FACE PIN={0}\tFID={1}\tSIZE={2}\tVALID={3}\tTMP={4}", userId, 1, size, 1, tmpUserPicBase64);
 
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.A2NguoiIclockUserPicSyn, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.A2NguoiIclockUserPicSyn, userId);
         }
         catch (Exception e)
         {
@@ -164,7 +165,7 @@ public class IclockOperarion
             int size = bytearr.Count();
             string cmd = string.Format("DATA UPDATE BIODATA PIN={0}\tFID={1}\tNO=0\tDuress=0\tType=9\tMajorVer=5\tMinorVer=621\tVALID={3}\tFormat=0\tTmp={4}", userId, 0, size, 1, tmpUserPicBase64);
 
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.A2NguoiIclockUserPicSyn, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.A2NguoiIclockUserPicSyn, userId);
         }
         catch (Exception e)
         {
@@ -178,7 +179,7 @@ public class IclockOperarion
             var bytearr = System.Convert.FromBase64String(tmpUserPicBase64);
             int size = bytearr.Count();
             string cmd = $"DATA UPDATE BIOPHOTO PIN={userId}\tType={2}\tSize={size}\tContent={tmpUserPicBase64}";
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.A2NguoiIclockUserPicSyn, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.A2NguoiIclockUserPicSyn, userId);
         }
         catch (Exception e)
         {
@@ -192,7 +193,7 @@ public class IclockOperarion
         try
         {
             string cmd = string.Format("DATA DELETE USERPIC PIN={0}", userId);
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.A2VanTayIclockSyn, userId, ActionDelete);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.A2VanTayIclockSyn, userId, ActionDelete);
         }
         catch (Exception e)
         {
@@ -205,7 +206,7 @@ public class IclockOperarion
         try
         {
             string cmd = string.Format("DATA DEL_USER PIN={0}", userId);
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.All, userId, ActionDelete);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.All, userId, ActionDelete);
         }
         catch (Exception e)
         {
@@ -220,7 +221,7 @@ public class IclockOperarion
         {
             //C: ${CmdID}: DATA${SP}QUERY${SP}USERINFO${SP}PIN=${XXX}
             string cmd = string.Format("DATA QUERY $ PIN={0}", userId);
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.None, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.None, userId);
         }
         catch (Exception e)
         {
@@ -237,7 +238,7 @@ public class IclockOperarion
             //FingerID =${ XXX}: Finger number, valued from 0 – 9.
 
             string cmd = string.Format("DATA QUERY FINGERTMP PIN={0}\tFingerID={1}", userId, fpIndex);
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.None, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.None, userId);
         }
         catch (Exception e)
         {
@@ -250,7 +251,7 @@ public class IclockOperarion
         {
             //string cmd = string.Format("DATA DEL_FP PIN ={0}\t{1}", userId, fpIndex);
             string cmd = string.Format("DATA DELETE FINGERTMP PIN={0}\t{1}", userId, fpIndex);
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.A2VanTayIclockSyn, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.A2VanTayIclockSyn, userId);
         }
         catch (Exception e)
         {
@@ -262,7 +263,7 @@ public class IclockOperarion
         try
         {
             string cmd = string.Format("DATA DELETE BIOPHOTO PIN={0}", userId);
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.A2VanTayIclockSyn, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.A2VanTayIclockSyn, userId);
         }
         catch (Exception e)
         {
@@ -275,7 +276,7 @@ public class IclockOperarion
         try
         {
             var cmd = string.Format("ENROLL_FP PIN={0}\tFID={1}\tRETRY={2}\tOVERWRITE={3}", userId, fpIndex, retry, overwrite);
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.None, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.None, userId);
         }
         catch (Exception e)
         {
@@ -287,7 +288,23 @@ public class IclockOperarion
         try
         {
             var cmd = string.Format("ENROLL_MF PIN={0}\tRETRY={1}", userId, retry);
-            return GenerateCommand(id,sn, cmd, false, IclockDataTable.None, userId);
+            return GenerateCommand(id, sn, cmd, false, IclockDataTable.None, userId);
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+    }
+    public static IclockCommand GetAttData(double id, string sn, DateTime startTime, DateTime endTime)
+    {
+        try
+        {
+            //C: 123:DATA QUERY ATTPHOTO StartTime = 2012 - 11 - 21T00: 00:00    EndTime = 2012 - 11 - 21T23: 59:59
+             string strStartTime = startTime.ToString("yyyy-MM-ddTHH:mm:ss");
+            string strEndTime = endTime.ToString("yyyy-MM-ddTHH:mm:ss");
+            var cmd = string.Format("DATA QUERY ATTLOG StartTime={0}\tEndTime={1}", strStartTime, strEndTime);
+
+            return GenerateCommand(id, sn, cmd, true, IclockDataTable.None, "");
         }
         catch (Exception e)
         {
@@ -299,7 +316,7 @@ public class IclockOperarion
         try
         {
             var cmd = "INFO";
-            return GenerateCommand(id,sn, cmd, true, IclockDataTable.None, "");
+            return GenerateCommand(id, sn, cmd, true, IclockDataTable.None, "");
         }
         catch (Exception e)
         {
@@ -311,19 +328,20 @@ public class IclockOperarion
         try
         {
             var cmd = "REBOOT";
-            return GenerateCommand(id,sn, cmd, true, IclockDataTable.None, "");
+            return GenerateCommand(id, sn, cmd, true, IclockDataTable.None, "");
         }
         catch (Exception e)
         {
             throw e;
         }
     }
+
     public static IclockCommand ClearAttData(double id, string sn)
     {
         try
         {
             var cmd = "CLEAR LOG";
-            return GenerateCommand(id,sn, cmd, true, IclockDataTable.None, "");
+            return GenerateCommand(id, sn, cmd, true, IclockDataTable.None, "");
         }
         catch (Exception e)
         {
@@ -335,7 +353,7 @@ public class IclockOperarion
         try
         {
             var cmd = "CLEAR PHOTO";
-            return GenerateCommand(id,sn, cmd, true, IclockDataTable.None, "");
+            return GenerateCommand(id, sn, cmd, true, IclockDataTable.None, "");
         }
         catch (Exception e)
         {
@@ -352,7 +370,7 @@ public class IclockOperarion
         try
         {
             var cmd = "CLEAR DATA";
-            return GenerateCommand(id,sn, cmd, true, IclockDataTable.None, "");
+            return GenerateCommand(id, sn, cmd, true, IclockDataTable.None, "");
         }
         catch (Exception e)
         {
@@ -365,7 +383,7 @@ public class IclockOperarion
         try
         {
             var cmd = "LOG";
-            return GenerateCommand(id,sn, cmd, true, IclockDataTable.None, "");
+            return GenerateCommand(id, sn, cmd, true, IclockDataTable.None, "");
         }
         catch (Exception e)
         {
@@ -378,7 +396,7 @@ public class IclockOperarion
         try
         {
             var cmd = "CHECK";
-            return GenerateCommand(id,sn, cmd, true, IclockDataTable.None, "");
+            return GenerateCommand(id, sn, cmd, true, IclockDataTable.None, "");
         }
         catch (Exception e)
         {
@@ -413,4 +431,3 @@ public class IclockOperarion
     }
 }
 
- 

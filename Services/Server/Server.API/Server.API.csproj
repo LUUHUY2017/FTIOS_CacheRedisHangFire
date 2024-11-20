@@ -98,6 +98,8 @@
 
     <Compile Include="APIs\Data\ClassRoomYears\V1\Controllers\ClassRoomYearController.cs" />
 
+    <Compile Include="APIs\Data\DashBoardReports\V1\Controllers\DashBoardReportController.cs" />
+
     <Compile Include="APIs\Data\DashBoards\V1\Controllers\DashBoardController.cs" />
 
     <Compile Include="APIs\Data\DeviceNotifications\V1\Controllers\DeviceNotificationController.cs" />
