@@ -6,14 +6,14 @@ using Server.Core.Entities.A2;
 using Shared.Core.Loggers;
 
 namespace Server.Application.MasterDatas.A2.Students.V1;
-public class StudentImageConsumer : IConsumer<RB_DataResponse>
+public class StudentReceivedConsumer : IConsumer<RB_DataResponse>
 {
     private readonly IEventBusAdapter _eventBusAdapter;
     private readonly Shared.Core.SignalRs.ISignalRClientService _signalRClientService;
     private readonly StudentService _studentService;
 
 
-    public StudentImageConsumer(
+    public StudentReceivedConsumer(
         IEventBusAdapter eventBusAdapter
       , Shared.Core.SignalRs.ISignalRClientService signalRClientService,
         StudentService studentService
@@ -34,9 +34,14 @@ public class StudentImageConsumer : IConsumer<RB_DataResponse>
             {
                 var dataAte = JsonConvert.DeserializeObject<Student>(dataRes.Content);
                 if (dataAte != null)
-                {
-                    var retval = await _studentService.SaveImageFromService(dataAte);
-                }
+                    await _studentService.SaveImageFromService(dataAte);
+            }
+
+            if (dataRes != null && dataRes.ReponseType == RB_DataResponseType.AttendencePush)
+            {
+                var dataAte = JsonConvert.DeserializeObject<Student>(dataRes.Content);
+                if (dataAte != null)
+                    await _studentService.RefreshSyncPage(dataRes.Content);
             }
         }
         catch (Exception ex)

@@ -4,14 +4,14 @@ using MassTransit;
 using Shared.Core.Loggers;
 
 namespace Server.Application.MasterDatas.A2.Students.V1;
-public class StudentConsumer : IConsumer<RB_ServerResponse>
+public class StudentDeviceConsumer : IConsumer<RB_ServerResponse>
 {
     private readonly IEventBusAdapter _eventBusAdapter;
     private readonly Shared.Core.SignalRs.ISignalRClientService _signalRClientService;
     private readonly StudentService _studentService;
 
 
-    public StudentConsumer(
+    public StudentDeviceConsumer(
         IEventBusAdapter eventBusAdapter
       , Shared.Core.SignalRs.ISignalRClientService signalRClientService,
         StudentService studentService
@@ -27,14 +27,9 @@ public class StudentConsumer : IConsumer<RB_ServerResponse>
     {
         try
         {
-            var dataRes = context.Message;
             // Cập nhật trạng thái đồng bộ dữ liệu học sinh
+            var dataRes = context.Message;
             var retval = await _studentService.SaveStatuSyncDevice(dataRes);
-
-            //if (_signalRClientService.Connection != null && _signalRClientService.Connection.State == HubConnectionState.Connected)
-            //{
-            //    _signalRClientService.Connection.SendAsync("MonitorDevice", xxx);
-            //}
         }
         catch (Exception ex)
         {
