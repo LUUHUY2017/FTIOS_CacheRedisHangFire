@@ -101,7 +101,7 @@ public partial class CronJobService : ICronJobService
                         Name = lastName,
                         OrganizationId = orgRes.Id,
                         SchoolCode = orgRes.OrganizationCode,
-                        ImageSrc = item.ImageSrc,
+                        ImageSrc = item.ImgSrc,
                     };
 
                     // Lưu thông tin lớp

@@ -67,7 +67,7 @@
         public string? ClassName { get; set; }
         public string? ClassId { get; set; }
         public string? BirthDay { get; set; }
-        public string? ImageSrc { get; set; }
+        public string? ImgSrc { get; set; }
     }
 
     public class StudentDataApiResponse
