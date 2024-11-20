@@ -15,6 +15,13 @@
 	  <EmbeddedResource Remove="Data\Consume\**" />
 	  <None Remove="Data\Consume\**" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Datas\Migrations\MySQL\20241111040633_Init_DB_Hanet_24111111711444.cs" />
+	  <Compile Remove="Datas\Migrations\MySQL\20241111040633_Init_DB_Hanet_24111111711444.Designer.cs" />
+	  <Compile Remove="Datas\Migrations\MySQL\20241112083146_Init_DB_Hanet_24111215711444.cs" />
+	  <Compile Remove="Datas\Migrations\MySQL\20241112083146_Init_DB_Hanet_24111215711444.Designer.cs" />
+	</ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
