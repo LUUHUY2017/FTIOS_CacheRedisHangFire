@@ -1,17 +1,17 @@
 ﻿<!--Email-->
-<div class="card shadow-sm" id="webui_dBSendEmail">
+<div class="card shadow-sm" id="webui_dBSendEmail" style="min-height: 215px;">
     <div class="card-body">
         <!--Tilte-->
-        <h2 class="text-start">Thống kê gửi email</h2>
-        <div class="row mt-3">
+        <h5 class="text-start">Thống kê gửi email</h5>
+        <div class="row mt-2 px-2">
             <!-- Dòng thống kê tổng số email đã gửi -->
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center underline-dashed px-0">
                 <span>Tổng số email đã gửi</span>
                 <span class="dots"></span>
                 <span class="fw-bold" v-on:click="onClickCell(null)" style="cursor: pointer;">{{data_Total.totalSendEmail}}</span>
             </div>
             <!-- Dòng thống kê email thành công -->
-            <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="d-flex justify-content-between align-items-center mt-2 underline-dashed px-0">
                 <span>Số email gửi thành công</span>
                 <span class="dots"></span>
                 <span>
@@ -20,7 +20,7 @@
                 </span>
             </div>
             <!-- Dòng thống kê email thất bại -->
-            <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="d-flex justify-content-between align-items-center mt-2 underline-dashed px-0">
                 <span>Số email gửi thất bại</span>
                 <span class="dots"></span>
                 <span>
@@ -29,7 +29,7 @@
                 </span>
             </div>
             <!-- Nút See More -->
-            <div class="col text-start mt-2">
+            <div class="col text-start mt-2 px-0">
                 <a href="/V1/AutoReportMonitor" class="text-end">Xem thêm</a>
             </div>
         </div>
