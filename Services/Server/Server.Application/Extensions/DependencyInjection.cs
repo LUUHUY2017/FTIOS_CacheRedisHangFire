@@ -18,6 +18,7 @@ using Server.Application.CronJobs;
 using Server.Application.MasterDatas.A0.Accounts.V1;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
+using Server.Application.MasterDatas.A2.DashBoardReports.V1;
 using Server.Application.MasterDatas.A2.DashBoards.V1;
 using Server.Application.MasterDatas.A2.DeviceNotifications.V1;
 using Server.Application.MasterDatas.A2.Devices;
@@ -31,6 +32,7 @@ using Server.Core.Identity.Interfaces.Accounts.Services;
 using Server.Core.Identity.Repositories;
 using Server.Core.Interfaces.A0;
 using Server.Core.Interfaces.A2.ClassRooms;
+using Server.Core.Interfaces.A2.DashBoardReports;
 using Server.Core.Interfaces.A2.DeviceNotifications;
 using Server.Core.Interfaces.A2.Devices;
 using Server.Core.Interfaces.A2.Organizations;
@@ -52,6 +54,7 @@ using Server.Infrastructure.Repositories.A0.AttendanceConfigs;
 using Server.Infrastructure.Repositories.A0.AttendanceTimeConfigs;
 using Server.Infrastructure.Repositories.A0.TimeConfigs;
 using Server.Infrastructure.Repositories.A2.ClassRooms;
+using Server.Infrastructure.Repositories.A2.DashBoardReports;
 using Server.Infrastructure.Repositories.A2.DeviceNotifications;
 using Server.Infrastructure.Repositories.A2.Devices;
 using Server.Infrastructure.Repositories.A2.Organizations;
@@ -305,6 +308,10 @@ public static class DependencyInjection
 
         //DashBoard
         service.AddScoped<DashBoardService>();
+
+        //DashBoardReport
+        service.AddScoped<IDashBoardReportRepository, DashBoardReportRepository>();
+        service.AddScoped<DashBoardReportService>();
     }
 
     public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)

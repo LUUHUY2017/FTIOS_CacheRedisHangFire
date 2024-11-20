@@ -4,5 +4,6 @@
     {
         public const string CANHBAOTHIETBIMATKETNOI = "CANHBAOTHIETBIMATKETNOI";
         public const string BAOCAOSOSANH = "BAOCAOSOSANH";
+        public const string BAOCAOTONGQUAN = "BAOCAOTONGQUAN";
     }
 }
