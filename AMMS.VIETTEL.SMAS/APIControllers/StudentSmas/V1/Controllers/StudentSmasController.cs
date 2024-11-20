@@ -1,11 +1,11 @@
 ﻿using AMMS.VIETTEL.SMAS.APIControllers.StudentSmas.V1.Requests;
+using AMMS.VIETTEL.SMAS.Applications.Services.Students.V1;
+using AMMS.VIETTEL.SMAS.Applications.Services.Students.V1.Model;
+using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart;
+using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Application.MasterDatas.A2.Students.V1;
-using Server.Application.MasterDatas.A2.Students.V1.Model;
-using Server.Application.Services.VTSmart;
-using Server.Application.Services.VTSmart.Responses;
 using Share.WebApp.Controllers;
 using Shared.Core.Commons;
 
@@ -41,7 +41,7 @@ namespace AMMS.VIETTEL.SMAS.APIControllers.StudentSmas.V1.Controllers
         public async Task<IActionResult> Edit(DtoStudentRequest request)
         {
             request.OrganizationId = GetOrganizationId();
-            var data = await _studentService.SaveFromWeb(request);
+            var data = await _studentService.SaveFromSmasWeb(request);
             return Ok(data);
         }
 

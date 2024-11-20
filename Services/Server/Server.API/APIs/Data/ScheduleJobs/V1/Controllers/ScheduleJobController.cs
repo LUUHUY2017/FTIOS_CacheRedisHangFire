@@ -80,15 +80,15 @@ public class ScheduleJobController : AuthBaseAPIController
             var model = _mapper.Map<ScheduleJob>(request);
             var retVal = await _scheduleJobRepository.UpdateAsync(model);
 
-            try
-            {
-                if (retVal.Succeeded)
-                {
-                    var scheduleJobs = new List<ScheduleJob> { retVal.Data };
-                    await _cronJobService.CreateScheduleCronJob(scheduleJobs);
-                }
-            }
-            catch (Exception ex) { }
+            //try
+            //{
+            //    if (retVal.Succeeded)
+            //    {
+            //        var scheduleJobs = new List<ScheduleJob> { retVal.Data };
+            //        await _cronJobService.CreateScheduleCronJob(scheduleJobs);
+            //    }
+            //}
+            //catch (Exception ex) { }
 
 
             return Ok(retVal);
@@ -109,13 +109,13 @@ public class ScheduleJobController : AuthBaseAPIController
     public async Task<ActionResult> Resend(string id)
     {
         var retVal = await _scheduleJobRepository.GetById(id);
-        if (retVal.Succeeded)
-        {
-            if (retVal.Data.ScheduleType == "DONGBOHOCSINH")
-                await _cronJobService.SyncStudentFromSmas(retVal.Data.Id);
-            if (retVal.Data.ScheduleType == "DONGBODIEMDANH")
-                await _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
-        }
+        //if (retVal.Succeeded)
+        //{
+        //    if (retVal.Data.ScheduleType == "DONGBOHOCSINH")
+        //        await _cronJobService.SyncStudentFromSmas(retVal.Data.Id);
+        //    if (retVal.Data.ScheduleType == "DONGBODIEMDANH")
+        //        await _cronJobService.SyncAttendenceToSmas(retVal.Data.Id);
+        //}
         return Ok(new Result<object>("Thành công", true));
     }
 
@@ -129,11 +129,11 @@ public class ScheduleJobController : AuthBaseAPIController
     {
         var result = await _scheduleJobRepository.ActiveAsync(request);
         var retVal = await _scheduleJobRepository.GetById(request.Id);
-        if (retVal.Succeeded)
-        {
-            var scheduleJobs = new List<ScheduleJob> { retVal.Data };
-            await _cronJobService.CreateScheduleCronJob(scheduleJobs);
-        }
+        //if (retVal.Succeeded)
+        //{
+        //    var scheduleJobs = new List<ScheduleJob> { retVal.Data };
+        //    await _cronJobService.CreateScheduleCronJob(scheduleJobs);
+        //}
         return Ok(result);
     }
 
@@ -148,11 +148,11 @@ public class ScheduleJobController : AuthBaseAPIController
         var result = await _scheduleJobRepository.InActiveAsync(request);
         var retVal = await _scheduleJobRepository.GetById(request.Id);
 
-        if (retVal.Succeeded)
-        {
-            string JobId = $"CronJobSyncSmas[*]" + retVal.Data.ScheduleType;
-            await _cronJobService.RemoveScheduleCronJob(JobId, retVal.Data.Id);
-        }
+        //if (retVal.Succeeded)
+        //{
+        //    string JobId = $"CronJobSyncSmas[*]" + retVal.Data.ScheduleType;
+        //    await _cronJobService.RemoveScheduleCronJob(JobId, retVal.Data.Id);
+        //}
         return Ok(result);
     }
 

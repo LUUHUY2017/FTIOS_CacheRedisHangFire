@@ -3,12 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Server.API.APIs.Data.Users.V1.Commons;
-using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
-using Server.Core.Entities.A0;
-using Server.Core.Entities.A2;
 using Server.Core.Identity.Entities;
 using Server.Core.Interfaces.A2.Organizations;
 using Server.Infrastructure.Datas.MasterData;
@@ -25,20 +20,17 @@ public class LoginModel : PageModel
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IConfiguration _configuration;
-    private readonly AccountVTSmartService _accountVTSmartService;
     private readonly MasterDataDbContext _masterDataDbContext;
     private readonly IOrganizationRepository _organizationRepository;
     public LoginModel(SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
         IConfiguration configuration,
-        AccountVTSmartService accountVTSmartService,
         MasterDataDbContext masterDataDbContext,
         IOrganizationRepository organizationRepository)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _configuration = configuration;
-        _accountVTSmartService = accountVTSmartService;
         _masterDataDbContext = masterDataDbContext;
         _organizationRepository = organizationRepository;
     }
@@ -134,7 +126,7 @@ public class LoginModel : PageModel
                 //try
                 //{
                 //    //Qua VT để lấy token tk: Input.Email, Input.Password
-                    
+
                 //    var response = await _accountVTSmartService.PostUserVT(Input.Email, Input.Password);
                 //    var a = 1;
                 //    if (response.currentUser != null && response.currentTenant != null)

@@ -3,9 +3,11 @@ using AMMS.ZkAutoPush.Applications.V1;
 using AMMS.ZkAutoPush.Datas.Databases;
 using AMMS.ZkAutoPush.Datas.Entities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Shared.Core.Caches.Redis;
 using Shared.Core.Loggers;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AMMS.ZkAutoPush.Applications;
 
@@ -198,6 +200,40 @@ public class DeviceCommandCacheService
     private string GetKey(string serialNumber)
     {
         return $"{_configuration.GetValue<string>("DataArea")}_{EventBusConstants.ZKTECO}:{key}:{serialNumber}:*";
+    }
+
+    public async Task AddCommandNotRuning(string serialNumber)
+    {
+        try
+        {
+            //Lấy danh sách hiện tại
+            var listAvaible = await Gets(serialNumber);
+            //Nếu không có trong danh sách
+            if (listAvaible == null)
+            {
+                var listNotRunning = _dbContext.zk_terminalcommandlog.Where(x => x.terminal_sn == serialNumber && x.successed == false && x.transfer_time == null);
+                if (listNotRunning.Any())
+                {
+                    foreach (var item in listNotRunning)
+                    {
+                        if (!string.IsNullOrEmpty(item.content))
+                        {
+                            var command = JsonConvert.DeserializeObject<IclockCommand>(item.content);
+                            if (command != null)
+                            {
+                                await Save(command);
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
     }
 
     //private List<IclockCommand> Convert(List<zk_terminalcommandlog> cmds)

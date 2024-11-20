@@ -11,6 +11,7 @@
     <Compile Remove="Datas\**" />
     <Compile Remove="Devices\**" />
     <Compile Remove="EventBusConsumer\**" />
+    <Compile Remove="MasterDatas\A0\AccountVTSmarts\**" />
     <Compile Remove="MasterDatas\DataInOutAvgs\**" />
     <Compile Remove="MasterDatas\DataInOutEvents\**" />
     <Compile Remove="MasterDatas\DataInOutLogs\**" />
@@ -25,6 +26,7 @@
     <EmbeddedResource Remove="Datas\**" />
     <EmbeddedResource Remove="Devices\**" />
     <EmbeddedResource Remove="EventBusConsumer\**" />
+    <EmbeddedResource Remove="MasterDatas\A0\AccountVTSmarts\**" />
     <EmbeddedResource Remove="MasterDatas\DataInOutAvgs\**" />
     <EmbeddedResource Remove="MasterDatas\DataInOutEvents\**" />
     <EmbeddedResource Remove="MasterDatas\DataInOutLogs\**" />
@@ -39,6 +41,7 @@
     <None Remove="Datas\**" />
     <None Remove="Devices\**" />
     <None Remove="EventBusConsumer\**" />
+    <None Remove="MasterDatas\A0\AccountVTSmarts\**" />
     <None Remove="MasterDatas\DataInOutAvgs\**" />
     <None Remove="MasterDatas\DataInOutEvents\**" />
     <None Remove="MasterDatas\DataInOutLogs\**" />
@@ -52,9 +55,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="CronJobs\DongBoDiemDanh_CronJobService.cs" />
+    <Compile Remove="CronJobs\DongBoHocSinh_CronJobService.cs" />
+    <Compile Remove="MasterDatas\A0\AttendanceConfigs\V1\AttendanceConfigService.cs" />
     <Compile Remove="MasterDatas\A2\AutoReportInOut\V1\AutoReportInOutService.cs" />
     <Compile Remove="MasterDatas\TA\TimeAttendenceEvents\V1\TimeAttendenceSyncSmasConsumer.cs" />
     <Compile Remove="Services\PeopleCounttingService.cs" />
+    <Compile Remove="Services\VTSmart\SmartService.cs" />
   </ItemGroup>
 
   <ItemGroup>

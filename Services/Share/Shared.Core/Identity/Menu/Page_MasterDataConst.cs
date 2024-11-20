@@ -238,7 +238,7 @@ public partial class PagesConst
             _ListMenu.Add(URL_V1_SchoolYear);
             _ListMenu.Add(URL_V1_ClassRoomYear);
 
-            _ListMenu.Add(URL_V1_ScheduleJob);
+            //_ListMenu.Add(URL_V1_ScheduleJob);
             _ListMenu.Add(URL_V1_ScheduleReport);
             _ListMenu.Add(URL_V1_DeviceSuperAdmin);
             _ListMenu.Add(URL_V1_DeviceAdmin);

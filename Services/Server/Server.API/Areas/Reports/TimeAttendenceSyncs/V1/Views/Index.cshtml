@@ -263,15 +263,26 @@
 </style>
 
 <script>
+    connection.start().then(function () {
+        console.warn("SignalR connected!");
+    }).catch(function (err) {
+        console.warn("Connection failed: ", err.toString());
+    });
+    connection.on("RefreshSyncPage", function (type, data) {
+        console.warn(type);
+        if (type == "TimeAttendenceSync") {
+            _bcCX.onLoadData();
+        }
+    });
+</script>
+<script>
     $(document).ready(function () {
-
         $("ul.pagination").on("click", "li", function () {
             var pageNumber = $(this).find("a").data('number');
             if (pageNumber != undefined) {
                 _bcCX.filter.CurentPage = pageNumber;
                 _bcCX.onLoadData();
             }
-
         });
     });
 

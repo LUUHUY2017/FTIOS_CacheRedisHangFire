@@ -2,7 +2,7 @@
 
 public static class EventBusConstants
 {
- 
+
     #region Web
     /// <summary>
     /// Phản hồi dữ liệu chấm công, ảnh chụp lên web
@@ -17,15 +17,6 @@ public static class EventBusConstants
     /// </summary>
     public static string Device_Auto_Push_D2S { get; private set; } = @"_device-auto-push_d2s";
 
-    /// <summary>
-    /// Phản hồi của Server lên Rabbit sau khi thực hiện lệnh
-    /// </summary>
-    public static string Server_Auto_Push_SMAS { get; private set; } = @"_server_auto_push_SMAS";
-
-    /// <summary>
-    /// Phản hồi của SMAS trả Rabbit sau khi thực hiện lệnh
-    /// </summary>
-    public static string SMAS_Auto_Push_Server { get; private set; } = @"_SMAS_auto_push_server";
     #endregion
 
     #region Zkteco   
@@ -63,5 +54,17 @@ public static class EventBusConstants
     public static string Hanet_Auto_Push_D2S { get; private set; } = @"_hanet-auto-push_d2s";
 
 
+    #endregion
+
+    #region Tích hợp Web Smas nội bộ
+    /// <summary>
+    /// Phản hồi của Server lên Rabbit sau khi thực hiện lệnh
+    /// </summary>
+    public static string Server_Auto_Push_SMAS { get; private set; } = @"_server_auto_push_SMAS";
+
+    /// <summary>
+    /// Phản hồi của SMAS trả Rabbit sau khi thực hiện lệnh
+    /// </summary>
+    public static string SMAS_Auto_Push_Server { get; private set; } = @"_SMAS_auto_push_server";
     #endregion
 }

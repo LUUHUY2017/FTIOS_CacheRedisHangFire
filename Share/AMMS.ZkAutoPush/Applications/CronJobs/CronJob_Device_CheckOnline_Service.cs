@@ -138,4 +138,49 @@ public partial class CronJobService : ICronJobService
     }
 
     #endregion
+
+    #region Xoá thiết bị
+    static bool Is_DeleteLog { get; set; } = false;
+
+    /// <summary>
+    /// Xoá dữ liệu log
+    /// </summary>
+    /// <returns></returns>
+    public async Task DeleteLog()
+    {
+        if (Is_DeleteLog)
+            return;
+
+        Is_DeleteLog = true;
+        try
+        {
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy") + ": Xoá dữ liệu");
+            //Danh sách từ CSDL
+
+            var deleteDate = DateTime.Now.AddMonths(-1);
+
+
+            var listRemove = await _dbContext.zk_transaction.Where(x => x.CreatedTime < deleteDate).ToListAsync();
+            if (listRemove != null && listRemove.Count > 0)
+            {
+                int count = listRemove.Count;
+
+                _dbContext.zk_transaction.RemoveRange(listRemove);
+                await _dbContext.SaveChangesAsync();
+                Logger.Warning("Xoá " + count + " bản ghi sau " + deleteDate.ToString("HH:mm:ss dd/MM/yyyy"));
+
+            }
+
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e);
+        }
+        finally
+        {
+            Is_DeleteLog = false;
+        }
+    }
+
+    #endregion
 }

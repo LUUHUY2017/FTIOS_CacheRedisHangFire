@@ -94,8 +94,6 @@
   </ItemGroup>
   <ItemGroup>
 
-    <Compile Include="APIs\Data\AttendanceConfigs\V1\Controllers\AttendanceConfigController.cs" />
-
     <Compile Include="APIs\Data\AttendanceTimeConfigs\V1\Models\AttendanceTimeTypeConst.cs" />
 
     <Compile Include="APIs\Data\DashBoards\V1\Controllers\DashBoardController.cs" />
@@ -176,6 +174,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="APIs\Data\AttendanceConfigs\V1\Controllers\" />
     <Folder Include="APIs\Data\ClassRoomYears\V1\Requests\" />
     <Folder Include="APIs\Data\Schoolyears\V1\Requests\" />
     <Folder Include="APIs\Data\ClassRooms\V1\Requests\" />

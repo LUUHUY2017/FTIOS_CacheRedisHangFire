@@ -16,8 +16,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Server.Application.CronJobs;
 using Server.Application.MasterDatas.A0.Accounts.V1;
-using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
-using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
 using Server.Application.MasterDatas.A2.DashBoards.V1;
@@ -29,7 +27,6 @@ using Server.Application.MasterDatas.A2.SchoolYearClasses.V1;
 using Server.Application.MasterDatas.A2.Students.V1;
 using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 using Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
-using Server.Application.Services.VTSmart;
 using Server.Core.Identity.Interfaces.Accounts.Services;
 using Server.Core.Identity.Repositories;
 using Server.Core.Interfaces.A0;
@@ -166,9 +163,7 @@ public static class DependencyInjection
                 });
                 #endregion
 
-
-
-                #region Gửi request xuống máy trạm
+                #region Trung tâm điều hướng đến loại thiết bị khi được ra lệnh đồng bộ
                 //Request from SV
                 cfg.ReceiveEndpoint($"{configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}", c =>
                 {
@@ -277,7 +272,7 @@ public static class DependencyInjection
 
         // AttendanceConfig
         service.AddScoped<IAttendanceConfigRepository, AttendanceConfigRepository>();
-        service.AddScoped<AttendanceConfigService>();
+        //service.AddScoped<AttendanceConfigService>();
 
         //Organization
         service.AddScoped<IOrganizationRepository, OrganizationRepository>();
@@ -288,10 +283,10 @@ public static class DependencyInjection
         service.AddScoped<TimeConfigService>();
 
         // Đồng bộ dữ liệu
-        service.AddScoped<SmartService>();
+        //service.AddScoped<SmartService>();
 
         //Account
-        service.AddScoped<AccountVTSmartService>();
+        //service.AddScoped<AccountVTSmartService>();
 
         //Monitor thiết bị
         service.AddScoped<MonitorDeviceService>();

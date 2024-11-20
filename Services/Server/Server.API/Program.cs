@@ -15,7 +15,6 @@ using Server.API.SignalRs;
 using Server.Application.CronJobs;
 using Server.Application.Extensions;
 using Server.Core.Identity.Entities;
-using Server.Core.Interfaces.A2.ScheduleJobs;
 using Server.Infrastructure.Datas.MasterData;
 using Server.Infrastructure.Identity;
 using Share.WebApp.Controllers;
@@ -485,14 +484,14 @@ using (var scope = app.Services.CreateScope())
     catch (Exception e) { Logger.Error(e); }
 
 
-    try
-    {
-        var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-        var scheduleJob = scope.ServiceProvider.GetRequiredService<IScheduleJobRepository>();
-        var scheduleLists = await scheduleJob.Gets(true);
-        await conJobService.CreateScheduleCronJob(scheduleLists);
-    }
-    catch (Exception e) { Logger.Error(e); }
+    //try
+    //{
+    //    var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
+    //    var scheduleJob = scope.ServiceProvider.GetRequiredService<IScheduleJobRepository>();
+    //    var scheduleLists = await scheduleJob.Gets(true);
+    //    await conJobService.CreateScheduleCronJob(scheduleLists);
+    //}
+    //catch (Exception e) { Logger.Error(e); }
 
 }
 

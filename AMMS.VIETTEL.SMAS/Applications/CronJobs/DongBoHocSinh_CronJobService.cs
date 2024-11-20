@@ -53,6 +53,9 @@ public partial class CronJobService : ICronJobService
     public async Task SyncStudentFromSmas(string sheduleId)
     {
         DateTime now = DateTime.Now;
+        var SyncSmas_Image = _configuration.GetValue<string>("SyncSmas:Image");
+        var SyncSmas_Class = _configuration.GetValue<string>("SyncSmas:Class");
+
         try
         {
             var jobRes = await _dbContext.ScheduleJob.FirstOrDefaultAsync(o => o.Actived == true && o.Id == sheduleId);
@@ -101,21 +104,38 @@ public partial class CronJobService : ICronJobService
                         ImageSrc = item.ImageSrc,
                     };
 
-                    //var resQ = await _schoolYearClassService.SaveFromService(el);
-                    //if (resQ.Succeeded)
-                    //    el.StudentClassId = resQ.Data.Id;
-
-                    var resS = await _studentService.SaveFromService(el);
+                    // Lưu thông tin lớp
                     try
                     {
-                        if (resS.Succeeded && !string.IsNullOrWhiteSpace(el.ImageSrc))
+                        if (SyncSmas_Class != null && SyncSmas_Class == "True")
                         {
-                            var stu = resS.Data;
-                            stu.ImageSrc = el.ImageSrc;
-                            await _studentService.SaveImageFromService(stu);
+                            var resQ = await _schoolYearClassService.SaveFromService(el);
+                            if (resQ.Succeeded)
+                                el.StudentClassId = resQ.Data.Id;
+                        }
+
+                    }
+                    catch (Exception ex) { Logger.Warning(ex.Message); }
+
+                    // Lưu thông tin học sinh
+                    var resS = await _studentService.SaveFromService(el);
+
+                    /// Lưu ảnh học sinh
+                    try
+                    {
+                        if (SyncSmas_Image != null && SyncSmas_Image == "True")
+                        {
+                            if (resS.Succeeded && !string.IsNullOrWhiteSpace(el.ImageSrc))
+                            {
+                                var stu = resS.Data;
+                                stu.ImageSrc = el.ImageSrc;
+                                await _studentService.SaveImageFromService(stu);
+                            }
                         }
                     }
                     catch (Exception ex) { Logger.Warning(ex.Message); }
+
+
                 }
 
                 logSchedule.ScheduleJobStatus = true;
