@@ -238,13 +238,18 @@ public partial class TimeAttendenceSyncService
                 Content = JsonConvert.SerializeObject(req),
                 ReponseType = RB_DataResponseType.AttendencePush,
             };
+
+
+            item.EventType = true;
+            _dbContext.TimeAttendenceEvent.Update(item);
+            await _dbContext.SaveChangesAsync();
+
+
             var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}");
             await aa.Send(rB_Response);
 
             //if (res == null || !res.IsSuccess)
             //    return new Result<TimeAttendenceEvent>($"Lỗi đồng bộ: Đồng bộ không thành công", false);
-
-            item.EventType = true;
 
             //try
             //{
@@ -279,7 +284,7 @@ public partial class TimeAttendenceSyncService
             //    Logger.Error(ext);
             //}
 
-            await _dbContext.SaveChangesAsync();
+
             return new Result<TimeAttendenceEvent>($"Đồng bộ thành công", true);
         }
         catch (Exception ex)

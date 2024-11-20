@@ -1,6 +1,7 @@
 ﻿using AMMS.DeviceData.RabbitMq;
 using EventBus.Messages;
 using MassTransit;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Server.Core.Entities.A2;
@@ -215,8 +216,6 @@ public partial class TimeAttendenceEventService
         }
         return "";
     }
-
-
     /// <summary>
     /// Cập nhật trạng thái đồng bộ api điểm danh
     /// </summary>
@@ -227,10 +226,9 @@ public partial class TimeAttendenceEventService
         bool statusSync = false;
         try
         {
-            var data = await _timeAttendenceSyncRepository.UpdateStatusAsync(request);
-            if (data.Succeeded)
+            if (_signalRClientService.Connection != null && _signalRClientService.Connection.State == HubConnectionState.Connected)
             {
-                statusSync = true;
+                _signalRClientService.Connection.SendAsync("RefreshSyncPage", "TimeAttendenceSync", request);
             }
         }
         catch (Exception ex)

@@ -13,7 +13,6 @@ public class AmmsHub : Hub
         await Clients.All.SendAsync("SystemLog", type, message);
     }
 
-
     public async Task ServerTime(string dateTime, long dateTimeTicks)
     {
         await Clients.All.SendAsync("ServerTime", dateTime, dateTimeTicks);
@@ -26,5 +25,10 @@ public class AmmsHub : Hub
     public async Task MonitorDevice(string type, string message)
     {
         await Clients.All.SendAsync("MonitorDevice", type, message);
+    }
+
+    public async Task RefreshSyncPage(string type, string message)
+    {
+        await Clients.All.SendAsync("RefreshSyncPage", type, message);
     }
 }

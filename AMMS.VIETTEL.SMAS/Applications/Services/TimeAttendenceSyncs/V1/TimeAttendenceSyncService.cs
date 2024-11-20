@@ -68,6 +68,7 @@ public partial class TimeAttendenceSyncService
 
                         sync.Message += $"[{DateTime.Now:dd/MM/yy HH:mm:ss}]: {ite.message}\r\n";
                         sync.LastModifiedDate = DateTime.Now;
+                        _dbContext.TimeAttendenceSync.Update(sync);
                     }
                     else
                     {
@@ -81,13 +82,14 @@ public partial class TimeAttendenceSyncService
                         };
                         await _dbContext.TimeAttendenceSync.AddAsync(log);
                     }
+                    await _dbContext.SaveChangesAsync();
                 }
             }
             catch (Exception ext)
             {
                 Logger.Error(ext);
             }
-            await _dbContext.SaveChangesAsync();
+
 
             return new Result<TimeAttendenceEvent>($"Đồng bộ thành công", true);
         }

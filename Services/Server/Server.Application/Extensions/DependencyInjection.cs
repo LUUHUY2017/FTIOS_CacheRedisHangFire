@@ -16,8 +16,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Server.Application.CronJobs;
 using Server.Application.MasterDatas.A0.Accounts.V1;
-using Server.Application.MasterDatas.A0.AccountVTSmarts.V1;
-using Server.Application.MasterDatas.A0.AttendanceConfigs.V1;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1;
 using Server.Application.MasterDatas.A0.TimeConfigs.V1;
 using Server.Application.MasterDatas.A2.DashBoards.V1;
@@ -274,7 +272,7 @@ public static class DependencyInjection
 
         // AttendanceConfig
         service.AddScoped<IAttendanceConfigRepository, AttendanceConfigRepository>();
-        service.AddScoped<AttendanceConfigService>();
+        //service.AddScoped<AttendanceConfigService>();
 
         //Organization
         service.AddScoped<IOrganizationRepository, OrganizationRepository>();
@@ -288,7 +286,7 @@ public static class DependencyInjection
         //service.AddScoped<SmartService>();
 
         //Account
-        service.AddScoped<AccountVTSmartService>();
+        //service.AddScoped<AccountVTSmartService>();
 
         //Monitor thiết bị
         service.AddScoped<MonitorDeviceService>();
