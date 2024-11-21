@@ -314,5 +314,31 @@ public partial class TimeAttendenceEventService
         return statusSync;
     }
 
+
+    public async Task<bool> PostRabbitToDeviceGetInfo(DeviceSynInfoRequest request)
+    {
+        bool statusSync = false;
+        try
+        {
+            RB_ServerRequest item = new RB_ServerRequest()
+            {
+                SerialNumber = request.SerialNumber,
+                Id = Guid.NewGuid().ToString(),
+                Action = ServerRequestAction.ActionGetDeviceInfo,
+                RequestType = ServerRequestType.Device,
+                DeviceModel = request.DeviceModel,
+                RequestId = DateTime.Now.TimeOfDay.Ticks,
+                DeviceId = request.Id,
+
+            };
+            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}");
+            await aa.Send(item);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return statusSync;
+    }
 }
 
