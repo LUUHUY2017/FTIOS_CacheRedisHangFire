@@ -25,7 +25,7 @@ public partial class CronJobService : ICronJobService
                 var minStartTime = minMaxTimes.Min(o => o.MinStartTime.Value.Hours);
                 var maxEndTime = minMaxTimes.Max(o => o.MaxEndTime.Value.Hours);
 
-                string startRun = minStartTime > 0 ? (minStartTime - 1).ToString() : "0";
+                string startRun = minStartTime > 0 ? (minStartTime).ToString() : "0";
                 //string endRun = maxEndTime < 23 ? (maxEndTime + 1).ToString() : "23";
                 string endRun = "22";
                 aboutHour = $"{startRun}-{endRun}";
