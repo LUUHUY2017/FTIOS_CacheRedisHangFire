@@ -1,12 +1,14 @@
 ﻿using AMMS.DeviceData.RabbitMq;
 using AMMS.ZkAutoPush.Datas.Databases;
 using AMMS.ZkAutoPush.Datas.Entities;
+using EventBus.Messages;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Shared.Core.Loggers;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Text;
 
 namespace AMMS.ZkAutoPush.Applications.V1
 {
@@ -15,6 +17,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
         private readonly DeviceAutoPushDbContext _deviceAutoPushDbContext;
         private readonly DeviceCacheService _deviceCacheService;
         private readonly DeviceCommandCacheService _deviceCommandCacheService;
+        private readonly IEventBusAdapter _eventBusAdapter;
 
         /// <summary>
         /// Danh sách thiết bị (sẽ chuyển sang caches)
@@ -27,12 +30,13 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
         private readonly IConfiguration _configuration;
 
-        public ZK_SV_PUSHService(DeviceAutoPushDbContext deviceAutoPushDbContext, IConfiguration configuration, DeviceCacheService deviceCacheService, DeviceCommandCacheService deviceCommandCacheService)
+        public ZK_SV_PUSHService(DeviceAutoPushDbContext deviceAutoPushDbContext, IConfiguration configuration, DeviceCacheService deviceCacheService, DeviceCommandCacheService deviceCommandCacheService, IEventBusAdapter eventBusAdapter)
         {
             _deviceAutoPushDbContext = deviceAutoPushDbContext;
             _configuration = configuration;
             _deviceCacheService = deviceCacheService;
             _deviceCommandCacheService = deviceCommandCacheService;
+            _eventBusAdapter = eventBusAdapter;
         }
         public async Task Process(RB_ServerRequest rB_ServerRequest)
         {
@@ -68,6 +72,26 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
                         if (command2 != null)
                         {
+                            int emlkb = Encoding.Unicode.GetByteCount(command2.Command);
+
+                            if (emlkb > 400 * 1024)
+                            {
+                                RB_ServerResponse responseFace = new RB_ServerResponse()
+                                {
+                                    Action = rB_ServerRequest.Action,
+                                    Content = "Dung lượng ảnh lớn hơn quy định",
+                                    Id = rB_ServerRequest.Id,
+                                    RequestId = rB_ServerRequest.Id,
+                                    IsSuccessed = false,
+                                    DateTimeResponse = DateTime.Now,
+                                    Message = "Không thành công"
+                                };
+
+                                var aaFace = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}");
+                                await aaFace.Send(responseFace);
+                                return;
+                            }
+
                             command2.DataId = Guid.NewGuid().ToString();
                             command2.ParentId = rB_ServerRequest.Id;
                             await AddCommand(rB_ServerRequest, command);

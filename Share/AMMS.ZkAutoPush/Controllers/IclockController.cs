@@ -210,7 +210,7 @@ public class IclockController : ControllerBase
 
             string commanText = "";
             int i = 0;
-            int totalkb = 20 * 1024;
+            int totalkb = 400 * 1024;
             int contentkb = 0;
             while (i < 200 || contentkb < totalkb)
             {
@@ -234,7 +234,9 @@ public class IclockController : ControllerBase
                     {
                         if (currentCommand.DataTable == IclockDataTable.A2NguoiIclockUserPicSyn)
                         {
+                            Logger.Warning("Ảnh lớn hơn quy định " + currentCommand.SerialNumber + " " + currentCommand.Id);
                             await _deviceCommandCacheService.Remove(sn, currentCommand.Id.ToString());
+                            listUsing.Remove(currentCommand);
                         }
                         continue;
                     }
