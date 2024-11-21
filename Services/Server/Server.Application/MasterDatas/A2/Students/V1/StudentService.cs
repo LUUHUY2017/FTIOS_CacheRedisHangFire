@@ -596,7 +596,7 @@ public class StudentService
             {
                 var item = _dbContext.PersonSynToDevice.FirstOrDefault(o => o.DeviceId == dev.Id && o.PersonId == stu.Id);
                 //var face = faces.Where(o => o.Actived == true && o.PersonId == stu.Id).FirstOrDefault();
-                var face = await _dbContext.PersonFace.Where(o => o.Actived == true && o.PersonId == stu.Id).ToListAsync();
+                var face = await _dbContext.PersonFace.Where(o => o.Actived == true && o.PersonId == stu.Id).FirstOrDefaultAsync();
 
                 if (item == null)
                 {
