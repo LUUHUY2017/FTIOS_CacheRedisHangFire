@@ -587,7 +587,7 @@ public class StudentService
             var imageFullFolder = Common.GetCurentFolder();
 
             var students = await _dbContext.Student.Where(o => o.Actived == true && o.OrganizationId == dev.OrganizationId).ToListAsync();
-            var faces = await _dbContext.PersonFace.Where(o => o.Actived == true && o.OrganizationId == dev.OrganizationId).ToListAsync();
+            //var faces = await _dbContext.PersonFace.Where(o => o.Actived == true && o.OrganizationId == dev.OrganizationId).ToListAsync();
 
             if (students == null || students.Count == 0)
                 return list_Sync;
@@ -595,7 +595,8 @@ public class StudentService
             foreach (var stu in students)
             {
                 var item = _dbContext.PersonSynToDevice.FirstOrDefault(o => o.DeviceId == dev.Id && o.PersonId == stu.Id);
-                var face = faces.Where(o => o.Actived == true && o.PersonId == stu.Id).FirstOrDefault();
+                //var face = faces.Where(o => o.Actived == true && o.PersonId == stu.Id).FirstOrDefault();
+                var face = await _dbContext.PersonFace.Where(o => o.Actived == true && o.PersonId == stu.Id).ToListAsync();
 
                 if (item == null)
                 {
