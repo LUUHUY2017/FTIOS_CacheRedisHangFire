@@ -35,6 +35,7 @@ public class DeviceResponse : Device
         OrganizationId = o.OrganizationId;
         UserCount = o.UserCount;
         FaceCount = o.FaceCount;
+        LastModifiedDate = o.LastModifiedDate;
         //GateId = o.GateId;
         //LaneId = o.LaneId;
     }
