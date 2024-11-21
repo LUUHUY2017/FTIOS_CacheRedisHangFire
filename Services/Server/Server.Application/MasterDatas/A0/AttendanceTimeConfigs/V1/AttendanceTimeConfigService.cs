@@ -1,5 +1,8 @@
-﻿using AutoMapper;
+﻿using AMMS.DeviceData.RabbitMq;
+using AutoMapper;
+using EventBus.Messages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Server.Application.MasterDatas.A0.AttendanceTimeConfigs.V1.Models;
 using Server.Application.MasterDatas.A2.Organizations.V1;
 using Server.Core.Entities.A0;
@@ -16,16 +19,25 @@ public class AttendanceTimeConfigService
     private readonly IMapper _mapper;
     private readonly IMasterDataDbContext _dBContext;
     private readonly OrganizationService _organizationService;
+
+    private readonly IEventBusAdapter _eventBusAdapter;
+    private readonly IConfiguration _configuration;
+
+
     public AttendanceTimeConfigService(
-        IAttendanceTimeConfigRepository AttendanceTimeConfigRepository,
         IMapper mapper,
+        IConfiguration configuration,
+        IEventBusAdapter eventBusAdapter,
+        IAttendanceTimeConfigRepository AttendanceTimeConfigRepository,
         IMasterDataDbContext dBContext,
         OrganizationService organizationService
         )
     {
-        _attendanceTimeConfigRepository = AttendanceTimeConfigRepository;
         _mapper = mapper;
         _dBContext = dBContext;
+        _configuration = configuration;
+        _eventBusAdapter = eventBusAdapter;
+        _attendanceTimeConfigRepository = AttendanceTimeConfigRepository;
         _organizationService = organizationService;
     }
 
@@ -55,6 +67,7 @@ public class AttendanceTimeConfigService
                 var retVal = await _attendanceTimeConfigRepository.UpdateAsync(dataUpdate);
                 return retVal;
             }
+
         }
         catch (Exception ex)
         {
@@ -171,5 +184,26 @@ public class AttendanceTimeConfigService
             return new Result<AttendanceTimeConfig>(null, $"Lỗi: {ex.Message}", false);
         }
     }
+    public async Task<Result<bool>> ChangeDataPushEventRb()
+    {
+        try
+        {
+            RB_DataResponse rB_Response = new RB_DataResponse()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Content = "Thay đổi thời gian",
+                ReponseType = RB_DataResponseType.ChangeAttendenceTime,
+            };
+            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_SMAS}");
+            await aa.Send(rB_Response);
+
+            return new Result<bool>($"Thành công ", false);
+        }
+        catch (Exception ex)
+        {
+            return new Result<bool>($"Lỗi: {ex.Message}", false);
+        }
+    }
+
 
 }

@@ -21,6 +21,7 @@ public class ViettelDbContext : BaseDbContext, IViettelDbContext
 
     public DbSet<AttendanceConfig> AttendanceConfig { get; set; }
     public DbSet<TimeConfig> TimeConfig { get; set; }
+    public DbSet<AttendanceTimeConfig> AttendanceTimeConfig { get; set; }
     public DbSet<Organization> Organization { get; set; }
     public DbSet<Device> Device { get; set; }
 

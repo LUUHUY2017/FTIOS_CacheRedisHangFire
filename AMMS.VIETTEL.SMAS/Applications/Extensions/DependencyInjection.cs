@@ -3,6 +3,7 @@ using AMMS.VIETTEL.SMAS.Applications.CronJobs;
 using AMMS.VIETTEL.SMAS.Applications.Services.AccountVTSmarts.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.AppConfigs.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.Organizations.V1;
+using AMMS.VIETTEL.SMAS.Applications.Services.ScheduleJobs.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.SchoolYearClasses;
 using AMMS.VIETTEL.SMAS.Applications.Services.Students.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.TimeAttendenceSyncs;
@@ -101,6 +102,7 @@ public static class DependencyInjection
         //ScheduleJob
         service.AddScoped<IScheduleJobRepository, ScheduleJobRepository>();
         service.AddScoped<IScheduleJobLogRepository, ScheduleJobLogRepository>();
+        service.AddScoped<ScheduleJobService>();
 
         ////  TimeAttendenceEvents
         service.AddScoped<TimeAttendenceSyncService>();
@@ -108,8 +110,6 @@ public static class DependencyInjection
         //service.AddScoped<ITATimeAttendenceEventRepository, TATimeAttendenceEventRepository>();
         //service.AddScoped<ITATimeAttendenceDetailRepository, TATimeAttendenceDetailRepository>();
         //service.AddScoped<ITATimeAttendenceSyncRepository, TATimeAttendenceSyncRepository>();
-
-
     }
 
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)

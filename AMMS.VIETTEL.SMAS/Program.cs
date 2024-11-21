@@ -337,7 +337,6 @@ using (var scope = app.Services.CreateScope())
         var viettelDbContext = scope.ServiceProvider.GetRequiredService<ViettelDbContext>();
         await viettelDbContext.Database.MigrateAsync();
 
-
         try
         {
             var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
@@ -346,6 +345,8 @@ using (var scope = app.Services.CreateScope())
             await conJobService.CreateScheduleCronJob(scheduleLists);
         }
         catch (Exception e) { Logger.Error(e); }
+
+
     }
     catch (Exception e)
     {

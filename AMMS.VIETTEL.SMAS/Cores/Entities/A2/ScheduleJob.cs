@@ -34,8 +34,12 @@ public class ScheduleJob : EntityBase
 public class ListScheduleCategory
 {
     public static ObjectString Minutely = new ObjectString() { Id = "Minutely", Name = "Mỗi phút" };
+    public static ObjectString _2Minutely = new ObjectString() { Id = "2M", Name = "Mỗi 2 phút" };
+    public static ObjectString _3Minutely = new ObjectString() { Id = "3M", Name = "Mỗi 3 phút" };
+    public static ObjectString _4Minutely = new ObjectString() { Id = "4M", Name = "Mỗi 4 phút" };
     public static ObjectString _5Minutely = new ObjectString() { Id = "5M", Name = "Mỗi 5 phút" };
     public static ObjectString _10Minutely = new ObjectString() { Id = "10M", Name = "Mỗi 10 phút" };
+    public static ObjectString _15Minutely = new ObjectString() { Id = "15M", Name = "Mỗi 15 phút" };
     public static ObjectString _20Minutely = new ObjectString() { Id = "20M", Name = "Mỗi 20 phút" };
     public static ObjectString _30Minutely = new ObjectString() { Id = "30M", Name = "Mỗi 30 phút" };
     public static ObjectString _40Minutely = new ObjectString() { Id = "40M", Name = "Mỗi 40 phút" };
@@ -81,18 +85,23 @@ public class ListScheduleCategory
             var _data = new List<ObjectString>();
 
             _data.Add(_5Minutely);
+            _data.Add(_2Minutely);
+            _data.Add(_3Minutely);
+            _data.Add(_4Minutely);
+            _data.Add(_5Minutely);
             _data.Add(_10Minutely);
+            _data.Add(_15Minutely);
             _data.Add(_20Minutely);
             _data.Add(_30Minutely);
             _data.Add(_40Minutely);
             _data.Add(_50Minutely);
 
-            _data.Add(_5seconds);
-            _data.Add(_10seconds);
-            _data.Add(_20seconds);
-            _data.Add(_30seconds);
-            _data.Add(_40seconds);
-            _data.Add(_50seconds);
+            //_data.Add(_5seconds);
+            //_data.Add(_10seconds);
+            //_data.Add(_20seconds);
+            //_data.Add(_30seconds);
+            //_data.Add(_40seconds);
+            //_data.Add(_50seconds);
 
             return _data;
         }
