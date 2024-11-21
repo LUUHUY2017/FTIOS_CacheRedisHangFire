@@ -69,6 +69,8 @@ public class Device : EntityBase
     /// </summary>
     public int? FaceCount { get; set; }
 
+    //public int? FingerCount { get; set; }
+
 }
 
 

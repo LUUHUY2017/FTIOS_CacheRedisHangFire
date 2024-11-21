@@ -134,4 +134,19 @@ public class DeviceAdminController : AuthBaseAPIController
             return Ok(new Result<object>("Lỗi:" + ex.Message, false));
         }
     }
+
+    [HttpPost("PostGetInfo")]
+    public async Task<IActionResult> PostGetInfo(DeviceSynInfoRequest request)
+    {
+        try
+        {
+            await _timeAttendenceEventService.PostRabbitToDeviceGetInfo(request);
+            return Ok(new Result<object>("Thành công", true));
+        }
+        catch (Exception ex)
+        {
+            return Ok(new Result<object>("Lỗi:" + ex.Message, false));
+        }
+    }
+
 }
