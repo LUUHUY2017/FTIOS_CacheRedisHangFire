@@ -15,6 +15,6 @@
         public static string AttendenceImage = "AttendenceImage";
         public static string UserInfo = "UserInfo";
         public static string AttendencePush = "AttendencePush";
-
+        public static string ChangeAttendenceTime = "ChangeAttendenceTime";
     }
 }

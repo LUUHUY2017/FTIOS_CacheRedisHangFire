@@ -1,4 +1,5 @@
 ﻿using AMMS.DeviceData.RabbitMq;
+using AMMS.VIETTEL.SMAS.Applications.Services.ScheduleJobs.V1;
 using AMMS.VIETTEL.SMAS.Applications.Services.VTSmart.Responses;
 using EventBus.Messages;
 using MassTransit;
@@ -12,17 +13,20 @@ public class TimeAttendenceSyncServiceConsumer : IConsumer<RB_DataResponse>
     private readonly IEventBusAdapter _eventBusAdapter;
     private readonly ISignalRClientService _signalRClientService;
     private readonly TimeAttendenceSyncService _timeAttendenceSyncService;
+    private readonly ScheduleJobService _scheduleJobService;
 
 
     public TimeAttendenceSyncServiceConsumer(
         IEventBusAdapter eventBusAdapter
       , ISignalRClientService signalRClientService,
-        TimeAttendenceSyncService timeAttendenceSyncService
+        TimeAttendenceSyncService timeAttendenceSyncService,
+        ScheduleJobService scheduleJobService
         )
     {
         _eventBusAdapter = eventBusAdapter;
         _signalRClientService = signalRClientService;
         _timeAttendenceSyncService = timeAttendenceSyncService;
+        _scheduleJobService = scheduleJobService;
     }
     public async Task Consume(ConsumeContext<RB_DataResponse> context)
     {
@@ -39,11 +43,14 @@ public class TimeAttendenceSyncServiceConsumer : IConsumer<RB_DataResponse>
                     //if (da.Succeeded)
                     //{
                     //    if (_signalRClientService.Connection != null && _signalRClientService.Connection.State == HubConnectionState.Connected)
-                    //    {
                     //        await _signalRClientService.Connection.SendAsync("RefreshSyncPage", "TimeAttendenceSync", dataRes.Content);
-                    //    } 
                     //}
                 }
+            }
+
+            if (dataRes != null && dataRes.ReponseType == RB_DataResponseType.ChangeAttendenceTime)
+            {
+                await _scheduleJobService.CreateScheduleCronJob();
             }
         }
         catch (Exception ex)

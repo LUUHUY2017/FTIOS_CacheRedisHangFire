@@ -482,17 +482,6 @@ using (var scope = app.Services.CreateScope())
         RecurringJob.AddOrUpdate($"Device_CheckDataReception_Cronjob", () => conJobService.CheckDataReception(), "*/5 * * * *", TimeZoneInfo.Local);
     }
     catch (Exception e) { Logger.Error(e); }
-
-
-    //try
-    //{
-    //    var conJobService = scope.ServiceProvider.GetRequiredService<ICronJobService>();
-    //    var scheduleJob = scope.ServiceProvider.GetRequiredService<IScheduleJobRepository>();
-    //    var scheduleLists = await scheduleJob.Gets(true);
-    //    await conJobService.CreateScheduleCronJob(scheduleLists);
-    //}
-    //catch (Exception e) { Logger.Error(e); }
-
 }
 
 
