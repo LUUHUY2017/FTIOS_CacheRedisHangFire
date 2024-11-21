@@ -66,8 +66,8 @@ public class DashBoardReportRepository : IDashBoardReportRepository
             var _data = (from _do in _biDbContext.ScheduleSendMail
                          where _do.Actived == active
                          && _do.ScheduleNote == request.Note
-                         && (request.OrganizationId != "0" || !string.IsNullOrEmpty(request.OrganizationId) ? _do.OrganizationId == request.OrganizationId : true)
-                         && (!string.IsNullOrWhiteSpace(request.Key) && request.ColumnTable == "scheduleName" ? _do.ScheduleName.Contains(request.Key) : true)
+                         //&& ((request.OrganizationId != "0" || !string.IsNullOrEmpty(request.OrganizationId)) ? _do.OrganizationId == request.OrganizationId : true)
+                         && ((!string.IsNullOrEmpty(request.ColumnTable) && request.ColumnTable == "ScheduleName") ? _do.ScheduleName.Contains(request.Key.Trim()) : true)
                          select _do).ToListAsync();
             return _data;
         }

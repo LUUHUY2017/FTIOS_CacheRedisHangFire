@@ -84,7 +84,6 @@ public class ListScheduleCategory
         {
             var _data = new List<ObjectString>();
 
-            _data.Add(_5Minutely);
             _data.Add(_2Minutely);
             _data.Add(_3Minutely);
             _data.Add(_4Minutely);

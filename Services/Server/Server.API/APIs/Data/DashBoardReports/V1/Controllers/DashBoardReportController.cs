@@ -44,10 +44,7 @@ public class DashBoardReportController : AuthBaseAPIController
         var retVal = await _sheduleSendEmailReponsity.GetById(id);
         if (retVal.Succeeded)
         {
-            if (retVal.Data.ScheduleSequentialSending == "Hourly" && retVal.Data.ScheduleNote == NotificationConst.CANHBAOTHIETBIMATKETNOI)
-                await _cronJobService.Device_Warning_ScheduleSendMail(id);
-            else if (retVal.Data.ScheduleSequentialSending == "TwoHourly" && retVal.Data.ScheduleNote == NotificationConst.CANHBAOTHIETBIMATKETNOI)
-                await _cronJobService.Device_Warning_ScheduleSendMail(id);
+            await _cronJobService.DashBoard_Report_ScheduleSendMail(id);
         }
         return Ok();
     }

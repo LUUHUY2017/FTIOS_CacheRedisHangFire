@@ -142,6 +142,20 @@ public class ZK_DEVICE_RPService
                                 //Đẩy dữ liệu lại rabbitmq cho sv
                                 if (x.DataId == null || x.ParentId != null)
                                 {
+                                    RB_ServerResponse responseFace = new RB_ServerResponse()
+                                    {
+                                        Action = x.Action,
+                                        Content = elm,
+                                        Id = x.ParentId,
+                                        RequestId = x.ParentId,
+                                        IsSuccessed = x.IsSuccessed,
+                                        DateTimeResponse = x.RevicedTime,
+                                        Message = x.IsSuccessed ? RB_ServerResponseMessage.Complete : RB_ServerResponseMessage.InComplete,
+                                    };
+
+                                    var aaFace = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}");
+                                    await aaFace.Send(responseFace);
+
                                     await _deviceCommandCacheService.Remove(data.SN, ID);
 
                                     return;
