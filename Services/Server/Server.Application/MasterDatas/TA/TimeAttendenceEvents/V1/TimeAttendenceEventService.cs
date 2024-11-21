@@ -3,6 +3,8 @@ using EventBus.Messages;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Server.Application.MasterDatas.A2.Devices.Models;
 using Server.Core.Entities.A2;
 using Server.Core.Entities.TA;
 using Server.Core.Interfaces.A2.Persons;
@@ -269,6 +271,41 @@ public partial class TimeAttendenceEventService
             {
                 statusSync = true;
             }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        return statusSync;
+    }
+
+    public async Task<bool> PostRabbitToDeviceGetAttendenceAgain(DeviceSyncAttendenceRequest request)
+    {
+        bool statusSync = false;
+        try
+        {
+            TA_AttendenceHistoryRequest para = new TA_AttendenceHistoryRequest
+            {
+                StartDate = request.StartDate,
+                EndDate = request.EndDate,
+
+            };
+            var param = JsonConvert.SerializeObject(para);
+            RB_ServerRequest item = new RB_ServerRequest()
+            {
+                Id = request.Id,
+                RequestId = DateTime.Now.TimeOfDay.Ticks,
+                Action = ServerRequestAction.ActionGetData,
+                RequestType = ServerRequestType.TAData,
+                DeviceId = request.Id,
+                SerialNumber = request.SerialNumber,
+                DeviceModel = request.DeviceModel,
+                SchoolId = request.OrganizationId,
+                RequestParam = param,
+            };
+
+            var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Server_Auto_Push_S2D}");
+            await aa.Send(item);
         }
         catch (Exception ex)
         {

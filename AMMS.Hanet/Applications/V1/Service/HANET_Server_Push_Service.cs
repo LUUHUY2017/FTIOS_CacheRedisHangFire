@@ -5,10 +5,8 @@ using AMMS.Hanet.Datas.Entities;
 using EventBus.Messages;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using RestSharp;
 using Shared.Core.Loggers;
 using System.Drawing.Imaging;
-using System.Text.Json.Serialization;
 
 namespace AMMS.Hanet.Applications.V1.Service
 {

@@ -42,13 +42,13 @@ public class DashBoardReportService
         _dbContext = dbContext;
     }
 
-    public async Task<Result<List<DashBoardReportRequestResponse>>> Filter(DashBoardReportModel filter)
+    public async Task<Result<List<DashBoardReportResponse>>> Filter(DashBoardReportModel filter)
     {
         try
         {
             filter.Note = NotificationConst.BAOCAOTONGQUAN;
             var datas = await _notificationRepository.GetAlls(filter);
-            var result = _mapper.Map<List<DashBoardReportRequestResponse>>(datas);
+            var result = _mapper.Map<List<DashBoardReportResponse>>(datas);
             if (result.Any())
             {
                 foreach (var item in result)
@@ -59,11 +59,11 @@ public class DashBoardReportService
                     item.ScheduleDataCollectName = ListScheduleEmailCategory.DataCollectType.FirstOrDefault(o => o.Id == item.ScheduleDataCollect)?.Name;
                 }
             }
-            return new Result<List<DashBoardReportRequestResponse>>(result, "Thành công!", true);
+            return new Result<List<DashBoardReportResponse>>(result, "Thành công!", true);
         }
         catch (Exception ex)
         {
-            return new Result<List<DashBoardReportRequestResponse>>(null, $"Có lỗi: {ex.Message}", false);
+            return new Result<List<DashBoardReportResponse>>(null, $"Có lỗi: {ex.Message}", false);
         }
     }
 
@@ -73,7 +73,7 @@ public class DashBoardReportService
         try
         {
             var model = _mapper.Map<ScheduleSendMail>(request);
-            model.ScheduleNote = NotificationConst.CANHBAOTHIETBIMATKETNOI;
+            model.ScheduleNote = NotificationConst.BAOCAOSOSANH;
             var retVal = await _notificationRepository.UpdateAsync(model);
 
             try
@@ -81,22 +81,13 @@ public class DashBoardReportService
                 if (retVal.Succeeded)
                 {
                     var newCronExpression = "0 * * * *";
-                    var timeSentHour = retVal.Data.ScheduleTimeStart.Value.Hours;
-                    var endSentHour = retVal.Data.ScheduleTimeEnd.Value.Hours;
+                    var timeSentHour = retVal.Data.ScheduleTimeSend.HasValue ? retVal.Data.ScheduleTimeSend.Value.Hours : 0;
+                    var timeSentMinute = retVal.Data.ScheduleTimeSend.HasValue ? retVal.Data.ScheduleTimeSend.Value.Minutes : 0;
 
-                    if (retVal.Data.ScheduleNote == NotificationConst.CANHBAOTHIETBIMATKETNOI)
+                    if (retVal.Data.ScheduleNote == NotificationConst.BAOCAOSOSANH)
                     {
-                        if (request.ScheduleSequentialSending == "Hourly")
-                        {
-                            //newCronExpression = $" */5 {timeSentHour}-{endSentHour} * * *";
-                            newCronExpression = $" 0 {timeSentHour}-{endSentHour} * * *";
-                            _IConJobService.UpdateDeviceStatusWarningCronJob(NotificationConst.CANHBAOTHIETBIMATKETNOI, retVal.Data.Id, newCronExpression);
-                        }
-                        if (request.ScheduleSequentialSending == "TwoHourly")
-                        {
-                            newCronExpression = $"0 {timeSentHour}-{endSentHour}/{2} * * *";
-                            _IConJobService.UpdateDeviceStatusWarningCronJob(NotificationConst.CANHBAOTHIETBIMATKETNOI, retVal.Data.Id, newCronExpression);
-                        }
+                        newCronExpression = $"{timeSentMinute} {timeSentHour} * * *";
+                        _IConJobService.UpdateDashBoardReportCronJob("GuiBaoCaoTongQuanHeThong", retVal.Data.Id, newCronExpression);
                     }
                 }
             }
@@ -117,36 +108,27 @@ public class DashBoardReportService
     {
         try
         {
-            var result = await _notificationRepository.ActiveAsync(request);
+            var retVal = await _notificationRepository.ActiveAsync(request);
             try
             {
-                if (result.Succeeded)
+                if (retVal.Succeeded)
                 {
                     var newCronExpression = "0 * * * *";
-                    var timeSentHour = result.Data.ScheduleTimeStart.Value.Hours;
-                    var endSentHour = result.Data.ScheduleTimeEnd.Value.Hours;
+                    var timeSentHour = retVal.Data.ScheduleTimeSend.HasValue ? retVal.Data.ScheduleTimeSend.Value.Hours : 0;
+                    var timeSentMinute = retVal.Data.ScheduleTimeSend.HasValue ? retVal.Data.ScheduleTimeSend.Value.Minutes : 0;
 
-                    if (result.Data.ScheduleNote == NotificationConst.CANHBAOTHIETBIMATKETNOI)
+                    if (retVal.Data.ScheduleNote == NotificationConst.BAOCAOSOSANH)
                     {
-                        if (result.Data.ScheduleSequentialSending == "Hourly")
-                        {
-                            //newCronExpression = $" */5 {timeSentHour}-{endSentHour} * * *";
-                            newCronExpression = $" 0 {timeSentHour}-{endSentHour} * * *";
-                            _IConJobService.UpdateDeviceStatusWarningCronJob(NotificationConst.CANHBAOTHIETBIMATKETNOI, result.Data.Id, newCronExpression);
-                        }
-                        if (result.Data.ScheduleSequentialSending == "TwoHourly")
-                        {
-                            newCronExpression = $"0 {timeSentHour}-{endSentHour}/{2} * * *";
-                            _IConJobService.UpdateDeviceStatusWarningCronJob(NotificationConst.CANHBAOTHIETBIMATKETNOI, result.Data.Id, newCronExpression);
-                        }
+                        newCronExpression = $"{timeSentMinute} {timeSentHour} * * *";
+                        _IConJobService.UpdateDashBoardReportCronJob("GuiBaoCaoTongQuanHeThong", retVal.Data.Id, newCronExpression);
                     }
                 }
-            }
+            }   
             catch (Exception ex)
             {
                 return new Result<ScheduleSendMail>(null, $"Có lỗi: {ex.Message}", false);
             }
-            return result;
+            return retVal;
         }
         catch (Exception ex)
         {
@@ -163,14 +145,7 @@ public class DashBoardReportService
             if (retVal.Succeeded)
             {
                 string JobId = "";
-                if (retVal.Data.ScheduleSequentialSending == "Hourly")
-                {
-                    JobId = NotificationConst.CANHBAOTHIETBIMATKETNOI + "_" + retVal.Data.Id;
-                }
-                else if (retVal.Data.ScheduleSequentialSending == "TwoHourly")
-                {
-                    JobId = NotificationConst.CANHBAOTHIETBIMATKETNOI + "_" + retVal.Data.Id;
-                }
+                JobId = "GuiBaoCaoTongQuanHeThong" + "_" + retVal.Data.Id;
                 _recurringJobManager.RemoveIfExists(JobId);
             }
             return retVal;

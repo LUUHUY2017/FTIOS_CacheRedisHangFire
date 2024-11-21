@@ -12,12 +12,26 @@ public partial class CronJobService : ICronJobService
         foreach (var item in scheduleLists)
         {
             var timeSentHour = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
-            var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Hours : 0;
+            var timeSentMinute = item.ScheduleTime.HasValue ? item.ScheduleTime.Value.Minutes : 0;
             if (item.ScheduleNote == "LAPLICHDONGBO")
             {
                 var newCronExpression = item.ScheduleSequential switch
                 {
+                    "5s" => "*/5 * * * * *",
+                    "10s" => "*/10 * * * * *",
+                    "20s" => "*/20 * * * * *",
+                    "30s" => "*/30 * * * * *",
+                    "40s" => "*/40 * * * * *",
+                    "50s" => "*/50 * * * * *",
+
                     "Minutely" => "* * * * *",
+                    "5M" => "*/5 * * * *",
+                    "10M" => "*/10 * * * *",
+                    "20M" => "*/20 * * * *",
+                    "30M" => "*/30 * * * *",
+                    "40M" => "*/40 * * * *",
+                    "50M" => "*/50 * * * *",
+
                     "Hourly" => "0 * * * *",
                     "Daily" => $"{timeSentMinute} {timeSentHour} * * *",
                     "Weekly" => $"{timeSentMinute} {timeSentHour} * * 0",
@@ -30,8 +44,11 @@ public partial class CronJobService : ICronJobService
                     await UpdateScheduleSyncStudentCronJob("CronJobSyncSmas[*]" + item.ScheduleType, item.Id, newCronExpression);
                 if (item.ScheduleType == "DONGBODIEMDANH")
                     await UpdateScheduleSyncAttendenceCronJob("CronJobSyncSmas[*]" + item.ScheduleType, item.Id, newCronExpression);
+
+                //RecurringJob.RemoveIfExists("CronJobSyncSmas[*]" + item.ScheduleType + "_" + item.Id);
             }
         }
+
     }
     public async Task UpdateScheduleSyncStudentCronJob(string jobId, string sheduleId, string newCronExpression)
     {
@@ -48,6 +65,7 @@ public partial class CronJobService : ICronJobService
         string JobName = jobId + "_" + sheduleId;
         RecurringJob.RemoveIfExists(JobName);
     }
+
 
 
     public async Task SyncStudentFromSmas(string sheduleId)

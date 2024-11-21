@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A2.Devices;
 using Server.Application.MasterDatas.A2.Devices.Models;
 using Server.Application.MasterDatas.A2.Students.V1;
+using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
 using Server.Core.Interfaces.A2.Devices.RequeResponsessts;
 using Server.Core.Interfaces.A2.Devices.Requests;
 using Share.Core.Pagination;
@@ -24,13 +25,20 @@ public class DeviceAdminController : AuthBaseAPIController
     private readonly IUriService _uriService;
     private readonly DeviceAdminService _deviceAdminService;
     private readonly StudentService _studentService;
+    private readonly TimeAttendenceEventService _timeAttendenceEventService;
 
-    public DeviceAdminController(DeviceAdminService deviceAdminService, StudentService studentService, IMapper mapper, IUriService uriService)
+    public DeviceAdminController(
+        DeviceAdminService deviceAdminService,
+        StudentService studentService,
+        TimeAttendenceEventService timeAttendenceEventService,
+        IMapper mapper,
+        IUriService uriService)
     {
         _deviceAdminService = deviceAdminService;
         _mapper = mapper;
         _uriService = uriService;
         _studentService = studentService;
+        _timeAttendenceEventService = timeAttendenceEventService;
     }
 
     /// <summary>
@@ -112,4 +120,18 @@ public class DeviceAdminController : AuthBaseAPIController
         }
     }
 
+    [HttpPost("PostSyncAttAgain")]
+    public async Task<IActionResult> PostSyncAttAgain(DeviceSyncAttendenceRequest request)
+    {
+        try
+        {
+
+            await _timeAttendenceEventService.PostRabbitToDeviceGetAttendenceAgain(request);
+            return Ok(new Result<object>("Thành công", true));
+        }
+        catch (Exception ex)
+        {
+            return Ok(new Result<object>("Lỗi:" + ex.Message, false));
+        }
+    }
 }
