@@ -316,37 +316,67 @@
                         return org ? org.organizationName : '';
                     },
                 },
+                // {
+                //     title: 'Tài khoản',
+                //     sortable: true,
+                //     field: 'deviceID'
+                // },
+                // {
+                //     title: 'Mật khẩu',
+                //     sortable: true,
+                //     field: 'password'
+                // },
+                // {
+                //     title: 'IP',
+                //     sortable: true,
+                //     field: 'ipAddress'
+                // },
+                // {
+                //     title: 'Http Port',
+                //     sortable: true,
+                //     field: 'httpPort'
+                // },
+                // {
+                //     title: 'Port Connect',
+                //     sortable: true,
+                //     field: 'portConnect'
+                // },
                 {
-                    title: 'Tài khoản',
+                    title: 'Số người dùng',
                     sortable: true,
-                    field: 'deviceID'
+                    field: 'userCount'
                 },
                 {
-                    title: 'Mật khẩu',
+                    title: 'Số khuôn mặt',
                     sortable: true,
-                    field: 'password'
+                    field: 'faceCount'
                 },
-                {
-                    title: 'IP',
-                    sortable: true,
-                    field: 'ipAddress'
-                },
-                {
-                    title: 'Http Port',
-                    sortable: true,
-                    field: 'httpPort'
-                },
-                {
-                    title: 'Port Connect',
-                    sortable: true,
-                    field: 'portConnect'
-                },
+                
                 {
                     title: 'Mô tả ',
                     sortable: true,
                     field: 'deviceDescription'
                 },
-
+                {
+                    title: 'Thời gian cập nhật',
+                    field: 'lastModifiedDate',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
 
             ],
             data: [],

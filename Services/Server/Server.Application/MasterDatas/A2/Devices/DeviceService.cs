@@ -1,6 +1,7 @@
 ﻿using AMMS.DeviceData.RabbitMq;
 using AutoMapper;
 using EventBus.Messages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Server.Application.MasterDatas.A2.Devices.Models;
@@ -256,5 +257,30 @@ namespace Server.Application.MasterDatas.A2.Devices
             return new Result<List<object>>(DeviceBrandConst.BrandNames, "Thành công", true);
         }
 
+        public async Task<Result<Device>> UpdateUserFace(Device request)
+        {
+            try
+            {
+                var data = await _dbContext.Device.FirstOrDefaultAsync(x => x.SerialNumber == request.SerialNumber);
+                if (data == null)
+                    return new Result<Device>($"Không có thông tin thiết bị", false);
+                data.FaceCount = request.FaceCount;
+                data.UserCount = request.UserCount;
+                data.LastModifiedDate = DateTime.Now;
+
+                _dbContext.Device.Update(data);
+                var check = await _dbContext.SaveChangesAsync();
+                if (check < 1)
+                {
+                    return new Result<Device>($"Có lỗi xảy ra!", false);
+                }
+
+                return new Result<Device>(data, $"Thành công!", true);
+            }
+            catch (Exception ex)
+            {
+                return new Result<Device>(null, $"Lỗi: {ex.Message}", false);
+            }
+        }
     }
 }

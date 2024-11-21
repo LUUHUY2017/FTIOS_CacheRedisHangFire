@@ -147,7 +147,7 @@
                                     <div class="valid-feedback"> </div>
                                 </div>
                             </div>
-
+                            <!--
                             <div class="row mb-3">
                                 <label class="col-form-label text-end col-lg-3">Ip Address</label>
                                 <div class="col-lg-7">
@@ -189,7 +189,7 @@
                                     <div class="valid-feedback"> </div>
                                 </div>
                             </div>
-
+                            -->
                             <div class="row mb-3">
                                 <label class="col-form-label text-end col-lg-3">Mô tả </label>
                                 <div class="col-lg-7">
@@ -309,6 +309,7 @@
                             ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset inactive " title="Ngừng hoạt động "> <i class="fa fa-minus-circle" ></i> </a> &nbsp; `;
                             ele += `<a href="javascript: " class="btn btn-sm btn-info syncDevice" title="Đồng bộ học sinh "><i class="fa fa-refresh" > </i> </a> &nbsp `;
                             ele += `<a href="javascript: " class="btn btn-sm btn-success  syncAttendenceAgain" title="Đọc lại dữ liệu điểm danh "><i class="fa fa-history" > </i> </a> &nbsp `;
+                            ele += `<a href="javascript: " class="btn btn-sm btn-info  syncGetInfo" title="Đọc thông tin thiết bị "><i class="fa fa-info-circle" > </i> </a> &nbsp `;
 
                         }
                         if (!row.actived) {
@@ -388,6 +389,9 @@
                         },
                         'click .syncAttendenceAgain': function (e, value, row) {
                             _deviceAdmin.onOpenFormSyncAgain(row);
+                        }, 
+                        'click .syncGetInfo': function (e, value, row) {
+                            _deviceAdmin.onSubmitGetInfo(row);
                         },
                     }
                 },
@@ -419,37 +423,66 @@
                         return org ? org.organizationName : '';
                     },
                 },
+                // {
+                //     title: 'Tài khoản',
+                //     sortable: true,
+                //     field: 'deviceID'
+                // },
+                // {
+                //     title: 'Mật khẩu',
+                //     sortable: true,
+                //     field: 'password'
+                // },
+                // {
+                //     title: 'IP',
+                //     sortable: true,
+                //     field: 'ipAddress'
+                // },
+                // {
+                //     title: 'Http Port',
+                //     sortable: true,
+                //     field: 'httpPort'
+                // },
+                // {
+                //     title: 'Port Connect',
+                //     sortable: true,
+                //     field: 'portConnect'
+                // },
                 {
-                    title: 'Tài khoản',
+                    title: 'Số người dùng',
                     sortable: true,
-                    field: 'deviceID'
+                    field: 'userCount'
                 },
                 {
-                    title: 'Mật khẩu',
+                    title: 'Số khuôn mặt',
                     sortable: true,
-                    field: 'password'
-                },
-                {
-                    title: 'IP',
-                    sortable: true,
-                    field: 'ipAddress'
-                },
-                {
-                    title: 'Http Port',
-                    sortable: true,
-                    field: 'httpPort'
-                },
-                {
-                    title: 'Port Connect',
-                    sortable: true,
-                    field: 'portConnect'
+                    field: 'faceCount'
                 },
                 {
                     title: 'Mô tả ',
                     sortable: true,
                     field: 'deviceDescription'
                 },
-
+                {
+                    title: 'Thời gian cập nhật',
+                    field: 'lastModifiedDate',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
 
             ],
             data: [],
@@ -679,7 +712,30 @@
                         window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
+            
+            onSubmitGetInfo(row) {
+                if (!validateForm("#FormSyncAgain"))
+                    return true;
 
+                axios.post('/api/v1/deviceAdmin/PostGetInfo', row, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+                    if (response.data.succeeded) {
+                        alertify.success(response.data.message);
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+                });
+            },
 
             onAddDevice(row) {
                 axios.post('/api/v1/deviceAdmin/Update', row, this.object.config).then(response => {

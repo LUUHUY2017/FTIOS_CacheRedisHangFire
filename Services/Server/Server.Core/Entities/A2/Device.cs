@@ -60,6 +60,17 @@ public class Device : EntityBase
     /// </summary>
     public string? DeviceModel { get; set; }
 
+    /// <summary>
+    /// Số user
+    /// </summary>
+    public int? UserCount { get; set; }
+    /// <summary>
+    /// Số khuôn mặt
+    /// </summary>
+    public int? FaceCount { get; set; }
+
+    //public int? FingerCount { get; set; }
+
 }
 
 
