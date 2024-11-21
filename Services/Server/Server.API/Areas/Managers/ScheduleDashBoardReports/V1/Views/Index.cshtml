@@ -4,7 +4,7 @@
 }
 
 <!-- Main content -->
-<div class="content-wrapper" id="webui_inout">
+<div class="content-wrapper" id="webui_dashBoardReport">
 
     <!-- Inner content -->
     <div class="content-inner">
@@ -65,7 +65,7 @@
                                 <input type="text" id="key" name="key" placeholder="Nhập từ khóa tìm kiếm" class="form-control" v-model="filter.key">
                             </div>
 
-                            <div class="col-lg-3 my-1 d-flex align-items-end">
+                            <div class="col-lg-3 d-flex align-items-end">
                                 <button type="submit" class="btn btn-primary" style="margin-right: 5px;">Tìm kiếm</button>
                             </div>
                         </div>
@@ -84,15 +84,14 @@
 
     <!-- Modal -->
     <div class="modal hide  fade" id="ModelAddEdit" role="dialog" aria-hidden="true">
-        <div id="waitDialog" class="modal-dialog modal-xl">
+        <div id="waitDialog" class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 id="staticBackdropLabel" class="modal-title">{{object.form_tile}} @ViewData["Title"]</h5>
                     <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn-close"> </button>
                 </div>
                 <div class="modal-body">
-                    <div class="card-body  mb-3">
-                        <div class="row_info row">
+                    <div class="row_info row">
                             <p>Thông tin</p>
                             <form class="needs-validation" novalidate id="FormAddEdit">
                                 @* <div class="row mb-3">
@@ -127,10 +126,10 @@
 
                                 </div> *@
                                 <div class="row mb-3">
-                                    <div class="col-md-6">
+                                    <div class="col-12 my-1">
                                         <div class="form-group row">
                                             <label class="col-form-label col-lg-3">Tên lịch gửi<span class="text-danger">*</span></label>
-                                            <div class="col-lg-9">
+                                            <div class="col-md-9">
                                                 <input type="text" class="form-control" required placeholder="Vui lòng nhập tên lịch " v-model="item.scheduleName">
                                                 <div class="invalid-feedback">Vui lòng nhập tên lịch gửi</div>
                                                 <div class="valid-feedback"></div>
@@ -138,7 +137,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-12 my-1">
                                         <div class="form-group row">
                                             <label class="col-form-label col-md-3">Loại báo cáo<span class="text-danger">*</span></label>
                                             <div class="col-md-9">
@@ -152,10 +151,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
+                                    <div class="col-12 my-1">
                                         <div class="form-group row">
                                             <label class="col-form-label col-md-3">Giờ gửi báo cáo <span class="text-danger">*</span></label>
                                             <div class="col-md-9">
@@ -165,7 +162,47 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @* <div class="col-md-6">
+
+                                    <div class="col-12 my-1">
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-md-3">Tiêu đề báo cáo<span class="text-danger">*</span></label>
+                                            <div class="col-md-9">
+                                                <textarea rows="1" class="form-control" required placeholder="Vui lòng nhập tiêu đề" v-model="item.scheduleTitleEmail"> </textarea>
+                                                <div class="invalid-feedback">Vui lòng nhập tiêu đề</div>
+                                                <div class="valid-feedback"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 my-1">
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-md-3">Nội dung báo cáo<span class="text-danger">*</span></label>
+                                            <div class="col-md-9">
+                                                <textarea rows="2" class="form-control" required placeholder="Vui lòng nhập nội dung" v-model="item.scheduleContentEmail">
+
+                                                    </textarea>
+                                                <div class="invalid-feedback">Vui lòng nhập nội dung</div>
+                                                <div class="valid-feedback"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 my-1">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-md-3">Hoạt động</label>
+                                                <div class="col-md-9">
+                                                    <div class="form-check-horizontal">
+                                                        <label class="form-check form-switch mb-0">
+                                                            <input type="checkbox" class="form-check-input" v-model="item.actived">
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                @* <div class="row mb-3">
+                                    <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-form-label col-md-3">Tuần suất gửi <span class="text-danger">*</span></label>
                                             <div class="col-md-9">
@@ -179,12 +216,12 @@
                                                 <div class="valid-feedback"> </div>
                                             </div>
                                         </div>
-                                    </div> *@
+                                    </div> 
                                     
-                                </div>
+                                </div> *@
 
-                                <div class="row mb-3">
-                                   @*  <div class="col-md-6">
+                                @* <div class="row mb-3">
+                                   <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-form-label col-md-3">Thời gian lấy dữ liệu từ<span class="text-danger">*</span></label>
                                             <div class="col-md-4">
@@ -214,50 +251,14 @@
                                                 <div class="valid-feedback"> </div>
                                             </div>
                                         </div>
-                                    </div> *@
-                                </div>
+                                    </div> 
+                                </div> *@
 
-                                <div class="row mb-3">
-                                    @* <div class="col-md-6">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-md-3">Tiêu đề báo cáo<span class="text-danger">*</span></label>
-                                            <div class="col-md-9">
-                                                <textarea rows="5" class="form-control" required placeholder="Vui lòng nhập tiêu đề" v-model="item.scheduleTitleEmail"> </textarea>
-                                                <div class="invalid-feedback">Vui lòng nhập tiêu đề</div>
-                                                <div class="valid-feedback"></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                @* <div class="row mb-3">
+                                   
 
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-md-3">Nội dung báo cáo<span class="text-danger">*</span></label>
-                                            <div class="col-md-9">
-                                                <textarea rows="5" class="form-control" required placeholder="Vui lòng nhập nội dung" v-model="item.scheduleContentEmail">
-
-                                                </textarea>
-                                                <div class="invalid-feedback">Vui lòng nhập nội dung</div>
-                                                <div class="valid-feedback"></div>
-                                            </div>
-                                        </div>
-                                    </div> *@
-                                </div>
-
-                                <div class="row mb-4">
-                                    <div class="col-md-6">
-                                        <div class="form-group row">
-                                            <label class="col-form-label col-md-3">Hoạt động</label>
-                                            <div class="col-lg-9">
-                                                <div class="form-check-horizontal">
-                                                    <label class="form-check form-switch mb-0">
-                                                        <input type="checkbox" class="form-check-input" v-model="item.actived">
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                    
+                                </div> *@
 
 
                                 <div class="row mb-3">
@@ -267,17 +268,16 @@
                                 </div>
                             </form>
                         </div>
-                    </div>
-                    @* <div class="card-body">
-                        <div class="row_info row">
-                            <div v-if="object.editAction" class="col-md-12 text-end">
+                    <div class="card-body">
+                        <div class="row_info row" v-if="object.editAction">
+                            <div class="col-md-12 text-end">
                                 <a v-on:click="onPopupModalSubmitVehicle(null)" style=" margin: 0 0 5px 5px" id="add_row_table" title="Thêm dòng" class=" btn-md btn btn-primary pull-right"> <i class="fa fa-plus"></i> Thêm mới </a>
                             </div>
                             <div class="col-md-12">
                                 <bootstrap-table :columns=" columns_selected" :data="data_selected" :options="options"></bootstrap-table>
                             </div>
                         </div>
-                    </div> *@
+                    </div>
 
                 </div>
             </div>
@@ -342,38 +342,38 @@
 <script>
     $(document).ready(function () {
         $('#scheduleExportType').on("change", function () {
-            _ReportInOut.item.scheduleExportType = $(this).val();
+            _dashBoardReport.item.scheduleExportType = $(this).val();
         });
         $('#scheduleSequentialSending').on("change", function () {
-            _ReportInOut.item.scheduleSequentialSending = $(this).val();
+            _dashBoardReport.item.scheduleSequentialSending = $(this).val();
         });
         $('#scheduleReportType').on("change", function () {
-            _ReportInOut.item.scheduleReportType = $(this).val();
+            _dashBoardReport.item.scheduleReportType = $(this).val();
         });
         $('#organizationId').on("change", function () {
-            _ReportInOut.item.organizationId = $(this).val();
-            _ReportInOut.item.organizationName = $(this).find("option:selected").text()?.trim();
+            _dashBoardReport.item.organizationId = $(this).val();
+            _dashBoardReport.item.organizationName = $(this).find("option:selected").text()?.trim();
         });
         $('#scheduleDataCollect').on("change", function () {
-            _ReportInOut.item.scheduleDataCollect = $(this).val();
+            _dashBoardReport.item.scheduleDataCollect = $(this).val();
         });
 
 
         $('#FOrganization').on("change", function () {
-            _ReportInOut.filter.organizationId = $(this).val();
+            _dashBoardReport.filter.organizationId = $(this).val();
         });
         $('#FActived').on("change", function () {
-            _ReportInOut.filter.actived = $(this).val();
+            _dashBoardReport.filter.actived = $(this).val();
         });
         $('#FcolumnTable').on("change", function () {
-            _ReportInOut.filter.columnTable = $(this).val();
+            _dashBoardReport.filter.columnTable = $(this).val();
         });
 
     });
 
 
-    var _ReportInOut = new Vue({
-        el: '#webui_inout',
+    var _dashBoardReport = new Vue({
+        el: '#webui_dashBoardReport',
         components: {
             'BootstrapTable': BootstrapTable
         },
@@ -409,20 +409,20 @@
                     },
                     events: {
                         'click .edit': function (e, value, row) {
-                            _ReportInOut.onPopupModelEdit(row);
+                            _dashBoardReport.onPopupModelEdit(row);
                         },
                         'click .resend': function (e, value, row) {
-                            _ReportInOut.onResend(row);
+                            _dashBoardReport.onResend(row);
                         },
                         'click .delete': function (e, value, row) {
                             var question = "Bạn có chắc chắn muốn xóa dòng này khỏi cơ sở dữ liệu không? sau khi xóa không khôi phục lại được!";
                             var content = "Nhập nội dung xóa (không quá 250 kí tự)";
                             alertify.prompt(question, content, ''
                                 , function (evt, value) {
-                                    axios.post('/api/v1/ScheduleSendEmail/Delete', { id: row.id, reason: value + " " }, _ReportInOut.object.bearerAuthorization).then(response => {
+                                    axios.post('/api/v1/ScheduleSendEmail/Delete', { id: row.id, reason: value + " " }, _dashBoardReport.object.bearerAuthorization).then(response => {
                                         if (response.data.succeeded) {
                                             alertify.success(response.data.message);
-                                            _ReportInOut.loadData();
+                                            _dashBoardReport.loadData();
                                         }
                                         else {
                                             alertify.warning(response.data.message);
@@ -438,10 +438,10 @@
                             var question = "Bạn có chắc chắn muốn ẩn dòng này không?";
                             var content = "Nhập nội dung xóa (không quá 250 kí tự)";
                             alertify.prompt(question, content, '', function (evt, value) {
-                                axios.post('/api/v1/AutoReportInOut/Inactive', { id: row.id, reason: value }, _ReportInOut.object.bearerAuthorization).then(response => {
+                                axios.post('/api/v1/DashBoardReport/Inactive', { id: row.id, reason: value }, _dashBoardReport.object.bearerAuthorization).then(response => {
                                     if (response.data.succeeded) {
                                         alertify.success(response.data.message);
-                                        _ReportInOut.loadData();
+                                        _dashBoardReport.loadData();
                                     }
                                     else {
                                         alertify.warning(response.data.message || "Có lỗi xảy ra!");
@@ -457,10 +457,10 @@
                         'click .active': function (e, value, row) {
                             var question = "Bạn có chắc chắn muốn kích hoạt dòng này không?";
                             alertify.confirm('Thông báo!', question, function () {
-                                axios.post('/api/v1/AutoReportInOut/Active', { id: row.id, reason: 'Kích hoạt lại bản ghi' }, _ReportInOut.object.bearerAuthorization).then(response => {
+                                axios.post('/api/v1/DashBoardReport/Active', { id: row.id, reason: 'Kích hoạt lại bản ghi' }, _dashBoardReport.object.bearerAuthorization).then(response => {
                                     if (response.data.succeeded) {
                                         alertify.success(response.data.message);
-                                        _ReportInOut.loadData();
+                                        _dashBoardReport.loadData();
                                     }
                                     else {
                                         alertify.warning(response.data.message || "Có lỗi xảy ra!");
@@ -494,16 +494,16 @@
                 //     field: "scheduleSequentialSending",
                 //     sortable: true,
                 // },
-                // {
-                //     title: "Tiêu đề báo cáo",
-                //     field: 'scheduleName',
-                //     sortable: true,
-                // },
-                // {
-                //     title: "Nội dung",
-                //     field: 'scheduleContentEmail',
-                //     sortable: true,
-                // },
+                {
+                    title: "Tiêu đề báo cáo",
+                    field: 'scheduleName',
+                    sortable: true,
+                },
+                {
+                    title: "Nội dung",
+                    field: 'scheduleContentEmail',
+                    sortable: true,
+                },
             ],
             data: [],
 
@@ -530,15 +530,15 @@
                     },
                     events: {
                         'click .edit': function (e, value, row) {
-                            _ReportInOut.onPopupModalSubmitVehicle(row);
+                            _dashBoardReport.onPopupModalSubmitVehicle(row);
                         },
                         'click .delete': function (e, value, row) {
                             var question = "Bạn có chắc chắn muốn xóa dòng này khỏi cơ sở dữ liệu không? sau khi xóa không khôi phục lại được!";
                             alertify.confirm('Thông báo!', question, function () {
-                                axios.post('/api/v1/ScheduleSendEmailDetail/Delete', { id: row.id, reason: "deleted" }, _ReportInOut.object.config).then(response => {
+                                axios.post('/api/v1/ScheduleSendEmailDetail/Delete', { id: row.id, reason: "deleted" }, _dashBoardReport.object.bearerAuthorization).then(response => {
                                     if (response.data.succeeded) {
                                         alertify.success(response.data.message);
-                                        _ReportInOut.onGetDetail();
+                                        _dashBoardReport.onGetDetail();
                                     }
                                     else {
                                         alertify.warning(response.data.message);
@@ -570,8 +570,8 @@
                 actived: "1",
                 key: "",
                 export: "0",
-                organizationId: 0,
-                scheduleNote: "BAOCAODULIEUVAORA",
+                organizationId: "0",
+                scheduleNote: "BAOCAOTONGQUAN",
             },
             item: {},
             item_add: {},
@@ -605,7 +605,7 @@
         methods: {
             loadData() {
                 $('.loader').show();
-                axios.post('/api/v1/AutoReportInOut/Gets', this.filter, this.object.bearerAuthorization).then(response => {
+                axios.post('/api/v1/DashBoardReport/Gets', this.filter, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
@@ -629,7 +629,7 @@
             onResetForm() {
                 this.item = {
                     actived: true,
-                    scheduleNote : "BAOCAODULIEUVAORA"
+                    scheduleNote : "BAOCAOTONGQUAN"
                 };
                 this.data_selected = [];
                 this.item_add = {};
@@ -653,7 +653,7 @@
                 $('#organizationId').val(this.item.organizationId).trigger('change');
                 $('#scheduleDataCollect').val(this.item.scheduleDataCollect).trigger('change');
 
-                _ReportInOut.onGetDetail();
+                _dashBoardReport.onGetDetail();
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('ModelAddEdit')).show();
             },
 
@@ -663,16 +663,16 @@
                 }
 
                 $('.loader').show();
-                this.item.scheduleNote = "BAOCAODULIEUVAORA";
-                axios.put('/api/v1/AutoReportInOut/Edit', this.item, this.object.config).then(response => {
+                this.item.scheduleNote = "BAOCAOTONGQUAN";
+                axios.post('/api/v1/DashBoardReport/Edit', this.item, this.object.bearerAuthorization).then(response => {
                     $('.loader').hide(0);
                     if (response.data.succeeded) {
-                        _ReportInOut.object.editAction = true;
+                        _dashBoardReport.object.editAction = true;
 
-                        _ReportInOut.item = response.data.data;
+                        _dashBoardReport.item = response.data.data;
 
                         alertify.success(response.data.message);
-                        _ReportInOut.loadData();
+                        _dashBoardReport.loadData();
                     }
                     else {
                         alertify.notify(response.data.message, 'error', 6, function () { });
@@ -686,7 +686,7 @@
 
             onGetDetail() {
                 $('.loader').show();
-                axios.get('/api/v1/ScheduleSendEmailDetail/Get?sheduleId=' + this.item.id, this.object.config).then(response => {
+                axios.get('/api/v1/ScheduleSendEmailDetail/Get?sheduleId=' + this.item.id, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 
@@ -702,7 +702,7 @@
 
             onResend(row) {
                 $('.loader').show();
-                axios.get('/api/v1/AutoReportInOut/Resend?id=' + row.id, this.object.config).then(response => {
+                axios.get('/api/v1/DashBoardReport/Resend?id=' + row.id, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
                     $('.loader').delay(100).hide(0);
@@ -733,7 +733,7 @@
                 $(".loader").show();
                 this.item_add.scheduleId = this.item.id;
 
-                axios.put('/api/v1/ScheduleSendEmailDetail/Edit', this.item_add, this.object.config).then(response => {
+                axios.post('/api/v1/ScheduleSendEmailDetail/Edit', this.item_add, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 
@@ -741,7 +741,7 @@
                     alertify.success(response.data.message);
                     bootstrap.Modal.getOrCreateInstance(document.getElementById('ModalSubmitVehicle')).hide();
 
-                    _ReportInOut.onGetDetail();
+                    _dashBoardReport.onGetDetail();
                 }).catch((error) => {
                     console.log(error);
                     $(".loader").delay(100).hide(0);
@@ -749,20 +749,11 @@
             },
 
             loadCombox() {
-                axios.get('/api/v1/ScheduleSendEmail/Organizations', this.object.config).then(response => {
+                axios.get('/api/v1/ScheduleSendEmail/ScheduleEmailOptions', this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login'))
                         window.location = window.location.href;
 
-                    this.combobox.organizations = response.data.items;
-                }).catch(error => {
-                    console.log(error);
-                });
-
-                axios.get('/api/v1/ScheduleSendEmail/ScheduleEmailOptions', this.object.config).then(response => {
-                    if (response.request.responseURL.includes('~/Account/Login'))
-                        window.location = window.location.href;
-
-                    this.combobox.reportTypes = response.data.reportTypesInOut;
+                    this.combobox.reportTypes = response.data.reportTypesDashBoardReport;
                     this.combobox.dataCollectTypes = response.data.dataCollectTypes;
                     this.combobox.sequentialSendings = response.data.sequentialSendingsInOut;
                     this.combobox.exportTypes = response.data.exportTypes;

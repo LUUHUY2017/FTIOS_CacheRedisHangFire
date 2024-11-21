@@ -81,6 +81,10 @@ public class ListScheduleEmailCategory
     {
                  new ObjectString() { Id = "CANHBAOTHIETBIMATKETNOI", Name = "Cảnh báo thiết bị mất kết nối" },
     };
+    public static List<ObjectString> ReportTypeDashBoardReport = new List<ObjectString>()
+    {
+                 new ObjectString() { Id = "BAOCAOTONGQUAN", Name = "Báo cáo tổng quan hệ thống" },
+    };
     //compare report
     public static List<ObjectString> ReportTypeInOut = new List<ObjectString>()
     {
@@ -120,6 +124,7 @@ public class ListScheduleEmailCategory
          new ObjectString() { Id = "BAOCAOTUDONG", Name = "Báo cáo tự động" },
          new ObjectString() { Id = "CANHBAOTHIETBIMATKETNOI", Name = "Cảnh báo thiết bị mất kết nối" },
          new ObjectString() { Id = "BAOCAOSOSANH", Name = "Báo cáo so sánh" },
+         new ObjectString() { Id = "BAOCAOTONGQUAN", Name = "Báo cáo tổng quan hệ thống" },
     };
 
 }
