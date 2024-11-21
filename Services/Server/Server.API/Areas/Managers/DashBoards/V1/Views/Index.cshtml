@@ -4,7 +4,7 @@
 }
 
 <!-- Main content -->
-<div class="content-wrapper" id="webui_dashboard">
+<div class="content-wrapper p-0" id="webui_dashboard">
 
     <!-- Inner content -->
     <div class="content-inner">
@@ -42,24 +42,40 @@
 
         </div> *@
 
-        <div class="container mt-4">
+        <div class="mt-4 px-2">
             <div class="row">
                 <!-- Cột 1 -->
                 <div class="col-md-6 col-lg-4">
-                    <h5>Dữ liệu</h5>
-                    @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DbSchoolClassStudent.cshtml")
-                    @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBDevice1.cshtml")
+                    <div class="px-2 bg-data">
+                        <h5 class="py-2" style="color: black;"><i class="ph-chart-pie"></i> Dữ liệu</h5>
+                    </div>
+                    <div class="ps-2 bg-data">
+                        @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DbSchoolClassStudent.cshtml")
+                    </div>
+                    <div class="ps-2 bg-data">
+                        @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBDevice1.cshtml")
+                    </div>
                 </div>
                 <!-- Cột 2 -->
                 <div class="col-md-6 col-lg-4">
-                    <h5>Hoạt động</h5>
-                    @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBStudentFace.cshtml")
-                    @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBStudentAttendace.cshtml")
+                    <div class="px-2 bg-active">
+                        <h5 class="py-2" style="color: black;"><i class="ph-clock"></i> Hoạt động</h5>
+                    </div>
+                    <div class="ps-2 bg-active">
+                        @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBStudentFace.cshtml")
+                    </div>
+                    <div class="ps-2 bg-active">
+                        @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBStudentAttendace.cshtml")
+                    </div>
                 </div>
                 <!-- Cột 3 -->
                 <div class="col-md-6 col-lg-4">
-                    <h5>Hệ thống</h5>
-                    @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBSendEmail.cshtml")
+                    <div class="px-2 bg-system">
+                        <h5 class="py-2" style="color: black;"><i class="ph-gear"></i> Hệ thống</h5>
+                    </div>
+                    <div class="ps-2 bg-system">
+                        @await Html.PartialAsync("/Areas/Managers/DashBoards/V1/Views/DBSendEmail.cshtml")
+                    </div>
                 </div>
             </div>
         </div>
@@ -72,5 +88,14 @@
 <style>
     .underline-dashed {
         border-bottom: 1px dashed; 
+    }
+    .bg-data {
+        background-color: #D0EFFF !important;
+    }
+    .bg-active {
+        background-color: #FFFAE3 !important;
+    }
+    .bg-system {
+        background-color: #A9F7B1 !important;
     }
 </style>
