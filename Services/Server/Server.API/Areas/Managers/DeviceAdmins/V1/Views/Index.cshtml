@@ -309,6 +309,7 @@
                             ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset inactive " title="Ngừng hoạt động "> <i class="fa fa-minus-circle" ></i> </a> &nbsp; `;
                             ele += `<a href="javascript: " class="btn btn-sm btn-info syncDevice" title="Đồng bộ học sinh "><i class="fa fa-refresh" > </i> </a> &nbsp `;
                             ele += `<a href="javascript: " class="btn btn-sm btn-success  syncAttendenceAgain" title="Đọc lại dữ liệu điểm danh "><i class="fa fa-history" > </i> </a> &nbsp `;
+                            ele += `<a href="javascript: " class="btn btn-sm btn-info  syncGetInfo" title="Đọc thông tin thiết bị "><i class="fa fa-info-circle" > </i> </a> &nbsp `;
 
                         }
                         if (!row.actived) {
@@ -388,6 +389,9 @@
                         },
                         'click .syncAttendenceAgain': function (e, value, row) {
                             _deviceAdmin.onOpenFormSyncAgain(row);
+                        }, 
+                        'click .syncGetInfo': function (e, value, row) {
+                            _deviceAdmin.onSubmitGetInfo(row);
                         },
                     }
                 },
@@ -708,7 +712,30 @@
                         window.location.href = '/Account/login?ReturnUrl=%2F';
                 });
             },
+            
+            onSubmitGetInfo(row) {
+                if (!validateForm("#FormSyncAgain"))
+                    return true;
 
+                axios.post('/api/v1/deviceAdmin/PostGetInfo', row, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login'))
+                        window.location = window.location.href;
+
+                    if (response.status == 302 || response.status == 401)
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+
+                    if (response.data.succeeded) {
+                        alertify.success(response.data.message);
+                    }
+                    else {
+                        alertify.notify(response.data.message, 'error', 6, function () { });
+                    }
+                }).catch(error => {
+                    $('.loader').hide(0);
+                    if (error.response && (error.response.status == 401 || error.response.status == 302))
+                        window.location.href = '/Account/login?ReturnUrl=%2F';
+                });
+            },
 
             onAddDevice(row) {
                 axios.post('/api/v1/deviceAdmin/Update', row, this.object.config).then(response => {
