@@ -266,12 +266,14 @@ namespace Server.Application.MasterDatas.A2.Devices
                     return new Result<Device>($"Không có thông tin thiết bị", false);
                 data.FaceCount = request.FaceCount;
                 data.UserCount = request.UserCount;
+                data.LastModifiedDate = DateTime.Now;
+
                 _dbContext.Device.Update(data);
                 var check = await _dbContext.SaveChangesAsync();
                 if (check < 1)
                 {
                     return new Result<Device>($"Có lỗi xảy ra!", false);
-                }    
+                }
 
                 return new Result<Device>(data, $"Thành công!", true);
             }

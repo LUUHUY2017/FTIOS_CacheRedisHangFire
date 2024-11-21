@@ -449,7 +449,36 @@
                     sortable: true,
                     field: 'deviceDescription'
                 },
-
+                {
+                    title: 'Số người dùng',
+                    sortable: true,
+                    field: 'userCount'
+                },
+                {
+                    title: 'Số khuôn mặt',
+                    sortable: true,
+                    field: 'faceCount'
+                },
+                {
+                    title: 'Thời gian cập nhật',
+                    field: 'lastModifiedDate',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            const d = new Date(value);
+                            return d.toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        } else {
+                            return ""; // Trả về chuỗi rỗng
+                        }
+                    },
+                },
 
             ],
             data: [],

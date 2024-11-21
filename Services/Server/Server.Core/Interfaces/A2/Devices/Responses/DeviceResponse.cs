@@ -33,6 +33,8 @@ public class DeviceResponse : Device
         DeviceModel = o.DeviceModel;
         DeviceType = o.DeviceType;
         OrganizationId = o.OrganizationId;
+        UserCount = o.UserCount;
+        FaceCount = o.FaceCount;
         //GateId = o.GateId;
         //LaneId = o.LaneId;
     }
