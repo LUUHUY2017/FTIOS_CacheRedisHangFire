@@ -53,6 +53,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     return;
                 IclockCommand command2 = null;
 
+                //Thêm thông tin người dùng
                 if (rB_ServerRequest.Action == ServerRequestAction.ActionAdd && rB_ServerRequest.RequestType == ServerRequestType.UserInfo)
                 {
                     TA_PersonInfo? data = JsonConvert.DeserializeObject<TA_PersonInfo>(rB_ServerRequest.RequestParam);
@@ -74,10 +75,11 @@ namespace AMMS.ZkAutoPush.Applications.V1
                         {
                             int emlkb = Encoding.Unicode.GetByteCount(command2.Command);
 
-                            if (emlkb > 400 * 1024)
+                            if (emlkb > 1000 * 1024)
                             {
                                 RB_ServerResponse responseFace = new RB_ServerResponse()
                                 {
+                                    ReponseType = RB_ServerResponseType.UserInfo,
                                     Action = rB_ServerRequest.Action,
                                     Content = "Dung lượng ảnh lớn hơn quy định",
                                     Id = rB_ServerRequest.Id,
@@ -98,6 +100,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                         }
                     }
                 }
+                //Xoá thông tin người dùng
                 else if (rB_ServerRequest.Action == ServerRequestAction.ActionDelete && rB_ServerRequest.RequestType == ServerRequestType.UserInfo)
                 {
                     TA_PersonInfo? data = JsonConvert.DeserializeObject<TA_PersonInfo>(rB_ServerRequest.RequestParam);
@@ -108,6 +111,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
                     command = IclockOperarion.CommandDeleteUser(requestId, sn, data.PersonCode);
                 }
+                //Cập nhật face
                 else if (rB_ServerRequest.Action == ServerRequestAction.ActionAdd && rB_ServerRequest.RequestType == ServerRequestType.UserFace)
                 {
                     TA_PersonFace? data = JsonConvert.DeserializeObject<TA_PersonFace>(rB_ServerRequest.RequestParam);
@@ -117,6 +121,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
                     command = IclockOperarion.CommandUploadUserFaceV3(requestId, sn, data.PersonCode, data.UserFace);
 
                 }
+                //Thêm thiết bị
                 else if (rB_ServerRequest.Action == ServerRequestAction.ActionAdd && rB_ServerRequest.RequestType == ServerRequestType.Device)
                 {
                     TA_Device? data = JsonConvert.DeserializeObject<TA_Device>(rB_ServerRequest.RequestParam);
@@ -132,6 +137,7 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
                     return;
                 }
+                //Xoá thiết bị
                 else if (rB_ServerRequest.Action == ServerRequestAction.ActionDelete && rB_ServerRequest.RequestType == ServerRequestType.Device)
                 {
                     TA_Device? data = JsonConvert.DeserializeObject<TA_Device>(rB_ServerRequest.RequestParam);
@@ -145,12 +151,10 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
                     return;
                 }
+                //Số người dùng
                 else if (rB_ServerRequest.Action == ServerRequestAction.ActionGetDeviceInfo && rB_ServerRequest.RequestType == ServerRequestType.Device)
                 {
-                    TA_Device? data = JsonConvert.DeserializeObject<TA_Device>(rB_ServerRequest.RequestParam);
-
-                    command = IclockOperarion.GetDeviceInfo(requestId, data.SerialNumber);
-                    return;
+                    command = IclockOperarion.GetDeviceInfo(requestId, sn);
                 }
                 else if (rB_ServerRequest.Action == ServerRequestAction.ActionGetData && rB_ServerRequest.RequestType == ServerRequestType.TAData)
                 {

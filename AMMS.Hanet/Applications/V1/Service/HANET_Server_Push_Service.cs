@@ -121,10 +121,17 @@ namespace AMMS.Hanet.Applications.V1.Service
                     {
                         conmandlog = await GetDataByTime(conmandlog);
                     }
+                    else if (rB_ServerRequest.Action == ServerRequestAction.ActionGetDeviceInfo && rB_ServerRequest.RequestType == ServerRequestType.Device)
+                    {
+
+                        await  GetDeviceInfo(conmandlog);
+                        return;
+                    }
                 }
                 //Trả lại lệnh cho máy chủ
                 RB_ServerResponse response = new RB_ServerResponse()
                 {
+                    ReponseType = RB_ServerResponseType.UserInfo,
                     Action = conmandlog.command_ation,
                     Content = conmandlog.return_content,
                     Id = conmandlog.Id,
@@ -390,8 +397,7 @@ namespace AMMS.Hanet.Applications.V1.Service
         /// <summary>
         /// Lấy lại thông tin chấm công 
         /// </summary>
-        /// <param name="startDate"></param>
-        /// <param name="endDate"></param>
+        /// <param name="conmandlog"></param>
         /// <returns></returns>
         public async Task<hanet_commandlog> GetDataByTime(hanet_commandlog conmandlog)
         {
@@ -500,6 +506,51 @@ namespace AMMS.Hanet.Applications.V1.Service
             }
 
         }
+
+        /// <summary>
+        /// Lấy lại thông tin thiết bị
+        /// </summary>
+        /// <param name="conmandlog"></param>
+        /// <returns></returns>
+        public async Task GetDeviceInfo(hanet_commandlog conmandlog)
+        {
+            try
+            {
+                TA_DeviceStatus tA_DeviceStatus = new TA_DeviceStatus();
+
+
+                var count = await _hanetAPIService.GetCountUserByPlace(HanetParam.PlaceId);
+
+                tA_DeviceStatus.SerialNumber = conmandlog.terminal_sn;
+                tA_DeviceStatus.UserCount = count;
+                tA_DeviceStatus.FaceCount = count;
+                string strContent = JsonConvert.SerializeObject(tA_DeviceStatus);
+
+                //Trả lại lệnh cho máy chủ
+                RB_ServerResponse responseDevice = new RB_ServerResponse()
+                {
+                    ReponseType = RB_ServerResponseType.DeviceInfo,
+                    Action = ServerRequestAction.ActionGetDeviceInfo,
+                    Content = strContent,
+                    Id = conmandlog.Id,
+                    RequestId = conmandlog.Id,
+                    IsSuccessed = conmandlog.successed,
+                    DateTimeResponse = conmandlog.return_time,
+                    Message = conmandlog.successed == true ? RB_ServerResponseMessage.Complete : RB_ServerResponseMessage.InComplete,
+                };
+
+                var aaDeviceInfo = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}");
+                await aaDeviceInfo.Send(responseDevice);
+                return;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                return;
+            }
+
+        }
+
     }
 
 }
