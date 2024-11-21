@@ -369,9 +369,9 @@ public class StudentService
                     var rootFolder = Common.GetCurentFolder();
                     string fileNames = rootFolder + request.ImageSrc;
 
-                    //int queryIndex = fileNames.IndexOf('?');
-                    //if (queryIndex != -1)
-                    //    fileNames = fileNames.Substring(0, queryIndex);
+                    int queryIndex = fileNames.IndexOf('?');
+                    if (queryIndex != -1)
+                        fileNames = fileNames.Substring(0, queryIndex);
 
                     request.ImageBase64 = Common.ConvertFileImageToBase64(fileNames);
                 }
