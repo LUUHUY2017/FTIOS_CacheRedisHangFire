@@ -39,11 +39,7 @@ public class StudentDeviceConsumer : IConsumer<RB_ServerResponse>
             // Cập nhật trạng thái đồng bộ 1 học sinh trên 1 thiết bị
             if (dataRes != null && dataRes.ReponseType == RB_ServerResponseType.UserInfo)
             {
-                var dataAte = JsonConvert.DeserializeObject<TA_PersonInfo>(dataRes.Content);
-                if (dataAte != null)
-                {
-                    await _studentService.SaveStatuSyncDevice(dataRes);
-                }
+                await _studentService.SaveStatuSyncDevice(dataRes);
             }
 
             // Đọc thông tin người dùng và vân tay trên 1 thiết bị
