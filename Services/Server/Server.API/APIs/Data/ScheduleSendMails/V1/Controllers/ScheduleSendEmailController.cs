@@ -232,6 +232,7 @@ public class ScheduleSendEmailController : AuthBaseAPIController
         var reportTypes = ListScheduleEmailCategory.ReportType.ToList();
         var reportTypesDevice = ListScheduleEmailCategory.ReportTypeDevice.ToList();
         var reportTypesInOut = ListScheduleEmailCategory.ReportTypeInOut.ToList();
+        var reportTypesDashBoardReport = ListScheduleEmailCategory.ReportTypeDashBoardReport.ToList();
         var sequentialSendings = ListScheduleEmailCategory.SequentialSending.ToList();
         var sequentialSendingsDevice = ListScheduleEmailCategory.SequentialSendingDevice.ToList();
         var sequentialSendingsInOut = ListScheduleEmailCategory.SequentialSendingInOut.ToList();
@@ -242,6 +243,7 @@ public class ScheduleSendEmailController : AuthBaseAPIController
             reportTypes = reportTypes,
             reportTypesDevice = reportTypesDevice,
             reportTypesInOut = reportTypesInOut,
+            reportTypesDashBoardReport = reportTypesDashBoardReport,
             sequentialSendings = sequentialSendings,
             sequentialSendingsDevice = sequentialSendingsDevice,
             sequentialSendingsInOut = sequentialSendingsInOut,

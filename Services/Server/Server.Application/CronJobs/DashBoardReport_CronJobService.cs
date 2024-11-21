@@ -38,12 +38,7 @@ public partial class CronJobService : ICronJobService
     {
         var recurringJobs = JobStorage.Current.GetConnection().GetRecurringJobs();
         string JobName = jobId + "_" + sheduleId;
-
-        if (jobId == NotificationConst.BAOCAOTONGQUAN)
-        {
-            RecurringJob.AddOrUpdate(JobName, () => DashBoard_Report_ScheduleSendMail(sheduleId), newCronExpression, TimeZoneInfo.Local);
-        }
-
+        RecurringJob.AddOrUpdate(JobName, () => DashBoard_Report_ScheduleSendMail(sheduleId), newCronExpression, TimeZoneInfo.Local);
     }
     public async Task DashBoard_Report_ScheduleSendMail(string sheduleId)
     {
@@ -191,13 +186,13 @@ public partial class CronJobService : ICronJobService
 
                 using (var template = new XLTemplate(inputFile))
                 {
-                    var data1 = new
+                    var data = new
                     {
                         date_report = $"{DateTime.Now.ToString("yyyy-MM-dd")}",
                         time_report = $"{DateTime.Now.ToString("HH:mm")}",
                     };
-                    template.AddVariable("items", model);
-                    template.AddVariable(data1);
+                    template.AddVariable("item", model);
+                    template.AddVariable(data);
                     template.Generate();
                     template.SaveAs(outputFile);
                 }

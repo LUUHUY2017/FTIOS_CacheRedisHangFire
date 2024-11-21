@@ -54,7 +54,7 @@ public class DashBoardReportService
                 foreach (var item in result)
                 {
                     item.ScheduleExportTypeName = ListScheduleEmailCategory.ExportType.FirstOrDefault(o => o.Id == item.ScheduleExportType)?.Name;
-                    item.ScheduleReportTypeName = ListScheduleEmailCategory.ReportType.FirstOrDefault(o => o.Id == item.ScheduleReportType)?.Name;
+                    item.ScheduleReportTypeName = ListScheduleEmailCategory.ReportTypeDashBoardReport.FirstOrDefault(o => o.Id == item.ScheduleReportType)?.Name;
                     item.ScheduleSequentialSendingName = ListScheduleEmailCategory.SequentialSending.FirstOrDefault(o => o.Id == item.ScheduleSequentialSending)?.Name;
                     item.ScheduleDataCollectName = ListScheduleEmailCategory.DataCollectType.FirstOrDefault(o => o.Id == item.ScheduleDataCollect)?.Name;
                 }
@@ -73,7 +73,7 @@ public class DashBoardReportService
         try
         {
             var model = _mapper.Map<ScheduleSendMail>(request);
-            model.ScheduleNote = NotificationConst.BAOCAOSOSANH;
+            model.ScheduleNote = NotificationConst.BAOCAOTONGQUAN;
             var retVal = await _notificationRepository.UpdateAsync(model);
 
             try
@@ -84,7 +84,7 @@ public class DashBoardReportService
                     var timeSentHour = retVal.Data.ScheduleTimeSend.HasValue ? retVal.Data.ScheduleTimeSend.Value.Hours : 0;
                     var timeSentMinute = retVal.Data.ScheduleTimeSend.HasValue ? retVal.Data.ScheduleTimeSend.Value.Minutes : 0;
 
-                    if (retVal.Data.ScheduleNote == NotificationConst.BAOCAOSOSANH)
+                    if (retVal.Data.ScheduleNote == NotificationConst.BAOCAOTONGQUAN)
                     {
                         newCronExpression = $"{timeSentMinute} {timeSentHour} * * *";
                         _IConJobService.UpdateDashBoardReportCronJob("GuiBaoCaoTongQuanHeThong", retVal.Data.Id, newCronExpression);
@@ -117,7 +117,7 @@ public class DashBoardReportService
                     var timeSentHour = retVal.Data.ScheduleTimeSend.HasValue ? retVal.Data.ScheduleTimeSend.Value.Hours : 0;
                     var timeSentMinute = retVal.Data.ScheduleTimeSend.HasValue ? retVal.Data.ScheduleTimeSend.Value.Minutes : 0;
 
-                    if (retVal.Data.ScheduleNote == NotificationConst.BAOCAOSOSANH)
+                    if (retVal.Data.ScheduleNote == NotificationConst.BAOCAOTONGQUAN)
                     {
                         newCronExpression = $"{timeSentMinute} {timeSentHour} * * *";
                         _IConJobService.UpdateDashBoardReportCronJob("GuiBaoCaoTongQuanHeThong", retVal.Data.Id, newCronExpression);
