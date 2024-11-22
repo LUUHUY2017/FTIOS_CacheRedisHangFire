@@ -210,7 +210,7 @@ public class IclockController : ControllerBase
 
             string commanText = "";
             int i = 0;
-            int totalkb = 400 * 1024;
+            int totalkb = 1000 * 1024;
             int contentkb = 0;
             while (i < 200 || contentkb < totalkb)
             {

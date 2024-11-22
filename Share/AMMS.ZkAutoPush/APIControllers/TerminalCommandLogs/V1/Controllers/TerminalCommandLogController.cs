@@ -84,4 +84,32 @@ public class TerminalCommandLogController : ControllerBase
 
         return Ok();
     }
+
+    [HttpGet("GetDeviceInfo")]
+    public async Task<IActionResult> GetDeviceInfo(string sn = "PYA8241500003")
+    {
+        try
+        {
+            RB_ServerRequest request = new RB_ServerRequest()
+            {
+                SerialNumber = sn,
+                Id = Guid.NewGuid().ToString(),
+                Action = ServerRequestAction.ActionGetDeviceInfo,
+                RequestType = ServerRequestType.Device,
+                DeviceModel = EventBusConstants.ZKTECO,
+                RequestId = DateTime.Now.TimeOfDay.Ticks,
+                DeviceId = Guid.NewGuid().ToString(),
+
+            };
+
+            await _zK_SV_PUSHService.Process(request);
+        }
+        catch (Exception ex)
+        {
+
+            Logger.Error(ex);
+        }
+
+        return Ok();
+    }
 }

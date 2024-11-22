@@ -837,7 +837,7 @@ public class Common
                     if (File.Exists(savePath))
                         File.Delete(savePath);
                     //img.Save(savePath);
-                    SaveJpeg1(savePath, img, 95);
+                    SaveJpeg1(savePath, img, 90);
                     // Resize ảnh
                     //SaveJpeg(savePath, img, 95);
                 }
