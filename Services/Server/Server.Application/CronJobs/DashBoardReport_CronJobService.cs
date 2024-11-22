@@ -69,11 +69,11 @@ public partial class CronJobService : ICronJobService
 
                         var filter = new DashBoardFilter()
                         {
-                            OrganizationId = item.Id,
+                            OrganizationId = item.OrganizationId,
                         };
                         var dataReport = await _dashBoardService.DashBoardReport(filter);
 
-                        var retVal = FileExel_ScheduleSendMailDashBoardReport(dataReport.Data);
+                        var retVal = await FileExel_ScheduleSendMailDashBoardReport(dataReport.Data, item?.OrganizationId);
 
                         if (retVal.Succeeded)
                         {
@@ -171,7 +171,7 @@ public partial class CronJobService : ICronJobService
 
     }
 
-    private Result<Footfall_ReportFile> FileExel_ScheduleSendMailDashBoardReport(TotalDashBoardModel model)
+    private async Task<Result<Footfall_ReportFile>> FileExel_ScheduleSendMailDashBoardReport(TotalDashBoardModel model, string? orgId)
     {
         try
         {
@@ -187,12 +187,19 @@ public partial class CronJobService : ICronJobService
                 string outputFile = rootParth_Output + nameFile;
                 string fileName = parth_Output + nameFile;
 
+                var _oranizationName = "Tất cả";
+                if (!string.IsNullOrEmpty(orgId) && orgId != "0")
+                {
+                    _oranizationName = (await _dbContext.Organization.FirstOrDefaultAsync(x => x.Id == orgId)).OrganizationName;
+                }
                 using (var template = new XLTemplate(inputFile))
                 {
                     var data = new
                     {
                         date_report = $"{DateTime.Now.ToString("yyyy-MM-dd")}",
                         time_report = $"{DateTime.Now.ToString("HH:mm")}",
+                        organizationName = _oranizationName,
+
                     };
                     template.AddVariable("item", model);
                     template.AddVariable(data);

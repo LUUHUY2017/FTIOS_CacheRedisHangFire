@@ -125,10 +125,25 @@
                                 </div>
 
                                 </div> *@
+           
                                 <div class="row mb-3">
                                     <div class="col-12 my-1">
                                         <div class="form-group row">
-                                            <label class="col-form-label col-lg-3">Tên lịch gửi<span class="text-danger">*</span></label>
+                                            <label class="col-form-label col-md-3">Trường học<span class="text-danger">*</span></label>
+                                            <div class="col-md-9">
+                                                <select data-dropdown-parent="#ModelAddEdit" required data-placeholder="Vui lòng chọn trường" id="organizationId" class="form-control select">
+                                                    <option v-for="option in combobox.organizations" v-bind:value="option.id">
+                                                        {{ option.organizationName }}
+                                                    </option>
+                                                </select>
+                                                <div class="invalid-feedback">Vui lòng chọn tổ chức </div>
+                                                <div class="valid-feedback"> </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 my-1">
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-md-3">Tên lịch gửi<span class="text-danger">*</span></label>
                                             <div class="col-md-9">
                                                 <input type="text" class="form-control" required placeholder="Vui lòng nhập tên lịch " v-model="item.scheduleName">
                                                 <div class="invalid-feedback">Vui lòng nhập tên lịch gửi</div>
@@ -489,6 +504,19 @@
                     field: "scheduleTimeSend",
                     sortable: true,
                 },
+                {
+                    title: "Trường học",
+                    field: "organizationId",
+                    sortable: true,
+                    formatter: (value, row, index) => {
+                        if (value === "0" || value === null || value === "")
+                        {
+                            return "Tất cả";
+                        }
+                        const organization = _dashBoardReport.combobox.organizations.find(x => x.id === value);
+                        return organization ? organization.organizationName : "Không xác định";
+                    },
+                },
                 // {
                 //     title: "Tần suất gửi",
                 //     field: "scheduleSequentialSending",
@@ -665,7 +693,7 @@
                 $('.loader').show();
                 this.item.scheduleNote = "BAOCAOTONGQUAN";
                 axios.post('/api/v1/DashBoardReport/Edit', this.item, this.object.bearerAuthorization).then(response => {
-                    $('.loader').hide(0);
+                    $('.loader').delay(100).hide(0);
                     if (response.data.succeeded) {
                         _dashBoardReport.object.editAction = true;
 
@@ -678,7 +706,7 @@
                         alertify.notify(response.data.message, 'error', 6, function () { });
                     }
                 }).catch(error => {
-                    $('.loader').hide(0);
+                    $('.loader').delay(100).hide(0);
                     console.log(error);
                 });
             },
@@ -759,6 +787,15 @@
                     this.combobox.exportTypes = response.data.exportTypes;
                 }).catch(error => {
                     console.log(error);
+                });
+
+                axios.get('/api/v1/Organization/Gets', this.object.bearerAuthorization).then(response => {
+                    if (response.request.responseURL.includes('Auth/Login')) {
+                        window.location = window.location.href;
+                    }
+                    this.combobox.organizations = [{ id: "0", organizationName: "Tất cả" }, ...response.data.data];
+                }).catch(error => {
+                    console.warn(error);
                 });
             },
         },

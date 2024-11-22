@@ -92,17 +92,17 @@ public class DashBoardController : AuthBaseAPIController
     /// Lấy tổng quan trường, lớp, học sinh
     /// </summary>
     /// <returns></returns>
-    [HttpGet("GetTotalSchool")]
-    public async Task<IActionResult> GetTotalSchool()
+    [HttpPost("GetTotalSchool")]
+    public async Task<IActionResult> GetTotalSchool(DashBoardFilter filter)
     {
-        return Ok(await _dashBoardService.GetTotalSchool());
+        return Ok(await _dashBoardService.GetTotalSchool(filter));
     }
 
     /// <summary>
     /// Lấy dữ liệu báo cáo
     /// </summary>
     /// <returns></returns>
-    [HttpGet("DashBoardReport")]
+    [HttpPost("DashBoardReport")]
     public async Task<IActionResult> DashBoardReport(DashBoardFilter filter)
     {
         return Ok(await _dashBoardService.DashBoardReport(filter));
