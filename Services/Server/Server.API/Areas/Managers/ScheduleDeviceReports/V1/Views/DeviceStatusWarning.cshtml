@@ -54,14 +54,14 @@
                                     <option value="0">Ngừng hoạt động</option>
                                 </select>
                             </div>
-                            <div class="col-lg-3 my-1" hidden>
+                            @* <div class="col-lg-3 my-1" hidden>
                                 <label class="form-label">Trường học</label>
                                 <select class="form-control select" data-dropdown-parent="#webui_notiDevice" data-placeholder="Vui lòng chọn tổ chức" id="FOrganization" v-model="filter.organizationId">
                                     <option v-for="option in combobox.organizations" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>
                                 </select>
-                            </div>
+                            </div> *@
                             <div class="col-lg-3 my-1">
                                 <label class="form-label">Từ khóa tìm kiếm</label>
                                 <input type="text" id="key" name="key" placeholder="Nhập từ khóa tìm kiếm" class="form-control" v-model="filter.key">

@@ -5,8 +5,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Server.Application.MasterDatas.A2.Students.V1;
+using Server.Application.MasterDatas.A2.Students.V1.Model;
 using Server.Application.MasterDatas.TA.TimeAttendenceEvents.V1;
-using Server.Application.MasterDatas.TA.TimeAttendenceSyncs.V1;
 using Server.Core.Interfaces.GIO.VehicleInOuts;
 using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
 using Share.WebApp.Controllers;
@@ -26,22 +27,21 @@ public class TimeAttenceEventController : AuthBaseAPIController
     private readonly IMapper _mapper;
     private readonly IGIOVehicleInOutRepository _vehicleInOut;
     private readonly TimeAttendenceEventService _timeService;
-    private readonly TimeAttendenceSyncService _timeSyncService;
+    private readonly StudentService _studentService;
 
     public TimeAttenceEventController(
         IMediator mediator,
         IMapper mapper,
         IGIOVehicleInOutRepository vehicleInOut,
         TimeAttendenceEventService timeService,
-        TimeAttendenceSyncService timeSyncService
+        StudentService studentService
         )
     {
         _mediator = mediator;
         _mapper = mapper;
         _vehicleInOut = vehicleInOut;
         _timeService = timeService;
-        _timeSyncService = timeSyncService;
-
+        _studentService = studentService;
     }
 
     /// <summary>
@@ -98,8 +98,13 @@ public class TimeAttenceEventController : AuthBaseAPIController
         try
         {
             request.OrganizationId = GetOrganizationId();
-            var items = await _timeService.GetAlls(request);
+            var reqS = _mapper.Map<StudentSearchRequest>(request);
 
+            var items = await _timeService.GetAlls(request);
+            var student = await _studentService.GetAlls(reqS);
+
+
+            int studentCount = await student.Select(o => o.Id).CountAsync();
             int totalAmount = await items.Select(o => o.Id).CountAsync();
             int totalFace = await items.CountAsync(o => o.EventType == true);
             int totalCurrent = totalAmount - totalFace;
@@ -115,6 +120,7 @@ public class TimeAttenceEventController : AuthBaseAPIController
 
             var retVal = new
             {
+                studentCount = studentCount,
                 totalAmount = totalAmount,
                 totalFace = totalFace,
                 totalCurrent = totalCurrent,

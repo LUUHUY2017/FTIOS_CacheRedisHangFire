@@ -83,7 +83,10 @@
         methods: {
             loadData() {
                 $('.loader').show();
-                axios.get('/api/v1/DashBoard/GetTotalSchool', this.object.bearerAuthorization).then(response => {
+                if (this.getCookie("organizationId")) {
+                    this.filter.organizationId = this.getCookie("organizationId");
+                }
+                axios.post('/api/v1/DashBoard/GetTotalSchool', this.filter, this.object.bearerAuthorization).then(response => {
                     if (response.request.responseURL.includes('~/Account/Login')) {
                         window.location = window.location.href;
                     }
@@ -100,6 +103,11 @@
                 }).catch(error => {
                     $('.loader').delay(100).hide(0);
                 });
+            },
+            getCookie(name) {
+                const value = "; " + document.cookie;
+                const parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
             },
         },
         mounted() {

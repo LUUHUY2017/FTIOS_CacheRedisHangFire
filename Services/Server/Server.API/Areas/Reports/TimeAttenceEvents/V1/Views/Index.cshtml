@@ -48,18 +48,27 @@
                         <div class="col-md-1">
                         </div>
 
-                        <div class="col-md-2 ">
-                            <label class="form-label">Tổng số học sinh điểm danh</label>
-                            <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalAmount">
+
+                        <div class="col-md-7 ms-auto" style=" display: flex;">
+                            <div class="ms-1">
+                                <label class="form-label">Tổng học sinh </label>
+                                <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="studentCount">
+                            </div>
+                            <div class="ms-1">
+                                <label class="form-label">Học sinh điểm danh</label>
+                                <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalAmount">
+                            </div>
+                            <div class="ms-1">
+                                <label class="form-label" title="Số học sinh điểm danh được quét đồng bộ">Học sinh đã đồng bộ</label>
+                                <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalFace">
+                            </div>
+                            <div class="ms-1">
+                                <label class="form-label" title="Số học sinh điểm danh chờ quét đồng bộ">Học sinh chưa đồng bộ</label>
+                                <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="totalCurrent">
+                            </div>
                         </div>
-                        <div class="col-md-2 ">
-                            <label class="form-label" title="Số học sinh điểm danh được quét đồng bộ">Tổng số học sinh đã đồng bộ</label>
-                            <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalFace">
-                        </div>
-                        <div class="col-md-2 ">
-                            <label class="form-label" title="Số học sinh điểm danh chờ quét đồng bộ">Tổng số học sinh chưa đồng bộ</label>
-                            <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="totalCurrent">
-                        </div>
+
+
                     </div>
                     <div class="row mb-3">
                         <div class="text-start">
@@ -142,7 +151,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="(item, index) in data">
-                                    <td><span>{{index  +1 }}</span></td>
+                                    <td><span>{{(index +1) + ( (filter.CurentPage -1) *  filter.RowsPerPage) }}</span></td>
                                     <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
                                     <td style=" white-space: nowrap;"><span>{{item.studentName}}</span></td>
                                     <td style=" white-space: nowrap;">
@@ -327,6 +336,7 @@
             },
             data: [],
             totalAmount: 0,
+            studentCount: 0,
             totalFace: 0,
             totalCurrent: 0,
             name_file: "LICHSUDIEMDANH_" + new Date().getDate() + "_" + new Date().getTime(),
@@ -393,6 +403,7 @@
                     }
 
                     this.totalAmount = response.data.data.totalAmount;
+                    this.studentCount = response.data.data.studentCount;
                     this.totalFace = response.data.data.totalFace;
                     this.totalCurrent = response.data.data.totalCurrent;
 

@@ -66,7 +66,7 @@ namespace Server.Infrastructure.Repositories.A2.DeviceNotifications
                 var _data = (from _do in _biDbContext.ScheduleSendMail
                              where _do.Actived == active
                              && _do.ScheduleNote == request.Note
-                             && ((request.OrganizationId != "0" || !string.IsNullOrEmpty(request.OrganizationId)) ? _do.OrganizationId == request.OrganizationId : true)
+                             && ((request.OrganizationId != "0" && !string.IsNullOrEmpty(request.OrganizationId)) ? _do.OrganizationId == request.OrganizationId : true)
                              && (!string.IsNullOrWhiteSpace(request.Key) && request.ColumnTable == "scheduleName" ? _do.ScheduleName.Contains(request.Key) : true)
                              select _do).ToListAsync();
                 return _data;

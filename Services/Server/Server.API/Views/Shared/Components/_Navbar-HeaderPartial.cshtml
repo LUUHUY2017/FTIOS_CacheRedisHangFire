@@ -314,12 +314,27 @@
     }
     $(document).ready(function () {
         $('#FilterOrgainizationNav').on("change", function () {
+            _navbarHeader.organizationId = $(this).val();
+
             _navbarHeader.setCookie("organizationId", $(this).val(), 7);
             _navbarHeader.removeLocalStorage();
 
             location.reload();
         });
     });
+
+
+    window.addEventListener("focus", () => {
+        var old = _navbarHeader.getCookie("organizationId")
+        var selectedValue = $('#FilterOrgainizationNav').val();
+        console.warn("old", old);
+        console.warn("organizationId", selectedValue);
+
+        if (old != selectedValue)
+            location.reload();
+    });
+
+
     var _navbarHeader = new Vue({
         el: "#navbarNoti001",
         data: {
@@ -328,6 +343,8 @@
             notifiticons: [],
             numberNotification: 0,
             selectedSchoolNav: "",
+            organizationId: "0",
+
             comboboxNav: {
                 schoolNavs: [],
             },
@@ -401,7 +418,7 @@
                 }
                 else {
                     //console.log(this.token);
-                    axios.get('/api/v1/Organization/Gets',this.object.config).then(response => {
+                    axios.get('/api/v1/Organization/Gets', this.object.config).then(response => {
                         if (response.request.responseURL.includes('Auth/Login')) {
                             window.location = window.location.href;
                         }

@@ -36,13 +36,14 @@ public class DashBoardService
     }
 
     //Send Email
-    public async Task<Result<TotalSendEmailModel>> GetToTalSendEmail()
+    public async Task<Result<TotalSendEmailModel>> GetToTalSendEmail(DashBoardFilter filter)
     {
         try
         {
             var dataSendEmail = await _dbContext.SendEmail
                                     .Where(x => (x.Actived == true)
                                             && (DateTime.Now.Date == ((DateTime)x.TimeSent).Date)
+                                            && ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? x.OrganizationId == filter.OrganizationId : true)
                                     )
                                     .ToListAsync();
             var data = new TotalSendEmailModel()
@@ -61,11 +62,13 @@ public class DashBoardService
     }
 
     //Device
-    public async Task<Result<DBDeviceModel1>> GetToTalDevice1()
+    public async Task<Result<DBDeviceModel1>> GetToTalDevice1(DashBoardFilter filter)
     {
         try
         {
-            var dataDevice = await _dbContext.Device.Where(x => x.Actived == true).ToListAsync();
+            var dataDevice = await _dbContext.Device.Where(x => (x.Actived == true)
+                                                        && ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? x.OrganizationId == filter.OrganizationId : true)
+                                                    ).ToListAsync();
             var data = new DBDeviceModel1()
             {
                 TotalDevice = dataDevice.Count,
@@ -170,7 +173,7 @@ public class DashBoardService
     }
 
     //StudentFace
-    public async Task<Result<DBStudentFaceModel>> GetTotalStudentFace()
+    public async Task<Result<DBStudentFaceModel>> GetTotalStudentFace(DashBoardFilter filter)
     {
         try
         {
@@ -179,6 +182,7 @@ public class DashBoardService
                               on s.Id equals pf.PersonId into personFaceGroup
                               from pfLeftJoin in personFaceGroup.DefaultIfEmpty() 
                               where s.Actived == true
+                                    && ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? s.OrganizationId == filter.OrganizationId : true)
                               group new { s, pfLeftJoin } by 1 into g 
                               select new DBStudentFaceModel
                               {
@@ -198,12 +202,15 @@ public class DashBoardService
     }
 
     //DBStudentAttendace
-    public async Task<Result<DBStudentAttendaceModel>> GetTotalStudentAttendance()
+    public async Task<Result<DBStudentAttendaceModel>> GetTotalStudentAttendance(DashBoardFilter filter)
     {
         try
         {
             var data = await _dbContext.TimeAttendenceEvent
-                        .Where(t => t.Actived == true && ((DateTime)t.EventTime).Date == DateTime.Now.Date)
+                        .Where(t => t.Actived == true 
+                                && ((DateTime)t.EventTime).Date == DateTime.Now.Date
+                                && ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? t.OrganizationId == filter.OrganizationId : true)
+                        )
                         .GroupBy(t => true) 
                         .Select(g => new DBStudentAttendaceModel
                         {
@@ -228,15 +235,21 @@ public class DashBoardService
     }
 
     //DBSchools
-    public async Task<Result<TotalSchoolModel>> GetTotalSchool()
+    public async Task<Result<TotalSchoolModel>> GetTotalSchool(DashBoardFilter filter)
     {
         try
         {
             var data = new TotalSchoolModel()
             {
-                TotalSchool = await _dbContext.Organization.CountAsync(),
-                TotalClass = await _dbContext.ClassRoom.CountAsync(),
-                TotalStudent = await _dbContext.Student.CountAsync(),
+                TotalSchool = await _dbContext.Organization
+                                    .Where(x => ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? x.Id == filter.OrganizationId : true))
+                                    .CountAsync(),
+                TotalClass = await _dbContext.ClassRoom
+                                    .Where(x => ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? x.OrganizationId == filter.OrganizationId : true))
+                                    .CountAsync(),
+                TotalStudent = await _dbContext.Student
+                                    .Where(x => ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? x.OrganizationId == filter.OrganizationId : true))
+                                    .CountAsync(),
             };
 
             return new Result<TotalSchoolModel>(data, $"Thành công!", true);
@@ -249,17 +262,17 @@ public class DashBoardService
     }
 
     //DashBoardReport
-    public async Task<Result<TotalDashBoardModel>> DashBoardReport()
+    public async Task<Result<TotalDashBoardModel>> DashBoardReport(DashBoardFilter filter)
     {
         try
         {
             var data = new TotalDashBoardModel()
             {
-                TotalSchoolModel = (await GetTotalSchool()).Data,
-                TotalSendEmailModel = (await GetToTalSendEmail()).Data,
-                DBDeviceModel1 = (await GetToTalDevice1()).Data,    
-                DBStudentFaceModel = (await GetTotalStudentFace()).Data,
-                StudentAttendaceModel = (await GetTotalStudentAttendance()).Data,
+                TotalSchoolModel = (await GetTotalSchool(filter)).Data,
+                TotalSendEmailModel = (await GetToTalSendEmail(filter)).Data,
+                DBDeviceModel1 = (await GetToTalDevice1(filter)).Data,    
+                DBStudentFaceModel = (await GetTotalStudentFace(filter)).Data,
+                StudentAttendaceModel = (await GetTotalStudentAttendance(filter)).Data,
             };
 
             return new Result<TotalDashBoardModel>(data, $"Thành công!", true);

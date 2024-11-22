@@ -56,6 +56,8 @@ public class AMMS_Get_Menu_User
                 No = o.First().No,
                 CategoryName = o.First().CategoryName,
                 Level = o.First().Level,
+                Url = o.First().Url,
+                Name = o.First().Name,
                 Parent = o.First().Parent,
                 List = o.OrderBy(o => o.No).ToList(),
             }).OrderBy(o => o.No).ToList();
