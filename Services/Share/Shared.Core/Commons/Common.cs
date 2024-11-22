@@ -741,7 +741,7 @@ public class Common
             height = (int)((img.Height * with) / img.Width);
         }
         var resizedImg = ResizeImage(img, with, height);
-        SaveJpegWithQuality(resizedImg, path, 50L);
+        SaveJpegWithQuality(resizedImg, path, 90);
 
     }
 
@@ -762,6 +762,10 @@ public class Common
 
     public static void SaveJpegWithQuality(Image img, string path, long quality)
     {
+
+        if (quality < 0 || quality > 100)
+            throw new ArgumentOutOfRangeException("quality must be between 0 and 100.");
+
         ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
 
         System.Drawing.Imaging.Encoder qualityEncoder = System.Drawing.Imaging.Encoder.Quality;
@@ -833,14 +837,12 @@ public class Common
                     if (File.Exists(savePath))
                         File.Delete(savePath);
                     //img.Save(savePath);
-                    SaveJpeg1(savePath, img, 90);
+                    SaveJpeg1(savePath, img, 95);
+                    // Resize ảnh
+                    //SaveJpeg(savePath, img, 95);
                 }
             }
         }
     }
-
-
-
-
 
 }
