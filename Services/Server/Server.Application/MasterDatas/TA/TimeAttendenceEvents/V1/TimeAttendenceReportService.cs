@@ -126,7 +126,7 @@ public partial class TimeAttendenceEventService
                         if (statusValue == "true")
                             query = query.Where(p => p.EventType == true);
                         else
-                            query = query.Where(p => p.EventType == null);
+                            query = query.Where(p => p.EventType == null || p.EventType == false);
                     }
                     break;
 
