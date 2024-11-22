@@ -139,7 +139,7 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="(item, index) in data">
-                                            <td><span>{{index  +1 }}</span></td>
+                                            <td><span>{{(index +1) + ( (filter.CurentPage -1) *  filter.RowsPerPage) }}</span></td>
                                             <td><a v-on:click="onSubmitSync(item)" class="btn btn-sm btn-info edit" title="Đồng bộ lại "> <i class="fa fa-refresh"> </i> </a></td>
                                             <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
                                             <td style=" white-space: nowrap;cursor:pointer" v-on:click="onViewImage(item)"><a style="text-decoration: underline;">{{item.studentName}}</a></td>

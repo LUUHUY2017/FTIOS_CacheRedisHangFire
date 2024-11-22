@@ -151,7 +151,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="(item, index) in data">
-                                    <td><span>{{index  +1 }}</span></td>
+                                    <td><span>{{(index +1) + ( (filter.CurentPage -1) *  filter.RowsPerPage) }}</span></td>
                                     <td style=" white-space: nowrap;"><span>{{item.studentCode}}</span></td>
                                     <td style=" white-space: nowrap;"><span>{{item.studentName}}</span></td>
                                     <td style=" white-space: nowrap;">
