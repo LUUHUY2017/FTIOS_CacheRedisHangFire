@@ -124,7 +124,16 @@ namespace AMMS.Hanet.Applications.V1.Service
                     else if (rB_ServerRequest.Action == ServerRequestAction.ActionGetDeviceInfo && rB_ServerRequest.RequestType == ServerRequestType.Device)
                     {
 
-                        await  GetDeviceInfo(conmandlog);
+                        await GetDeviceInfo(conmandlog);
+                        return;
+                    }
+                }
+                else
+                {
+                    if (rB_ServerRequest.Action == ServerRequestAction.ActionGetDeviceInfo && rB_ServerRequest.RequestType == ServerRequestType.Device)
+                    {
+
+                        await GetDeviceInfo(conmandlog);
                         return;
                     }
                 }

@@ -26,7 +26,6 @@ public class ZK_DEVICE_RPService
         _deviceCacheService = deviceCacheService;
         _deviceCommandCacheService = deviceCommandCacheService;
     }
-    static int countData = 0;
     public async Task ProcessData(ZK_DEVICE_RP data)
     {
         try
@@ -102,6 +101,22 @@ public class ZK_DEVICE_RPService
                                     Logger.Error(e);
                                 }
 
+
+                                if (Return == "0")//Thiet bi thuc hien thanh cong lenh
+                                {
+                                    x.returnCode = 0;
+                                    x.IsSuccessed = true;
+                                }
+                                else// Co loi khi thuc hienh lenh
+                                {
+                                    int returnCode = 0;
+                                    int.TryParse(Return, out returnCode);
+                                    x.returnCode = returnCode;
+                                    x.IsSuccessed = false;
+                                }
+
+                                await UpdateCommand(x, elm);
+
                                 //Gửi thông tin lại máy chủ
                                 TA_DeviceStatus tA_DeviceStatus = new TA_DeviceStatus();
                                 tA_DeviceStatus.ConnectStatus = true;
@@ -132,8 +147,6 @@ public class ZK_DEVICE_RPService
                             }
                             else
                             {
-                                countData++;
-                                Console.WriteLine("Số bản ghi: " + countData.ToString());
                                 if (Return == "0")//Thiet bi thuc hien thanh cong lenh
                                 {
                                     x.returnCode = 0;
@@ -186,7 +199,7 @@ public class ZK_DEVICE_RPService
 
                                 var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}");
                                 await aa.Send(response);
-                                Console.WriteLine("Gửi rabitmq: " + countData.ToString());
+                                Console.WriteLine("Gửi rabitmq: " + ID.ToString());
 
                                 await _deviceCommandCacheService.Remove(data.SN, ID);
 
