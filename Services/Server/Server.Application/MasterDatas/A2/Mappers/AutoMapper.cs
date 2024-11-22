@@ -15,6 +15,7 @@ using Server.Core.Interfaces.A2.ScheduleJobs.Requests;
 using Server.Core.Interfaces.A2.ScheduleSendEmails.Requests;
 using Server.Core.Interfaces.A2.SchoolYears.Requests;
 using Server.Core.Interfaces.A2.StudentClassRoomYears.Requests;
+using Server.Core.Interfaces.TimeAttendenceEvents.Requests;
 
 namespace Server.Application.MasterDatas.A2.Mappers;
 
@@ -49,5 +50,8 @@ public partial class AutoMapper : Profile
 
         CreateMap<StudentClassRoomYear, ClassRoomYearFilterRequest>().ReverseMap();
         CreateMap<StudentClassRoomYear, ClassRoomYearRequest>().ReverseMap();
+
+
+        CreateMap<StudentSearchRequest, AttendenceReportFilterReq>().ReverseMap();
     }
 }

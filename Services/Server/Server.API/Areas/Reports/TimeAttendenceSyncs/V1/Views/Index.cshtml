@@ -48,17 +48,19 @@
                         <div class="col-md-1">
                         </div>
 
-                        <div class="col-md-2 ">
-                            <label class="form-label" title="Số bản ghi lịch sử">Tổng số bản ghi </label>
-                            <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalAmount">
-                        </div>
-                        <div class="col-md-2 ">
-                            <label class="form-label" title="Số bản ghi được cập nhật sang SMAS">Tổng số đã đồng bộ</label>
-                            <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalFace">
-                        </div>
-                        <div class="col-md-2 ">
-                            <label class="form-label" v-on:click="onSubmitAgain()" title="Số bản ghi chưa được cập nhật sang SMAS"> Đang chờ </label>
-                            <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="totalCurrent">
+                        <div class="col-md-7 ms-auto" style=" display: flex;">
+                            <div class="ms-1">
+                                <label class="form-label" title="Số bản ghi lịch sử">Tổng số bản ghi </label>
+                                <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalAmount">
+                            </div>
+                            <div class="ms-1">
+                                <label class="form-label" title="Số bản ghi được cập nhật sang SMAS">Tổng số đã đồng bộ</label>
+                                <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="totalFace">
+                            </div>
+                            <div class="ms-1">
+                                <label class="form-label" v-on:click="onSubmitAgain()" title="Số bản ghi chưa được cập nhật sang SMAS"> Đang chờ </label>
+                                <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="totalCurrent">
+                            </div>
                         </div>
                     </div>
                     <div class="row ">
