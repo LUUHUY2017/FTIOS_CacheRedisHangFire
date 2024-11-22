@@ -3,6 +3,7 @@ using AMMS.ZkAutoPush.Data;
 using AMMS.ZkAutoPush.Datas.Databases;
 using AMMS.ZkAutoPush.Datas.Entities;
 using EventBus.Messages;
+using Newtonsoft.Json;
 using Shared.Core.Loggers;
 
 namespace AMMS.ZkAutoPush.Applications.V1;
@@ -45,6 +46,13 @@ public class ZK_DEVICE_RPService
                             var ID = contentArr[0].Split('=')[1];
                             var Return = contentArr[1].Split('=')[1];
                             var CMD = contentArr[2].Split('=')[1];
+
+                            //Xoá lệnh khỏi danh sách
+                            var x = await _deviceCommandCacheService.GetByCode(data.SN, ID);
+
+                            if (x == null)
+                                return;
+
                             //Là thông tin thiết bị
                             if (CMD == "INFO")
                             {
@@ -63,7 +71,6 @@ public class ZK_DEVICE_RPService
                                 string faceQty = GetValueFromEqual("FaceCount", _ListParams);
                                 string palmQty = GetValueFromEqual("PvCount", _ListParams);
                                 string transactionQty = GetValueFromEqual("TransactionCount", _ListParams);
-
                                 //Cập nhật vào CSDL
                                 try
                                 {
@@ -92,34 +99,38 @@ public class ZK_DEVICE_RPService
                                 }
                                 catch (Exception e)
                                 {
-
+                                    Logger.Error(e);
                                 }
 
+                                //Gửi thông tin lại máy chủ
+                                TA_DeviceStatus tA_DeviceStatus = new TA_DeviceStatus();
+                                tA_DeviceStatus.ConnectStatus = true;
+                                tA_DeviceStatus.SerialNumber = data.SN;
+                                tA_DeviceStatus.UserCount = int.Parse(userQty);
+                                tA_DeviceStatus.FaceCount = int.Parse(faceQty);
+                                tA_DeviceStatus.FingerCount = int.Parse(fpQty);
 
-                                //RB_ServerResponse response = new RB_ServerResponse()
-                                //{
-                                //    Action = ServerRequestAction.ActionGetDeviceInfo,
-                                //    Content = content,
-                                //    Id = x.DataId,
-                                //    RequestId = x.DataId,
-                                //    IsSuccessed = true,
-                                //    DateTimeResponse = DateTime.Now,
-                                //    Message = true ? RB_ServerResponseMessage.Complete : RB_ServerResponseMessage.InComplete,
-                                //};
+                                string strContent = JsonConvert.SerializeObject(tA_DeviceStatus);
 
-                                //var aa = await _eventBusAdapter.GetSendEndpointAsync(EventBusConstants.DataArea + EventBusConstants.Device_Auto_Push_D2S);
-                                //await aa.Send(response);
+                                RB_ServerResponse response = new RB_ServerResponse()
+                                {
+                                    ReponseType = RB_ServerResponseType.DeviceInfo,
+                                    Action = ServerRequestAction.ActionGetDeviceInfo,
+                                    Content = strContent,
+                                    Id = x.DataId,
+                                    RequestId = x.DataId,
+                                    IsSuccessed = true,
+                                    DateTimeResponse = DateTime.Now,
+                                    Message = true ? RB_ServerResponseMessage.Complete : RB_ServerResponseMessage.InComplete,
+                                };
 
+                                var aa = await _eventBusAdapter.GetSendEndpointAsync($"{_configuration["DataArea"]}{EventBusConstants.Device_Auto_Push_D2S}");
+                                await aa.Send(response);
+
+                                await _deviceCommandCacheService.Remove(data.SN, ID);
 
                             }
-                            else if (CMD == "DATA")
-                            {
-                                var strData = "";
-                            }
-
-                            //Xoá lệnh khỏi danh sách
-                            var x = await _deviceCommandCacheService.GetByCode(data.SN, ID);
-                            if (x != null)
+                            else
                             {
                                 countData++;
                                 Console.WriteLine("Số bản ghi: " + countData.ToString());
@@ -144,6 +155,7 @@ public class ZK_DEVICE_RPService
                                 {
                                     RB_ServerResponse responseFace = new RB_ServerResponse()
                                     {
+                                        ReponseType = RB_ServerResponseType.UserInfo,
                                         Action = x.Action,
                                         Content = elm,
                                         Id = x.ParentId,
@@ -162,6 +174,7 @@ public class ZK_DEVICE_RPService
                                 }
                                 RB_ServerResponse response = new RB_ServerResponse()
                                 {
+                                    ReponseType = RB_ServerResponseType.UserInfo,
                                     Action = x.Action,
                                     Content = elm,
                                     Id = x.DataId,
