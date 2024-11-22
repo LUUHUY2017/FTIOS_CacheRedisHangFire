@@ -235,15 +235,21 @@ public class DashBoardService
     }
 
     //DBSchools
-    public async Task<Result<TotalSchoolModel>> GetTotalSchool()
+    public async Task<Result<TotalSchoolModel>> GetTotalSchool(DashBoardFilter filter)
     {
         try
         {
             var data = new TotalSchoolModel()
             {
-                TotalSchool = await _dbContext.Organization.CountAsync(),
-                TotalClass = await _dbContext.ClassRoom.CountAsync(),
-                TotalStudent = await _dbContext.Student.CountAsync(),
+                TotalSchool = await _dbContext.Organization
+                                    .Where(x => ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? x.Id == filter.OrganizationId : true))
+                                    .CountAsync(),
+                TotalClass = await _dbContext.ClassRoom
+                                    .Where(x => ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? x.OrganizationId == filter.OrganizationId : true))
+                                    .CountAsync(),
+                TotalStudent = await _dbContext.Student
+                                    .Where(x => ((!string.IsNullOrEmpty(filter.OrganizationId) && filter.OrganizationId != "0") ? x.OrganizationId == filter.OrganizationId : true))
+                                    .CountAsync(),
             };
 
             return new Result<TotalSchoolModel>(data, $"Thành công!", true);
@@ -262,7 +268,7 @@ public class DashBoardService
         {
             var data = new TotalDashBoardModel()
             {
-                TotalSchoolModel = (await GetTotalSchool()).Data,
+                TotalSchoolModel = (await GetTotalSchool(filter)).Data,
                 TotalSendEmailModel = (await GetToTalSendEmail(filter)).Data,
                 DBDeviceModel1 = (await GetToTalDevice1(filter)).Data,    
                 DBStudentFaceModel = (await GetTotalStudentFace(filter)).Data,
