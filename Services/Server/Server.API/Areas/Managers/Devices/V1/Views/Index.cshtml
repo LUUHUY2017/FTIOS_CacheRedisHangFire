@@ -54,14 +54,14 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-lg-2 my-1" hidden>
+                            @* <div class="col-lg-2 my-1" hidden>
                                 <label class="form-label">Trường học</label>
                                 <select id="FilterOrganization" class="form-control select" data-dropdown-parent="#webui_device" v-model="filter.organizationId">
                                     <option v-for="option in combobox.schools" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>
                                 </select>
-                            </div>
+                            </div> *@
                             <div class="col-lg-2 my-1">
                                 <label class="form-label">Tìm kiếm theo</label>
                                 <select class="form-select" v-model:value="filter.columnTable">
@@ -342,12 +342,12 @@
                 //     field: 'portConnect'
                 // },
                 {
-                    title: 'Số người dùng',
+                    title: 'Tổng số học sinh',
                     sortable: true,
                     field: 'userCount'
                 },
                 {
-                    title: 'Số khuôn mặt',
+                    title: 'Tổng số khuôn mặt',
                     sortable: true,
                     field: 'faceCount'
                 },

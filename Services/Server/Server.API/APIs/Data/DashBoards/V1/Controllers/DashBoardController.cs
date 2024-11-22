@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.MasterDatas.A2.DashBoards.V1;
+using Server.Application.MasterDatas.A2.DashBoards.V1.Models;
 using Server.Application.MasterDatas.A2.DashBoards.V1.Models.Devices;
 using Share.WebApp.Controllers;
 
@@ -24,10 +25,10 @@ public class DashBoardController : AuthBaseAPIController
     /// Lấy tổng quan gửi email
     /// </summary>
     /// <returns></returns>
-    [HttpGet("GetTotalSendEmail")]
-    public async Task<IActionResult> GetTotalSendEmail()
+    [HttpPost("GetTotalSendEmail")]
+    public async Task<IActionResult> GetTotalSendEmail(DashBoardFilter filter)
     {
-        return Ok(await _dashBoardService.GetToTalSendEmail());
+        return Ok(await _dashBoardService.GetToTalSendEmail(filter));
     }
     /// <summary>
     /// Lấy tổng quan thiết bị
@@ -43,10 +44,10 @@ public class DashBoardController : AuthBaseAPIController
     /// Lấy tổng quan thiết bị 1
     /// </summary>
     /// <returns></returns>
-    [HttpGet("GetToTalDevice1")]
-    public async Task<IActionResult> GetToTalDevice1()
+    [HttpPost("GetToTalDevice1")]
+    public async Task<IActionResult> GetToTalDevice1(DashBoardFilter filter)
     {
-        return Ok(await _dashBoardService.GetToTalDevice1());
+        return Ok(await _dashBoardService.GetToTalDevice1(filter));
     }
     /// <summary>
     /// Lấy tổng quan thiết bị theo orgId
@@ -72,19 +73,19 @@ public class DashBoardController : AuthBaseAPIController
     /// Lấy tổng quan đồng bộ khuôn mặt
     /// </summary>
     /// <returns></returns>
-    [HttpGet("GetTotalStudentFace")]
-    public async Task<IActionResult> GetTotalStudentFace()
+    [HttpPost("GetTotalStudentFace")]
+    public async Task<IActionResult> GetTotalStudentFace(DashBoardFilter filter)
     {
-        return Ok(await _dashBoardService.GetTotalStudentFace());
+        return Ok(await _dashBoardService.GetTotalStudentFace(filter));
     }
     /// <summary>
     /// Lấy tổng quan điểm danh
     /// </summary>
     /// <returns></returns>
-    [HttpGet("GetTotalStudentAttendance")]
-    public async Task<IActionResult> GetTotalStudentAttendance()
+    [HttpPost("GetTotalStudentAttendance")]
+    public async Task<IActionResult> GetTotalStudentAttendance(DashBoardFilter filter)
     {
-        return Ok(await _dashBoardService.GetTotalStudentAttendance());
+        return Ok(await _dashBoardService.GetTotalStudentAttendance(filter));
     }
 
     /// <summary>
@@ -102,8 +103,8 @@ public class DashBoardController : AuthBaseAPIController
     /// </summary>
     /// <returns></returns>
     [HttpGet("DashBoardReport")]
-    public async Task<IActionResult> DashBoardReport()
+    public async Task<IActionResult> DashBoardReport(DashBoardFilter filter)
     {
-        return Ok(await _dashBoardService.DashBoardReport());
+        return Ok(await _dashBoardService.DashBoardReport(filter));
     }
 }

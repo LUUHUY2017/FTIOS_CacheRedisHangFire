@@ -4,6 +4,7 @@ public class DashBoardFilter
 {
     public string? ColumnTable { get; set; } = null;
     public string? Key { get; set; } = null;
-    public DateTime? TimeFilter { get; set; } = null!;
+    //public DateTime? TimeFilter { get; set; } = null!;
+    public string? OrganizationId { get; set; } = null!;
 
 }

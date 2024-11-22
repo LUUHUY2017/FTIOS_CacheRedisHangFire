@@ -67,8 +67,11 @@ public partial class CronJobService : ICronJobService
                     if (users.Any())
                     {
 
-
-                        var dataReport = await _dashBoardService.DashBoardReport();
+                        var filter = new DashBoardFilter()
+                        {
+                            OrganizationId = item.Id,
+                        };
+                        var dataReport = await _dashBoardService.DashBoardReport(filter);
 
                         var retVal = FileExel_ScheduleSendMailDashBoardReport(dataReport.Data);
 

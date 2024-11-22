@@ -54,14 +54,14 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-lg-2 my-1" hidden>
+                            @* <div class="col-lg-2 my-1" hidden>
                                 <label class="form-label">Trường học</label>
                                 <select id="FilterOrganization" class="form-control select" data-dropdown-parent="#webui_deviceAd" v-model="filter.organizationId">
                                     <option v-for="option in combobox.schools" v-bind:value="option.id">
                                         {{ option.organizationName }}
                                     </option>
                                 </select>
-                            </div>
+                            </div> *@
                             <div class="col-lg-2 my-1">
                                 <label class="form-label">Tìm kiếm theo</label>
                                 <select class="form-select" v-model:value="filter.columnTable">
@@ -87,6 +87,20 @@
 
             <div class="card">
                 <div class="card-body">
+                    <div class="pull-left row">
+                        <div class="col-md-3 ">
+                            <label class="form-label">Tổng số học sinh</label>
+                            <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="data_total.totalAmount">
+                        </div>
+                        <div class="col-md-3 ">
+                            <label class="form-label">Tổng có khuôn mặt</label>
+                            <input type="text" class="form-control  mb-3 fw-bold " readonly v-model:value="data_total.totalFace">
+                        </div>
+                        <div class="col-md-3 ">
+                            <label class="form-label">Tổng chưa có khuôn mặt</label>
+                            <input type="text" class="form-control mb-3 fw-bold " readonly v-model:value="data_total.totalCurrent">
+                        </div>
+                    </div>
                     <bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
                 </div>
             </div>
@@ -449,12 +463,12 @@
                 //     field: 'portConnect'
                 // },
                 {
-                    title: 'Số người dùng',
+                    title: 'Tổng học sinh',
                     sortable: true,
                     field: 'userCount'
                 },
                 {
-                    title: 'Số khuôn mặt',
+                    title: 'Tổng số khuôn mặt',
                     sortable: true,
                     field: 'faceCount'
                 },
@@ -571,6 +585,11 @@
             },
             combobox: { schools: [], },
             addModel: false,
+            data_total: {
+                totalAmount: 0,
+                totalFace: 0,
+                totalCurrent: 0,
+            },
         },
         methods: {
             loadData() {
@@ -587,6 +606,7 @@
                     this.data = [];
                     if (response.data.succeeded) {
                         this.data = response.data.data;
+                        this.onLoadData_General();
                     }
                     else {
                         //alertify.notify(response.data.message, 'error', 6, function () { });
@@ -748,6 +768,22 @@
                 }).catch(error => {
                     console.log(error);
                     alert("Lỗi: " + error.response.data.message);
+                });
+            },
+
+            onLoadData_General() {
+                axios.post('/api/v1/Student/PostGeneral', this.filter, this.object.config).then(response => {
+                    if (response.request.responseURL.includes('~/Account/Login')) {
+                        window.location = window.location.href;
+                    }
+
+                    this.data_total.totalAmount = response.data.data.totalAmount;
+                    this.data_total.totalFace = response.data.data.totalFace;
+                    this.data_total.totalCurrent = response.data.data.totalCurrent;
+
+                }).catch(error => {
+                    $('.loader').delay(100).hide(0);
+                    console.log(error);
                 });
             },
 
