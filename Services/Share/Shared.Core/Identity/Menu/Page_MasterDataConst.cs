@@ -12,7 +12,7 @@ public partial class PagesConst
         Url = "V1/DashBoard",
         Module = Module.Master,
         RolePermission = RoleConst.SuperAdmin_Role,
-        CategoryMenu = Category.Dashboard.Id,
+        CategoryMenu = null,
     };
 
     public static readonly PageObject URL_V1_TimeAttenceEvent = new PageObject

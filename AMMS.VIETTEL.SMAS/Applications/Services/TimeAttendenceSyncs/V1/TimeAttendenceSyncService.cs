@@ -8,6 +8,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Shared.Core.Commons;
+using Shared.Core.Loggers;
 using Shared.Core.SignalRs;
 
 namespace AMMS.VIETTEL.SMAS.Applications.Services.TimeAttendenceSyncs;
@@ -53,9 +54,13 @@ public partial class TimeAttendenceSyncService
     {
         try
         {
+            Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(data));
             var res = await _smartService.PostSyncAttendence2Smas(data, data.schoolCode);
             if (res == null || !res.IsSuccess)
+            {
+                Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
                 return new Result<TimeAttendenceEvent>($"Lỗi đồng bộ: Đồng bộ không thành công", false);
+            }
 
             #region Lưu lịch sử đồng bộ
             var _listLog = new List<TimeAttendenceSync>();

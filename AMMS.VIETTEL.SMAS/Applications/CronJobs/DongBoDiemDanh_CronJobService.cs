@@ -57,7 +57,7 @@ public partial class CronJobService : ICronJobService
 
             //Logger.Warning("SMAS_Req:" + JsonConvert.SerializeObject(req));
             var res = await _smartService.PostSyncAttendence2Smas(req, orgRes.OrganizationCode);
-            Logger.Warning("SMAS_Res:" + JsonConvert.SerializeObject(res));
+            Logger.Warning("SMAS_Res:" + orgRes.OrganizationCode + JsonConvert.SerializeObject(res));
 
             if (res == null || !res.IsSuccess)
                 return;

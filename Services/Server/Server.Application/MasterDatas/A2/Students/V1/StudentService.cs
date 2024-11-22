@@ -379,7 +379,7 @@ public class StudentService
 
 
             if (!string.IsNullOrWhiteSpace(request.ImageBase64))
-                await _personRepository.SaveImageAsync(stu.Id, request.ImageBase64, folderName);
+                await _personRepository.SaveImageAsync(stu.Id, request.OrganizationId, folderName);
 
             stu.ImageSrc = request.ImageBase64;
             var revt = await PushStudentsByEventBusAsync(stu);
@@ -476,7 +476,7 @@ public class StudentService
                 //img.Save(fileName);
                 Common.SaveJpeg1(fileName, img, 100);
             }
-            await _personRepository.SaveImageAsync(stu.Id, request.UserFace, folderName);
+            await _personRepository.SaveImageAsync(stu.Id, stu.OrganizationId, folderName);
 
             //stu.ImageSrc = request.UserFace;
             //var revt = await PushPersonByEventBusAsync(stu);
@@ -795,7 +795,7 @@ public class StudentService
             {
                 // Lưu ảnh online
                 await Common.DownloadAndSaveImage(stu.ImageSrc, fileName);
-                await _personRepository.SaveImageAsync(stu.Id, "", folderName);
+                await _personRepository.SaveImageAsync(stu.Id, stu.OrganizationId, folderName);
             }
 
             return new Result<Student>($"Cập nhật thành công", true);
