@@ -245,13 +245,15 @@
                         var ele = `<div style="white-space: nowrap; ">`;
                         //ele += `<a href = "javascript:" class= "btn btn-sm btn-info resend"  title = "Gửi lại" > <i class="fa fa-repeat" > </i>  </a > &nbsp;`;
                         ele += ` <a href="javascript: " class="btn btn-danger btn-sm delete-asset delete " title="Xóa "> <i class="fa fa-trash" ></i> </a> &nbsp; `;
-                        //ele += ` <a href="javascript: " class="btn btn-info btn-sm delete-asset info " title="Chi tiết "> <i class="fa fa-info" ></i> </a> &nbsp; `;
+                        ele += ` <a href="javascript: " class="btn btn-info btn-sm delete-asset reboot " title="Khởi động lại "> <i class="fa fa-repeat" ></i> </a> &nbsp; `;
+                        ele += ` <a href="javascript: " class="btn btn-info btn-sm delete-asset deletelog " title="Xoá dữ liệu chấm công "> <i class="fa fa-trash" ></i> </a> &nbsp; `;
+                        ele += ` <a href="javascript: " class="btn btn-info btn-sm delete-asset deleteall " title="Xoá tất cả dữ liệu"> <i class="fa fa-trash" ></i> </a> &nbsp; `;
                         ele += ` </div>`;
                         return ele;
                     },
                     events: {
                         'click .delete': function (e, value, row) {
-                            var question = "Bạn có chắc chắn xóa thiết bị này không?";
+                            var question = "Bạn có chắc chắn xóa thiết bị " + row.name + " không?";
                             alertify.confirm('Thông báo!', question, function () {
                                 axios.post('/api/v1/MonitorDevice/delete', { id: row.id, reason: "" }, _device.object.bearerAuthorization).then(response => {
                                     if (response.data.succeeded) {
@@ -269,6 +271,58 @@
                                 });
                             }, function () { });
                         },
+                        'click .reboot': function (e, value, row) {
+                            var question = "Bạn có chắc chắn khởi động lại thiết bị " + row.name + " không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/MonitorDevice/Reboot', { id: row.id, name: "" }, _device.object.bearerAuthorization).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+                        'click .deletelog': function (e, value, row) {
+                            var question = "Bạn có chắc chắn xoá dữ liệu chấm công thiết bị " + row.name + " không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/MonitorDevice/DeleteAllLog', { id: row.id, name: "" }, _device.object.bearerAuthorization).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+                        'click .deleteall': function (e, value, row) {
+                            var question = "Bạn có chắc chắn xoá tất cả dữ liệu của thiết bị " + row.name +" không?";
+                            alertify.confirm('Thông báo!', question, function () {
+                                axios.post('/api/v1/MonitorDevice/DeleteAll', { id: row.id, name: "" }, _device.object.bearerAuthorization).then(response => {
+                                    if (response.data.succeeded) {
+                                        alertify.success(response.data.message);
+                                    }
+                                    else {
+                                        alertify.warning(response.data.message);
+                                    }
+
+                                }).catch(error => {
+                                    console.log(error);
+                                    alert("Lỗi: " + error.response.data.message);
+                                });
+                            }, function () { });
+                        },
+
                     }
                 },
                 {

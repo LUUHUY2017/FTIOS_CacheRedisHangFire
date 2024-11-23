@@ -60,7 +60,6 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
                     if (data == null)
                         return;
-                    // await SaveUserInfo(data);
 
                     command = IclockOperarion.CommandUploadUser(requestId, sn, data.PersonCode, data.FullName, "", "0", data.UserCard, rB_ServerRequest.Id);
                     //Đẩy thêm ảnh
@@ -107,8 +106,6 @@ namespace AMMS.ZkAutoPush.Applications.V1
 
                     if (data == null)
                         return;
-                    await DeleteUserInfo(data);
-
                     command = IclockOperarion.CommandDeleteUser(requestId, sn, data.PersonCode);
                 }
                 //Cập nhật face

@@ -37,4 +37,35 @@ public class MonitorDeviceController : ControllerBase
     {
         return Ok(await _monitorDeviceService.Delete(request));
     }
+
+    /// <summary>
+    /// Reboot 
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("Reboot")]
+    public async Task<IActionResult> Reboot(ObjectString request)
+    {
+        return Ok(await _monitorDeviceService.Reboot(request));
+    }
+
+    /// <summary>
+    /// Xoá hết dữ liệu 
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("DeleteAll")]
+    public async Task<IActionResult> DeleteAll(ObjectString request)
+    {
+        return Ok(await _monitorDeviceService.DeleteAllData(request));
+    }
+
+    /// <summary>
+    /// Xoá hết dữ liệu chấm công 
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("DeleteAllLog")]
+    public async Task<IActionResult> DeleteAllLog(ObjectString request)
+    {
+        return Ok(await _monitorDeviceService.DeleteAllLog(request));
+    }
+
 }
