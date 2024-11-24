@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using Hangfire.Dashboard.BasicAuthorization;
 using Hangfire.MySql;
 using IdentityModel.Client;
 using IdentityServer4.EntityFramework.DbContexts;
@@ -405,8 +406,27 @@ if (builder.Configuration["Hangfire:Enable"] == "True")
     //app.UseHangfireDashboard("/hangfire_dashboard");
     app.UseHangfireDashboard("/hangfire_dashboard", new DashboardOptions
     {
+        DashboardTitle = "Hệ thống điểm danh",
+        DarkModeEnabled = false,
+        DisplayStorageConnectionString =false,
         IgnoreAntiforgeryToken = true,
-        Authorization = new[] { new DashboardNoAuthorizationFilter() }
+        //Authorization = new[] { new DashboardNoAuthorizationFilter() }
+        //Hangfire.Dashboard.Basic.Authentication by yuzd
+        Authorization = new[] { new BasicAuthAuthorizationFilter(new BasicAuthAuthorizationFilterOptions
+        {
+            RequireSsl = false,
+            SslRedirect = false,
+            LoginCaseSensitive = true,
+            Users = new []
+            {
+                new BasicAuthAuthorizationUser
+                {
+                    Login ="admin",
+                    PasswordClear =  "123"
+                }
+            }
+
+        }) }
     });
     //app.UseHangfireDashboard();
     app.UseHangfireServer();
